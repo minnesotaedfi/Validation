@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace ValidationPortal.Controllers
+namespace MDE.ValidationPortal.Controllers
 {
     public class HomeController : Controller
     {

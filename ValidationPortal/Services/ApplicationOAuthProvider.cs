@@ -9,10 +9,12 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OAuth;
-using ValidationPortal.Models;
+using MDE.ValidationPortal.Models;
 
-namespace ValidationPortal.Providers
+namespace MDE.ValidationPortal.Providers
 {
+    // Delete This
+    /*
     public class ApplicationOAuthProvider : OAuthAuthorizationServerProvider
     {
         private readonly string _publicClientId;
@@ -95,4 +97,5 @@ namespace ValidationPortal.Providers
             return new AuthenticationProperties(data);
         }
     }
+    */
 }

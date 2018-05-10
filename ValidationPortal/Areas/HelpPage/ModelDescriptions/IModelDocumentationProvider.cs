@@ -1,7 +1,7 @@
 using System;
 using System.Reflection;
 
-namespace ValidationPortal.Areas.HelpPage.ModelDescriptions
+namespace MDE.ValidationPortal.Areas.HelpPage.ModelDescriptions
 {
     public interface IModelDocumentationProvider
     {

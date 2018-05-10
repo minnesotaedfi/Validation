@@ -2,8 +2,11 @@
 using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
 
-namespace ValidationPortal.Models
+namespace MDE.ValidationPortal.Models
 {
+    // TODO: Delete This
+    /*
+
     // Models used as parameters to AccountController actions.
 
     public class AddExternalLoginBindingModel
@@ -81,4 +84,5 @@ namespace ValidationPortal.Models
         [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
     }
+    */
 }

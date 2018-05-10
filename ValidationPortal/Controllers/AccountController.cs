@@ -13,12 +13,14 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OAuth;
-using ValidationPortal.Models;
-using ValidationPortal.Providers;
-using ValidationPortal.Results;
+using MDE.ValidationPortal.Models;
+using MDE.ValidationPortal.Providers;
+using MDE.ValidationPortal.Results;
 
-namespace ValidationPortal.Controllers
+namespace MDE.ValidationPortal.Controllers
 {
+    // TODO: Delete this
+    /*
     [Authorize]
     [RoutePrefix("api/Account")]
     public class AccountController : ApiController
@@ -491,4 +493,5 @@ namespace ValidationPortal.Controllers
 
         #endregion
     }
+    */
 }

@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Net.Http.Headers;
 using System.Web.Http.Description;
-using ValidationPortal.Areas.HelpPage.ModelDescriptions;
+using MDE.ValidationPortal.Areas.HelpPage.ModelDescriptions;
 
-namespace ValidationPortal.Areas.HelpPage.Models
+namespace MDE.ValidationPortal.Areas.HelpPage.Models
 {
     /// <summary>
     /// The model that represents an API displayed on the help page.

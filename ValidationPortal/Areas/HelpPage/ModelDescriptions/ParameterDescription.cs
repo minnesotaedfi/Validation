@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace ValidationPortal.Areas.HelpPage.ModelDescriptions
+namespace MDE.ValidationPortal.Areas.HelpPage.ModelDescriptions
 {
     public class ParameterDescription
     {

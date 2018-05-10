@@ -5,9 +5,9 @@ using System.Reflection;
 using System.Web.Http.Controllers;
 using System.Web.Http.Description;
 using System.Xml.XPath;
-using ValidationPortal.Areas.HelpPage.ModelDescriptions;
+using MDE.ValidationPortal.Areas.HelpPage.ModelDescriptions;
 
-namespace ValidationPortal.Areas.HelpPage
+namespace MDE.ValidationPortal.Areas.HelpPage
 {
     /// <summary>
     /// A custom <see cref="IDocumentationProvider"/> that reads the API documentation from an XML documentation file.

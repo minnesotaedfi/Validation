@@ -1,0 +1,44 @@
+﻿body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+    font-family: Calibri, Arial, sans-serif;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    max-width: 280px;
+}
+
+/* Footer area Quick Links */
+div.layout-footer {
+    color: rgb(255, 255, 255);
+    background-color: rgb(0, 56, 101);
+}
+
+/***************************************************************************************/
+/* Bootstrap Overrides */
+
+.topNav {
+    background: rgb(255, 255, 255);
+    padding: 0px;
+    text-align: right;
+    color: rgb(0, 0, 0);
+    border-bottom-color: rgb(120, 190, 33);
+    border-bottom-width: 30px;
+    border-bottom-style: solid;
+}
+/***************************************************************************************/
+
+.noDisc {
+    list-style-type: none;
+}

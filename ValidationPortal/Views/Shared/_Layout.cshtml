@@ -4,34 +4,85 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <title>@ViewBag.Title</title>
+    <link rel="SHORTCUT ICON" href="~/favicon.ico" />
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 </head>
 <body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, null)</li>
-                    <li>@Html.ActionLink("API", "Index", "Help", new { area = "" }, null)</li>
-                </ul>
+    <div class="navbar">
+        <div class="container-fluid">
+            <div class="row topNav" role="banner">
+                <div class="col-sm-12">
+                    <div class="noprint">
+                        <div class="navbar-header">
+                            <img src="~/Content/Images/mdelogo.png" class="img-fluid" />
+                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                            @*Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })*@
+                        </div>
+                        <div class="navbar-collapse collapse">
+                            <ul class="nav navbar-nav">
+                                <li>@*Html.ActionLink("Home", "Index", "Home", new { area = "" }, null)*@</li>
+                                <li>@*Html.ActionLink("API", "Index", "Help", new { area = "" }, null)*@</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    <div class="container body-content">
-        @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
-        </footer>
+    @RenderBody()
+    @{var footerLinkBaseUrl = "https://Education.mn.gov"; }
+    <div class="row layout-footer" style="background-color: rgb(0, 56, 101); color: rgb(255, 255, 255);">
+        <div class="row">
+            <h2>Quick Links</h2>
+        </div>
+        <div class="row">
+            <div class="col-xs-4 qLink noprint">
+                <ul class="noDisc">
+                    <li><a target="" mde="" href="@(footerLinkBaseUrl)/MDE/MDE058804">A-Z Subject Directory</a></li>
+                    <li><a target="" href="https://bosa.mn.gov/BOSA/index.htm">Board of School Administrators</a></li>
+                    <li><a href="https://mn.gov/board-of-teaching/" target="">Board of Teaching</a></li>
+                    <li><a target="" href="@(footerLinkBaseUrl)/MDE/dse/safe/index.htm">Bullying Prevention</a></li>
+                    <li><a href="@(footerLinkBaseUrl)/MDE/about/cal/index.htm" target="">Calendar</a></li>
+                    <li><a href="@(footerLinkBaseUrl)/MDE/about/jobs/index.htm" target="">Careers</a></li>
+                    <li><a href="@(footerLinkBaseUrl)/MDE/fam/elsprog/index.htm" target="">Early Learning (PreK)</a></li>
+                    <li><a target="" href="@(footerLinkBaseUrl)/MDE/dse/ESSA/index.htm">Every Student Succeeds Act (ESSA)</a></li>
+                    <li><a target="" href="@(footerLinkBaseUrl)/MDE/dse/FNS/index.htm">Food and Nutrition Services</a></li>
+                    <li><a target="" href="@(footerLinkBaseUrl)/mde/dse/grants/">Grants</a></li>
+                    <li><a target="" href="@(footerLinkBaseUrl)/MDE/about/rule/index.htm">Legislation, Rulemaking and Reports</a></li>
+                    <li><a target="" href="@(footerLinkBaseUrl)/MDE/Data/Maps/index.html">Maps</a></li>
+                </ul>
+            </div>
+            <div class="col-xs-4 qLink qLinkRight noprint">
+                <ul class="noDisc">
+                    <li><a target="" href="@(footerLinkBaseUrl)/MDE/fam/sped/index.htm">Special Education</a></li>
+                    <li><a target="" href="@(footerLinkBaseUrl)/MDE/fam/stds/index.htm">Standards (K-12)</a></li>
+                    <li><a href="@(footerLinkBaseUrl)/MDE/fam/after/slide/index.htm" target="">Summer Learning</a></li>
+                    <li><a href="@(footerLinkBaseUrl)/MDE/fam/tests/index.htm" target="">Testing</a></li>
+                    <li><a href="@(footerLinkBaseUrl)/MDE/fam/wbwf/index.htm" target="">World's Best Workforce</a></li>
+                    <li><a href="@(footerLinkBaseUrl)/MDE/about/004831" target="">Accessibility Policy</a></li>
+                    <li><a href="@(footerLinkBaseUrl)/MDE/about/MDEDEV_001317" target="">Help</a></li>
+                    <li><a href="https://mn.gov/portal/">Minnesota gov</a></li>
+                    <li><a target="" href="@(footerLinkBaseUrl)/MDE/about/MDEDEV_001315">Privacy Statement</a></li>
+                    <li><a target="" href="@(footerLinkBaseUrl)/MDE/about/MDEDEV_001316">Site Disclaimer</a></li>
+                </ul>
+            </div>
+            <div class="col-xs-4">
+                <div id="contact" class="noprint justify-content-center">
+                    <ul>
+                        <li><strong>Minnesota Department of Education</strong></li>
+                        <li>1500 Highway 36 West</li>
+                        <li>Roseville MN 55113</li>
+                        <li>651-582-8200</li>
+                        <li><p><a target="" href="mailto:mde.commissioner@state.mn.us">Email the Commissioner</a></p><p><a target="" href="http://education.state.mn.us/MDE/about/map/">Directions</a></p><p><strong>Copyright 2017<br>Minnesota Department of Education</strong></p></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
 
     @Scripts.Render("~/bundles/jquery")

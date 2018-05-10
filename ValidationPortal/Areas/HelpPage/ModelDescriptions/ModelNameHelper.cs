@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 
-namespace ValidationPortal.Areas.HelpPage.ModelDescriptions
+namespace MDE.ValidationPortal.Areas.HelpPage.ModelDescriptions
 {
     internal static class ModelNameHelper
     {

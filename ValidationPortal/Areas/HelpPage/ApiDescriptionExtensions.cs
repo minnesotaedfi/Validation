@@ -3,7 +3,7 @@ using System.Text;
 using System.Web;
 using System.Web.Http.Description;
 
-namespace ValidationPortal.Areas.HelpPage
+namespace MDE.ValidationPortal.Areas.HelpPage
 {
     public static class ApiDescriptionExtensions
     {

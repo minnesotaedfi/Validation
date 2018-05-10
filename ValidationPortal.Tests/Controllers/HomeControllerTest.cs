@@ -1,9 +1,9 @@
 ﻿using System.Web.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ValidationPortal;
-using ValidationPortal.Controllers;
+using MDE.ValidationPortal;
+using MDE.ValidationPortal.Controllers;
 
-namespace ValidationPortal.Tests.Controllers
+namespace MDE.ValidationPortal.Tests.Controllers
 {
     [TestClass]
     public class HomeControllerTest

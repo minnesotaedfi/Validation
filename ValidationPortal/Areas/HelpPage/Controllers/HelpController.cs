@@ -1,10 +1,10 @@
 using System;
 using System.Web.Http;
 using System.Web.Mvc;
-using ValidationPortal.Areas.HelpPage.ModelDescriptions;
-using ValidationPortal.Areas.HelpPage.Models;
+using MDE.ValidationPortal.Areas.HelpPage.ModelDescriptions;
+using MDE.ValidationPortal.Areas.HelpPage.Models;
 
-namespace ValidationPortal.Areas.HelpPage.Controllers
+namespace MDE.ValidationPortal.Areas.HelpPage.Controllers
 {
     /// <summary>
     /// The controller that will handle requests for the help page.

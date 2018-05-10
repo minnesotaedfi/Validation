@@ -1,6 +1,6 @@
 using System;
 
-namespace ValidationPortal.Areas.HelpPage.ModelDescriptions
+namespace MDE.ValidationPortal.Areas.HelpPage.ModelDescriptions
 {
     public class ParameterAnnotation
     {

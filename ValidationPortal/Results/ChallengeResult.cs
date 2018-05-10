@@ -7,8 +7,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
 
-namespace ValidationPortal.Results
+namespace MDE.ValidationPortal.Results
 {
+    // TODO: Delete This
     public class ChallengeResult : IHttpActionResult
     {
         public ChallengeResult(string loginProvider, ApiController controller)

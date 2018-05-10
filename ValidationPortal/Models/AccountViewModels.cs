@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ValidationPortal.Models
+namespace MDE.ValidationPortal.Models
 {
+    // TODO: Delete This
+    /*
+
     // Models returned by AccountController actions.
 
     public class ExternalLoginViewModel
@@ -40,4 +43,5 @@ namespace ValidationPortal.Models
 
         public string ProviderKey { get; set; }
     }
+    */
 }

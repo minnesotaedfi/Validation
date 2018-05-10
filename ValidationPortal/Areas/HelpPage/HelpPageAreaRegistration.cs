@@ -1,7 +1,7 @@
 using System.Web.Http;
 using System.Web.Mvc;
 
-namespace ValidationPortal.Areas.HelpPage
+namespace MDE.ValidationPortal.Areas.HelpPage
 {
     public class HelpPageAreaRegistration : AreaRegistration
     {

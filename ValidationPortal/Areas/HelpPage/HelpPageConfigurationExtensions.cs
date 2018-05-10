@@ -11,10 +11,10 @@ using System.Net.Http.Headers;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Description;
-using ValidationPortal.Areas.HelpPage.ModelDescriptions;
-using ValidationPortal.Areas.HelpPage.Models;
+using MDE.ValidationPortal.Areas.HelpPage.ModelDescriptions;
+using MDE.ValidationPortal.Areas.HelpPage.Models;
 
-namespace ValidationPortal.Areas.HelpPage
+namespace MDE.ValidationPortal.Areas.HelpPage
 {
     public static class HelpPageConfigurationExtensions
     {
