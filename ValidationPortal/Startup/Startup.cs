@@ -128,6 +128,7 @@ namespace MDE.ValidationPortal
 
             // Web API Controller instances will be created by dependency injection.
             container.RegisterWebApiControllers(httpConfiguration);
+            container.RegisterMvcControllers(Assembly.GetExecutingAssembly());
 
             // Web API will use this DI container to create everything the framework knows how to inject.
             httpConfiguration.DependencyResolver = new SimpleInjectorWebApiDependencyResolver(container);

@@ -11,7 +11,21 @@ namespace MDE.ValidationPortal
     {
         public static void RegisterRoutes(RouteCollection routes)
         {
-            routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
+            //routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
+
+            //routes.MapRoute(
+            //    name: "ValidationReports",
+            //    url: "Validation/{action}",
+            //    defaults: new { controller = "Validation", action = "Reports", id = UrlParameter.Optional }
+            //);
+
+            //routes.MapRoute(
+            //    name: "RulesCollections",
+            //    url: "Rules/{*id}",
+            //    defaults: new { controller = "Rules", action = "Collections", id = UrlParameter.Optional }
+            //);
+
+            routes.MapMvcAttributeRoutes();
 
             routes.MapRoute(
                 name: "Default",

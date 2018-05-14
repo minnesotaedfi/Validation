@@ -7,10 +7,11 @@ using System.Web.Mvc;
 namespace MDE.ValidationPortal
 {
     [AllowAnonymous]
-    public class HomeController : Controller
+    public class ValidationController : Controller
     {
-        [Route("Home/Index")]
-        public ActionResult Index()
+        // GET: Validation/Reports
+        [Route("Validation/Reports")]
+        public ActionResult Reports(int id = 0)
         {
             return View();
         }
