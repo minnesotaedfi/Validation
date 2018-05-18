@@ -1,0 +1,31 @@
+ruleset Section25
+
+rule 285.1
+	when {Section25} exists then 
+	require {GeneralEducationFTE}.[GeneralEdFte] > '0'
+	or {SpecialEducation}.[Section52FTE] > '0'
+	or {SpecialEducation}.[Section53FTE] > '0'
+	else 'Total FTE must be greater than 0 when submitting a Section 25 request.'
+
+/*rule 285.3
+	when collection is StudentRecordMaintenance then 
+	require today > FallAsOfDate
+	and today < SpringAsOfDate
+	else 'The SRM As of Date must be after the Fall Pupil Membership count date and before the Spring Supplemental count date.'
+*/	
+
+/* FirstDayInAttendance rules */	
+rule 285.542.1 
+	when collection is StudentRecordMaintenance then
+	require {Section25}.[FirstDayInAttendance] > FallAsOfDate
+	and {Section25}.[FirstDayInAttendance] < SpringAsOfDate
+	else 'First Day In Attendance must be after the Fall Pupil Membership count date and before the Spring Supplemental count date.'
+		
+rule 285.542.2 
+	require {Section25}.[FirstDayInAttendance] <= today
+	else 'First Day In Attendance must be on or before the "As of Date" in the Student Record Maintenance component.'
+		
+rule 285.542.4
+	when {Section25} exists then 
+	require {Enrollment}.[EnrollmentDate] <= {Section25}.[FirstDayInAttendance]
+	else 'First Day In Attendance cannot be prior to the student`s date of enrollment.'

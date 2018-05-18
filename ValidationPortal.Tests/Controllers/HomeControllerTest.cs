@@ -1,7 +1,7 @@
 ﻿using System.Web.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MDE.ValidationPortal;
-using MDE.ValidationPortal.Controllers;
+using MDE.ValidationPortal;
 
 namespace MDE.ValidationPortal.Tests.Controllers
 {

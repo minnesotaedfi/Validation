@@ -1,0 +1,182 @@
+﻿ruleset SchoolDemographics
+
+/* GradeSetting rules */
+rule 253.290.1
+	when collection is in [FallGeneralCollection,SpringGeneralCollection,EOYGeneralCollection]
+	and {SchoolDemographics}.[GradeSetting] = '30'
+	and {Enrollment}.[DistrictExitStatus] <> '00' then
+	expect {SpecialEducation} exists
+	else 'The Special Education Component is normally submitted when the Grade or Setting is "30".'
+	
+/*rule 253.290.2  
+	when {SchoolDemographics}.[GradeSetting] >= '00'
+	and {SchoolDemographics}.[GradeSetting] <= '12' then
+	expect {SchoolDemographics}.[GradeSetting] >= years since {PersonalCore}.[DateOfBirth] as of 7 years before 1-Sep
+	and {SchoolDemographics}.[GradeSetting] <= years since {PersonalCore}.[DateOfBirth] as of 3 years before 1-Sep
+	else 'The Grade or Setting is outside the expected range for the student\'s age (within two years of their chronological age minus five).'*/
+	
+rule 253.290.7
+	when {StudentCourse} exists then
+	require {SchoolDemographics}.[GradeSetting] <> '20'
+	else 'If the Student Course component is submitted then Grade or Setting cannot be 20.'
+	
+rule 253.290.8
+	when {SchoolDemographics}.[GradeSetting] ='14'
+	and collection is in [FallGeneralCollection,SpringGeneralCollection,EOYGeneralCollection,StudentRecordMaintenance] then
+	require {SpecialEducation} exists
+	and {SpecialEducation}.[PrimaryDisability] exists
+	else 'A Primary Disability in the Special Education Component is required when Grade or Setting = 14.'
+
+rule 253.290.9
+	expect count({SchoolDemographics} when {SchoolDemographics}.[GradeSetting] = {EEM}.[SFNGradeLevel]) > 0
+	else 'The Grade or Setting does not match the Grades or Settings identified in EEM as offered by this entity. '	
+	
+rule 253.290.10
+	when {SchoolDemographics}.[GradeSetting] = '14' then
+	require years since {PersonalCore}.[DateOfBirth] as of 1-Dec >= '18'
+	else 'The use of Grade or Setting 14 is restricted to students who are 18 years of age or older as of December 1 of the current school year.'
+	
+rule 253.290.12
+	when {SchoolDemographics}.[GradeSetting] is in ['00','01','02','03','04','05','06','07','08','09','10','11','12'] then
+	expect years since {PersonalCore}.[DateOfBirth] as of 1-Dec >= 5
+	else 'The student is less than 5 years of age as of December 1 of the current school year. Please confirm that the Date of Birth and reported Grade or Setting are correct.'
+	
+rule 253.290.13
+	when {SchoolDemographics}.[GradeSetting] = '20' then
+	require {Enrollment}.[DistrictExitStatus] <> '19'
+	else 'Adult Education participant FTE data is no longer reported in MSDS. Participants may no longer be reported except to update the exit status for the purposes of calculating graduation and dropout rates. If this situation doesn\'t apply, remove the participant from the collection.'
+
+	
+/* OperatingDistrictNumber rules */
+rule 253.283.2 
+	require {SchoolDemographics}.[OperatingDistrictNumber] = {EEM}.[EntityCode]
+	else 'The operating district number is not in the EEM hierarchy below the submitting entity.'
+	
+rule 253.283.3
+	require {EEM}.[Status] is in ['Open - Active','Close – Pending (still open-active)','Closed']
+	else 'The Operating District Number must have an EEM status code of 01 (open), 10 (close pending) or 99 (closed) as of the count date.'
+	
+rule 253.283.4
+	require {EEM}.[EntityCode] = {SchoolDemographics}.[OperatingDistrictNumber]
+	and {EEM}.[EntityTypeCategory] = '3'
+	else 'Operating District Number is blank, is not a valid Operating District Number or the Operating District Number is not "Open-Active" in EEM'
+	
+rule 253.283.5
+	when {EEM}.[Status] = 'Closed'
+	and collection is TeacherStudentDataLink then
+	require {EEM}.[CloseDate] >= 30-Jun
+	else 'If the Operating District Number has an EEM status code of "99" (closed), then the date closed must be on or after June 30th of the current school year or the school year reported in Academic Year, whichever is earliest.'
+	
+rule 253.283.6
+	when {EEM}.[Status] = 'Closed'
+	and collection is in [FallGeneralCollection,SpringGeneralCollection,EOYGeneralCollection,EarlyRoster,StudentRecordMaintenance] then
+	require {EEM}.[CloseDate] >= 1 year before 1-Jul
+	and {Enrollment}.[DistrictExitStatus] <> '19'
+	else 'If the Operating District Number has an EEM status code of "99" (closed), then the date closed must be on or after July 1st of the previous school year and the reported students District Exit Status cannot be 19.'
+
+/* OutofLevelGrade rules */	
+rule 253.558.1 
+	when count({SchoolDemographics} when {SchoolDemographics}.[GradeSetting] = {EEM}.[SFNGradeLevel]) = 0 then
+	require {SchoolDemographics}.[OutofLevelGrade] = 'Yes'
+	else 'The Out of Level Grade characteristic must be submitted as "Yes/True" when the student`s grade does not match the actual grades as indicated in the EEM as offered by this entity and is not grade "14", "20" or "30".'	
+
+
+/* SchoolFacilityNumber rules */
+rule 253.285.1 
+	require {SchoolDemographics}.[OperatingDistrictNumber] = {EEM}.[EntityCode]
+	or {EEM}.[SFNTypeCategory] is in ['1','5']
+	else 'School or Facility number must follow the EEM hierarchy.'
+	
+rule 253.285.2 
+	require {EEM}.[SchoolFacilityNumber] = {SchoolDemographics}.[SchoolFacilityNumber]
+	and {EEM}.[SFNType] is in ['2','3','10','11','18','19','26','27','34']
+	else 'School or Facility number is invalid.'
+	
+rule 253.285.3
+	when {Enrollment}.[DistrictExitStatus] = '19' then
+	require {EEM}.[SFNStatus] is in ['Open - Active','Close - Pending (still open-active)']
+	else 'The School Facility Number must be assigned to an entity that was open at the time represented by the submitted data.'
+	
+rule 253.285.4 
+	when {EEM}.[SFNStatus] = 'Closed'
+	and {Enrollment} exists then
+	require {Enrollment}.[DistrictExitDate] exists
+	else 'The reported School Facility Number is for a closed building. The student must be reported with a District Exit Date.'
+
+rule 253.285.5 
+	when collection is in [FallGeneralCollection,SpringGeneralCollection,EOYGeneralCollection,StudentRecordMaintenance,EarlyRoster,TeacherStudentDataLink]
+	and {Enrollment}.[DistrictExitStatus] <> '00'
+	and {EarlyOn} does not exist then
+	require {SchoolDemographics}.[SchoolFacilityNumber] exists
+	else 'School Facility Number is required for all General collections, SRM, TSDL, and Early Roster except when Exit Status = 00 or when the EarlyOn component is submitted.'
+
+rule 253.285.6
+	when {EEM}.[SFNStatus] = 'Closed'
+	and collection is TeacherStudentDataLink
+	and {StudentCourse}.[AcademicYear] exists then
+	require {EEM}.[SFNCloseDate] >= 1-Sep
+	else 'The close date in EEM for the submitted School Facility Number must be the same as or after September 1st of the earliest reported Academic Year.'
+	
+rule 253.285.9
+	when {EEM}.[SFNStatus] = 'Closed'
+	and collection is TeacherStudentDataLink
+	and {StudentCourse}.[AcademicYear] does not exist then
+	require {EEM}.[SFNCloseDate] >= 1-Sep
+	else 'The close date in EEM for the submitted School Facility Number must be the same as or after September 1st of the current school year.'
+	
+	
+rule 253.285.11
+	when {EEM}.[SFNType] = '34'
+	and collection is in [FallGeneralCollection,SpringGeneralCollection,EOYGeneralCollection,StudentRecordMaintenance] then
+	require {Membership}.[StudentResidency] is in ['04','08']
+	else 'If the School Facility Number is a nonpublic school, then the Student Residency (Membership) must be 04 or 08.'	
+	
+rule 253.285.12 
+	/* when collection is not in [EarlyRoster,TeacherStudentDataLink] */
+	when collection is in [FallEarlyChildhood, SpringEarlyChildhood, EOPEarlyChildhood, EOYGeneralCollection, FallGeneralCollection, SpringGeneralCollection, StudentRecordMaintenance]
+	and {EarlyOn} exists
+	and years since {PersonalCore}.[DateOfBirth] as of AsOfDate > '3'
+	and {SpecialEducation} exists then
+	require {SchoolDemographics}.[SchoolFacilityNumber] exists
+	else 'School Facility Number may be blank when the EarlyOn component is submitted except when the child is older than 3 years on count day and the SpecialEducation component is submitted.'	
+	
+rule 253.285.13 
+	when {EEM}.[SFNStatus] = 'Closed' then
+	require {EEM}.[SFNCloseDate] >= {Enrollment}.[DistrictExitDate]
+	else 'The reported School Facility Number is for a closed building. The student must be reported with a District Exit Date that is on or before the building close date in EEM.'
+	
+rule 253.285.14
+	when collection is in [FallGeneralCollection,SpringGeneralCollection,EOYGeneralCollection,TeacherStudentDataLink,StudentRecordMaintenance] 
+	and {EEM}.[SFNStatus] = 'Closed' then
+	require {EEM}.[SFNCloseDate] > 1 year before 1-Jul 
+	else 'This School Facility Number has a close date in EEM that is prior to the current or previous school year and cannot be used.'
+		
+rule 253.285.15
+	when collection is EarlyRoster 
+	and {EEM}.[SFNStatus] = 'Closed' then
+	require {EEM}.[SFNCloseDate] > 1-Jul 
+	else 'This School Facility Number has a close date in EEM prior to the current school year and cannot be used.'
+	
+/* StudentIdNumber rules */	
+rule 253.15.1 
+	require {SchoolDemographics}.[LocalStudentId] is not in ['0',
+															 '00',
+															 '000',
+															 '0000',
+															 '00000',
+															 '000000',
+															 '0000000',
+															 '00000000',
+															 '000000000',
+															 '0000000000',
+															 '00000000000',
+															 '000000000000',
+															 '0000000000000',
+															 '00000000000000',
+															 '000000000000000',
+															 '0000000000000000',
+															 '00000000000000000',
+															 '000000000000000000',
+															 '0000000000000000000',
+															 '00000000000000000000']
+	else 'Student ID number cannot be 0`s.'

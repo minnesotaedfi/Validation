@@ -1,0 +1,3 @@
+﻿EXISTS (SELECT * FROM (SELECT {{{#each lookups}}}{{{#unless @first}}}, {{{/unless}}}[{{{this}}}]{{{/each}}} FROM [{{{schema}}}].[{{{lookupTableName}}}])
+[{{{tableName}}}]({{{#each components}}}{{{#unless @first}}}, {{{/unless}}}{{{CharacteristicName}}}{{{/each}}})
+WHERE {{{#each components}}}{{{#unless @first}}} AND {{{/unless}}}[{{{../tableName}}}].[{{{CharacteristicName}}}] = [{{{ComponentName}}}].[{{{CharacteristicName}}}]{{{/each}}})

@@ -1,0 +1,62 @@
+﻿ruleset CollectionCertification
+
+
+rule 100.2
+	when collection is in [FallGeneralCollection, SpringGeneralCollection, EOYGeneralCollection, StudentRecordMaintenance, FallEarlyChildhood, SpringEarlyChildhood, EOPEarlyChildhood,  TeacherStudentDataLink] then
+	require {PersonalCore}.[UIC] exists
+	else 'Outstanding resolution issues'
+	
+rule 100.3
+	when collection is in [FallGeneralCollection, SpringGeneralCollection, EOYGeneralCollection, StudentRecordMaintenance, FallEarlyChildhood, SpringEarlyChildhood, EOPEarlyChildhood, TeacherStudentDataLink] then
+	require {RuleValidationDetail} does not exist
+	else 'Outstanding field-level validation issues'
+	
+rule 100.4
+	when collection is in [FallGeneralCollection, SpringGeneralCollection, EOYGeneralCollection, StudentRecordMaintenance, FallEarlyChildhood, SpringEarlyChildhood, EOPEarlyChildhood, TeacherStudentDataLink] then
+	require {PersonalCore}.[UIC] is unique
+	else 'Multiple Students with same UIC'
+	
+rule 100.7
+	when collection is in [FallGeneralCollection, SpringGeneralCollection, EOYGeneralCollection] then
+	require {EmptySchools}.[ContinuingStudents] exists
+	and {EmptySchools}.[ContinuingStudents] > 0
+	else 'All open school buildings within your district must have continuing students reported before your General Collection can be certified.'
+	
+rule 100.10 
+	when collection is in [FallGeneralCollection, SpringGeneralCollection] then
+	require {TotalFTE}.[TotalFTE] <= 1
+	else 'Student is reported with more than 1.00 total FTE within this Operating District.'
+	
+rule 100.15
+	when collection is in [FallGeneralCollection, SpringGeneralCollection, EOYGeneralCollection, StudentRecordMaintenance] then
+	expect {PercentIEP}.[PercentIEP] <= .2
+	else 'The number of students with active IEPs reported with an Initial IEP is higher than expected. Please confirm that all students reported with the Initial IEP component are new special education students receiving an IEP for the first time.'
+	
+rule 100.24
+	when collection is StudentRecordMaintenance
+	and {Section25} exists then
+	expect FallAsOfDate < today
+	and SpringAsOfDate < today
+	else 'Section 25e requests may only be submitted after the Fall General Collection closes. These requests must be certified prior to the Spring Count date.'
+	
+rule 100.26
+	when collection is StudentRecordMaintenance then
+	require {TotalFTE}.[TotalFTE] <= 1
+	else 'Student is reported with more than 1.00 total FTE within this Operating District.'
+
+rule 100.27
+	when collection is in [FallGeneralCollection,SpringGeneralCollection] then
+	expect {EmptySchools}.[FTE] > 0
+	else 'All open school buildings within your district must have students reported with FTE before your General Collection can be certified.'
+	
+rule 100.40
+	when collection is in [FallEarlyChildhood, SpringEarlyChildhood, EOPEarlyChildhood, EOYGeneralCollection, FallGeneralCollection, SpringGeneralCollection, StudentRecordMaintenance] 
+	and {SNE}.[SupplementalNutritionEligibility] = 2 then
+	require {HomelessDemographics} does not exist
+	else 'Students who have been reported as homeless in the current school year must be reported with Supplemental Eligibility Nutrition code 1 (Free).'
+	
+rule 100.48
+	when collection is StudentRecordMaintenance 
+	and {Section23a} exists then
+	require DaysSinceYearMonthLastDay({Section23a}.[MonthClaimed], AsOfDate) <= 30
+	else 'Section 23a claims can only be certified within 30 calendar days of the last day of the month claimed.'

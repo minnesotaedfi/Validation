@@ -1,0 +1,2 @@
+﻿EXISTS (SELECT * FROM (VALUES {{{tuples}}}) {{{tableName}}}({{{#each components}}}{{{#unless @first}}}, {{{/unless}}}{{{CharacteristicName}}}{{{/each}}})
+WHERE {{{#each components}}}{{{#unless @first}}} AND {{{/unless}}}[{{{../tableName}}}].[{{{CharacteristicName}}}] = [{{{ComponentName}}}].[{{{CharacteristicName}}}]{{{/each}}})

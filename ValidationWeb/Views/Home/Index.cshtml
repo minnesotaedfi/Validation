@@ -1,0 +1,50 @@
+﻿@model HomeIndexViewModel
+<script>
+        function hideElement(elemId)
+        {
+            $(elemId).fadeOut();
+        }
+</script>
+
+<div class="row clear-margin">
+    <div>
+        <button type="button" class="btn prime-blue district-dropdown">
+            Organizations <span class="badge badge-light">@(Model.FilteredEdOrgs.Count()) / @(Model.AuthorizedEdOrgs.Count())</span>
+        </button>
+    </div>
+    <div class="h2">School years open for submission: 
+        <span>@( string.Join(", ", Model.YearsOpenForDataSubmission.Select(yr => yr.ToString()).OrderBy(y => y).ToList()))</span>
+    </div>
+</div>
+
+<div class="row clear-margin">
+    @{ var rnd = new Random(); }
+    @foreach (var announcement in Model.Announcements.OrderByDescending(a => a.Priority).ToList())
+    {
+        var cardHeader = announcement.IsEmergency ? "Urgent!" : "Announcement";
+        var announcementParagraphs = (announcement.Message ?? string.Empty).Replace("\r", "").Split(new char[] { '\n' });
+        var cardColor = announcement.IsEmergency ? "danger-red" : "accent-soft-blue";
+        var cardId = $"card{rnd.Next(int.MaxValue)}";
+
+        if (announcement.Expiration < DateTime.Now)
+        {
+            <div id="@(cardId)" class="@(cardColor) page-width clear-margin rounded-padded">
+                <h4>@(cardHeader)</h4>
+                @foreach (var paragraph in announcementParagraphs)
+                {
+                    <p>@Html.Raw(paragraph)</p>
+                }
+                @if (!string.IsNullOrWhiteSpace(announcement.LinkUrl))
+                {
+                    <a href="@(announcement.LinkUrl)" target="_blank">@(announcement.LinkUrl)</a>
+                }
+                @if (!string.IsNullOrWhiteSpace(announcement.ContactInfo))
+                {
+                    <span>@(announcement.ContactInfo)</span>  <button type="button" onclick="hideElement('#@(cardId)')" class="btn btn-sm btn-primary btn-light float-right">Dismiss</button>
+                }
+            </div>
+            <br />
+        }
+    }
+
+</div>

@@ -1,0 +1,156 @@
+﻿<!DOCTYPE html>
+<html ng-app="MyApp" lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>MSDS Validation Rules</title>
+    <!-- Bootstrap Core CSS -->
+    <link href="Content/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <style>
+        body {
+            font-size: large;
+        }
+
+        input[type='radio'], label {
+            vertical-align: baseline;
+            margin: 10px;
+        }
+    </style>
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script src="Scripts/jquery-3.1.1.min.js"></script>
+    <script src="Scripts/jquery.signalR-2.2.1.min.js"></script>
+    <script src="Scripts/angular.min.js"></script>
+    <script src="Scripts/bootstrap.min.js"></script>
+    <script src="Scripts/angular-signalr-hub.min.js"></script>
+    <!-- ReSharper disable once Html.PathError -->
+    <script src="signalr/hubs"></script>
+    <script type="text/javascript">
+        angular.module("MyApp", ['SignalR'])
+        .controller("MyController", function ($scope, $http, Hub) {
+            var hub = new Hub('signalrAppenderHub', {
+                listeners: {
+                    'onLoggedEvent': function (e) {
+                        console.log(JSON.stringify(e));
+                        $scope.log[e.FormattedEvent] = e;
+                        $scope.$apply();
+                    }
+                },
+                errorHandler: function (error) {
+                    console.error(error);
+                }
+            });
+
+            $scope.log = {};
+
+            $scope.selection = {
+                connection: null,
+                collection: null,
+                persist: false
+            };
+
+            $scope.validateData = function (persist) {
+                $scope.log = {};
+                $scope.selection.persist = persist;
+                $http.post(
+                    "/api/validate",
+                    JSON.stringify($scope.selection),
+                    { headers: { 'Content-Type': 'application/json' } }
+                    ).success(function (data) {
+                    });
+            }
+
+            $http.get("/api/options").success(function (data) {
+                $scope.connections = data.connections;
+                $scope.selection.connection = data.connections[0];
+                $scope.collections = data.collections;
+                $scope.selection.collection = data.collections[0];
+            });
+        });
+    </script>
+</head>
+
+<body id="body">
+    <!-- Page Content -->
+    <div class="container" ng-controller="MyController">
+        <div class="jumbotron">
+            <h1>MSDS Validation Rule Engine</h1>
+            <p>Select your district database, collection, and press "Test" to verify your data or "Run" to persist the results for reporting.</p>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="panel panel-success">
+                    <div class="panel-heading">
+                        <h2><a data-toggle="collapse" href="#connection1"><span class="glyphicon glyphicon-education"></span>&nbsp;District</a></h2>
+                    </div>
+                    <div class="panel-collapse collapse" id="connection1">
+                        <div class="panel-body">
+                            <div class="radio" ng-repeat="val in connections">
+                                <label><input type="radio" name="rbConnections" class="list-group-item" ng-value="val" ng-model="selection.connection" />{{val}}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer panel-default small text-muted text-right">{{selection.connection}}</div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <h2>
+                            <a data-toggle="collapse" href="#collection1"><span class="glyphicon glyphicon-briefcase"></span>&nbsp;Collection</a>
+                        </h2>
+                    </div>
+                    <div class="panel-collapse collapse" id="collection1">
+                        <div class="panel-body">
+                            <div class="radio" ng-repeat="val in collections">
+                                <label><input type="radio" name="rbCollections" class="list-group-item" ng-value="val" ng-model="selection.collection" />{{val}}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer panel-default small text-muted text-right">{{selection.collection}}</div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="panel panel-warning">
+                    <div class="panel-heading"><h2><span class="glyphicon glyphicon-play-circle"></span>&nbsp;Action</h2></div>
+                    <div class="panel-body">
+                        <button type="button" class="btn btn-info btn-block btn-lg" ng-click="validateData(false)"><span class="glyphicon glyphicon-leaf"></span>&nbsp;Test</button>
+                        <button type="button" class="btn btn-success btn-block btn-lg" ng-click="validateData(true)"><span class="glyphicon glyphicon-fire"></span>&nbsp;Run</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="panel panel-danger">
+                    <div class="panel-heading">
+                        <h2>
+                            <a data-toggle="collapse" href="#logs1">
+                                <span class="glyphicon glyphicon-comment"></span>&nbsp;Results
+                            </a>
+                        </h2>
+                    </div>
+                    <div class="panel-body" id="logs1">
+                        <table class="table table-condensed">
+                            <tr ng-repeat="val in log" ng-class="{'info': val.Level == 'INFO','warning' : val.Level == 'WARN', 'danger' : val.Level == 'ERROR'|| val.Level == 'FATAL'}">
+                                <th>{{val.FormattedEvent}}</th>
+                                <td>{{val.Message}}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.container -->
+</body>
+</html>

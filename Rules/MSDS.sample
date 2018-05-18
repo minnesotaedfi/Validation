@@ -1,0 +1,41 @@
+﻿/* This is a sample MSDS Rules file. */
+
+collection EarlyRoster includes SubmittingEntity
+
+/* ruleset Assessment           */
+/* ruleset PersonalCore         */
+/* ruleset PersonalDemographics */
+/* ruleset SchoolDemographics   */
+
+ruleset SubmittingEntity
+
+rule 167.188.1
+  when {SubmittingEntity}.[SubmittingEntityTypeCode] is in ["D" "B"]
+  require Numeric({SubmittingEntity}.[SubmittingEntityCode]) = true 
+    and Length({SubmittingEntity}.[SubmittingEntityCode]) = 5
+  else "Must be 5 digits when Submitting Entity Type is 'D' or 'B'."
+
+rule 167.188.2
+when {SubmittingEntity}.[SubmittingEntityCode] is not blank
+then {SubmittingEntity}.[SubmittingEntityTypeCode SubmittingEntityCode] must be in {EEM}.[SubmittingEntityTypeCode SubmittingEntityCode]
+else "Must be a valid code in the EEM."
+
+rule 167.187.1
+when collection is in [GeneralCollection TeacherStudentDataLink StudentRecordMaintenance]
+then {SubmittingEntity}.[SubmittingEntityTypeCode] must be "D"
+else "If the collection being submitted is the Fall, Spring, or EOY General Collections or the TSDL Collection Or SRM Collection, then the SubmittingEntityType must be 'D'."
+
+rule 167.187.2
+when collection is RequestforUIC
+then {SubmittingEntity}.[SubmittingEntityTypeCode] must be in ["D" "B" "A"]
+else "If the collection being submitted is the Request for UIC collection then the Submitting Entity Type may be any code ('A', 'B' or 'D')."
+
+rule 167.187.3
+when collection is EarlyRoster
+then {SubmittingEntity}.[SubmittingEntityTypeCode] must be in ["D" "B"]
+else "If the collection being submitted is the Early Roster collection then the Submitting Entity Type may be any code ('B' or 'D')."
+
+rule 167.187.4
+when collection is EarlyChildhood
+then {SubmittingEntity}.[SubmittingEntityTypeCode] must be in ["D" "A"]
+else "If the collection being submitted is the Early Childhood collection then the Submitting Entity Type may be any code ('A' or 'D')."

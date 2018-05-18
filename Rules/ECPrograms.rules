@@ -1,0 +1,217 @@
+ruleset ECPrograms
+
+rule 171.1 
+	when {SNE} exists
+	and count({ECPrograms} when {ECPrograms}.[ECProgram] is not in ['02','03','10']) > '0' then
+	require count ({ECPrograms} when {ECPrograms}.[EEMSchoolFacilityNumber] exists) > '0'
+	else 'When SNE is submitted and the student is reported in a program other than Head Start, Early Head Start or blended Head Start, a School or Facility Number must be reported in at least one f the EC Programs components.'
+
+	
+/* ECDeliveryMethod rules */
+rule 171.394.1  
+	when {ECPrograms}.[ECDeliveryMethod] = '1' then
+	require {ECPrograms}.[SchoolFacilityNumber] exists
+	else 'When the delivery method indicates services are school based, a school code must be reported.'
+	
+
+/* ECDeliverySchedule rules */	
+rule 171.389.2 
+	when {ECPrograms}.[ECDeliverySchedule] = '07' then
+	require {ECPrograms}.[ECProgram] is in ['03','10']
+	else 'Only Head Start or Early Head Start programs can report a delivery schedule of Served by Family Child Care Center.'
+
+rule 171.389.4 
+	when {ECPrograms}.[ECDeliverySchedule] = '08' then
+	require {ECPrograms}.[ECProgram] <> '01'
+	else 'If the delivery schedule is 08 (other) then ECprograms cannot be 01 (GSRP)'
+
+
+/* ECProgram rules */
+rule 171.193.1 
+	when {ECPrograms}.[ECProgram] is in [01,02] then
+	require years since {PersonalCore}.[DateOfBirth] as of 1-Sep < '5'
+	and years since {PersonalCore}.[DateOfBirth] as of 1-Dec >= '4'
+	else 'Children\'s birthdates must be between 9/2/2011 and 12/1/2012 to meetthe 2016-2017 school year age requirements for GSRP'
+
+rule 171.193.2 
+	when {ECPrograms}.[ECProgram] is in [01,02,03] then
+	require {ECPrograms}.[ECDeliverySchedule] exists
+	else 'EC Delivery Schedule is required for GSRP and Head Start.'
+
+rule 171.193.3 
+	when count({ECPrograms} when {ECPrograms}.[ECProgram,ECDeliverySchedule] is in [('01','02'),('05','06')]) > '0' then
+	expect count({ECPrograms} when {ECPrograms}.[ECProgram] = '03') = '0'
+	else 'Children enrolled in GSRP and Head Start at the same time should only receive services from and be reported in the GSRP/Head Start Blend Program (program code 02).'
+
+rule 171.193.4 
+	when count({ECPrograms} when {ECPrograms}.[ECProgram] = '01' and {ECPrograms}.[ECDeliverySchedule] is in ['01','02']) > 0 then
+	expect count ({ECPrograms} when {ECPrograms}.[ECProgram] = '03' and {ECPrograms}.[ECDeliverySchedule] is in ['05','06','07','08']) = 0
+	else 'Children enrolled in GSRP and Head Start at the same time should only receive services from and be reported in the GSRP/Head Start Blend Program (program code 02).'
+
+rule 171.193.6 
+	when count({ECPrograms} when {ECPrograms}.[ECProgram,ECDeliverySchedule] is in [('02','03'),('05','06')]) > '0' then
+	expect count({ECPrograms} when {ECPrograms}.[ECProgram] = '01') = '0'
+	else 'Children enrolled in GSRP and Head Start at the same time should only receive services from and be reported in the GSRP/Head Start Blend Program (program code 02).'
+
+rule 171.193.7 
+	when count({ECPrograms} when {ECPrograms}.[ECProgram] = '03' and {ECPrograms}.[ECDeliverySchedule] is in ['01','02']) > 0 then
+	expect count({ECPrograms} when {ECPrograms}.[ECProgram] = '01' and {ECPrograms}.[ECDeliverySchedule] is in ['05','06','07','08']) = 0
+	else 'Children enrolled in Head Start and GSRP at the same time should only receive services from and be reported in the GSRP/Head Start Blend Program (program code 02).'
+
+rule 171.193.8 
+	when {ECPrograms}.[ECProgram] = '10' then
+	require years since {PersonalCore}.[DateOfBirth] as of {ECPrograms}.[ECProgramStartDate] < '3'
+	else 'Children must be less than 3 years old to participate in the Early Head Start program.'
+
+rule 171.193.9 
+	when {ECPrograms}.[ECProgram] = '18' then
+	expect years since {PersonalCore}.[DateOfBirth] as of 1-Nov < '8'
+	else 'A child must be less than 8 years old as of November 1 of the current school year to participate in the Early Childhood Block Grant program.'
+
+rule 171.193.10
+	when {ECPrograms}.[ECProgram] = '10' then
+	expect years since {PersonalCore}.[DateOfBirth] as of {ECPrograms}.[ECProgramEndDate] <= '3'
+	else 'A child must be exited by 3 years old to participate in the Early Head Start Program.'
+
+rule 171.193.11
+	when {ECPrograms}.[ECProgram] is in ['01','02'] then
+	require {ECPrograms}.[EEMFiscalEntityTypeCode] = 'D'
+	else 'An ISD is always the fiscal entity for Great Start Readiness Programs.'
+	
+rule 171.193.13
+	when {ECPrograms}.[ECProgram] = '02' then
+	require {ECPrograms}.[ECDeliverySchedule] is in ['05','06']
+	else 'GSRP/Head Start Blended Programs must be full-day programs.'
+	
+rule 171.193.14 
+	when {ECPrograms}.[ECProgram] = '18' then
+	require {EEM}.[EntityTypeCategory] = '2'
+	else 'Only an entity with an EEM type of ISD can submit records for students in Sec. 32p Early Childhood Block Grant in an Early Childhood Collection.'
+	
+rule 171.193.15
+	when {ECPrograms}.[ECProgram] is in ['01','02'] then
+	require {ECPrograms}.[ECDeliveryMethod] is in [1,2]
+	else 'The home-based delivery method is not an option for GSRP programs.'
+	
+
+/* ECProgramEndDate rules */	
+rule 171.392.1
+	require {ECPrograms}.[ECProgramEndDate] >= {ECPrograms}.[ECProgramStartDate]
+	else 'Program end date cannot be before the program start date.'
+	
+rule 171.392.2
+	when {ECPrograms}.[ECProgramExitReason] exists then
+	require {ECPrograms}.[ECProgramEndDate] exists
+	else 'A program end date is required when the program exit reason field is populated.'
+
+rule 171.392.3 
+	when {ECPrograms}.[FiscalEntityStatus] = 'Closed' then
+	require {ECPrograms}.[ECProgramEndDate] exists
+	else 'When Fiscal Entity is closed, EC Program`s End Date is required'
+	
+rule 171.392.4 
+	when {ECPrograms}.[FiscalEntityStatus] = 'Closed' then
+	require {ECPrograms}.[ECProgramEndDate] <= {ECPrograms}.[FiscalEntityCloseDate]
+	else 'The program end date must be on or before the date the entity was reported as closed in the EEM.'	
+	
+rule 171.392.6
+	when {ECPrograms}.[ECProgram] is in ['01','02'] then
+	require {ECPrograms}.[ECProgramEndDate] >= 1-Sep
+	else 'The GSRP end date must be on or after September 1 of the current school year.'
+	
+rule 171.392.8
+	when {ECPrograms}.[ECProgram] is in ['01','02'] then
+	expect {ECPrograms}.[ECProgramEndDate] >= 1-Sep
+	else 'It is unusual for a program end date to be before September 1 of the current school year.'
+	
+rule 171.392.10 
+	when collection is in [FallEarlyChildhood,SpringEarlyChildhood] then
+	require {ECPrograms}.[ECProgramEndDate] <= AsOfDate
+	else 'The EC Program End Date must be on or before the as of date for this collection. Report program exits that occur after this collection period in the next collection.'
+	
+rule 171.392.11 
+	when collection is in [FallEarlyChildhood,SpringEarlyChildhood,EOPEarlyChildhood] then
+	require {ECPrograms}.[ECProgramEndDate] < 1 year after 1-Sep
+	else 'The EC Program End Date must be prior to Sept. 15 of the next school year. Report program exits that occur on or after Sept. 15 in the EC Fall Collection.'
+	
+rule 171.392.12 
+	when collection is in [FallEarlyChildhood,SpringEarlyChildhood,EOPEarlyChildhood]
+	and {ECPrograms}.[ECProgram] is in ['01','02'] then
+	require {ECPrograms}.[ECProgramEndDate] exists
+	else 'Exit data must be reported in the EOP Collection for children in GSRP programs.'
+	
+
+/* ECProgramExitReason rules */	
+rule 171.198.1 
+	when {ECPrograms}.[ECProgramEndDate] exists then
+	require {ECPrograms}.[ECProgramExitReason] exists
+	else 'An exit reason is required when the program exit date field is populated.'
+	
+
+/* ECProgramStartDate rules */	
+rule 171.195.1 
+	require {ECPrograms}.[ECProgramStartDate] <= today
+	else 'Early Childhood Program Start Date cannot be after the current date.'
+	
+rule 171.195.2 
+	require {ECPrograms}.[ECProgramStartDate] >= {PersonalCore}.[DateOfBirth]
+	else 'Early Childhood Program Start Date cannot be prior to the date of birth.'
+	
+rule 171.195.3 
+	require {ECPrograms}.[ECProgramStartDate] >= {ECPrograms}.[FiscalEntityOpenDate]
+	else 'The Fiscal Entity was not open-active on the program start date'
+	
+rule 171.195.4 
+	require {ECPrograms}.[ECProgramStartDate] < {ECPrograms}.[FiscalEntityCloseDate]
+	else 'The Fiscal Entity was not open-active on the program start date.'	
+	
+
+/* FiscalEntityCode rules */	
+rule 171.194.1  
+	when {ECPrograms}.[FiscalEntityTypeCode] = 'A' then
+	require {ECPrograms}.[FiscalEntityCode] matches '[9]'
+	else 'Fiscal Entity Type must be "A" when Fiscal Entity Code is 9 characters.'
+	
+rule 171.194.2 
+	when {ECPrograms}.[FiscalEntityTypeCode] = 'D' then
+	require {ECPrograms}.[FiscalEntityCode] matches '[0-9][0-9][0-9][0-9][0-9]'
+	else 'Fiscal Entity Code must be 5 characters when Fiscal Entity Type is "D".'
+	
+rule 171.194.3  
+	require {ECPrograms}.[FiscalEntityCode] = {ECPrograms}.[EEMFiscalEntityCode]
+	and {ECPrograms}.[FiscalEntityTypeCode] = {ECPrograms}.[EEMFiscalEntityTypeCode]
+	else 'Fiscal Entity Code is blank or is not a valid Fiscal Entity Code.'	
+
+	
+/* FiscalEntityTypeCode rules */	
+rule 171.205.1   
+	require {ECPrograms}.[FiscalEntityTypeCode] is in ['A','D']
+	else 'The Fiscal Entity Type must be "A" or "D".'
+	
+	
+	
+/* SchoolFacilityNumber rules */	
+rule 171.285.1   
+	require {ECPrograms}.[SchoolFacilityNumber] = {ECPrograms}.[EEMSchoolFacilityNumber]
+	else 'The School Facility Number is invalid'
+	
+rule 171.285.2 
+	require {ECPrograms}.[SFNOpenDate] <= {ECPrograms}.[ECProgramStartDate]
+	else 'The entity reported in School Facility Number was not open on or before the EC Program Start Date reported.'
+	
+rule 171.285.4  
+	when {ECPrograms}.[SFNStatus] = 'Closed' then
+	require {ECPrograms}.[SFNCloseDate] >= {ECPrograms}.[ECProgramEndDate]
+	else 'The close date in EEM for the submitted School Facility Number must be the same as or after the EC Program End Date.'	
+	
+rule 171.285.5   
+	when {ECPrograms}.[SFNStatus] = 'Closed' then
+	require {ECPrograms}.[SFNCloseDate] >= CollectionOpenDate
+	else 'The submitted School Facility Number has a close date in EEM that is prior to the collection open date and cannot be used'	
+	
+rule 171.285.6   
+	when {ECPrograms}.[SFNStatus] is in ['Open - Active','Open - Pending','Open - Under construction/remodeling','Open - Vacant'] then
+	require {ECPrograms}.[SFNOpenDate] <= AsOfDate
+	else 'The submitted School Facility Number has an open date that is after the collection close date and cannot be used.'	
+	
+

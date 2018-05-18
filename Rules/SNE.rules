@@ -1,0 +1,7 @@
+ruleset SNE
+
+rule 168.1 
+	when {SNE} exists 
+	and collection is in [FallGeneralCollection,SpringGeneralCollection,EOYGeneralCollection,StudentRecordMaintenance] then 
+	require {SchoolDemographics}.[SchoolFacilityNumber] exists
+	else 'If the SNE component is submitted, then the School or Facility cannot be blank.'

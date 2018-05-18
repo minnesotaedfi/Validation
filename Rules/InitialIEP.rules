@@ -1,0 +1,118 @@
+ruleset InitialIEP
+
+rule 224.1
+	when {InitialIEP} exists then
+	expect months since {PersonalCore}.[DateOfBirth] as of AsOfDate > '30'
+	else 'Children who are 2 1/2 years of age or younger may not be reported with the Initial IEP component.'
+
+rule 224.2 
+	when {InitialIEP} exists then
+	require years since {PersonalCore}.[DateOfBirth] as of 1-Sep < '26'
+	else 'The student must be less than 26 years of age as of September 1 of the current school year.'
+
+
+/* DateOfParentalConsent rules */	
+rule 224.320.1
+	require {InitialIEP}.[DateOfParentalConsent] >= {PersonalCore}.[DateOfBirth]
+	else 'Date of Parental Consent cannot be earlier than the Date of Birth.'
+	
+rule 224.320.3 
+	when {InitialIEP}.[TimelinessOfInitialIEP] <> '22' then
+	require {InitialIEP}.[DateOfParentalConsent] exists
+	else 'DateOfParentalConsent is required unless TimelinessOfInitialIEP = 22.'
+	
+rule 224.320.5
+	require {InitialIEP}.[DateOfParentalConsent] <=  AsOfDate
+	else 'Date of Parental Consent cannot be a future date.'
+
+/* DaysBeyondTimeline rules */	
+rule 224.330.1
+	when {InitialIEP}.[TimelinessOfInitialIEP] is in [11,12,18,19,20,21,22] then
+	require {InitialIEP}.[DaysBeyondTimeline] does not exist
+	else 'When Timeliness of Initial IEP contains code "11", "12", "18", "19", "20", "21", or "22" the Days Beyond Timeline must not be reported.'
+	
+rule 224.330.2 
+	when {InitialIEP}.[TimelinessOfInitialIEP] is in [13,14,15,16,17] then
+	require {InitialIEP}.[DaysBeyondTimeline] exists 
+	else 'When Timeliness of Initial IEP contains code "13", "14", "15", "16" or "17" the Days Beyond Timeline must be greater than 0.'
+
+
+/* InitialIEPCompletionDate rules */	
+rule 224.529.1
+	require {InitialIEP}.[InitialIEPCompletionDate] >= {PersonalCore}.[DateOfBirth]
+	else 'Initial IEP Completion Date cannot be earlier than the student`s Date of Birth.'
+	
+rule 224.529.2 
+	require {InitialIEP}.[InitialIEPCompletionDate] <= AsOfDate
+	else 'Initial IEP Completion Date must be on or before the collection count date or SRM As Of Date.'
+	
+rule 224.529.3 
+	require {InitialIEP}.[InitialIEPCompletionDate] >= {InitialIEP}.[DateOfParentalConsent]
+	else 'Initial IEP Completion Date cannot be prior to the Date of Parental Consent.'
+	
+rule 224.529.4
+	when {InitialIEP}.[ResultOfInitialIEP] = '1' then
+	require {InitialIEP}.[InitialIEPCompletionDate] exists
+	else 'The Initial IEP Completion Date must be submitted if the Result of Initial IEP is 1.'
+	
+rule 224.529.5 
+	when years since {PersonalCore}.[DateOfBirth] as of {InitialIEP}.[InitialIEPCompletionDate] > '3' then
+	require {InitialIEP}.[PartCTransitionTimeliness] <> '50'
+	else 'If the Initial IEP Completion Date is later than the child`s third birthday, Part C Transition Timeliness cannot be reported as timely (code "50").'
+
+
+/* PartCTransitionTimeliness rules */	
+rule 224.524.1
+	when years since {PersonalCore}.[DateOfBirth] as of AsOfDate > '4' then
+	require {InitialIEP}.[PartCTransitionTimeliness] does not exist
+	else 'Part C Transition Timeliness may not be reported if the child is older than 4 years of age.'
+	
+rule 224.524.2 
+	when {InitialIEP}.[TimelinessOfInitialIEP] is in [18,19,20,21,22] then
+	require {InitialIEP}.[PartCTransitionTimeliness] does not exist
+	else 'Part C Transition Timeliness may not be reported if the Timeliness of Initial IEP contains codes 18, 19, 20, 21, or 22.'
+	
+rule 224.524.3 
+	when {InitialIEP}.[PartCTransitionTimeliness] exists then
+	require {InitialIEP}.[DateOfParentalConsent] exists
+	and {InitialIEP}.[InitialIEPCompletionDate] exists
+	and {InitialIEP}.[TimelinessOfInitialIEP] exists
+	else 'If the Part C Transition Timeliness characteristic is reported then the Date of Parental Consent, Initial IEP Completion Date, and Timeliness of Initial IEP must be reported.'
+
+
+/* ResultOfInitialIEP rules */	
+rule 224.328.1
+	when {InitialIEP}.[TimelinessOfInitialIEP] is in [11,12,13,14,15,16,17,22] then
+	require {InitialIEP}.[ResultOfInitialIEP] exists
+	else 'When Timeliness of Initial IEP contains code 11, 12, 13, 14, 15, 16, 17 or 22 the Result of Initial IEP must contain a valid code.'
+	
+rule 224.328.2 
+	when {InitialIEP}.[TimelinessOfInitialIEP] is in [18,19,20,21] then
+	require {InitialIEP}.[ResultOfInitialIEP] does not exist
+	else 'When Timeliness of Initial IEP contains code 18, 19, 20, or 21 the Result of Initial IEP must not be reported.'
+	
+rule 224.328.3 
+	when {InitialIEP}.[TimelinessOfInitialIEP] = '22' then
+	require {InitialIEP}.[ResultOfInitialIEP] = '1'
+	else 'If TimelinessOfInitialIEP is 22, then the ResultOfInitialIEP must equal 1.'
+	
+rule 224.328.4
+	when {InitialIEP}.[ResultOfInitialIEP] is in [2,3]
+	and {SpecialEducation}.[PrimaryDisability] exists then
+	require {SpecialEducation}.[SpecEdExitDate] exists
+	else 'If a child that was previously receiving Special Education services under an IFSP is found ineligible in their Initial IEP or the parents refuse services, the child needs to be exited from Special Education.'
+	
+rule 224.328.5
+	when {InitialIEP}.[ResultOfInitialIEP] = '1'
+	and {SpecialEducation}.[PrimaryDisability] exists then
+	require {SpecialEducation}.[TypeOfPlan] = '02'
+	and {SpecialEducation}.[PlanDate] >= {InitialIEP}.[InitialIEPCompletionDate]
+	else 'If a child is receiving Special Education services under an IFSP and is found eligible in their Initial IEP, the Type of Plan must be IEP and the Plan Date must be on or after the Initial IEP Completion Date.'	
+
+
+/* TimelinessOfInitialIEP rules */	
+rule 224.325.1
+	when {InitialIEP}.[ResultOfInitialIEP] exists
+	or {InitialIEP}.[DaysBeyondTimeline] exists then
+	require {InitialIEP}.[TimelinessOfInitialIEP] exists
+	else 'If Result Of Initial IEP or Days Beyond Timeline are submitted, Timeliness Of Initial IEP must contain a valid code.'

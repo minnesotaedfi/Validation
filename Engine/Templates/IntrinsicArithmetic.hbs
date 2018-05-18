@@ -1,0 +1,1 @@
+﻿(SELECT {{{operation}}}(v) FROM (VALUES {{{#each components}}}{{{#unless @first}}}, {{{/unless}}}([{{{ComponentName}}}].[{{{CharacteristicName}}}]){{{/each}}}) AS value(v))

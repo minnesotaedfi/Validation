@@ -1,0 +1,1 @@
+﻿DATEDIFF({{{datepart}}}, {{{startdate}}}, {{{enddate}}}) - CASE WHEN DATEADD(dd, DATEDIFF(dd, 0, {{{enddate}}}), 0) < DATEADD({{{datepart}}}, DATEDIFF({{{datepart}}}, {{{startdate}}}, {{{enddate}}}), {{{startdate}}}) THEN 1 ELSE 0 END

@@ -1,0 +1,154 @@
+﻿body {
+    padding-top: 15px;
+    padding-bottom: 15px;
+    font-family: Calibri, Arial, sans-serif;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+    margin: 0;
+}
+
+/* Background Colors */
+.prime-blue {
+    background-color: rgb(0, 56, 101);
+}   
+
+.accent-blue {
+    background-color: rgb(164, 188, 194);
+}   
+
+.accent-soft-blue {
+    background-color: rgb(184, 218, 255);
+}   
+
+.minnesota-green {
+    background-color: rgb(120, 190, 33);
+}
+
+.danger-red {
+    background-color: rgb(166, 25, 46);
+    color: rgb(255, 255, 255);
+    font-weight: bold;
+}
+
+.white-heavy-text {
+    color: rgb(255, 255, 255);
+    font-weight: bold;
+}   
+
+.scrollable-row {
+    overflow-y:auto;
+}
+
+.noDisc {
+    list-style: none;
+    padding-left: 0;
+}
+
+.clear-margin {
+    margin: 0;
+}
+
+.margin10 {
+    margin: 10px;
+}
+
+.page-width {
+    width: 100%;
+}
+
+.rounded-padded {
+    border-radius: 15px;
+    padding: 20px;
+}
+
+.district-dropdown {
+    margin-right: 20px;
+    color: rgb(255, 255, 255);
+    font-weight: bold;
+}
+
+/***************************************************************************************/
+/* Forms */
+/* Set width on the form input elements since they're 100% wide by default */
+input, select, textarea {
+    max-width: 280px;
+}
+/***************************************************************************************/
+
+/***************************************************************************************/
+/* Bootstrap Overrides */
+
+/* 
+    (width & margin) Ensure container rows (especially colored bars) touch the left and right sides of screen.
+                     Override the evil -15px Margin
+    (padding) Keep text from butting again edge of screen.
+*/
+.row.layout {
+    width: 100%;
+    margin: 0;
+    padding: 10px;
+}
+
+/* 
+    (width & margin) Ensure container rows (especially colored bars) touch the left and right sides of screen.
+    (padding) Keep colored Navigation bar flush against edge of screen.
+*/
+.container-fluid.layout {
+    padding-left: 0;
+    padding-right: 0;
+}
+/***************************************************************************************/
+
+/***************************************************************************************/
+/* Header area */
+.top-banner {
+    background-color: rgb(255, 255, 255);
+    color: rgb(0, 0, 0);
+    padding: 10px;
+    border-bottom-color: rgb(120, 190, 33);
+    border-bottom-width: 10px;
+    border-bottom-style: solid;
+    text-align: right;
+}
+
+/* Minnesota requires padding to give logo impact. */
+.mdelogo {
+    float: left; 
+    padding: 30px;
+}
+
+.app-title {
+    font-size: 32pt; 
+    font-weight: bold;
+    color: rgb(0, 56, 101); 
+    padding: 30px;
+}
+
+.navbar-nav a  {
+    color: rgb(255, 255, 255);
+}
+/***************************************************************************************/
+
+
+/***************************************************************************************/
+/* Footer area Quick Links */
+div.layout-footer {
+    color: rgb(255, 255, 255);
+    background-color: rgb(0, 56, 101);
+}
+
+div.layout-footer li a {
+    color: rgb(164, 188, 194);
+    text-decoration: underline solid rgb(164, 188, 194);
+}
+
+div.hfooter {
+    font-size: 133%;
+    font-weight: bold;
+}
+/***************************************************************************************/
+

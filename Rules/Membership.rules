@@ -1,0 +1,51 @@
+ruleset Membership
+
+
+/*  StudentResidency rules */		
+rule 257.25.1
+	when {EEM}.[EntityTypeCategory] = '3' then
+	require {Membership}.[StudentResidency] is not in ['10','11','12','13']
+	else 'If the Operating District is an LEA, then Student Residency cannot contain the codes 10, 11, 12, or 13.'
+	
+rule 257.25.2 
+	when {EEM}.[EntityTypeCategory] = '4' then
+	require {Membership}.[StudentResidency] is in ['08','09','10','14','15']
+	else 'If the Operating District is a PSA, then Student Residency must contain the one of the following codes (08, 09, 10, 14 or 15).'
+	
+rule 257.25.4
+	when {PersonalDemographics} exists 
+	and {EEM}.[EntityTypeCategory] = '3'
+	and {Membership}.[StudentResidency] is in ['01','02','03','04','05','06','07'] then
+	require {SchoolDemographics}.[OperatingDistrictNumber] <> {PersonalDemographics}.[ResidentLEANumber]
+	else 'When the Operating District is an LEA District and the Student Residency contains one of the codes from 01-07, the Operating District Number cannot be the same as the Resident LEA Number.'
+	
+rule 257.25.5
+	when {PersonalDemographics} exists 
+	and {EEM}.[EntityTypeCategory] = '3'
+	and {Membership}.[StudentResidency] is in ['08','09','14','15'] then
+	require {SchoolDemographics}.[OperatingDistrictNumber] = {PersonalDemographics}.[ResidentLEANumber]
+	else 'When the Operating District is a LEA District and the Student Residency contains one of the following codes (08, 09,14, 15), the Operating District Number must be the same as the Resident LEA Number.'
+
+rule 257.25.7
+	when {SchoolDemographics}.[OperatingDistrictNumber] = '84060' then
+	require {Membership}.[StudentResidency] = '06'
+	else 'If the Operating District is 84060, then Student Residency must be "06" (all other non-resident).'
+	
+rule 257.25.8 
+	when {EEM}.[EntityTypeCategory] = '2'
+	and {PersonalDemographics}.[ResidentLEANumber] <> {EEM}.[EntityCode] then
+	require {Membership}.[StudentResidency] is in ['04','06','07','09']
+	else 'If the reported Resident LEA Number is not a constituent district of the ISD, then Student Residency must be "04", "06", "07" or "09".'
+	
+rule 257.25.9
+	when {EEM}.[EntityTypeCategory] = '2'
+	and {PersonalDemographics}.[ResidentLEANumber] = {EEM}.[EntityCode] then
+	require {Membership}.[StudentResidency] is in ['08','09','11','12','13','14','15']
+	else 'If the reported Resident LEA Number is a constituent district of the ISD, then Student Residency must be "08", "09", "11", "12", "13", "14", or "15".'
+	
+rule 257.25.10
+	when {SpecialEducation}.[Section53FTE] > '0' then
+	require {Membership}.[StudentResidency] <> '09'
+	else 'Student residency cannot be 09 when Section 53 FTE is claimed.'
+	
+	

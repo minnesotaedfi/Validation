@@ -1,0 +1,102 @@
+ruleset StudentCourse
+
+
+rule 252.1
+	require count({StudentCourse} by [LocalCourseCode,CourseSectionId,AcademicYear]) <= 1
+	else 'A unique Student Course is defined by the values submitted for Local Course ID, Course Section ID, and Academic Year. Multiple components cannot have the same Student Course.'
+
+	
+/* CollegeCredit rules */	
+rule 252.572.1
+	when {StudentCourse}.[CollegeCredit] exists then
+	require {StudentCourse}.[CourseType] = '10'
+	else 'College Credit can only be submitted when the course type is "10".'
+
+
+/* CompletionStatus rules */
+rule 252.410.4 
+	when {StudentCourse}.[CompletionStatus] = 'CS' then
+	require {StudentCourse}.[SubjectAreaCode] = '73'
+	and {StudentCourse}.[CourseIdentifierCode] = '039'
+	else 'When the Completion Status is "CS" in any TSDL collection, the Subject Area Code must = "73" and the Course Identifier Code must = "039"'
+
+
+
+/* CourseIdentifierCode rules */		
+rule 252.173.1 
+	when {StudentCourse}.[SubjectAreaCode] <> '00' then
+	require {StudentCourse}.[CourseIdentifierCode] exists
+	else 'Course Identifier Code is required for all Subject Area Codes except "00".'
+
+rule 252.173.2 
+	require Substring({StudentCourse}.[CourseIdentifierCode]) = {StudentCourse}.[SubjectAreaCode]
+	else 'Course Identifier code must be a NCES Course ID from the Secondary School Course Classification System or proposed Prior to Secondary School Course Classisfication System and must be associated with the Subject Area Code submitted.'
+	
+
+
+/* CourseType rules */		
+rule 252.160.1 
+	when {StudentCourse}.[CourseType] is in ['02','03'] then
+	require {SchoolDemographics}.[GradeSetting] >= '07'
+	and {SchoolDemographics}.[GradeSetting] <= '12'
+	else 'When Course Type is "02" or "03",  the student must be reported in grade 7-12.'
+	
+rule 252.160.2 
+	when {StudentCourse}.[CourseType] is in ['04','07','10'] then
+	require {SchoolDemographics}.[GradeSetting] >= '09'
+	and {SchoolDemographics}.[GradeSetting] <= '12'
+	else 'When Course Type is "04" or "07" or "10", the student must be reported in grade 9-12.'
+	
+rule 252.160.3
+	when {StudentCourse}.[CourseType] = '10' then
+	require {StudentCourse}.[CollegeCredit] > '0'
+	else 'When the reported Course Type is "10", the College Credit characteristic must be submitted.'
+
+
+/* MentorPIC rules */		
+rule 252.561.1 
+	when {StudentCourse}.[VirtualMethod] = 'Not Virtual'
+	or {StudentCourse}.[VirtualMethod] does not exist then
+	require {StudentCourse}.[MentorPIC] does not exist
+	else 'You may only submit a Mentor PIC when a Virtual Method is selected.'
+
+
+
+/* PIC rules */		
+rule 252.427.1 
+	when {StudentCourse}.[CourseType] is not in [07,10]
+	or {StudentCourse}.[SubjectAreaCode] <> '00' then
+	require {StudentCourse}.[PIC] exists
+	else 'A teacher PIC must be reported unless the student is reported with a Course Type of "Dual Enrollment/Early Middle College" (07) or "64b Dual/Concurrent Enrollment" (10), or unless the course is a state approved CTE course that is also being reported in CTEIS (Subject Area Code "00").'
+	
+	
+rule 252.427.3 
+	require count ({StudentCourse} by [PIC,LocalCourseCode,CourseSectionId]) <= '1'
+	else 'A PIC may only be used once per component.'
+
+	
+/* SubjectAreaCode rules */		
+rule 252.171.1 
+	when {SchoolDemographics}.[GradeSetting] is in ['00','01','02','03','04','05','30'] then
+	require {StudentCourse}.[SubjectAreaCode] is in ['51','52','53','54','55','56','57','58','59','60','61','62','63','64','65','66','67','68','69','70','71','72','73']
+	else 'Unless the student is taking a course out of grade level, they should be reported with an NCES Prior to Secondary SCED code.'
+	
+rule 252.171.2 
+	when {SchoolDemographics}.[GradeSetting] is in ['06','07','08','14'] then
+	require {StudentCourse}.[SubjectAreaCode] is in ['51','52','53','54','55','56','57','58','59','60','61','62','63','64','65','66','67','68','69','70','71','72','73']
+	or {StudentCourse}.[SubjectAreaCode] is in ['01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22']
+	else 'The Subject Area Code reported is not a valid NCES SCED code.'
+	
+rule 252.171.3
+	when {SchoolDemographics}.[GradeSetting] is in ['09','10','11','12'] then
+	require {StudentCourse}.[SubjectAreaCode] is in ['00','01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22']
+	or ({StudentCourse}.[SubjectAreaCode] = '73' and {StudentCourse}.[CourseIdentifierCode] = '039')
+	else 'Unless the student is taking a course out of grade level, they should be reported with an NCES Secondary SCED code or Subject Area Code "00" or Subject Area Code "73" and Course Identifier Code "039".'
+
+	
+/* VirtualMethod rules */		
+rule 252.560.1 
+	when {EEM}.[SFNEducationalSetting] = 'FTVirtual' then
+	require {StudentCourse}.[VirtualMethod] exists
+	and {StudentCourse}.[VirtualMethod] <> 'NV'
+	else 'Virtual method must contain a value other than "NV" or blank when the school associated with this student is indicated as being a cyber school or a 100% virtual school.'

@@ -1,0 +1,361 @@
+ruleset SpecialEducation
+
+rule 225.1
+	when {SpecialEducation} exists
+	and collection is in [FallGeneralCollection,SpringGeneralCollection,EOYGeneralCollection] 
+	and months since {PersonalCore}.[DateOfBirth] as of AsOfDate <= '30' then 
+	expect {EarlyOn} exists
+	else 'Children under age 2 1/2 years must be reported with the Early On component when submitting special education data in the General Collections.'	
+	
+/* PlanDate rules */	
+rule 225.31.1
+	require {SpecialEducation}.[PlanDate] >= {PersonalCore}.[DateOfBirth]
+	else 'Plan Date cannot be less than prior to the student`s Date of Birth.'
+	
+rule 225.31.2  
+	require {SpecialEducation}.[PlanDate] <= AsOfDate
+	else 'Plan Date must be less than or equal to the As of Date.'
+	
+rule 225.31.3 
+	expect {SpecialEducation}.[PlanDate] <= {Enrollment}.[DistrictExitDate]
+	else 'An IEP is usually conducted before a student exits the district.'
+	
+rule 225.31.4
+	expect {SpecialEducation}.[PlanDate] <= {SpecialEducation}.[SpecEdExitDate]
+	else 'An IEP is usually conducted before a student exits special education.'
+	
+rule 225.31.5
+	expect months since {SpecialEducation}.[PlanDate] as of AsOfDate <= 12
+	else 'Plan Date indicates this student\'s IEP occurred more than 1 year ago andmay be out of compliance.'
+	
+rule 225.31.7
+	when {SpecialEducation}.[PlanDate] exists then
+	require {SpecialEducation}.[TypeOfPlan] exists
+	else 'If Plan Date is submitted the Type of Plan is required.'
+
+	
+/* PlacedByAnotherDistIEP rules */	
+rule 225.42.1
+	when {SpecialEducation}.[PrimaryDisability] does not exist then 
+	require {SpecialEducation}.[PlacedByAnotherDistIEP] does not exist
+	else 'If Primary Disability is not submitted, Placed By Another District IEP cannot be submitted.'
+	
+rule 225.42.2
+	when {SpecialEducation}.[PlacedByAnotherDistIEP] = true then
+	require {SpecialEducation}.[TypeOfPlan] = '02'
+	else 'When Placed By Another District IEP is Yes/True then the type of plan must be an IEP (02).'
+
+
+/* PrimaryDisability rules */		
+rule 225.29.1
+	when {SpecialEducation}.[PrimaryDisability] does not exist then 
+	require {SpecialEducation}.[PlacedByAnotherDistIEP] does not exist
+	else 'PrimaryDisability is required unless StudentResidency = 09.'
+
+rule 225.29.2 
+	when {SpecialEducation}.[PrimaryDisability] = '11'
+	and years since {PersonalCore}.[DateOfBirth] as of AsOfDate >= '8' then 
+	expect {Enrollment}.[DistrictExitStatus] <> '19'
+	or {SpecialEducation}.[SpecEdExitReason] exists
+	else 'If PrimaryDisability is 11 (Early Childhood Developmental Delay) and the student`s age is 8 or older on the As of Date, then SpecEdExitReason must contain a valid code and/or DistrictExitStatus must contain a code other than 19.'
+	
+rule 225.29.3 
+	when {SpecialEducation}.[PrimaryDisability] is in ['06','13'] then 
+	expect years since {PersonalCore}.[DateOfBirth] as of AsOfDate > '2'
+	else 'Students with Primary Disability codes 06 or 13 are usually at least 3 years old.'
+	
+rule 225.29.4 
+	when {SpecialEducation}.[PrimaryDisability] exists then 
+	require {SpecialEducation}.[PlanDate] exists
+	else 'If PrimaryDisabiltity contains a valid code, then PlanDate must contain a valid date.'
+	
+rule 225.29.5
+	when  {SpecialEducation}.[PrimaryDisability] does not exist then 
+	require {SpecialEducation}.[PlanDate] does not exist
+	else 'PlanDate must be blank if a valid Primary Disability code is not submitted.'
+	
+	
+/* PrimaryEducationalSetting rules */	
+rule 225.39.1
+	when collection is FallGeneralCollection
+	and {SpecialEducation}.[PrimaryDisability] exists then 
+	require {SpecialEducation}.[PrimaryEducationalSetting] exists
+	else 'Primary Educational Setting is required for all students with disabilities receiving special education services when submitted in the Fall General Collection.'
+	
+rule 225.39.2 
+	when {SpecialEducation}.[PrimaryEducationalSetting] exists then 
+	require {SpecialEducation}.[PrimaryDisability] exists
+	else 'If Primary Educational Setting is submitted, Primary Disability must contain a valid code.'
+	
+rule 225.39.3 
+	when collection is FallGeneralCollection
+	and {Membership}.[StudentResidency] is in ['04','07','08','15']
+	and years since {PersonalCore}.[DateOfBirth] as of AsOfDate >= '6'
+	and years since {PersonalCore}.[DateOfBirth] as of 1-Sep < '26' 
+	and ({SpecialEducation}.[SpecEdExitDate] does not exist or {SpecialEducation}.[SpecEdExitDate] > AsOfDate) then 
+	require {SpecialEducation}.[PrimaryEducationalSetting] = '07'
+	else 'If Student Residency is reported as 04, 07, 08 or 15, Primary Educational Setting must be 07'
+	
+rule 225.39.4 
+	when collection is in [SpringGeneralCollection,EOYGeneralCollection,StudentRecordMaintenance]
+	and {Membership}.[StudentResidency] is in ['04','07','08','15']
+	and years since {PersonalCore}.[DateOfBirth] as of AsOfDate >= '6'
+	and years since {PersonalCore}.[DateOfBirth] as of 1-Sep < '26' 
+	and ({SpecialEducation}.[SpecEdExitDate] does not exist or {SpecialEducation}.[SpecEdExitDate] > AsOfDate) then 
+	expect {SpecialEducation}.[PrimaryEducationalSetting] = '07'
+	else 'If Student Residency is reported as 04, 07, 08 or 15, Primary Educational Setting must be 07.'
+	
+rule 225.39.5
+	when collection is FallGeneralCollection
+	and {Membership}.[StudentResidency] = '09'
+	and {SpecialEducation}.[PrimaryDisability] exists
+	and years since {PersonalCore}.[DateOfBirth] as of AsOfDate >= '6'
+	and years since {PersonalCore}.[DateOfBirth] as of 1-Sep < '26' 
+	and ({SpecialEducation}.[SpecEdExitDate] does not exist or {SpecialEducation}.[SpecEdExitDate] > AsOfDate) then 
+	require {SpecialEducation}.[PrimaryEducationalSetting] is in ['05','03']
+	else 'If Student Residency is 09 and a valid Primary Disability Code is submitted, Primary Educational Setting must be 05 or 03.'
+	
+rule 225.39.6 
+	when collection is in [SpringGeneralCollection,EOYGeneralCollection,StudentRecordMaintenance]
+	and {Membership}.[StudentResidency] = '09'
+	and {SpecialEducation}.[PrimaryDisability] exists
+	and years since {PersonalCore}.[DateOfBirth] as of AsOfDate >= '6'
+	and years since {PersonalCore}.[DateOfBirth] as of 1-Sep < '26' 
+	and ({SpecialEducation}.[SpecEdExitDate] does not exist or {SpecialEducation}.[SpecEdExitDate] > AsOfDate) then
+	expect {SpecialEducation}.[PrimaryEducationalSetting] is in ['05','03']
+	else 'If Student Residency is 09 and a valid Primary Disability Code is submitted, Primary Educational Setting must be 05 or 03.'
+	
+rule 225.39.7
+	when collection is FallGeneralCollection
+	and {SpecialEducation}.[PrimaryEducationalSetting] is in ['02','03','05','06','07','11','12','13'] 
+	and ({SpecialEducation}.[SpecEdExitDate] does not exist or {SpecialEducation}.[SpecEdExitDate] > AsOfDate) then 
+	require years since {PersonalCore}.[DateOfBirth] as of AsOfDate >= '6'
+	and years since {PersonalCore}.[DateOfBirth] as of 1-Sep < '26'
+	else 'Primary Educational Setting is invalid if  02, 03, 05, 06, 07, 11, 12 , or 13 is reported and the student`s age is not between 6 and 26 years.'
+	
+rule 225.39.8
+	when collection is in [SpringGeneralCollection,EOYGeneralCollection,StudentRecordMaintenance]
+	and {SpecialEducation}.[PrimaryEducationalSetting] is in ['02','03','05','06','07','11','12','13'] 
+	and ({SpecialEducation}.[SpecEdExitDate] does not exist or {SpecialEducation}.[SpecEdExitDate] > AsOfDate) then 
+	expect years since {PersonalCore}.[DateOfBirth] as of AsOfDate >= 6
+	and years since {PersonalCore}.[DateOfBirth] as of 1-Sep < 26
+	else 'Primary Educational Setting is invalid if  02, 03, 05, 06, 07, 11, 12 , or 13 is reported and the student`s age is not between 6 and 26 years.'
+	
+rule 225.39.9
+	when collection is FallGeneralCollection
+	and {SpecialEducation}.[PrimaryEducationalSetting] is in ['22','23','25','26','27','46','47','48','49'] 
+	and ({SpecialEducation}.[SpecEdExitDate] does not exist or {SpecialEducation}.[SpecEdExitDate] > AsOfDate) then 
+	require months since {PersonalCore}.[DateOfBirth] as of AsOfDate >= '30'
+	and years since {PersonalCore}.[DateOfBirth] as of AsOfDate < '6'
+	else 'Primary Educational Setting is invalid if 22, 23, 25, 26, 27, 46, 47, 48, or 49 is reported and the student is not between 2 1/2 and 6 years of age.'
+	
+rule 225.39.10
+	when collection is in [SpringGeneralCollection,EOYGeneralCollection,StudentRecordMaintenance]
+	and {SpecialEducation}.[PrimaryEducationalSetting] is in ['22','23','25','26','27','46','47','48','49'] 
+	and ({SpecialEducation}.[SpecEdExitDate] does not exist or {SpecialEducation}.[SpecEdExitDate] > AsOfDate) then 
+	expect years since {PersonalCore}.[DateOfBirth] as of AsOfDate >= '3'
+	and years since {PersonalCore}.[DateOfBirth] as of AsOfDate < '6'
+	else 'Primary Educational Setting is invalid if 22, 23, 25, 26, 27, 46, 47, 48, or 49 is reported and the student is not between 3 and 6 years of age.'
+	
+rule 225.39.11
+	when collection is FallGeneralCollection
+	and {SpecialEducation}.[PrimaryEducationalSetting] is in ['31','38','41']
+	and ({SpecialEducation}.[SpecEdExitDate] does not exist or {SpecialEducation}.[SpecEdExitDate] > AsOfDate) then 
+	require years since {PersonalCore}.[DateOfBirth] as of AsOfDate < '3'
+	else 'When Primary Educational Setting 31, 38 or 41 is reported, the student must be less than 3 years of age.'
+	
+rule 225.39.12
+	when collection is in [SpringGeneralCollection,EOYGeneralCollection,StudentRecordMaintenance]
+	and {SpecialEducation}.[PrimaryEducationalSetting] is in ['31','38','41']
+	and ({SpecialEducation}.[SpecEdExitDate] does not exist or {SpecialEducation}.[SpecEdExitDate] > AsOfDate) then 
+	expect years since {PersonalCore}.[DateOfBirth] as of AsOfDate < '3'
+	else 'When Primary Educational Setting 31, 38 or 41 is reported, the student must be less than 3 years of age.'
+
+
+
+/* ProgramServiceCode rules */		
+rule 225.37.1 
+	when {SpecialEducation}.[PrimaryDisability] exists 
+	and {SpecialEducation}.[SupportServices] does not exist then 
+	require {SpecialEducation}.[ProgramServiceCode] exists
+	else 'If Primary Disability contains a valid value and Support Services does not contain a valid code, Program Service Code must contain at least one valid code.'
+	
+rule 225.37.2 
+	when {SpecialEducation}.[Section52FTE] > '0'
+	or {SpecialEducation}.[Section53FTE] > '0' then 
+	require {SpecialEducation}.[ProgramServiceCode] exists
+	else 'If either Section 52 FTE or Section 53 FTE > 0.00, Program Service Code must contain at least one valid code.'
+
+rule 225.37.3 
+	when {SpecialEducation}.[ProgramServiceCode] is in ['191','270']
+	and years since {PersonalCore}.[DateOfBirth] as of AsOfDate >= '8' then 
+	require {SpecialEducation}.[SpecEdExitReason] exists
+	or {Enrollment}.[DistrictExitStatus] <> '19'
+	else 'If Program Service Code = "191" or "270" and the student is >= 8 years of age on the DateOf Count, then either SpecEd Exit Reason must contain a value or District Exit Status must contain a valid code other than "19".'
+
+	
+/* SecondaryDisability rules */		
+rule 225.335.1 
+	when {SpecialEducation}.[SecondaryDisability] exists then 
+	expect {SpecialEducation}.[PrimaryDisability] exists
+	else 'Students reported with Secondary Disability Characteristics are generally reported with at least one Primary Disability code.'
+
+
+/* Section52FTE rules */		
+rule 225.35.1 
+	when {SpecialEducation}.[Section53FTE] > '0' then 
+	require {SpecialEducation}.[Section52FTE] = '0'
+	else 'The Section 52 FTE cannot be greater than 0.00 when Section 53 FTE is reported with a value greater than 0.00.'
+	
+rule 225.35.2 
+	when {SpecialEducation}.[Section52FTE] > '0' then 
+	require {SpecialEducation}.[PrimaryDisability] exists
+	or {Membership}.[StudentResidency] = '09'
+	else 'The Section 52 FTE is invalid because the Student Residency is not reported with a code of 09 or Primary Disability does not contain a value.'
+	
+rule 225.35.3 
+	when {SchoolDemographics}.[GradeSetting] = '20' then 
+	require {SpecialEducation}.[Section52FTE] = '0'
+	else 'The Section 52 FTE cannot be greater than 0.00 when the student is submitted with a Grade or Setting of 20 (adult education).'
+	
+rule 225.35.4 
+	when {SpecialEducation}.[Section52FTE] > '0' then 
+	require years since {PersonalCore}.[DateOfBirth] as of 1-Sep < '26'
+	else 'The Section 52 FTE is invalid because the student`s age is not less than 26 as of September 1st of current school year.'
+
+rule 225.35.5
+	when years since {PersonalCore}.[DateOfBirth] as of AsOfDate >= '8' 
+	and {SchoolDemographics}.[GradeSetting] = '30' then 
+	require {SpecialEducation}.[Section52FTE] = '0.00'
+	else 'The Section 52 FTE cannot be greater than 0.00 when the student is 8 years of age or older on the As of Date and reported in Grade Or Setting 30.'
+
+rule 225.35.6
+	when {EEM}.[SFNStatus] = 'Closed' then 
+	require {SpecialEducation}.[Section52FTE] = 0
+	else 'Section 52 FTE may not be submitted if the entity was closed before the As of Date.'
+	
+rule 225.35.7
+	when {EEM}.[SFNOpenDate] > AsOfDate then 
+	require {SpecialEducation}.[Section52FTE] = 0
+	else 'Section 52 FTE may not be submitted if the entity was opened after the As of Date.'	
+	
+rule 225.35.9
+	when {SpecialEducation}.[SpecEdExitDate] < AsOfDate then 
+	require {SpecialEducation}.[Section52FTE] = '0.00'
+	else 'Section 52 FTE may not be submitted when the Special Education Exit Date is before the As of Date.'
+	
+rule 225.35.10 
+	when {Enrollment}.[EnrollmentDate] > AsOfDate then 
+	require {SpecialEducation}.[Section52FTE] = '0.00'
+	else 'Section 52 FTE may not be submitted when the Enrollment Date is after the As of Date.'
+
+rule 225.35.11 
+	when {Enrollment}.[DistrictExitStatus] is in ['01','02','03','04','40','41'] then 
+	require {SpecialEducation}.[Section52FTE] = 0
+	else 'FTE may not be claimed; this student’s current cohort status indicates he/she has been reported as having graduated with a diploma.'
+	
+rule 225.35.12 
+	when {Enrollment}.[DistrictExitStatus] is in ['05','06','20','21'] then 
+	expect {SpecialEducation}.[Section52FTE] = 0
+	else 'FTE is generally not claimed for a student who has been reported as completing k-12 education without a diploma. Please confirm that this student is eligible for FTE.'
+	
+/* Section53FTE rules */		
+rule 225.36.1 
+	when {SpecialEducation}.[Section52FTE] > '0' then 
+	require {SpecialEducation}.[Section53FTE] = '0'
+	else 'The Section 53 FTE cannot contain a value > 0.00 when Section 52 FTE is reported with a value > 0.00.'
+	
+rule 225.36.2 
+	when {SpecialEducation}.[Section53FTE] > '0' then 
+	require {SpecialEducation}.[PrimaryDisability] exists
+	else 'The Section 53 FTE contains an invalid value because the Primary Disability does not contain a value.'
+	
+rule 225.36.3 
+	when {SchoolDemographics}.[GradeSetting] = '20' then 
+	require {SpecialEducation}.[Section53FTE] = '0'
+	else 'The Section 53 FTE cannot be > 0.00 when the student is submitted with a Grade or Setting of 20 (adult education).'
+
+rule 225.36.4 
+	when {SpecialEducation}.[Section52FTE] > '0.00' then 
+	require years since {PersonalCore}.[DateOfBirth] as of 1-Sep < '26'
+	else 'The Section 53 FTE is not valid when the student`s age is not less than 26 as of September 1st of current school year.'
+	
+rule 225.36.5
+	when years since {PersonalCore}.[DateOfBirth] as of AsOfDate >= '8'
+	and {SchoolDemographics}.[GradeSetting] = '30' then 
+	require {SpecialEducation}.[Section53FTE] = '0.00'
+	else 'The Section 53 FTE is not valid when the student is 8 years of age or older on count date and reported in Grade Or Setting as 30.'
+
+rule 225.36.6
+	when {EEM}.[SFNStatus] = 'Closed' then 
+	require {SpecialEducation}.[Section53FTE] = 0
+	else 'Section 53 FTE may not be submitted if the entity was closed before the collection Count Date or, when submitted with the Student Record Maintenance component, As of Date.'
+	
+rule 225.36.7
+	when {EEM}.[SFNOpenDate] > AsOfDate then 
+	require {SpecialEducation}.[Section53FTE] = 0
+	else 'Section 53 FTE may not be submitted if the entity was opened after the collection Count Date or, when submitted with the Student Record Maintenance component, As of Date.'
+	
+rule 225.36.9
+	when {SpecialEducation}.[SpecEdExitDate] < AsOfDate then 
+	expect {SpecialEducation}.[Section53FTE] = '0.00'
+	else 'Section 53 FTE may not be submitted when the Special Education Exit Date is before the collection Count Date or, when submitted with the Student Record Maintenance component, As of Date.'
+	
+rule 225.36.10
+	when {Enrollment}.[EnrollmentDate] > AsOfDate then 
+	require {SpecialEducation}.[Section53FTE] = '0.00'
+	else 'Section 53 FTE may not be submitted when the Enrollment Date is later than the collection Count Date or, when submitted with the Student Record Maintenance component, As of Date.'
+	
+rule 225.36.11 
+	when {Membership}.[StudentResidency] = '12' then
+	require {SpecialEducation}.[Section53FTE] = '0'
+	else 'The Section 53 FTE cannot be > 0.00 when the student is reported with a Student Residency Code of 12.'
+	
+rule 225.36.12
+	when {Enrollment}.[DistrictExitStatus] is in ['01','02','03','04','40','41'] then 
+	require {SpecialEducation}.[Section53FTE] = 0
+	else 'FTE may not be claimed. This student’s current cohort status indicates he/she has been reported as having graduated with a diploma.'
+	
+rule 225.36.13
+	when {Enrollment}.[DistrictExitStatus] is in ['05','06','20','21'] then 
+	expect {SpecialEducation}.[Section53FTE] = 0
+	else 'FTE is generally not claimed for a student who has been reported as completing k-12 education without a diploma. Please confirm that this student is eligible for FTE.'
+
+/* SpecEdExitDate rules */		
+rule 225.41.1
+	require {SpecialEducation}.[SpecEdExitDate] >= {Enrollment}.[EnrollmentDate]
+	else 'The Spec Ed Exit Date must be on or after the District Enrollment Date.'
+	
+rule 225.41.2 
+	require {SpecialEducation}.[SpecEdExitDate] <= {Enrollment}.[DistrictExitDate]
+	else 'The Spec Ed Exit Date must be on or before the District Exit Date.'
+	
+rule 225.41.3 
+	when {SpecialEducation}.[SpecEdExitDate] exists then 
+	require {SpecialEducation}.[SpecEdExitReason] exists
+	else 'When Special Education Exit Date is reported, a valid reason must also be reported in the Special Education Exit Reason.'
+	
+rule 225.41.4 
+	require {SpecialEducation}.[SpecEdExitDate] <= today
+	else 'Date of Special Ed Exit cannot be a future date'
+
+
+/* SpecEdExitReason rules */		
+rule 225.40.1 
+	when {SpecialEducation}.[SpecEdExitReason] exists then 
+	require {SpecialEducation}.[SpecEdExitDate] exists
+	and {SpecialEducation}.[PrimaryDisability] exists
+	else 'Special Education Exit Reason may only be reported when PrimaryDisability contains a valid code and SpecEdExitDate contains a valid date.'
+
+
+/* SupportServices rules */		
+rule 225.38.1 
+	when {SpecialEducation}.[PrimaryDisability] exists
+	and {SpecialEducation}.[ProgramServiceCode] does not exist then 
+	require {SpecialEducation}.[SupportServices] exists
+	else 'If Primary Disability is submitted and Program Service Code is not submitted, Support Services must contain at least one valid code.'
+		
+rule 225.38.2 
+	when {SpecialEducation}.[PrimaryDisability] does not exist then 
+	require {SpecialEducation}.[SupportServices] does not exist
+	else 'Support Services cannot be reported if Primary Disability does not contain a valid code.'

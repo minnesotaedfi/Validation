@@ -1,0 +1,28 @@
+﻿@model ValidationReportDetailsViewModel
+
+<div class="h2">Validation Report Details for District @Model.DistrictName</div>
+<div class="h2">Collection @Model.CollectionName (@Model.CompletedWhen.ToShortDateString() @Model.CompletedWhen.ToShortTimeString())</div>
+
+    <div class="row">
+        <table class="table table-sm table-responsive-md table-bordered">
+            <tr class="table-primary">
+                <th>Component</th>
+                <th>Student</th>
+                <th>School Number</th>
+                <th>Grade</th>
+                <th>Error Number</th>
+                <th>Error</th>
+            </tr>
+            @foreach (var summary in Model.ErrorSummaries)
+            {
+                <tr>
+                    <td>@summary.Component</td>
+                    <td>@summary.Student.FullName <br />@summary.Student.Id</td>
+                    <td>@summary.School <br />456</td>
+                    <td>@summary.Grade</td>
+                    <td>@summary.ErrorCode</td>
+                    <td>@summary.ErrorText</td>
+                </tr>
+            }
+        </table>
+    </div>

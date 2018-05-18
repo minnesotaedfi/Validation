@@ -1,0 +1,31 @@
+ruleset SubmittingEntity
+
+/* SubmittingEntityCode rules */	
+rule 167.188.1 
+	when {SubmittingEntity}.[SubmittingEntityTypeCode] is in ['D','B'] then
+	require {SubmittingEntity}.[SubmittingEntityCode] match '[0-9][0-9][0-9][0-9][0-9]'
+	else 'Must be 5 digits when Submitting Entity Type is "D" or "B".'
+
+rule 167.188.2 
+	when {SubmittingEntity}.[SubmittingEntityCode] exists then
+	require {SubmittingEntity}.[SubmittingEntityCode] = {EEM}.[EntityCode]
+	and {SubmittingEntity}.[SubmittingEntityTypeCode] = {EEM}.[EntityTypeCode]
+	else 'Must be a valid code in the EEM.'
+	
+/* SubmittingEntityTypeCode rules */		
+rule 167.187.1 
+	when collection is in [FallGeneralCollection,SpringGeneralCollection,EOYGeneralCollection,TeacherStudentDataLink,StudentRecordMaintenance] then
+	require {SubmittingEntity}.[SubmittingEntityTypeCode] = 'D'
+	else 'If the collection being submitted is the Fall, Spring, or EOY General Collections or the TSDL Collection Or SRM Collection, then the SubmittingEntityType must be "D".'
+
+	
+rule 167.187.3
+	when collection is EarlyRoster then
+	require {SubmittingEntity}.[SubmittingEntityTypeCode] is in ['D','B']
+	else 'If the collection being submitted is the Early Roster collection, then the Submitting Entity Type must be "B" or "D".'
+	
+rule 167.187.4
+	when collection is in [FallEarlyChildhood,SpringEarlyChildhood,EOPEarlyChildhood] then
+	require {SubmittingEntity}.[SubmittingEntityTypeCode] is in ['D','A']
+	else 'If the collection being submitted is an Early Childhood collection, then the Submitting Entity Type must be "A" or "D".'
+	

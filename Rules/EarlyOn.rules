@@ -1,0 +1,94 @@
+ruleset EarlyOn
+
+rule 269.1
+	when {EarlyOn} exists then
+	require {EEM}.[EntityTypeCategory] = '2'
+	else 'The EarlyOn component can only submitted by an entity with an EEM entity type of ISD.'
+	
+	
+/* CurrentIFSPDate rules */		
+rule 269.497.1
+	expect days since {EarlyOn}.[CurrentIFSPDate] as of AsOfDate <= 365
+	or {EarlyOn}.[PartCExitDate] exists
+	else 'Active participants in Early On should have an IFSP at least annually.'
+	
+rule 269.497.2 
+	require {EarlyOn}.[CurrentIFSPDate] <= AsOfDate
+	else 'A future date may not be reported, as the IFSP could be canceled.'
+	
+/* PartCExitDate rules */		
+rule 269.500.1
+	when {EarlyOn} exists 
+	and {EarlyOn}.[PartCExitDate] does not exist then
+	require years since {PersonalCore}.[DateOfBirth] as of AsOfDate < '3'
+	else 'Children age 3 and older are not eligible for Part C services.'
+	
+rule 269.500.2 
+	when {EarlyOn} exists 
+	and {EarlyOn}.[PartCExitDate] exists then
+	require {SchoolDemographics}.[GradeSetting] = '30'
+	else 'Children reported as participating in Early On (Part C) services must be reported with Grade or Setting code "30".'
+	
+rule 269.500.3
+	when {EarlyOn}.[PartCExitReason] exists then
+	require {EarlyOn}.[PartCExitDate] exists
+	else 'When a Part C Exit Reason is reported, a valid Part C Exit Date must also be submitted.'
+	
+rule 269.500.4 
+	when {EarlyOn}.[PartCExitReason] does not exist then
+	require {EarlyOn}.[PartCExitDate] does not exist
+	else 'When a valid Part C Exit Reason is not reported, Part C Exit Date must be blank or not submitted.'
+	
+rule 269.500.5 
+	require {EarlyOn}.[PartCExitDate] <= AsOfDate
+	else 'The Part C Exit Date cannot be after the count date.'
+	
+rule 269.500.6
+	require years since {PersonalCore}.[DateOfBirth] as of {EarlyOn}.[PartCExitDate] <= '3'
+	else 'Children must be exited from Part C Services no later than their 3rd birthday. Please confirm these dates are correct.'
+	
+rule 269.500.7
+	require {EarlyOn}.[PartCExitDate] >= {EarlyOn}.[CurrentIFSPDate]
+	else 'The Part C Exit Date cannot be before the date reported in Current IFSP Date.'
+	
+rule 269.500.8
+	when {Enrollment}.[DistrictExitDate] exists then
+	require {EarlyOn}.[PartCExitDate] exists
+	else 'Children reported as exiting the district must also be reported as exiting Early On.'
+	
+	
+/* PartCExitReason rules */	
+rule 269.499.2 
+	when {EarlyOn}.[PartCExitReason] = '30' then
+	require {PartBReferral} exist
+	else 'The Part B Referral Component must be submitted for children exited from Part C as eligible for Part B Services.'
+	
+	
+/* TransitionConference rules */	
+rule 269.508.1
+	when {EarlyOn}.[TransitionConference] exists then
+	require years since {PersonalCore}.[DateOfBirth] as of AsOfDate <= '4'
+	else 'The child must be 4 years of age or younger on the As of Date in order to report the timeliness of the Transition Conference.'
+
+	
+rule 269.508.2 
+	when {SpecialEducation} exists
+	and months since {PersonalCore}.[DateOfBirth] as of {EarlyOn}.[PartCExitDate] > '27' then
+	expect {EarlyOn}.[TransitionConference] exists
+	else 'Children older than 2 years 9 months on the Part C Exit Date who are receiving Special Education services are expected to have a Transition Conference.'
+	
+	
+/* TransitionIFSP rules */	
+rule 269.507.1
+	when {EarlyOn}.[TransitionIFSP] exists then
+	require years since {PersonalCore}.[DateOfBirth] as of AsOfDate >= '2'
+	else 'Transition from Part C services does not occur until the child is 2 years of age or older.'
+	
+rule 269.507.2 
+	when months since {PersonalCore}.[DateOfBirth] as of {EarlyOn}.[PartCExitDate] > '27' then
+	expect {EarlyOn}.[TransitionIFSP] exists
+	else 'Children older than 2 years 9 months on the Part C Exit Date are expected to have a Transition IFSP.'
+	
+	
+
+

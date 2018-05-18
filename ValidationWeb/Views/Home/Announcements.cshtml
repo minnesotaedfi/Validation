@@ -1,0 +1,32 @@
+﻿@model HomeAnnouncementsViewModel
+<div class="row clear-margin">
+    @{ var rnd = new Random(); }
+    @foreach (var announcement in Model.Announcements.OrderByDescending(a => a.Priority).ToList())
+    {
+        var cardHeader = announcement.IsEmergency ? "Urgent!" : "Announcement";
+        var announcementParagraphs = (announcement.Message ?? string.Empty).Replace("\r", "").Split(new char[] { '\n' });
+        var cardColor = announcement.IsEmergency ? "danger-red" : "accent-soft-blue";
+        var cardId = $"card{rnd.Next(int.MaxValue)}";
+
+        if (announcement.Expiration < DateTime.Now)
+        {
+            <div id="@(cardId)" class="@(cardColor) page-width clear-margin rounded-padded">
+                <h4>@(cardHeader)</h4>
+                @foreach (var paragraph in announcementParagraphs)
+                {
+                    <p>@Html.Raw(paragraph)</p>
+                }
+                @if (!string.IsNullOrWhiteSpace(announcement.LinkUrl))
+                {
+                    <a href="@(announcement.LinkUrl)" target="_blank">@(announcement.LinkUrl)</a>
+                }
+                @if (!string.IsNullOrWhiteSpace(announcement.ContactInfo))
+                {
+                    <span>@(announcement.ContactInfo)</span>
+                }
+            </div>
+            <br />
+        }
+    }
+
+</div>

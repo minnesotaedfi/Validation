@@ -1,0 +1,37 @@
+ruleset Attendance
+
+/* DaysAttended rules */
+rule 218.295.1
+	when {Enrollment}.[DistrictExitDate] > {Enrollment}.[EnrollmentDate] 
+	and {Attendance}.[DaysAttended] <> '0' then
+	require {Attendance}.[DaysAttended] <= {Attendance}.[TotalPossibleAttendence]
+	else 'Days Attended cannot be greater than the Total Possible Attendance.'	
+	
+	
+	
+/* TotalPossibleAttendance rules */
+rule 218.297.1
+	when {Enrollment}.[DistrictExitStatus] = '19'
+	and {Enrollment}.[DistrictExitDate] > 1-Sep
+	and {SchoolDemographics}.[GradeSetting] is not in ['20','30']
+	and {Membership}.[StudentResidency] is not in [04,07,08,09,12,13,15]
+	and days since {Enrollment}.[EnrollmentDate] as of {Enrollment}.[DistrictExitDate] <> 1 then
+	require {Attendance}.[TotalPossibleAttendence] > 0
+	else 'If a student is reported with a District Exit Status of "19", and the Attendance component is submitted, then the total possible attendance must be greater than 0.'
+	
+rule 218.297.2 
+	when {Enrollment}.[DistrictExitDate] > FallAsOfDate
+	and {Enrollment}.[DistrictExitDate] > 1-Sep
+	and {SchoolDemographics}.[GradeSetting] is not in ['20','30']
+	and {Membership}.[StudentResidency] is not in [04,07,08,09,12,13,15]
+	and days since {Enrollment}.[EnrollmentDate] as of {Enrollment}.[DistrictExitDate] <> 1 then
+	require {Attendance}.[TotalPossibleAttendence] > 0
+	else 'Total possible attendance must be greater than zero if the exit date is after the Fall legislated pupil membership count date.'
+	
+rule 218.297.3
+	when {Enrollment}.[DistrictExitDate] > 1-Sep
+	and {SchoolDemographics}.[GradeSetting] is not in ['20','30']
+	and {Membership}.[StudentResidency] is not in [04,07,08,09,12,13,15]
+	and days since {Enrollment}.[EnrollmentDate] as of {Enrollment}.[DistrictExitDate] <> 1 then
+	require {Attendance}.[TotalPossibleAttendence] <= days since latest of ({Enrollment}.[EnrollmentDate],1-Jul) as of earliest of ({Enrollment}.[EnrollmentDate], AsOfDate)
+	else 'Total possible attendance cannot be greater than the number of days between enrollment date (or July 1 of the current school year, whichever is later) and exit date (or collection as of date, whichever is earlier).'

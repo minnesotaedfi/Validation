@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Operations Version="1.0" xmlns="http://schemas.microsoft.com/sqlserver/dac/Serialization/2012/02">
+  <Operation Name="Rename Refactor" Key="a76be2b6-8816-458a-b61f-b4c7ee17b82a" ChangeDateTime="03/10/2016 17:36:31">
+    <Property Name="ElementName" Value="[dbo].[Component1].[Uid]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Component1]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Component1Id" />
+  </Operation>
+  <Operation Name="Move Schema" Key="b77d9539-d30e-4b95-9a41-cbc7d2391e76" ChangeDateTime="06/28/2016 18:29:26">
+    <Property Name="ElementName" Value="[dbo].[Component1]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="NewSchema" Value="msds" />
+    <Property Name="IsNewSchemaExternal" Value="False" />
+  </Operation>
+  <Operation Name="Move Schema" Key="f80d5e86-dc41-4c1e-8522-5abc0a542b45" ChangeDateTime="06/28/2016 18:30:06">
+    <Property Name="ElementName" Value="[dbo].[Component2]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="NewSchema" Value="msds" />
+    <Property Name="IsNewSchemaExternal" Value="False" />
+  </Operation>
+  <Operation Name="Move Schema" Key="41775465-dafd-4e72-a169-5e8224f71872" ChangeDateTime="06/28/2016 18:30:39">
+    <Property Name="ElementName" Value="[dbo].[RuleValidation]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="NewSchema" Value="msds" />
+    <Property Name="IsNewSchemaExternal" Value="False" />
+  </Operation>
+  <Operation Name="Move Schema" Key="343e6801-b48c-4940-bf64-e162bf4003f1" ChangeDateTime="06/28/2016 18:31:25">
+    <Property Name="ElementName" Value="[dbo].[RuleValidationDetail]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="NewSchema" Value="msds" />
+    <Property Name="IsNewSchemaExternal" Value="False" />
+  </Operation>
+  <Operation Name="Move Schema" Key="bc4cc309-7d51-4202-b8d9-997eeb6ecbe7" ChangeDateTime="06/28/2016 18:31:57">
+    <Property Name="ElementName" Value="[dbo].[RuleValidationRuleComponent]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="NewSchema" Value="msds" />
+    <Property Name="IsNewSchemaExternal" Value="False" />
+  </Operation>
+</Operations>

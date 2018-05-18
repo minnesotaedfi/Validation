@@ -1,0 +1,1 @@
+﻿(SELECT {{{operation}}}(v) FROM (VALUES {{{#each values}}}{{{#unless @first}}}, {{{/unless}}}({{{this}}}){{{/each}}}) AS value(v))

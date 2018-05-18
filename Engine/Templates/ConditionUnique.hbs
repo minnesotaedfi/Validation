@@ -1,0 +1,3 @@
+﻿EXISTS (SELECT {{{#each characteristicName}}}{{{#unless @first}}}, {{{/unless}}}[{{{this}}}]{{{/each}}} FROM [{{{schema}}}].[{{{componentName}}}] [{{{tableName}}}] 
+WHERE {{{#each characteristicName}}}{{{#unless @first}}} AND {{{/unless}}}[{{{../tableName}}}].[{{{this}}}] = [{{{../componentName}}}].[{{{this}}}]{{{/each}}}
+GROUP BY {{{#each characteristicName}}}{{{#unless @first}}}, {{{/unless}}}[{{{this}}}]{{{/each}}} HAVING COUNT(Id) = 1)

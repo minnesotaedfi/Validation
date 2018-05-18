@@ -1,0 +1,68 @@
+﻿@model ValidationReportsViewModel
+
+
+    <div class="row">
+        <div class="h2">Validation Reports for District @Model.DistrictName</div>
+        <button id="newValidationButton" type="button" class="btn btn-primary white-heavy-text float-right margin10" data-toggle="modal" data-target="#NewValidationModal">Validate</button>
+        
+        <!-- New Validation Modal -->
+        <div id="NewValidationModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Modal Heading</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        Modal body...
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Confirm Validation Modal
+        <div id="ConfirmNewValidationModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Modal Heading</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        Modal body...
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>-->
+    </div>
+    <div class="row">
+        <table class="table table-sm table-responsive-md table-bordered">
+            <tr class="table-primary">
+                <th>Request Date/Time</th>
+                <th>Collection</th>
+                <th>Initiated By</th>
+                <th>Status</th>
+                <th>Completion Date/Time</th>
+                <th>Error Count</th>
+                <th>Warning Count</th>
+            </tr>
+            @foreach (var summary in Model.ReportSummaries)
+            {
+                <tr>
+                    <td>@summary.RequestedWhen.ToShortDateString() <br />@summary.RequestedWhen.ToShortTimeString()</td>
+                    <td>@Html.ActionLink(summary.Collection ?? "Unknown", "Report", "Validation", new { area = "", id = summary.ValidationResultsId }, null)</td>
+                    <td>@summary.InitiatedBy</td>
+                    <td>@summary.Status</td>
+                    <td>@summary.CompletedWhen.ToShortDateString() <br />@summary.CompletedWhen.ToShortTimeString()</td>
+                    <td>@summary.ErrorCount</td>
+                    <td>@summary.WarningCount</td>
+                </tr>
+            }
+        </table>
+    </div>

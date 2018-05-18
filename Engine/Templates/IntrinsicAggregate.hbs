@@ -1,0 +1,5 @@
+﻿(SELECT {{{operation}}}([{{{componentName}}}{{{tableSuffix}}}].[{{{characteristicName}}}]) FROM 
+({{{#each tables}}}{{{#unless @first}}} UNION {{{/unless}}}SELECT DISTINCT [Id] FROM [{{{../schema}}}].[{{{this}}}]{{{/each}}}) [Ids{{{tableSuffix}}}]
+{{{#each tables}}}LEFT OUTER JOIN [{{{../schema}}}].[{{{this}}}] [{{{this}}}{{{../tableSuffix}}}] ON [Ids{{{../tableSuffix}}}].[Id] = [{{{this}}}{{{../tableSuffix}}}].[Id] {{{/each}}}
+WHERE [Ids].[Id] = [Ids{{{tableSuffix}}}].[Id] {{#if sqlwhere}} AND {{{sqlwhere}}}{{/if}}
+{{#if characteristicIds}}{{{#each characteristicIds}}} AND [{{{../componentName}}}{{{../tableSuffix}}}].[{{{this}}}] = [{{{../componentName}}}].[{{{this}}}]{{/each}}{{/if}})

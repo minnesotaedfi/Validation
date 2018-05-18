@@ -1,0 +1,273 @@
+ruleset Discipline
+
+	
+/*  DateOfIncident rules */
+rule 230.319.1
+	require {Discipline}.[DateOfIncident] >= {Enrollment}.[EnrollmentDate]
+	and {Discipline}.[DateOfIncident] <= {Enrollment}.[DistrictExitDate]
+	else 'The date reported for this incident must fall within the period of enrollment with the Operating District.'
+	
+rule 230.319.2 
+	require {Discipline}.[DateOfIncident] <= today
+	else 'The Incident Date must be on or before the general collection count date or SRM As of Date.'
+	
+	
+/*  FollowUp rules */
+rule 230.305.1 
+	when {SpecialEducation}.[PrimaryDisability] exists 
+	and sum({Discipline}.[InitialDays,SecondaryDays]) > 10 then
+	require {Discipline}.[FollowUp] exists
+	else 'Students identified as special education participants who are removed from their regular education setting for more than 10 days must have at least one code.'
+
+rule 230.305.2 
+	when {Discipline}.[InitialConsequenceType] = '5'
+	or {Discipline}.[SecondaryConsequenceType] = '5'
+	or {Discipline}.[OtherConsequenceType] = '5' then
+	require {Discipline}.[FollowUp] exists
+	else 'Students who are expelled must have at least one code reported in Follow Up'
+	
+rule 230.305.4 
+	require count({Discipline} by [FollowUp,IncidentID]) <= 1
+	else 'Follow Up codes may not be reported more than once per incident.'
+	
+	
+/*  IncidentID rules */	
+rule 230.280.1 
+	when {Discipline} exists then 
+	require {Discipline}.[IncidentID] is unique
+	else 'The same Incident ID has been reported in more than one Discipline component for this record. Use a unique identification code for each incident in which a student is involved.'
+
+	
+	
+/*  InitialConsequenceType rules */
+rule 230.470.1
+	when {Discipline}.[InitialConsequenceType] is in ['3','4'] then
+	require {SpecialEducation}.[PrimaryDisability] exists
+	else 'Code "3" (Removal By Hearing Officer) and code "4" (Unilateral Removal) may only be reported when the student is reported with a valid Primary Disability code in the Special Education component.'
+	
+	
+/*  InitialDays rules */
+rule 230.471.1
+	when {Discipline}.[InitialConsequenceType] <> '5' then
+	require {Discipline}.[InitialDays] >= '0.5'
+	and {Discipline}.[InitialDays] <= '185'
+	else 'Length of action must be at least 0.5 but not more than 185 days'
+
+rule 230.471.2 
+	when {Discipline}.[InitialConsequenceType] = '5' then
+	require {Discipline}.[InitialDays] <= '185'
+	or {Discipline}.[InitialDays] = '888'
+	else 'The length of action when reporting consequence type "5" (Expulsion) must be 185 days or less, except when the student is permanently expelled. For permanently expelled students report "888" as the length of action.'
+
+rule 230.471.3 
+	when {Discipline}.[InitialConsequenceType] is in ['3','4'] then
+	require {Discipline}.[InitialDays] <= '45'
+	else 'The length of action may not be greater than 45 days when the conquence type is "3" or "4"'
+	
+	
+/* InitialStartDate rules */
+rule 230.472.1 
+	when {SpecialEducation}.[SpecEdExitDate] exists
+	and {Discipline}.[InitialConsequenceType] is in ['3','4'] then
+	require {Discipline}.[InitialStartDate] < {SpecialEducation}.[SpecEdExitDate]
+	else 'The start date of the initial consequence must be prior to the Special Education Exit Date when the conquence type is "3" or "4".'
+	
+rule 230.472.2 
+	require {Discipline}.[InitialStartDate] >= {Enrollment}.[EnrollmentDate]
+	else 'The start date of the initial consequence must be on or after the date of enrollment within the district.'
+	
+rule 230.472.3
+	require {Discipline}.[InitialStartDate] <= {Enrollment}.[DistrictExitDate]
+	else 'The start date of the initial consequence must be before the date the student exited the district.'
+	
+rule 230.472.4 
+	require {Discipline}.[InitialStartDate] >= {Discipline}.[DateOfIncident]
+	else 'The start date of the initial consequence must be the same as or after the date the incident occurred'
+	
+rule 230.472.5 
+	require {Discipline}.[InitialStartDate] <= today
+	else 'Initial Start Date must be on or prior to the current date; future dates are not allowed.'
+	
+
+/* OtherConsequenceType rules */
+rule 230.476.1 
+	when {Discipline}.[SecondaryConsequenceType] does not exist then
+	require {Discipline}.[OtherConsequenceType] does not exist
+	else 'A secondary consequence must be included in the record when submitting a value in Other Consequence Type'
+	
+rule 230.476.2 
+	when {Discipline}.[OtherConsequenceType] is in ['3','4'] then
+	require {SpecialEducation}.[PrimaryDisability] exists
+	else 'Code "3" (Removal By Hearing Officer) and code "4" (Unilateral Removal) may only be reported when the student is reported with a valid Primary Disability code in the Special Education component.'
+	
+/* OtherDays rules */
+rule 230.477.1 
+	when {Discipline}.[OtherConsequenceType] exists then
+	require {Discipline}.[OtherDays] exists
+	else 'When an other consequence is reported the number of other days must also be reported'
+	
+rule 230.477.2 
+	when {Discipline}.[OtherConsequenceType] does not exist then
+	require {Discipline}.[OtherDays] does not exist
+	else 'When an other consequence is not reported, other days must not be reported.'
+	
+rule 230.477.3 
+	when {Discipline}.[OtherConsequenceType] <> '5' then
+	require {Discipline}.[OtherDays] >= '0.5'
+	and {Discipline}.[OtherDays] <= '185'
+	else 'Length of action must be at least 0.5 but not more than 185 days.'
+	
+rule 230.477.4 
+	when {Discipline}.[OtherConsequenceType] = '5' then
+	require {Discipline}.[OtherDays] <= '185'
+	or {Discipline}.[OtherDays] = '888'
+	or {Discipline}.[OtherDays] does not exist
+	else 'The length of action when reporting consequence type "5" (Expulsion) must be 185 days or less, except when the student is permanently expelled. For permanently expelled students report "888" as the length of action.'
+	
+rule 230.477.5 
+	when {Discipline}.[OtherConsequenceType] is in ['3','4'] then
+	require {Discipline}.[OtherDays] <= '45'
+	else 'The length of action may not be greater than 45 days when the consequence type is "3" or "4"'
+	
+	
+/* OtherStartDate rules */
+rule 230.478.1 
+	when {Discipline}.[OtherConsequenceType] exists then
+	require {Discipline}.[OtherStartDate] exists
+	else 'When an other consequence is reported the other start date must also be reported'
+	
+rule 230.478.2 
+	when {Discipline}.[OtherConsequenceType] does not exist then
+	require {Discipline}.[OtherStartDate] does not exist
+	else 'When an other consequence is not reported, the other start date must not be reported.'
+	
+rule 230.478.3 
+	when {SpecialEducation}.[SpecEdExitDate] exists
+	and {Discipline}.[OtherConsequenceType] is in ['3','4'] then
+	require {Discipline}.[OtherStartDate] < {SpecialEducation}.[SpecEdExitDate]
+	else 'The start date of the other consequence must be prior to the Special Education Exit Date when the consequence type is "3" or "4"'
+	
+rule 230.478.4 
+	when {Discipline}.[OtherStartDate] exists then
+	require {Discipline}.[OtherStartDate] >= {Enrollment}.[EnrollmentDate]
+	or {Discipline}.[OtherStartDate] >= max({EnrollmentExitDate}.[EntryDate])
+	else 'The start date of the other consequence must be on or after the date of enrollment within the district.'
+
+rule 230.478.5 
+	when {Discipline}.[OtherStartDate] exists then
+	require {Discipline}.[OtherStartDate] <= {Enrollment}.[DistrictExitDate]
+	or {Discipline}.[OtherStartDate] <= max({EnrollmentExitDate}.[ExitWithdrawDate])
+	else 'The start date of the other consequence must be on or before the date the student exited the district.'
+	
+rule 230.478.6
+	when {Discipline}.[OtherStartDate] exists then
+	require {Discipline}.[OtherStartDate] >= {Discipline}.[DateOfIncident]
+	else 'The start date of the other consequence must be the same as or after the date the incident occurred'
+	
+rule 230.478.7
+	when {Discipline}.[OtherStartDate] exists then
+	require {Discipline}.[OtherStartDate] > {Discipline}.[InitialStartDate]
+	or {Discipline}.[OtherStartDate] > {Discipline}.[SecondaryStartDate]
+	else 'When an other consequence is reported, the other start date must be after the primary consequence start date and the secondary consequence start date.'
+	
+rule 230.478.8 
+	require {Discipline}.[OtherStartDate] <= today
+	else 'Other Start Date must be on or prior to the current date; future dates are not allowed.'
+	
+	
+/* SecondaryConsequenceType rules */
+rule 230.473.1 
+	when {Discipline}.[SecondaryConsequenceType] is in ['3','4'] then
+	require {SpecialEducation}.[PrimaryDisability] exists
+	else 'Code "3" (Removal By Hearing Officer) and code "4" (Unilateral Removal) may only be reported when the student is reported with a valid Primary Disability code in the Special Education component.'
+
+	
+/* SecondaryDays rules */
+rule 230.474.1 
+	when {Discipline}.[SecondaryConsequenceType] exists then
+	require {Discipline}.[SecondaryDays] exists
+	else 'When a secondary consequence is reported the number of days must also be reported'
+
+rule 230.474.2 
+	when {Discipline}.[SecondaryConsequenceType] does not exist then
+	require {Discipline}.[SecondaryDays] does not exist
+	else 'When a secondary consequences is not reported, secondary days must not be reported.'
+	
+rule 230.474.3 
+	when {Discipline}.[SecondaryConsequenceType] <> '5' then
+	require {Discipline}.[SecondaryDays] >= '0.5'
+	or {Discipline}.[SecondaryDays] <= '185'
+	or {Discipline}.[SecondaryDays] does not exist
+	else 'Length of action must be at least 0.5 but not more than 185 days.'
+	
+rule 230.474.4 
+	when {Discipline}.[SecondaryConsequenceType] = '5' then
+	require {Discipline}.[SecondaryDays] <= '185'
+	or {Discipline}.[SecondaryDays] = '888'
+	else 'The length of action when reporting consequence type "5" (Expulsion) must be 185 days or less, except when the student is permanently expelled. For permanently expelled students report "888" as the length of action.'
+	
+rule 230.474.5 
+	when {Discipline}.[SecondaryConsequenceType] is in ['3','4'] then
+	require {Discipline}.[SecondaryDays] <= '45'
+	else 'The length of action may not be greater than 45 days when the consequence type is "3" or "4"'
+	
+	
+/* SecondaryStartDate rules */
+rule 230.475.1 
+	when {Discipline}.[SecondaryConsequenceType] exists then
+	require {Discipline}.[SecondaryStartDate] exists
+	else 'When a secondary consequence is reported the start date must also be reported'
+	
+rule 230.475.2 
+	when {Discipline}.[SecondaryConsequenceType] does not exist then
+	require {Discipline}.[SecondaryStartDate] does not exist
+	else 'When a secondary consequence is not reported, the secondary start date must not be reported.'
+	
+rule 230.475.3 
+	when {SpecialEducation}.[SpecEdExitDate] exists
+	and {Discipline}.[SecondaryConsequenceType] is in ['3','4'] then
+	require {Discipline}.[SecondaryStartDate] < {SpecialEducation}.[SpecEdExitDate]
+	else 'The start date of the secondary consequence must be prior to the Special Education Exit Date when the consequence type is "3" or "4"'
+	
+rule 230.475.4 
+	when {Discipline}.[SecondaryStartDate] exists then
+	require {Discipline}.[SecondaryStartDate] >= {Enrollment}.[EnrollmentDate] 
+	or {Discipline}.[SecondaryStartDate] >= max({EnrollmentExitDate}.[EntryDate])
+	else 'The start date of the secondary consequence must be on or after the date of enrollment within the district.'
+
+rule 230.475.5 
+	when {Discipline}.[SecondaryStartDate] exists then
+	require {Discipline}.[SecondaryStartDate] <= {Enrollment}.[DistrictExitDate]
+	or {Discipline}.[SecondaryStartDate] <= max({EnrollmentExitDate}.[ExitWithdrawDate])
+	else 'The start date of the secondary consequence must be before the date the student exited the district.'
+	
+rule 230.475.6
+	when {Discipline}.[SecondaryStartDate] exists then
+	require {Discipline}.[SecondaryStartDate] >= {Discipline}.[DateOfIncident]
+	else 'The start date of the secondary consequence must be the same as or after the date the incident occurred'
+	
+rule 230.475.7
+	when {Discipline}.[SecondaryStartDate] exists then
+	require {Discipline}.[SecondaryStartDate] > {Discipline}.[InitialStartDate]
+	else 'When a secondary consequence is reported, the secondary start date must be after the start date of the primary consequence start date.'
+	
+rule 230.475.8 
+	require {Discipline}.[SecondaryStartDate] <= today
+	else 'Secondary Start Date must be on or prior to the current date; future dates are not allowed.'
+
+
+/* SeriousBodilyInjury rules */
+rule 230.468.1 
+	when {Discipline}.[IncidentType] <> '60' then
+	require {Discipline}.[SeriousBodilyInjury] does not exist
+	else 'Serious Bodily Injury may only be reported when the Incident Type is "60" (Physical Violence with injury).'
+
+	
+/* SexualAssault */
+rule 230.469.1 
+	when {Discipline}.[IncidentType] is not in [60,61] then
+	require {Discipline}.[SexualAssault] does not exist
+	else 'Sexual Assault may only be reported when the Incident Type is "60" (Physical Violence with injury) or "61" (Physical Violence without injury).'
+
+
+
