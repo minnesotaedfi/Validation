@@ -128,6 +128,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\Scripts\jquery-3.3.1.js" />
+    <Content Include="Content\Scripts\jquery-3.3.1.min.js" />
     <Content Include="packages.config" />
     <Content Include="Views\Validation\Report.cshtml" />
     <None Include="Web.Debug.config">
