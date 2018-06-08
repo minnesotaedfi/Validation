@@ -132,6 +132,10 @@
     <Content Include="Content\Scripts\jquery-3.3.1.min.js" />
     <Content Include="packages.config" />
     <Content Include="Views\Validation\Report.cshtml" />
+    <Content Include="Views\Shared\_BigFooter.cshtml" />
+    <Content Include="Views\Shared\_LittleFooter.cshtml" />
+    <Content Include="Views\Home\_ViewStart.cshtml" />
+    <Content Include="Views\Shared\_BigLayout.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -181,7 +185,7 @@
     <Content Include="Views\Rules\Collections.cshtml" />
     <Content Include="Views\Rules\Detail.cshtml" />
     <Content Include="Views\Rules\Editor.cshtml" />
-    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Shared\_LittleLayout.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Validation\Reports.cshtml" />
     <Content Include="Views\Web.config" />
