@@ -31,5 +31,9 @@ namespace ValidationWeb
         /// Local time (and date) after which the Announcement will not be displayed and may be deleted.
         /// </summary>
         public DateTime Expiration { get; set; }
+        /// <summary>
+        /// If not null, then the annoucement will only be displayed to a user with access to at least one of these EdOrgs.
+        /// </summary>
+        public List<EdOrg> LimitToEdOrgs { get; set; }
     }
 }

@@ -7,9 +7,6 @@ namespace ValidationWeb
 {
     public class ValidationReportDetailsViewModel
     {
-        public string DistrictName { get; set; }
-        public string CollectionName { get; set; }
-        public DateTime CompletedWhen { get; set; }
-        public IEnumerable<ValidationErrorSummary> ErrorSummaries { get; set; }
+        public ValidationReportDetails Details { get; set; }
     }
 }

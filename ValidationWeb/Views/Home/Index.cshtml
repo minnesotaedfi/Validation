@@ -9,7 +9,7 @@
 <div class="row clear-margin">
     <div>
         <button type="button" class="btn prime-blue district-dropdown">
-            Organizations <span class="badge badge-light">@(Model.FilteredEdOrgs.Count()) / @(Model.AuthorizedEdOrgs.Count())</span>
+            Organizations <span class="badge badge-light">@(Model.FocusedEdOrg.Name) / @(Model.AuthorizedEdOrgs.Count()) authorized</span>
         </button>
     </div>
     <div class="h2">School years open for submission: 

@@ -13,9 +13,9 @@ namespace ValidationWeb
         /// </summary>
         public IEnumerable<EdOrg> AuthorizedEdOrgs { get; set; }
         /// <summary>
-        /// Subset of Ed Orgs currently chosen for viewing.
+        /// Ed Org currently selected (being acting on when a user takes actions designed to affect a single EdOrg)
         /// </summary>
-        public IEnumerable<EdOrg> FilteredEdOrgs { get; set; }
+        public EdOrg FocusedEdOrg { get; set; }
         public IEnumerable<SchoolYear> YearsOpenForDataSubmission { get; set; }
     }
 }
