@@ -1,7 +1,7 @@
 ﻿@model ValidationReportDetailsViewModel
 
-<div class="h2">Validation Report Details for District @Model.DistrictName</div>
-<div class="h2">Collection @Model.CollectionName (@Model.CompletedWhen.ToShortDateString() @Model.CompletedWhen.ToShortTimeString())</div>
+<div class="h2">Validation Report Details for District @Model.Details.DistrictName</div>
+<div class="h2">Collection @Model.Details.CollectionName (@Model.Details.CompletedWhen.ToShortDateString() @Model.Details.CompletedWhen.ToShortTimeString())</div>
 
     <div class="row">
         <table class="table table-sm table-responsive-md table-bordered">
@@ -13,7 +13,7 @@
                 <th>Error Number</th>
                 <th>Error</th>
             </tr>
-            @foreach (var summary in Model.ErrorSummaries)
+            @foreach (var summary in Model.Details.ErrorSummaries)
             {
                 <tr>
                     <td>@summary.Component</td>

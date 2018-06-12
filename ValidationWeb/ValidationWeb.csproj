@@ -17,7 +17,7 @@
     <RootNamespace>ValidationWeb</RootNamespace>
     <AssemblyName>ValidationWeb</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
-    <UseIISExpress>true</UseIISExpress>
+    <UseIISExpress>false</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -210,15 +210,18 @@
     <Compile Include="Models\ValidationReportDetails.cs" />
     <Compile Include="Models\ValidationReportSummary.cs" />
     <Compile Include="Services\Implementations\AnnouncementService.cs" />
+    <Compile Include="Services\Implementations\AppUserService.cs" />
     <Compile Include="Services\Implementations\ConfigurationValues.cs" />
     <Compile Include="Services\Implementations\EdOrgService.cs" />
     <Compile Include="Services\Implementations\Fakes\FakeAnnouncementService.cs" />
+    <Compile Include="Services\Implementations\Fakes\FakeAppUserService.cs" />
     <Compile Include="Services\Implementations\Fakes\FakeEdOrgService.cs" />
     <Compile Include="Services\Implementations\Fakes\FakeValidatedDataSubmissionService.cs" />
     <Compile Include="Services\Implementations\Fakes\FakeValidationResultsService.cs" />
     <Compile Include="Services\Implementations\ValidatedDataSubmissionService.cs" />
     <Compile Include="Services\Implementations\ValidationResultsService.cs" />
     <Compile Include="Services\Interfaces\IAnnouncementService.cs" />
+    <Compile Include="Services\Interfaces\IAppUserService.cs" />
     <Compile Include="Services\Interfaces\IConfigurationValues.cs" />
     <Compile Include="Services\Interfaces\IEdOrgService.cs" />
     <Compile Include="Services\Interfaces\IValidatedDataSubmissionService.cs" />
@@ -255,7 +258,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>6888</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:6888/</IISUrl>
+          <IISUrl>http://localhost/acdcs/portal</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

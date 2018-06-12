@@ -37,15 +37,17 @@ namespace ValidationWeb
             // Services registered will depend on whether in production or test mode.
             if (config.UseFakeViewModelData)
             {
-                container.Register<IEdOrgService, FakeEdOrgService>(Lifestyle.Scoped);
                 container.Register<IAnnouncementService, FakeAnnouncementService>(Lifestyle.Scoped);
+                container.Register<IAppUserService, FakeAppUserService>(Lifestyle.Scoped);
+                container.Register<IEdOrgService, FakeEdOrgService>(Lifestyle.Scoped);
                 container.Register<IValidatedDataSubmissionService, FakeValidatedDataSubmissionService>(Lifestyle.Scoped);
                 container.Register<IValidationResultsService, FakeValidationResultsService>(Lifestyle.Scoped);
             }
             else
             {
-                container.Register<IEdOrgService, EdOrgService>(Lifestyle.Scoped);
                 container.Register<IAnnouncementService, AnnouncementService>(Lifestyle.Scoped);
+                container.Register<IAppUserService, AppUserService>(Lifestyle.Scoped);
+                container.Register<IEdOrgService, EdOrgService>(Lifestyle.Scoped);
                 container.Register<IValidatedDataSubmissionService, ValidatedDataSubmissionService>(Lifestyle.Scoped);
                 container.Register<IValidationResultsService, ValidationResultsService>(Lifestyle.Scoped);
             }
