@@ -8,6 +8,6 @@ namespace ValidationWeb.Services
 {
     public interface IAnnouncementService
     {
-        List<Announcement> GetAnnoucements();
+        List<Announcement> GetAnnoucements(int sessionId, bool includePreviouslyDismissedAnnouncements = false);
     }
 }

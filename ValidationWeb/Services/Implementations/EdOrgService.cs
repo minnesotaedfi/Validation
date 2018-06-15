@@ -7,18 +7,19 @@ namespace ValidationWeb.Services
 {
     public class EdOrgService : IEdOrgService
     {
-        // TODO: add a real implementation
+        protected readonly ValidationPortalDbContext _validationPortalDataContext;
+        protected readonly IAppUserService _appUserService;
+
+        public EdOrgService(ValidationPortalDbContext validationPortalDataContext, IAppUserService appUserService)
+        {
+            _validationPortalDataContext = validationPortalDataContext;
+            _appUserService = appUserService;
+        }
 
         public List<EdOrg> GetEdOrgs()
         {
-            var mde = new EdOrg { Id = "MDE", Name = "MN Department of Education", Parent = null, Type = EdOrgType.State };
-            var sRegion = new EdOrg { Id = "South", Name = "Southern Region", Parent = mde, Type = EdOrgType.Region };
-            var d622 = new EdOrg { Id = "ISD 622", Name = "North St. Paul-Maplewood School District", Parent = sRegion, Type = EdOrgType.District };
-            var d625 = new EdOrg { Id = "ISD 625", Name = "St. Paul School District", Parent = sRegion, Type = EdOrgType.District };
-            var s6221 = new EdOrg { Id = "School 622-1", Name = "Eagle Point Elementary School", Parent = d622, Type = EdOrgType.School };
-            var s6222 = new EdOrg { Id = "School 622-2", Name = "John Glenn Middle School", Parent = d622, Type = EdOrgType.School };
-
-            return new List<EdOrg> { mde, sRegion, d622, d625, s6221, s6222 };
+            int sessionId = 0;
+            return _appUserService.GetCurrentAppUser(sessionId).AuthorizedEdOrgs.OrderBy(eo => eo.Name).ToList();
         }
 
         public EdOrg GetEdOrgById(string edOrgId)

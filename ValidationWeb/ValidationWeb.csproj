@@ -209,12 +209,12 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\RulesController.cs" />
     <Compile Include="Controllers\ValidationController.cs" />
+    <Compile Include="Database\EnumLookup.cs" />
     <Compile Include="Database\ValidationPortalDbContext.cs" />
     <Compile Include="Database\ValidationPortalDbMigrationConfiguration.cs" />
     <Compile Include="Models\Announcement.cs" />
     <Compile Include="Models\AppUser.cs" />
     <Compile Include="Models\AppUserSession.cs" />
-    <Compile Include="Models\DismissedAnnouncements.cs" />
     <Compile Include="Models\EdOrgType.cs" />
     <Compile Include="Models\EdOrg.cs" />
     <Compile Include="Models\ErrorSeverity.cs" />

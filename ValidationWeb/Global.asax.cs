@@ -50,6 +50,9 @@ namespace ValidationWeb
                 container.Register<IEdOrgService, EdOrgService>(Lifestyle.Scoped);
                 container.Register<IValidatedDataSubmissionService, ValidatedDataSubmissionService>(Lifestyle.Scoped);
                 container.Register<IValidationResultsService, ValidationResultsService>(Lifestyle.Scoped);
+
+                // Entity Framework Database Contexts
+                container.Register<ValidationPortalDbContext>(Lifestyle.Scoped);
             }
             container.Verify();
             DependencyResolver.SetResolver(new SimpleInjectorDependencyResolver(container));

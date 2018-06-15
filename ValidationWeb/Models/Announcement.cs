@@ -1,12 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
 
 namespace ValidationWeb
 {
-    public class Announcement
+    [Table("validation.Announcement")]
+    public partial class Announcement
     {
+        public Announcement()
+        {
+            LimitToEdOrgs = new HashSet<EdOrg>();
+            AppUserSessions = new HashSet<AppUserSession>();
+        }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Key]
+        public int Id { get; set; }
         /// <summary>
         /// A higher number should be displayed before announcements with lower numbers.
         /// </summary>
@@ -34,6 +46,10 @@ namespace ValidationWeb
         /// <summary>
         /// If not null, then the annoucement will only be displayed to a user with access to at least one of these EdOrgs.
         /// </summary>
-        public List<EdOrg> LimitToEdOrgs { get; set; }
+        public ICollection<EdOrg> LimitToEdOrgs { get; set; }
+        /// <summary>
+        /// Sessions that have dismissed this announcement.
+        /// </summary>
+        public ICollection<AppUserSession> AppUserSessions { get; set; }
     }
 }

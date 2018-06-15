@@ -22,12 +22,52 @@ namespace ValidationWeb
             // Fixes a known bug in which EntityFramework.SqlServer.dll is not copied into consumer even when CopyLocal is True.
             var includeSqlServerDLLInConsumer = System.Data.Entity.SqlServer.SqlProviderServices.Instance;
         }
-        //public virtual DbSet<Client> Clients { get; set; }
-        //public virtual DbSet<Token> Tokens { get; set; }
+        public virtual DbSet<Announcement> Announcements { get; set; }
+        public virtual DbSet<AppUser> AppUsers { get; set; }
+        public virtual DbSet<AppUserSession> AppUserSessions { get; set; }
+        public virtual DbSet<EdOrg> EdOrgs { get; set; }
+        public virtual DbSet<EdOrgTypeLookup> EdOrgTypeLookup { get; set; }
+        public virtual DbSet<ErrorSeverityLookup> ErrorSeverityLookup { get; set; }
+        public virtual DbSet<SchoolYear> SchoolYears { get; set; }
+        public virtual DbSet<Student> Students { get; set; }
+        public virtual DbSet<ValidationErrorSummary> ValidationErrorSummaries { get; set; }
+        public virtual DbSet<ValidationReportDetails> ValidationReportDetails { get; set; }
+        public virtual DbSet<ValidationReportSummary> ValidationReportSummaries { get; set; }
+
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Announcement>()
+                .HasMany<EdOrg>(ann => ann.LimitToEdOrgs)
+                .WithMany(eo => eo.Announcements)
+                .Map(cs =>
+                {
+                    cs.MapLeftKey("AnnouncementId");
+                    cs.MapRightKey("EdOrgId");
+                    cs.ToTable("validation.AnnouncementEdOrg");
+                });
+
+            modelBuilder.Entity<AppUser>()
+                .HasMany<EdOrg>(apu => apu.AuthorizedEdOrgs)
+                .WithMany(eo => eo.AppUsers)
+                .Map(cs =>
+                {
+                    cs.MapLeftKey("AppUserId");
+                    cs.MapRightKey("EdOrgId");
+                    cs.ToTable("validation.AppUserEdOrg");
+                });
+
+            modelBuilder.Entity<AppUserSession>()
+                .HasMany<Announcement>(aus => aus.DismissedAnnouncements)
+                .WithMany(ann => ann.AppUserSessions)
+                .Map(cs =>
+                {
+                    cs.MapLeftKey("AppUserSessionId");
+                    cs.MapRightKey("EdOrgId");
+                    cs.ToTable("validation.DismissedAnnouncements");
+                });
         }
     }
 }

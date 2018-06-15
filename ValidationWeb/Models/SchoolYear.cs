@@ -1,20 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
 
 namespace ValidationWeb
 {
+    [Table("validation.SchoolYear")]
     public class SchoolYear
     {
         public SchoolYear() { }
+
         public SchoolYear(string startYear, string endYear)
         {
             StartYear = startYear;
             EndYear = endYear;
         }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Key]
+        public int Id { get; set; }
+
         public string StartYear { get; set; }
         public string EndYear { get; set; }
+
         public override string ToString()
         {
             var hasStart = ! string.IsNullOrWhiteSpace(StartYear);

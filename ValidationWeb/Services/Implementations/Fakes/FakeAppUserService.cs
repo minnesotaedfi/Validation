@@ -7,23 +7,54 @@ namespace ValidationWeb.Services
 {
     public class FakeAppUserService : IAppUserService
     {
-        public AppUser GetCurrentAppUser()
+        private static List<AppUserSession> _openSessions = new List<AppUserSession>();
+
+        protected readonly IEdOrgService _edOrgService;
+
+        private AppUserSession currentSession = null;
+
+        public FakeAppUserService(IEdOrgService edOrgService)
         {
-            return new AppUser
+            _edOrgService = edOrgService;
+        }
+
+        public AppUser GetCurrentAppUser(int sessionId)
+        {
+            return GetSession(sessionId).AppUser;
+        }
+
+        /// <summary>
+        /// Returns SessionId number.
+        /// </summary>
+        /// <returns></returns>
+        public int CreateAppUserSession(int appUserId)
+        {
+            var specialEdOrg = _edOrgService.GetEdOrgById("ISD 622");
+            var allOrgs = _edOrgService.GetEdOrgs();
+            var initalAppUser = new AppUser { Id = -1, Name = "Jane Educator", AuthorizedEdOrgs = allOrgs };
+
+            currentSession = new AppUserSession
             {
-                AuthorizedEdOrgs = new FakeEdOrgService().GetEdOrgs(),
-                Id = -1,
-                Name = "Jane Educator"
+                Id = (new Random()).Next(1, 1000000),
+                AppUser = initalAppUser,
+                AppUserId = initalAppUser.Id,
+                FocusedEdOrg = specialEdOrg,
+                FocusedEdOrgId = specialEdOrg.Id
             };
+
+            _openSessions.Add(currentSession);
+
+            return currentSession.Id;
         }
 
         public AppUserSession GetSession(int sessionId)
         {
-            return new AppUserSession
-            {
-                DismissedAnnouncements = Enumerable.Empty<DismissedAnnouncement>().ToList(),
-                FocusedEdOrg = new FakeEdOrgService().GetEdOrgs().FirstOrDefault(edo => edo.Id == "ISD 622")
-            };
+            return _openSessions.First(sess => sess.Id == sessionId);
+        }
+
+        public void DismissAnnouncement(int sessionId, int announcementId)
+        {
+            _openSessions.First(sess => sess.Id == sessionId).DismissedAnnouncements.Add(new Announcement { Id = announcementId });
         }
     }
 }

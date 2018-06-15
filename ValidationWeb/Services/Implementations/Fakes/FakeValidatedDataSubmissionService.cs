@@ -11,8 +11,8 @@ namespace ValidationWeb.Services
         {
             return new List<SchoolYear>
             {
-                new SchoolYear("2018", "2019"),
-                new SchoolYear("2019", "2020")
+                new SchoolYear {Id = 0, StartYear = "2018", EndYear = "2019" },
+                new SchoolYear {Id = 0, StartYear = "2019", EndYear = "2020" },
             };
         }
     }

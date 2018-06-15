@@ -1,16 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
 
 namespace ValidationWeb
 {
+    [Table("validation.ReportDetails")]
     public class ValidationReportDetails
     {
+        public ValidationReportDetails()
+        {
+            ErrorSummaries = new HashSet<ValidationErrorSummary>();
+        }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Key]
+        public int Id { get; set; }
+
         public string DistrictName { get; set; }
         public string CollectionName { get; set; }
         public DateTime CompletedWhen { get; set; }
-        public IEnumerable<ValidationErrorSummary> ErrorSummaries { get; set; }
+
+        [ForeignKey("ValidationReportSummary")]
+        public int ValidationReportSummaryId { get; set; }
+        public ValidationReportSummary ValidationReportSummary { get; set; }
+
+        public ICollection<ValidationErrorSummary> ErrorSummaries { get; set; }
 
     }
 }

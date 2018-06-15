@@ -7,27 +7,27 @@ namespace ValidationWeb.Services
 {
     public class AnnouncementService : IAnnouncementService
     {
-        public List<Announcement> GetAnnoucements()
+        protected readonly ValidationPortalDbContext _validationPortalDataContext;
+        protected readonly IAppUserService _appUserService;
+
+        public AnnouncementService(
+            ValidationPortalDbContext validationPortalDataContext,
+            IAppUserService appUserService)
         {
-            return new List<Announcement>
-            {
-                new Announcement
-                {
-                    Priority = 0,
-                    ContactInfo = "info@education.mn.gov",
-                    IsEmergency = false,
-                    LinkUrl = "https://education.mn.gov/",
-                    Message = "You may know about the nice Department of Education web page. But have you been there lately?\r\nWhy don't you go have a look now?"
-                },
-                new Announcement
-                {
-                    Priority = 1,
-                    ContactInfo = "info@education.mn.gov",
-                    IsEmergency = true,
-                    LinkUrl = "https://education.mn.gov/",
-                    Message = "A volcano erupted in Hawaii!"
-                }
-            };
+            _validationPortalDataContext = validationPortalDataContext;
+            _appUserService = appUserService;
+        }
+
+        public List<Announcement> GetAnnoucements(int sessionId, bool includePreviouslyDismissedAnnouncements = false)
+        {
+            var dismissedAnnouncementIds = _appUserService.GetSession(sessionId).DismissedAnnouncements.Select(da => da.Id).ToArray();
+            var edOrgIds = _appUserService.GetCurrentAppUser().AuthorizedEdOrgs.Select(aeo => aeo.Id).ToArray(); 
+            return _validationPortalDataContext.Announcements.Where(ann => includePreviouslyDismissedAnnouncements 
+            || ( 
+                 (ann.LimitToEdOrgs == null || ann.LimitToEdOrgs.Any(lte => edOrgIds.Contains(lte.Id))) 
+                 && (! dismissedAnnouncementIds.Contains(ann.Id))
+               )
+            ).OrderByDescending(ann => ann.Priority).ToList();
         }
     }
 }
