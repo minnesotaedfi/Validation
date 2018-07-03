@@ -7,6 +7,7 @@ namespace ValidationWeb
 {
     public class HomeIndexViewModel
     {
+        public AppUserSession AppUserSession { get; set; }
         public IEnumerable<Announcement> Announcements { get; set; }
         /// <summary>
         /// Ed Orgs the use is allowed to see.

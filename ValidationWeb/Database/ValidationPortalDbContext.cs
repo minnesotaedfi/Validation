@@ -23,7 +23,6 @@ namespace ValidationWeb
             var includeSqlServerDLLInConsumer = System.Data.Entity.SqlServer.SqlProviderServices.Instance;
         }
         public virtual DbSet<Announcement> Announcements { get; set; }
-        public virtual DbSet<AppUser> AppUsers { get; set; }
         public virtual DbSet<AppUserSession> AppUserSessions { get; set; }
         public virtual DbSet<EdOrg> EdOrgs { get; set; }
         public virtual DbSet<EdOrgTypeLookup> EdOrgTypeLookup { get; set; }
@@ -47,16 +46,6 @@ namespace ValidationWeb
                     cs.MapLeftKey("AnnouncementId");
                     cs.MapRightKey("EdOrgId");
                     cs.ToTable("validation.AnnouncementEdOrg");
-                });
-
-            modelBuilder.Entity<AppUser>()
-                .HasMany<EdOrg>(apu => apu.AuthorizedEdOrgs)
-                .WithMany(eo => eo.AppUsers)
-                .Map(cs =>
-                {
-                    cs.MapLeftKey("AppUserId");
-                    cs.MapRightKey("EdOrgId");
-                    cs.ToTable("validation.AppUserEdOrg");
                 });
 
             modelBuilder.Entity<AppUserSession>()

@@ -59,7 +59,7 @@
                     @summary.RequestedWhen.ToShortDateString()
                     <br />@summary.RequestedWhen.ToShortTimeString()
                 </td>
-                <td>@Html.ActionLink(summary.Collection ?? "Unknown", "Report", "Validation", new { area = "", id = summary.ValidationResultsId }, null)</td>
+                <td>@Html.ActionLink(summary.Collection ?? "Unknown", "Report", "Validation", new { area = "", id = summary.Id }, null)</td>
                 <td>@summary.InitiatedBy</td>
                 <td>@summary.Status</td>
                 <td>

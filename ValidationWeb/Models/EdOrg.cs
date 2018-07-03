@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
@@ -12,8 +13,17 @@ namespace ValidationWeb
         public EdOrg()
         {
             Announcements = new HashSet<Announcement>();
-            AppUsers = new HashSet<AppUser>();
         }
+
+        /// <summary>
+        /// Not database generated - but comes from ODS - comes from assignment via code, or bulk-loading this table.
+        /// </summary>
+        [Key]
+        public string Id { get; set; }
+        public string OrganizationName { get; set; }
+        public string StateOrganizationId { get; set; }
+        public string FormattedOrganizationId { get; set; }
+        public string DistrictName { get; set; }
 
         [ForeignKey("Parent")]
         public EdOrg ParentEdOrgId { get; set; }
@@ -23,12 +33,7 @@ namespace ValidationWeb
         public int EdOrgTypeLookupId { get; set; }
         public EdOrgTypeLookup Type { get; set; }
 
-        public string Id { get; set; }
-
-        public string Name { get; set; }
-
         public ICollection<Announcement> Announcements { get; set; }
-        public ICollection<AppUser> AppUsers { get; set; }
 
         public bool TryGetEdOrgType(out EdOrgType edOrgType)
         {

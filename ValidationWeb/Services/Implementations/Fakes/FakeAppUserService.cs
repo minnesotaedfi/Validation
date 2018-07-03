@@ -8,53 +8,57 @@ namespace ValidationWeb.Services
     public class FakeAppUserService : IAppUserService
     {
         private static List<AppUserSession> _openSessions = new List<AppUserSession>();
-
-        protected readonly IEdOrgService _edOrgService;
-
         private AppUserSession currentSession = null;
+        protected readonly IEdOrgService _edOrgService;
 
         public FakeAppUserService(IEdOrgService edOrgService)
         {
             _edOrgService = edOrgService;
         }
 
-        public AppUser GetCurrentAppUser(int sessionId)
-        {
-            return GetSession(sessionId).AppUser;
-        }
-
         /// <summary>
         /// Returns SessionId number.
         /// </summary>
         /// <returns></returns>
-        public int CreateAppUserSession(int appUserId)
+        private AppUserSession CreateAppUserSession()
         {
             var specialEdOrg = _edOrgService.GetEdOrgById("ISD 622");
             var allOrgs = _edOrgService.GetEdOrgs();
-            var initalAppUser = new AppUser { Id = -1, Name = "Jane Educator", AuthorizedEdOrgs = allOrgs };
 
             currentSession = new AppUserSession
             {
-                Id = (new Random()).Next(1, 1000000),
-                AppUser = initalAppUser,
-                AppUserId = initalAppUser.Id,
+                Id = (new Random()).Next(1, 1000000).ToString(),
+                DismissedAnnouncements = new HashSet<Announcement>(),
+                ExpiresUtc = DateTime.UtcNow.AddHours(1),
+                UserIdentity = new ValidationPortalIdentity
+                {
+                    AppRole = AppRole.Administrator,
+                    AuthorizedEdOrgs = allOrgs,
+                    Email = "jane.educator@education.mn.edu",
+                    FirstName = "Jane",
+                    MiddleName = "Anne",
+                    LastName = "Educator",
+                    FullName = "Jane A. Educator",
+                    Name = "Jane",
+                    UserId = "Jane"
+                },
                 FocusedEdOrg = specialEdOrg,
                 FocusedEdOrgId = specialEdOrg.Id
             };
 
             _openSessions.Add(currentSession);
 
-            return currentSession.Id;
+            return currentSession;
         }
 
-        public AppUserSession GetSession(int sessionId)
+        public AppUserSession GetSession()
         {
-            return _openSessions.First(sess => sess.Id == sessionId);
+            return _openSessions.FirstOrDefault() ?? CreateAppUserSession();
         }
 
-        public void DismissAnnouncement(int sessionId, int announcementId)
+        public void DismissAnnouncement(int announcementId)
         {
-            _openSessions.First(sess => sess.Id == sessionId).DismissedAnnouncements.Add(new Announcement { Id = announcementId });
+            GetSession().DismissedAnnouncements.Add(new Announcement { Id = announcementId });
         }
     }
 }

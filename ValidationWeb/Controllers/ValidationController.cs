@@ -26,7 +26,7 @@ namespace ValidationWeb
         // GET: Validation/Reports
         public ActionResult Reports()
         {
-            var edOrg = _appUserService.GetSession(-1).FocusedEdOrg;
+            var edOrg = _appUserService.GetSession().FocusedEdOrg;
             var model = (edOrg == null) ? 
                 new ValidationReportsViewModel
                 {
@@ -35,7 +35,7 @@ namespace ValidationWeb
                 } :
                 new ValidationReportsViewModel
                 {
-                    DistrictName = edOrg.Name,
+                    DistrictName = edOrg.OrganizationName,
                     ReportSummaries = _validationResultsService.GetValidationReportSummaries(edOrg.Id)
                 };
             return View(model);

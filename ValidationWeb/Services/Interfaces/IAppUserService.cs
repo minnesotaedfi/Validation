@@ -8,10 +8,8 @@ namespace ValidationWeb.Services
 {
     public interface IAppUserService
     {
-        AppUser GetCurrentAppUser(int sessionId);
-        AppUserSession GetSession(int sessionId);
-        int CreateAppUserSession(int appUserId);
-        void DismissAnnouncement(int sessionId, int announcementId);
+        void DismissAnnouncement(int announcementId);
+        AppUserSession GetSession();
     }
 }
 

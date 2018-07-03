@@ -15,17 +15,17 @@ namespace ValidationWeb
             DismissedAnnouncements = new HashSet<Announcement>();
         }
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
-        public int Id { get; set; }
+        [StringLength(64)]
+        public string Id { get; set; }
 
         /// <summary>
         /// Logged in user.
         /// </summary>
-        [ForeignKey("AppUser")]
-        public int AppUserId { get; set; }
-        public AppUser AppUser { get; set; }
+        [NotMapped]
+        public ValidationPortalIdentity UserIdentity { get; set; }
 
+        public DateTime ExpiresUtc { get; set; }
         /// <summary>
         /// This is the EdOrg that the user is acting on/viewing ... chosen in the application/website.
         /// </summary>

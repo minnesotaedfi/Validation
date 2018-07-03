@@ -14,12 +14,12 @@ namespace ValidationWeb.Services
             var aRegion = ValidationPortalDbMigrationConfiguration.EdOrgTypeLookups.First(eot => eot.CodeValue == EdOrgType.Region.ToString());
             var aState = ValidationPortalDbMigrationConfiguration.EdOrgTypeLookups.First(eot => eot.CodeValue == EdOrgType.State.ToString());
 
-            var mde = new EdOrg { Id = "MDE", Name = "MN Department of Education", Parent = null, Type = aState };
-            var sRegion = new EdOrg { Id = "South", Name = "Southern Region", Parent = mde, Type = aRegion };
-            var d622 = new EdOrg { Id = "ISD 622", Name = "North St. Paul-Maplewood School District", Parent = sRegion, Type = aDistrict };
-            var d625 = new EdOrg { Id = "ISD 625", Name = "St. Paul School District", Parent = sRegion, Type = aDistrict };
-            var s6221 = new EdOrg { Id = "School 622-1", Name = "Eagle Point Elementary School", Parent = d622, Type = aSchool };
-            var s6222 = new EdOrg { Id = "School 622-2", Name = "John Glenn Middle School", Parent = d622, Type = aSchool };
+            var mde = new EdOrg { Id = "MDE", OrganizationName = "MN Department of Education", Parent = null, Type = aState };
+            var sRegion = new EdOrg { Id = "South", OrganizationName = "Southern Region", Parent = mde, Type = aRegion };
+            var d622 = new EdOrg { Id = "ISD 622", OrganizationName = "North St. Paul-Maplewood School District", Parent = sRegion, Type = aDistrict };
+            var d625 = new EdOrg { Id = "ISD 625", OrganizationName = "St. Paul School District", Parent = sRegion, Type = aDistrict };
+            var s6221 = new EdOrg { Id = "School 622-1", OrganizationName = "Eagle Point Elementary School", Parent = d622, Type = aSchool };
+            var s6222 = new EdOrg { Id = "School 622-2", OrganizationName = "John Glenn Middle School", Parent = d622, Type = aSchool };
 
             return new List<EdOrg> { mde, sRegion, d622, d625, s6221, s6222 };
         }

@@ -5,8 +5,9 @@ using System.Web;
 
 namespace ValidationWeb.Services
 {
-    public class IConfigurationValues
+    public interface IConfigurationValues
     {
-        public bool UseFakeViewModelData { get;  }
+        bool UseFakeViewModelData { get; }
+        string AuthenticationServerRedirectUrl { get; }
     }
 }

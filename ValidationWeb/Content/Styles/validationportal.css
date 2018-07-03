@@ -2,6 +2,8 @@
     padding-top: 15px;
     padding-bottom: 15px;
     font-family: Calibri, Arial, sans-serif;
+    max-width: 90%;
+    margin: auto;
 }
 
 /* Set padding to keep content from hitting the edges */

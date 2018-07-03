@@ -30,10 +30,11 @@ namespace ValidationWeb
         {
             var model = new HomeIndexViewModel
             {
+                AppUserSession = _appUserService.GetSession(),
                 Announcements = _announcementService.GetAnnoucements(),
                 YearsOpenForDataSubmission = _validatedDataSubmissionService.GetYearsOpenForDataSubmission(),
                 AuthorizedEdOrgs = _edOrgService.GetEdOrgs(),
-                FocusedEdOrg = _appUserService.GetSession(-1).FocusedEdOrg
+                FocusedEdOrg = _appUserService.GetSession().FocusedEdOrg
             };
             return View(model);
         }

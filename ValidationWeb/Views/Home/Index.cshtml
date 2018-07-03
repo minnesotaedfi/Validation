@@ -9,12 +9,12 @@
 <div class="row clear-margin">
     <div>
         <button type="button" class="btn prime-blue district-dropdown dropdown-toggle" data-toggle="dropdown">
-            Click to choose your organization: <span class="badge badge-light">@(Model.FocusedEdOrg.Name) / @(Model.AuthorizedEdOrgs.Count()) authorized</span>
+            Click to choose your organization: <span class="badge badge-light">@(Model.FocusedEdOrg.OrganizationName) / @(Model.AuthorizedEdOrgs.Count()) authorized</span>
         </button>
         <div class="dropdown-menu">
             @foreach (var edOrg in Model.AuthorizedEdOrgs)
             {
-                <span class="dropdown-item" data-district-chosen="@(edOrg.Id)">@(edOrg.Name)</span>
+                <span class="dropdown-item" data-district-chosen="@(edOrg.Id)">@(edOrg.OrganizationName)</span>
             }      
         </div>
     </div>
@@ -32,7 +32,7 @@
         var cardColor = announcement.IsEmergency ? "danger-red" : "accent-soft-blue";
         var cardId = $"card{rnd.Next(int.MaxValue)}";
 
-        if (announcement.Expiration < DateTime.Now)
+        if (announcement.Expiration > DateTime.UtcNow)
         {
             <div id="@(cardId)" class="@(cardColor) page-width clear-margin rounded-padded">
                 <h4>@(cardHeader)</h4>

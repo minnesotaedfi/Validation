@@ -7,47 +7,30 @@ namespace ValidationWeb.Services
 {
     public class AppUserService : IAppUserService
     {
+        public const string SessionItemName = "Session";
         protected readonly ValidationPortalDbContext _validationPortalDataContext;
         protected readonly IEdOrgService _edOrgService;
+        protected readonly IHttpContextProvider _httpContextProvider;
 
-        public AppUserService(ValidationPortalDbContext validationPortalDataContext, IEdOrgService edOrgService)
+        public AppUserService(
+            ValidationPortalDbContext validationPortalDataContext, 
+            IEdOrgService edOrgService,
+            IHttpContextProvider httpContextProvider)
         {
             _validationPortalDataContext = validationPortalDataContext;
             _edOrgService = edOrgService;
+            _httpContextProvider = httpContextProvider;
         }
 
-        public int CreateAppUserSession(int appUserId)
+        public void DismissAnnouncement(int announcementId)
         {
-            var allOrgs = _edOrgService.GetEdOrgs();
-            var specialEdOrg = _edOrgService.GetEdOrgById("ISD 622");
-
-            var currentSession = new AppUserSession
-            {
-                AppUser = new AppUser { Id = -1, Name = "Jane Educator", AuthorizedEdOrgs = allOrgs },
-                AppUserId = -1,
-                FocusedEdOrg = specialEdOrg,
-                FocusedEdOrgId = specialEdOrg.Id
-            };
-
-            _validationPortalDataContext.AppUserSessions.Add(currentSession);
+            GetSession().DismissedAnnouncements.Add(_validationPortalDataContext.Announcements.First(ann => ann.Id == announcementId));
             _validationPortalDataContext.SaveChanges();
-
-            return currentSession.Id;
         }
 
-        public void DismissAnnouncement(int sessionId, int announcementId)
+        public AppUserSession GetSession()
         {
-            GetSession(sessionId).DismissedAnnouncements.Add(_validationPortalDataContext.Announcements.First(ann => ann.Id == announcementId));
-        }
-
-        public AppUser GetCurrentAppUser(int sessionId)
-        {
-            return GetSession(sessionId).AppUser;
-        }
-
-        public AppUserSession GetSession(int sessionId)
-        {
-            return _validationPortalDataContext.AppUserSessions.First(sess => sess.Id == sessionId);
+            return _httpContextProvider.CurrentHttpContext.Items[SessionItemName] as AppUserSession;
         }
     }
 }

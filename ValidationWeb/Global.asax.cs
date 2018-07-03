@@ -17,9 +17,7 @@ namespace ValidationWeb
 {
     public class Global : System.Web.HttpApplication
     {
-
-        private ConfigurationValues config = new ConfigurationValues();
-
+        private AppSettingsFileConfigurationValues config = new AppSettingsFileConfigurationValues();
         protected void Application_Start(object sender, EventArgs e)
         {
             RouteConfig.RegisterRoutes(RouteTable.Routes);
@@ -39,7 +37,9 @@ namespace ValidationWeb
             {
                 container.Register<IAnnouncementService, FakeAnnouncementService>(Lifestyle.Scoped);
                 container.Register<IAppUserService, FakeAppUserService>(Lifestyle.Scoped);
+                container.Register<IConfigurationValues, AppSettingsFileConfigurationValues>(Lifestyle.Scoped);
                 container.Register<IEdOrgService, FakeEdOrgService>(Lifestyle.Scoped);
+                container.Register<IHttpContextProvider, HttpContextProvider>(Lifestyle.Scoped);
                 container.Register<IValidatedDataSubmissionService, FakeValidatedDataSubmissionService>(Lifestyle.Scoped);
                 container.Register<IValidationResultsService, FakeValidationResultsService>(Lifestyle.Scoped);
             }
@@ -47,7 +47,9 @@ namespace ValidationWeb
             {
                 container.Register<IAnnouncementService, AnnouncementService>(Lifestyle.Scoped);
                 container.Register<IAppUserService, AppUserService>(Lifestyle.Scoped);
+                container.Register<IConfigurationValues, AppSettingsFileConfigurationValues>(Lifestyle.Scoped);
                 container.Register<IEdOrgService, EdOrgService>(Lifestyle.Scoped);
+                container.Register<IHttpContextProvider, HttpContextProvider>(Lifestyle.Scoped);
                 container.Register<IValidatedDataSubmissionService, ValidatedDataSubmissionService>(Lifestyle.Scoped);
                 container.Register<IValidationResultsService, ValidationResultsService>(Lifestyle.Scoped);
 
@@ -56,7 +58,6 @@ namespace ValidationWeb
             }
             container.Verify();
             DependencyResolver.SetResolver(new SimpleInjectorDependencyResolver(container));
-
         }
     }
 }

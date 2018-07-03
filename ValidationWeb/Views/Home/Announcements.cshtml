@@ -8,7 +8,7 @@
         var cardColor = announcement.IsEmergency ? "danger-red" : "accent-soft-blue";
         var cardId = $"card{rnd.Next(int.MaxValue)}";
 
-        if (announcement.Expiration < DateTime.Now)
+        if (announcement.Expiration > DateTime.UtcNow)
         {
             <div id="@(cardId)" class="@(cardColor) page-width clear-margin rounded-padded">
                 <h4>@(cardHeader)</h4>

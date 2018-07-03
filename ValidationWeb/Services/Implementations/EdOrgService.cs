@@ -18,8 +18,7 @@ namespace ValidationWeb.Services
 
         public List<EdOrg> GetEdOrgs()
         {
-            int sessionId = 0;
-            return _appUserService.GetCurrentAppUser(sessionId).AuthorizedEdOrgs.OrderBy(eo => eo.Name).ToList();
+            return _appUserService.GetSession().UserIdentity.AuthorizedEdOrgs.OrderBy(eo => eo.OrganizationName).ToList();
         }
 
         public EdOrg GetEdOrgById(string edOrgId)
