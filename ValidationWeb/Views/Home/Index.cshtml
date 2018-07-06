@@ -7,23 +7,29 @@
 </script>
 
 <div class="row clear-margin">
-    <div>
+    <div class="tbmargin10">
         <button type="button" class="btn prime-blue district-dropdown dropdown-toggle" data-toggle="dropdown">
-            Click to choose your organization: <span class="badge badge-light">@(Model.FocusedEdOrg.OrganizationName) / @(Model.AuthorizedEdOrgs.Count()) authorized</span>
+            @(Model.AppUserSession.UserIdentity.FirstName), Click to choose your organization: <span class="badge badge-light">@(Model.FocusedEdOrg.OrganizationName) / @(Model.AuthorizedEdOrgs.Count()) authorized</span>
         </button>
-        <div class="dropdown-menu">
+        <div class="dropdown-menu prime-blue white-heavy-text">
             @foreach (var edOrg in Model.AuthorizedEdOrgs)
             {
-                <span class="dropdown-item" data-district-chosen="@(edOrg.Id)">@(edOrg.OrganizationName)</span>
+                <span class="dropdown-item white-heavy-text" data-district-chosen="@(edOrg.Id)">@(edOrg.OrganizationName)</span>
             }      
         </div>
     </div>
-    <div class="h2">School years open for submission: 
-        <span>@( string.Join(", ", Model.YearsOpenForDataSubmission.Select(yr => yr.ToString()).OrderBy(y => y).ToList()))</span>
+    <div class="tbmargin10">
+        <p class="h4">
+            You are logged in as @(Model.AppUserSession.UserIdentity.FullName) with access level: @(Model.AppUserSession.UserIdentity.AppRole?.Name).
+        </p>
+        <p  class="h4">
+            School years open for submission:
+            <span>@( string.Join(", ", Model.YearsOpenForDataSubmission.Select(yr => yr.ToString()).OrderBy(y => y).ToList()))</span>
+        </p>
     </div>
 </div>
 
-<div class="row clear-margin">
+<div class="row tbmargin10 lrmargin0">
     @{ var rnd = new Random(); }
     @foreach (var announcement in Model.Announcements.OrderByDescending(a => a.Priority).ToList())
     {

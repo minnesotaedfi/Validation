@@ -20,6 +20,18 @@ namespace ValidationWeb.Services
                         CollectionName = "End of Year Collection",
                         CompletedWhen = new DateTime(2018, 4, 26, 15, 1, 44),
                         DistrictName = "North St. Paul-Maplewood School District",
+                        ValidationReportSummaryId = validationReportId,
+                        ValidationReportSummary = new ValidationReportSummary
+                        {
+                            Id = 1,
+                            Collection = "End of Year Collection",
+                            InitiatedBy = "mdoe@k12.isd622.mn.gov",
+                            RequestedWhen = new DateTime(2018, 4, 26, 14, 59, 0),
+                            CompletedWhen = new DateTime(2018, 4, 26, 15, 1, 44),
+                            Status = "Complete",
+                            ErrorCount = 5038,
+                            WarningCount = 3726
+                        },
                         ErrorSummaries = new ValidationErrorSummary[]
                         {
                             new ValidationErrorSummary
@@ -70,6 +82,18 @@ namespace ValidationWeb.Services
                         CollectionName = "End of Year Collection",
                         CompletedWhen = new DateTime(2018, 4, 26, 15, 1, 44),
                         DistrictName = "North St. Paul-Maplewood School District",
+                        ValidationReportSummaryId = validationReportId,
+                        ValidationReportSummary = new ValidationReportSummary
+                        {
+                            Id = 2,
+                            Collection = "End of Year Collection",
+                            InitiatedBy = "jsmith@k12.isd622.mn.gov",
+                            RequestedWhen = new DateTime(2018, 5, 1, 15, 30, 0),
+                            CompletedWhen = new DateTime(2018, 5, 1, 15, 31, 25),
+                            Status = "Complete",
+                            ErrorCount = 976,
+                            WarningCount = 424
+                        },
                         ErrorSummaries = new ValidationErrorSummary[]
                         {
                             new ValidationErrorSummary

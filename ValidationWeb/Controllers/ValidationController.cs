@@ -40,6 +40,7 @@ namespace ValidationWeb
                 };
             return View(model);
         }
+
         public ActionResult Report(int id = 0)
         {
             if (id == 0)
@@ -50,5 +51,13 @@ namespace ValidationWeb
             var model = new ValidationReportDetailsViewModel { Details = _validationResultsService.GetValidationReportDetails(id) };
             return View(model);
         }
+
+
+        // GET: Validation/Reports
+        public ActionResult Submissions()
+        {
+            return View();
+        }
+
     }
 }

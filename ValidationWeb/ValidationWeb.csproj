@@ -148,6 +148,7 @@
     <Content Include="Views\Shared\_LittleFooter.cshtml" />
     <Content Include="Views\Home\_ViewStart.cshtml" />
     <Content Include="Views\Shared\_BigLayout.cshtml" />
+    <Content Include="Views\Validation\Submissions.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

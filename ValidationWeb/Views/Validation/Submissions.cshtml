@@ -1,9 +1,8 @@
-﻿@model ValidationReportsViewModel
-
-
+﻿
 <div class="row">
-    <div class="h4">Validation Reports for District @Model.DistrictName</div>
-    <button id="newValidationButton" type="button" class="btn btn-primary white-heavy-text float-right margin10" data-toggle="modal" data-target="#NewValidationModal">Validate</button>
+    <div class="h4">Data Submissions for District  North St. Paul-Maplewood School District</div>
+    <button id="newValidationButton" type="button" class="btn btn-primary white-heavy-text float-right margin10" data-toggle="modal" data-target="#NewValidationModal">Submit Data</button>
+
     <!-- New Validation Modal -->
     <div id="NewValidationModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
@@ -43,33 +42,40 @@
 <div class="row tbmargin10">
     <table class="table table-sm table-responsive-md table-bordered">
         <tr class="table-primary">
-            <th>Request Date/Time</th>
-            <th>Collection</th>
+            <th>Submission Date/Time</th>
             <th>Initiated By</th>
-            <th>Status</th>
+            <th>School Year</th>
             <th>Completion Date/Time</th>
-            <th>Below Error<br />Threshold</th>
-            <th>Error Count</th>
-            <th>Warning Count</th>
+            <th>Unique Students</th>
+            <th>Status</th>
+            <th>Submission</th>
         </tr>
-        @foreach (var summary in Model.ReportSummaries)
-            {
-            <tr>
-                <td>
-                    @summary.RequestedWhen.ToShortDateString()
-                    <br />@summary.RequestedWhen.ToShortTimeString()
-                </td>
-                <td>@Html.ActionLink(summary.Collection ?? "Unknown", "Report", "Validation", new { area = "", id = summary.Id }, null)</td>
-                <td>@summary.InitiatedBy</td>
-                <td>@summary.Status</td>
-                <td>
-                    @summary.CompletedWhen.ToShortDateString()
-                    <br />@summary.CompletedWhen.ToShortTimeString()
-                </td>
-                <td class="minnesota-green-text">Yes</td>
-                <td>@summary.ErrorCount</td>
-                <td>@summary.WarningCount</td>
-            </tr>
-        }
+        <tr>
+            <td>6/28/2018 3:18 PM</td>
+            <td>M. Jenson</td>
+            <td>2017-2018</td>
+            <td>Pending</td>
+            <td>New: <br />Updated: <br />Deleted: </td>
+            <td>In Progress</td>
+            <td>End-Of-Year Collection</td>
+        </tr>
+        <tr>
+            <td>4/28/2018 3:18 PM</td>
+            <td>M. Jenson</td>
+            <td>2017-2018</td>
+            <td>4/28/2018 3:21 PM</td>
+            <td>New: 283<br />Updated: 0<br />Deleted: 0</td>
+            <td>Completed</td>
+            <td>End-Of-Year Collection</td>
+        </tr>
+        <tr>
+            <td>4/28/2018 3:18 PM</td>
+            <td>M. Jenson</td>
+            <td>2017-2018</td>
+            <td>4/28/2018 3:21 PM</td>
+            <td>New: -<br />Updated: -<br />Deleted: -</td>
+            <td><a href="#">Failed To Complete</a></td>
+            <td>End-Of-Year Collection</td>
+        </tr>
     </table>
 </div>

@@ -2,8 +2,6 @@
     padding-top: 15px;
     padding-bottom: 15px;
     font-family: Calibri, Arial, sans-serif;
-    max-width: 90%;
-    margin: auto;
 }
 
 /* Set padding to keep content from hitting the edges */
@@ -11,6 +9,10 @@
     padding-left: 15px;
     padding-right: 15px;
     margin: 0;
+}
+
+.container-fluid, .layout-footer {
+    max-width: 1280px;
 }
 
 /* Background Colors */
@@ -28,6 +30,11 @@
 
 .minnesota-green {
     background-color: rgb(120, 190, 33);
+}
+
+.minnesota-green-text {
+    color: rgb(90, 143, 24);
+    font-weight: bold;
 }
 
 .danger-red {
@@ -56,6 +63,16 @@
 
 .margin10 {
     margin: 10px;
+}
+
+.tbmargin10 {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.lrmargin0 {
+    margin-left: 0px;
+    margin-right: 0px;
 }
 
 .page-width {
@@ -115,6 +132,10 @@ input, select, textarea {
     border-bottom-width: 10px;
     border-bottom-style: solid;
     text-align: right;
+    margin-top: 0px;
+    margin-left: 15px;
+    margin-right: 15px;
+    max-width: 1280px;
 }
 
 /* Minnesota requires padding to give logo impact. */
@@ -124,7 +145,7 @@ input, select, textarea {
 }
 
 .app-title {
-    font-size: 32pt; 
+    font-size: 24pt; 
     font-weight: bold;
     color: rgb(0, 56, 101); 
     padding: 30px;

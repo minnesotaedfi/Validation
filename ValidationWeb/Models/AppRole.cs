@@ -18,21 +18,21 @@ namespace ValidationWeb
         {
             if (string.Compare(name, "SummaryViewer", CaseInsensitive) == 0)
             {
-                return SummaryViewer;
+                return new AppRole { Name = "SummaryViewer" };
             }
             if (string.Compare(name, "Viewer", CaseInsensitive) == 0)
             {
-                return Viewer;
+                return new AppRole { Name = "Viewer" };
             }
             if (string.Compare(name, "Launcher", CaseInsensitive) == 0)
             {
-                return Launcher;
+                return new AppRole { Name = "Launcher" };
             }
             if (string.Compare(name, "Administrator", CaseInsensitive) == 0)
             {
-                return Administrator;
+                return new AppRole { Name = "Administrator" };
             }
-            return Unauthorized;
+            return new AppRole { Name = "Unauthorized" };
         }
 
         #region Operator Overloads

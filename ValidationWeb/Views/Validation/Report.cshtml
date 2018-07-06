@@ -1,28 +1,39 @@
 ﻿@model ValidationReportDetailsViewModel
-
-<div class="h2">Validation Report Details for District @Model.Details.DistrictName</div>
-<div class="h2">Collection @Model.Details.CollectionName (@Model.Details.CompletedWhen.ToShortDateString() @Model.Details.CompletedWhen.ToShortTimeString())</div>
-
-    <div class="row">
-        <table class="table table-sm table-responsive-md table-bordered">
-            <tr class="table-primary">
-                <th>Component</th>
-                <th>Student</th>
-                <th>School Number</th>
-                <th>Grade</th>
-                <th>Error Number</th>
-                <th>Error</th>
-            </tr>
-            @foreach (var summary in Model.Details.ErrorSummaries)
-            {
-                <tr>
-                    <td>@summary.Component</td>
-                    <td>@summary.Student.GetFullName() <br />@summary.Student.Id</td>
-                    <td>@summary.School <br />456</td>
-                    <td>@summary.Grade</td>
-                    <td>@summary.ErrorCode</td>
-                    <td>@summary.ErrorText</td>
+        <div class="row">
+            <div class="h4">Validation Report Details for District @Model.Details.DistrictName</div>
+        </div>
+        <div class="row">
+            <div>Requested On: @Model.Details.CompletedWhen.ToShortDateString() @Model.Details.CompletedWhen.ToShortTimeString()</div>
+        </div>
+        <div class="row">
+            <div>Initiated By: @Model.Details.ValidationReportSummary.InitiatedBy</div>
+        </div>
+        <div class="row">
+            <div>Submission: @Model.Details.CollectionName</div>
+        </div>
+        <div class="row ">
+            <div>Status: @Model.Details.ValidationReportSummary.Status</div>
+        </div>
+        <div class="row tbmargin10">
+            <table class="table table-sm table-responsive-md table-bordered">
+                <tr class="table-primary">
+                    <th>Component</th>
+                    <th>Student</th>
+                    <th>School Number</th>
+                    <th>Grade</th>
+                    <th>Error Number</th>
+                    <th>Error</th>
                 </tr>
-            }
-        </table>
-    </div>
+                @foreach (var summary in Model.Details.ErrorSummaries)
+            {
+                    <tr>
+                        <td>@summary.Component</td>
+                        <td>@summary.Student.GetFullName() <br />@summary.Student.Id</td>
+                        <td>@summary.School <br />456</td>
+                        <td>@summary.Grade</td>
+                        <td>@summary.ErrorCode</td>
+                        <td>@summary.ErrorText</td>
+                    </tr>
+                }
+            </table>
+        </div>
