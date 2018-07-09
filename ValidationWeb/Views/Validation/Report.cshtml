@@ -1,5 +1,16 @@
 ﻿@model ValidationReportDetailsViewModel
-        <div class="row">
+
+@Scripts.Render("~/bundles/jquery")
+
+<script>
+    $(document).ready(function() {
+        $("#export").click(function() {
+            $('#errorTable').table2csv({ filename: 'errorTable.csv' });
+        });
+    });
+</script>
+
+<div class="row">
             <div class="h4">Validation Report Details for District @Model.Details.DistrictName</div>
         </div>
         <div class="row">
@@ -13,9 +24,10 @@
         </div>
         <div class="row ">
             <div>Status: @Model.Details.ValidationReportSummary.Status</div>
+            <button id ="export" data-export="export" class="btn btn-primary white-heavy-text float-right margin10" style="display: inline-block">Export</button>
         </div>
         <div class="row tbmargin10">
-            <table class="table table-sm table-responsive-md table-bordered">
+            <table class="table table-sm table-responsive-md table-bordered" id ="errorTable">
                 <tr class="table-primary">
                     <th>Component</th>
                     <th>Student</th>

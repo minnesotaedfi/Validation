@@ -1,5 +1,15 @@
 ﻿@model ValidationReportsViewModel
 
+@Scripts.Render("~/bundles/jquery")
+
+
+<script>
+    $(document).ready(function() {
+        $("#export").click(function() {
+            $('#reportsTable').table2csv({ filename: 'reportsTable.csv' });
+        });
+    });
+</script>
 
 <div class="row">
     <div class="h4">Validation Reports for District @Model.DistrictName</div>
@@ -21,6 +31,8 @@
             </div>
         </div>
     </div>
+    
+    <button id ="export" data-export="export" class="btn btn-primary white-heavy-text float-right margin10">Export</button>
 
     <!-- Confirm Validation Modal
     <div id="ConfirmNewValidationModal" class="modal fade" role="dialog">
@@ -41,7 +53,7 @@
     </div>-->
 </div>
 <div class="row tbmargin10">
-    <table class="table table-sm table-responsive-md table-bordered">
+    <table class="table table-sm table-responsive-md table-bordered" id ="reportsTable">
         <tr class="table-primary">
             <th>Request Date/Time</th>
             <th>Collection</th>

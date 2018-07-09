@@ -21,6 +21,8 @@ namespace ValidationWeb
                       "~/Content/Scripts/popper.min.js",
                       "~/Content/Scripts/bootstrap.js",
                       "~/Content/Scripts/respond.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/table2CSV").Include("~/Content/Scripts/table2csv.js"));
         }
     }
 }
