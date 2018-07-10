@@ -1,12 +1,14 @@
-﻿@Scripts.Render("~/bundles/jquery")
-
-<script>
-    $(document).ready(function() {
-        $("#export").click(function() {
-            $('#dataSubmissions').table2csv({ filename: 'dataSubmissions.csv' });
+﻿
+@section scripts
+{
+    <script>
+        $(document).ready(function() {
+            $("#export").click(function() {
+                $('#dataSubmissions').table2csv({ filename: 'dataSubmissions.csv' });
+            });
         });
-    });
-</script>
+    </script>
+}
 
 <div class="row">
     <div class="h4">Data Submissions for District  North St. Paul-Maplewood School District</div>

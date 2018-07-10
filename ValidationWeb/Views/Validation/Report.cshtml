@@ -1,14 +1,15 @@
 ﻿@model ValidationReportDetailsViewModel
 
-@Scripts.Render("~/bundles/jquery")
-
-<script>
-    $(document).ready(function() {
-        $("#export").click(function() {
-            $('#errorTable').table2csv({ filename: 'errorTable.csv' });
+@section scripts
+ {
+    <script>
+        $(document).ready(function() {
+            $("#export").click(function() {
+                $('#errorTable').table2csv({ filename: 'validationReportDetails.csv' });
+            });
         });
-    });
-</script>
+    </script>
+}
 
 <div class="row">
             <div class="h4">Validation Report Details for District @Model.Details.DistrictName</div>
