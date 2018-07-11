@@ -14,26 +14,71 @@
         <div class="row ">
             <div>Status: @Model.Details.ValidationReportSummary.Status</div>
         </div>
-        <div class="row tbmargin10">
-            <table class="table table-sm table-responsive-md table-bordered">
-                <tr class="table-primary">
-                    <th>Component</th>
-                    <th>Student</th>
-                    <th>School Number</th>
-                    <th>Grade</th>
-                    <th>Error Number</th>
-                    <th>Error</th>
-                </tr>
-                @foreach (var summary in Model.Details.ErrorSummaries)
-            {
-                    <tr>
-                        <td>@summary.Component</td>
-                        <td>@summary.Student.GetFullName() <br />@summary.Student.Id</td>
-                        <td>@summary.School <br />456</td>
-                        <td>@summary.Grade</td>
-                        <td>@summary.ErrorCode</td>
-                        <td>@summary.ErrorText</td>
-                    </tr>
-                }
-            </table>
-        </div>
+@*         <div class="row tbmargin10"> *@
+@*             <table class="table table-sm table-responsive-md table-bordered"> *@
+@*                 <tr class="table-primary"> *@
+@*                     <th>Component</th> *@
+@*                     <th>Student</th> *@
+@*                     <th>School Number</th> *@
+@*                     <th>Grade</th> *@
+@*                     <th>Error Number</th> *@
+@*                     <th>Error</th> *@
+@*                 </tr> *@
+@*                 @foreach (var summary in Model.Details.ErrorSummaries) *@
+@*             { *@
+@*                     <tr> *@
+@*                         <td>@summary.Component</td> *@
+@*                         <td>@summary.Student.GetFullName() <br />@summary.Student.Id</td> *@
+@*                         <td>@summary.School <br />456</td> *@
+@*                         <td>@summary.Grade</td> *@
+@*                         <td>@summary.ErrorCode</td> *@
+@*                         <td>@summary.ErrorText</td> *@
+@*                     </tr> *@
+@*                 } *@
+@*             </table> *@
+@*         </div> *@
+
+
+<div class ="row tbmargin10" id ="testTable">
+
+</div>
+
+
+
+@section scripts
+{
+    <script>
+
+        var tableData = [];
+
+        @foreach(var summary in Model.Details.ErrorSummaries)
+        {
+            <text>
+                tableData.push(
+                    {
+                        component: "@summary.Component",
+                        student: "@summary.Student.GetFullName()" + "\n" + "@summary.Student.Id",
+                        school: "@summary.School" + "\n 456",
+                        grade: "@summary.Grade",
+                        errorCode: "@summary.ErrorCode",
+                        error: "@summary.ErrorText"
+                    });
+            </text>
+        }
+
+        $("#testTable").tabulator({
+            data: tableData, //set initial table data
+            layout: "fitColumns",
+            pagination: "local",
+            paginationSize : 2,
+            columns: [
+                { title: "Component", field: "component" },
+                { title: "Student", field: "student" },
+                { title: "School", field: "school" },
+                { title: "Grade", field: "grade" },
+                { title: "Error Number", field: "errorNumber" },
+                { title: "Error", field: "error" }
+            ]
+        });
+    </script>
+}

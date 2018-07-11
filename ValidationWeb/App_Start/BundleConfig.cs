@@ -21,6 +21,11 @@ namespace ValidationWeb
                       "~/Content/Scripts/popper.min.js",
                       "~/Content/Scripts/bootstrap.js",
                       "~/Content/Scripts/respond.js"));
+
+
+            bundles.Add(new ScriptBundle("~/bundles/tabulatorScripts").Include("~/Content/Scripts/tabulator.min.js"));
+            bundles.Add(new StyleBundle("~/Content/tabulatorCSS").Include("~/Content/Styles/tabulator_modern.min.css"));
+            bundles.Add(new ScriptBundle("~/bundles/jqueryUI").Include("~/Content/Scripts/jquery-ui.js"));
         }
     }
 }
