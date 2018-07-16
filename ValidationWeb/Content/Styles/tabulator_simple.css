@@ -3,7 +3,8 @@
   position: relative;
   background-color: #fff;
   overflow: hidden;
-  font-size: 14px;
+  font-size: 1rem;
+  font-family: Calibri, Arial, sans-serif;
   text-align: left;
   -ms-transform: translatez(0);
   transform: translatez(0);
@@ -26,7 +27,7 @@
   width: 100%;
   border-bottom: 1px solid #999;
   background-color: #fff;
-  color: #555;
+  color: #212529;
   font-weight: bold;
   white-space: nowrap;
   overflow: hidden;
@@ -34,6 +35,7 @@
   -khtml-user-select: none;
   -webkit-user-select: none;
   -o-user-select: none;
+
 }
 
 .tabulator .tabulator-header .tabulator-col {
@@ -55,6 +57,7 @@
 }
 
 .tabulator .tabulator-header .tabulator-col .tabulator-col-content {
+  background: #b8daff;
   box-sizing: border-box;
   position: relative;
   padding: 4px;

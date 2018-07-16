@@ -10,5 +10,6 @@ namespace ValidationWeb.Services
     {
         List<ValidationReportSummary> GetValidationReportSummaries(string edOrgId);
         ValidationReportDetails GetValidationReportDetails(int validationReportId);
+        List<ValidationErrorSummary> GetValidationErrorSummaryTableData(int validationReportSummaryId);
     }
 }

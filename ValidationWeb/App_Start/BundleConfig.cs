@@ -23,9 +23,10 @@ namespace ValidationWeb
                       "~/Content/Scripts/respond.js"));
 
 
-            bundles.Add(new ScriptBundle("~/bundles/tabulatorScripts").Include("~/Content/Scripts/tabulator.min.js"));
-            bundles.Add(new StyleBundle("~/Content/tabulatorCSS").Include("~/Content/Styles/tabulator_modern.min.css"));
+            bundles.Add(new ScriptBundle("~/bundles/tabulatorScripts").Include("~/Content/Scripts/tabulator.js"));
+            bundles.Add(new StyleBundle("~/Content/tabulatorCSS").Include("~/Content/Styles/tabulator_simple.css"));
             bundles.Add(new ScriptBundle("~/bundles/jqueryUI").Include("~/Content/Scripts/jquery-ui.js"));
+            bundles.Add(new StyleBundle("~/Content/jqueryUICSS").Include("~/Content/Styles/jquery-ui.css"));
         }
     }
 }

@@ -40,7 +40,6 @@
 
 
 <div class ="row tbmargin10" id ="testTable">
-
 </div>
 
 
@@ -49,36 +48,71 @@
 {
     <script>
 
-        var tableData = [];
 
-        @foreach(var summary in Model.Details.ErrorSummaries)
+        var studentAutoCompleteFilter = function(cell, onRendered, success, cancel, editorParams)
         {
-            <text>
-                tableData.push(
-                    {
-                        component: "@summary.Component",
-                        student: "@summary.Student.GetFullName()" + "\n" + "@summary.Student.Id",
-                        school: "@summary.School" + "\n 456",
-                        grade: "@summary.Grade",
-                        errorCode: "@summary.ErrorCode",
-                        error: "@summary.ErrorText"
-                    });
-            </text>
-        }
+            
+            var tableData = {};
+            $.ajax({
+                url: "../GetValidationErrorSummaryTableData",
+                type: "GET",
+                data: {validationReportSummaryId : @Model.Details.ValidationReportSummaryId},
+                async: false,
+                success: function (data) {
+                    tableData = JSON.parse(data);
+                }
+            });
 
+            var studentNameList = [];
+
+            tableData.forEach(function(item, index) {
+                studentNameList.push(item.Student.FirstName + " " + item.Student.LastName);
+            });
+
+            var container = $("<input id='tags' placeholder='filter column...'>").autocomplete({
+                source: studentNameList
+            });
+            $("#testTable").tabulator("setData");
+            container.css({
+                "padding":"4px",
+                "width":"100%",
+                "box-sizing":"border-box",
+                "-webkit-appearance": "none"
+            });
+
+            return container;
+        }
+       
+        
+      
         $("#testTable").tabulator({
-            data: tableData, //set initial table data
+            ajaxURL: "../GetValidationErrorSummaryTableData",
+            ajaxParams: { validationReportSummaryId: @Model.Details.ValidationReportSummaryId },
             layout: "fitColumns",
             pagination: "local",
-            paginationSize : 2,
+            paginationSize: 1,
             columns: [
-                { title: "Component", field: "component" },
-                { title: "Student", field: "student" },
-                { title: "School", field: "school" },
-                { title: "Grade", field: "grade" },
-                { title: "Error Number", field: "errorNumber" },
-                { title: "Error", field: "error" }
+                { title: "Component", field: "Component", formatter: "textarea" },
+                {
+                    title: "Student",
+                    field: "Student",
+                    formatter: "textarea",
+                    headerFilter: studentAutoCompleteFilter,
+                    headerFilterFunc:"like",
+                    mutator: function(value,
+                        data,
+                        type,
+                        params,
+                        component) {return value.FirstName + " "+ value.LastName;
+                    }
+                },
+                { title: "School", field: "School", formatter: "textarea", headerFilter: "input"},
+                { title: "Grade", field: "Grade", formatter: "textarea" },
+                { title: "Error Number", field: "ErrorCode",formatter: "textarea" },
+                { title: "Error", field: "ErrorText", formatter: "textarea", headerFilter: "input" }
             ]
         });
+
+
     </script>
 }
