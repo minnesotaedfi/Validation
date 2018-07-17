@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Script.Serialization;
 using ValidationWeb.Services;
 
 namespace ValidationWeb
@@ -57,6 +58,16 @@ namespace ValidationWeb
         public ActionResult Submissions()
         {
             return View();
+        }
+
+        // GET: Validation/GetErrorReportTableData
+        public String GetValidationErrorSummaryTableData(int validationReportSummaryId)
+        {
+            var jsonSerialiser = new JavaScriptSerializer();
+            List<ValidationErrorSummary> errorSummaryList = _validationResultsService.GetValidationErrorSummaryTableData(validationReportSummaryId);
+            var json = jsonSerialiser.Serialize(errorSummaryList);
+
+            return json;
         }
 
     }

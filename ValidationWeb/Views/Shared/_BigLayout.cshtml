@@ -6,6 +6,10 @@
     <title>ASDCS District Data Validation Portal</title>
     <link rel="SHORTCUT ICON" href="~/favicon.ico" />
     @Styles.Render("~/Content/css")
+    @Styles.Render("~/Content/tabulatorCSS")
+    @Styles.Render("~/Content/jqueryUICSS")
+
+
 </head>
 <body>
     <div class="container-fluid layout">
@@ -43,6 +47,9 @@
     </div>
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/jqueryUI")
+    @Scripts.Render("~/bundles/tabulatorScripts")
+    @Scripts.Render("~/bundles/table2CSV")
     @RenderSection("scripts", required: false)
 </body>
 </html>

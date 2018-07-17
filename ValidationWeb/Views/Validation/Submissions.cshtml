@@ -1,4 +1,15 @@
 ﻿
+@section scripts
+{
+    <script>
+        $(document).ready(function() {
+            $("#export").click(function() {
+                $('#dataSubmissions').table2csv({ filename: 'dataSubmissions.csv' });
+            });
+        });
+    </script>
+}
+
 <div class="row">
     <div class="h4">Data Submissions for District  North St. Paul-Maplewood School District</div>
     <button id="newValidationButton" type="button" class="btn btn-primary white-heavy-text float-right margin10" data-toggle="modal" data-target="#NewValidationModal">Submit Data</button>
@@ -21,6 +32,8 @@
         </div>
     </div>
 
+    <button id ="export" data-export="export" class="btn btn-primary white-heavy-text float-right margin10">Export</button>
+
     <!-- Confirm Validation Modal
     <div id="ConfirmNewValidationModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
@@ -40,7 +53,7 @@
     </div>-->
 </div>
 <div class="row tbmargin10">
-    <table class="table table-sm table-responsive-md table-bordered">
+    <table class="table table-sm table-responsive-md table-bordered" id ="dataSubmissions">
         <tr class="table-primary">
             <th>Submission Date/Time</th>
             <th>Initiated By</th>

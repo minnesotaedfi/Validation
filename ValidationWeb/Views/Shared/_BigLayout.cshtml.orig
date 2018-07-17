@@ -9,10 +9,11 @@
     @Styles.Render("~/Content/tabulatorCSS")
     @Styles.Render("~/Content/jqueryUICSS")
 
+
 </head>
 <body>
     <div class="container-fluid layout">
-        <div class="row ">
+        <div class="row">
             <div class="top-banner col-12">
                 <img src="~/Content/Images/mdelogo450.png" class="img-fluid mdelogo" />
                 <div class="app-title clear-margin">ASDCS District Data Validation Portal</div>
@@ -42,13 +43,21 @@
                 @RenderBody()
             </div>
         </div>
-        @Html.Partial("_LittleFooter")
+        @Html.Partial("_BigFooter")
     </div>
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
+<<<<<<< HEAD
     @Scripts.Render("~/bundles/jqueryUI")
-    @Scripts.Render("~/bundles/table2CSV")
+
+
     @Scripts.Render("~/bundles/tabulatorScripts")
+
+=======
+    @Scripts.Render("~/bundles/table2CSV")
+>>>>>>> development
+
     @RenderSection("scripts", required: false)
 </body>
 </html>
+
