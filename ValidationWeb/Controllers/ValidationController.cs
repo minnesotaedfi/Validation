@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Engine.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -9,35 +10,45 @@ namespace ValidationWeb
 {
     public class ValidationController : Controller
     {
-        private readonly IAppUserService _appUserService;
-        private readonly IEdOrgService _edOrgService;
-        private readonly IValidationResultsService _validationResultsService;
+        protected readonly IAppUserService _appUserService;
+        protected readonly IEdOrgService _edOrgService;
+        protected readonly IRulesEngineService _rulesEngineService;
+        protected readonly ISchoolYearService _schoolYearService;
+        protected readonly IValidationResultsService _validationResultsService;
+        protected readonly Model _engineObjectModel;
 
         public ValidationController(
             IAppUserService appUserService,
             IEdOrgService edOrgService,
-            IValidationResultsService validationResultsService)
+            IValidationResultsService validationResultsService,
+            IRulesEngineService rulesEngineService,
+            ISchoolYearService schoolYearService,
+            Model engineObjectModel)
         {
             _appUserService = appUserService;
             _edOrgService = edOrgService;
+            _engineObjectModel = engineObjectModel;
+            _rulesEngineService = rulesEngineService;
+            _schoolYearService = schoolYearService;
             _validationResultsService = validationResultsService;
         }
 
         // GET: Validation/Reports
         public ActionResult Reports()
         {
-            var edOrg = _appUserService.GetSession().FocusedEdOrg;
-            var model = (edOrg == null) ? 
-                new ValidationReportsViewModel
-                {
-                    DistrictName = "Invalid Education Organization Selected",
-                    ReportSummaries = Enumerable.Empty<ValidationReportSummary>().ToList()
-                } :
-                new ValidationReportsViewModel
-                {
-                    DistrictName = edOrg.OrganizationName,
-                    ReportSummaries = _validationResultsService.GetValidationReportSummaries(edOrg.Id)
-                };
+            var edOrg = _edOrgService.GetEdOrgById(_appUserService.GetSession().FocusedEdOrgId);
+            var rulesCollections = _engineObjectModel.Collections.OrderBy(x => x.CollectionId).ToList();
+            var theUser = _appUserService.GetUser();
+            var districtName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
+            var reportSummaries = (edOrg == null) ? Enumerable.Empty<ValidationReportSummary>().ToList() : _validationResultsService.GetValidationReportSummaries(edOrg.Id);
+            var model = new ValidationReportsViewModel
+            {
+                DistrictName = districtName,
+                TheUser = theUser,
+                ReportSummaries = reportSummaries,
+                RulesCollections = rulesCollections,
+                SchoolYears = _schoolYearService.GetSubmittableSchoolYears().ToList()
+            };
             return View(model);
         }
 
@@ -50,6 +61,14 @@ namespace ValidationWeb
 
             var model = new ValidationReportDetailsViewModel { Details = _validationResultsService.GetValidationReportDetails(id) };
             return View(model);
+        }
+
+        public ActionResult RunEngine(string collectionId, string schoolYear)
+        {
+            // TODO: Validate the user's access to district, action, school year
+            // Kick off Validation
+            ValidationReportSummary summary = _rulesEngineService.RunEngine(schoolYear, collectionId);
+            return Json(summary);
         }
 
 

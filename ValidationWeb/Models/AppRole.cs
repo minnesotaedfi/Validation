@@ -5,6 +5,7 @@ using System.Web;
 
 namespace ValidationWeb
 {
+    [Serializable]
     public class AppRole
     {
         public static AppRole Unauthorized = CreateAppRole("Unauthorized");
@@ -71,16 +72,6 @@ namespace ValidationWeb
         public override bool Equals(object obj)
         {
             return (obj as AppRole)?.Name == this.Name;
-        }
-
-        public static bool operator ==(AppRole leftHandSide, AppRole rightHandSide)
-        {
-            return leftHandSide.Name == rightHandSide.Name;
-        }
-
-        public static bool operator !=(AppRole leftHandSide, AppRole rightHandSide)
-        {
-            return !(leftHandSide.Name == rightHandSide.Name);
         }
 
         public override int GetHashCode()

@@ -29,9 +29,7 @@ namespace ValidationWeb
         /// <summary>
         /// This is the EdOrg that the user is acting on/viewing ... chosen in the application/website.
         /// </summary>
-        [ForeignKey("FocusedEdOrg")]
         public string FocusedEdOrgId { get; set; }
-        public EdOrg FocusedEdOrg { get; set; }
 
         /// <summary>
         /// Announcements that have been dismissed by the user during this session.

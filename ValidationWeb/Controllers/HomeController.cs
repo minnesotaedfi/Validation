@@ -34,8 +34,12 @@ namespace ValidationWeb
                 Announcements = _announcementService.GetAnnoucements(),
                 YearsOpenForDataSubmission = _validatedDataSubmissionService.GetYearsOpenForDataSubmission(),
                 AuthorizedEdOrgs = _edOrgService.GetEdOrgs(),
-                FocusedEdOrg = _appUserService.GetSession().FocusedEdOrg
+                FocusedEdOrg = _edOrgService.GetEdOrgById(_appUserService.GetSession().FocusedEdOrgId)
             };
+            if (model.AuthorizedEdOrgs.Count() == 0)
+            {
+                return new HttpUnauthorizedResult("Unauthorized - no educational organizations assigned to user.");
+            }
             return View(model);
         }
 

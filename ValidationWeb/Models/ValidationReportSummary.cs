@@ -12,13 +12,16 @@ namespace ValidationWeb
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
-        public int Id { get; set; }
+        public long Id { get; set; }
+        [StringLength(48)]
+        [Required]
+        public string EdOrgId { get; set; }
         public DateTime RequestedWhen { get; set; }
         public string Collection { get; set; }
         public string InitiatedBy { get; set; }
         public string Status { get; set; }
-        public DateTime CompletedWhen { get; set; }
-        public int ErrorCount { get; set; }
-        public int WarningCount { get; set; }
+        public DateTime? CompletedWhen { get; set; }
+        public int? ErrorCount { get; set; }
+        public int? WarningCount { get; set; }
     }
 }

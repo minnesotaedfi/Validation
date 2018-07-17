@@ -29,6 +29,7 @@ namespace ValidationWeb
     /// <summary>
     /// A representation of the authenticated Validation Portal user, for use in HTTP Contexts.
     /// </summary>
+    [Serializable]
     public class ValidationPortalIdentity : IIdentity
     {
         public string AuthenticationType { get { return "MNDOE_SSO"; } }

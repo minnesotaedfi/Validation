@@ -9,6 +9,7 @@ namespace ValidationWeb
     /// <summary>
     /// The Entity Framework "Seed" method (ValidationPortalDbMigrationConfiguration) is used to update these values in the database.
     /// </summary>
+    [Serializable]
     public partial class EnumLookup
     {
         [Key]

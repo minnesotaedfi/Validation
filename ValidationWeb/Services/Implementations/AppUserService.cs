@@ -9,16 +9,13 @@ namespace ValidationWeb.Services
     {
         public const string SessionItemName = "Session";
         protected readonly ValidationPortalDbContext _validationPortalDataContext;
-        protected readonly IEdOrgService _edOrgService;
         protected readonly IHttpContextProvider _httpContextProvider;
 
         public AppUserService(
             ValidationPortalDbContext validationPortalDataContext, 
-            IEdOrgService edOrgService,
             IHttpContextProvider httpContextProvider)
         {
             _validationPortalDataContext = validationPortalDataContext;
-            _edOrgService = edOrgService;
             _httpContextProvider = httpContextProvider;
         }
 
@@ -31,6 +28,11 @@ namespace ValidationWeb.Services
         public AppUserSession GetSession()
         {
             return _httpContextProvider.CurrentHttpContext.Items[SessionItemName] as AppUserSession;
+        }
+
+        public ValidationPortalIdentity GetUser()
+        {
+            return GetSession().UserIdentity;
         }
     }
 }

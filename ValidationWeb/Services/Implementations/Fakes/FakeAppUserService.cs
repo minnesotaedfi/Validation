@@ -15,6 +15,22 @@ namespace ValidationWeb.Services
         {
             _edOrgService = edOrgService;
         }
+        public ValidationPortalIdentity GetUser()
+        {
+            var allOrgs = _edOrgService.GetEdOrgs();
+            return new ValidationPortalIdentity
+            {
+                AppRole = AppRole.Administrator,
+                AuthorizedEdOrgs = allOrgs,
+                Email = "jane.educator@education.mn.edu",
+                FirstName = "Jane",
+                MiddleName = "Anne",
+                LastName = "Educator",
+                FullName = "Jane A. Educator",
+                Name = "Jane",
+                UserId = "Jane"
+            };
+        }
 
         /// <summary>
         /// Returns SessionId number.
@@ -42,7 +58,6 @@ namespace ValidationWeb.Services
                     Name = "Jane",
                     UserId = "Jane"
                 },
-                FocusedEdOrg = specialEdOrg,
                 FocusedEdOrgId = specialEdOrg.Id
             };
 

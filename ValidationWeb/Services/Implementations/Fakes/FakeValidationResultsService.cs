@@ -24,6 +24,7 @@ namespace ValidationWeb.Services
                         ValidationReportSummary = new ValidationReportSummary
                         {
                             Id = 1,
+                            EdOrgId = "ISD622",
                             Collection = "End of Year Collection",
                             InitiatedBy = "mdoe@k12.isd622.mn.gov",
                             RequestedWhen = new DateTime(2018, 4, 26, 14, 59, 0),
@@ -86,6 +87,7 @@ namespace ValidationWeb.Services
                         ValidationReportSummary = new ValidationReportSummary
                         {
                             Id = 2,
+                            EdOrgId = "ISD622",
                             Collection = "End of Year Collection",
                             InitiatedBy = "jsmith@k12.isd622.mn.gov",
                             RequestedWhen = new DateTime(2018, 5, 1, 15, 30, 0),
@@ -152,6 +154,7 @@ namespace ValidationWeb.Services
                     new ValidationReportSummary
                     {
                         Id = 2,
+                        EdOrgId = "ISD622",
                         Collection = "End of Year Collection",
                         InitiatedBy = "jsmith@k12.isd622.mn.gov",
                         RequestedWhen = new DateTime(2018, 5, 1, 15, 30, 0),
@@ -163,6 +166,7 @@ namespace ValidationWeb.Services
                     new ValidationReportSummary
                     {
                         Id = 1,
+                        EdOrgId = "ISD622",
                         Collection = "End of Year Collection",
                         InitiatedBy = "mdoe@k12.isd622.mn.gov",
                         RequestedWhen = new DateTime(2018, 4, 26, 14, 59, 0),

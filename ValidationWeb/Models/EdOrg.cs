@@ -7,6 +7,7 @@ using System.Web;
 
 namespace ValidationWeb
 {
+    [Serializable]
     [Table("validation.EdOrg")]
     public class EdOrg
     {
@@ -25,11 +26,11 @@ namespace ValidationWeb
         public string FormattedOrganizationId { get; set; }
         public string DistrictName { get; set; }
 
-        [ForeignKey("Parent")]
-        public EdOrg ParentEdOrgId { get; set; }
+        // Foreign Key configured in Fluent API OnModelCreating method
+        public string ParentId { get; set; }
         public EdOrg Parent { get; set; }
 
-        [ForeignKey("EdOrgTypeLookup")]
+        [ForeignKey("Type")]
         public int EdOrgTypeLookupId { get; set; }
         public EdOrgTypeLookup Type { get; set; }
 

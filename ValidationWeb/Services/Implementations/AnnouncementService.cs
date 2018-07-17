@@ -21,13 +21,15 @@ namespace ValidationWeb.Services
         public List<Announcement> GetAnnoucements(bool includePreviouslyDismissedAnnouncements = false)
         {
             var dismissedAnnouncementIds = _appUserService.GetSession().DismissedAnnouncements.Select(da => da.Id).ToArray();
-            var edOrgIds = _appUserService.GetSession().UserIdentity.AuthorizedEdOrgs.Select(aeo => aeo.Id).ToArray(); 
-            return _validationPortalDataContext.Announcements.Where(ann => includePreviouslyDismissedAnnouncements 
-            || ( 
-                 (ann.LimitToEdOrgs == null || ann.LimitToEdOrgs.Any(lte => edOrgIds.Contains(lte.Id))) 
-                 && (! dismissedAnnouncementIds.Contains(ann.Id))
-               )
-            ).OrderByDescending(ann => ann.Priority).ToList();
+            var edOrgIds = _appUserService.GetSession().UserIdentity.AuthorizedEdOrgs.Select(aeo => aeo.Id).ToArray();
+            var allAnnouncements = _validationPortalDataContext.Announcements.ToList();
+            var announcements = allAnnouncements.Where(ann =>
+                ann.LimitToEdOrgs != null
+                && ann.LimitToEdOrgs.Select(lte => lte.Id).Intersect(edOrgIds).Count() > 0
+                && !dismissedAnnouncementIds.Contains(ann.Id)
+                ).OrderByDescending(ann => ann.Priority).ToList();
+
+            return announcements;
         }
     }
 }

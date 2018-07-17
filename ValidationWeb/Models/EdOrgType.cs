@@ -14,6 +14,7 @@ namespace ValidationWeb
         State = 3
     }
 
+    [Serializable]
     [Table("validation.EdOrgTypeLookup")]
     public class EdOrgTypeLookup : EnumLookup { }
 }

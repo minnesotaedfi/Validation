@@ -24,7 +24,7 @@ namespace ValidationWeb
         public DateTime CompletedWhen { get; set; }
 
         [ForeignKey("ValidationReportSummary")]
-        public int ValidationReportSummaryId { get; set; }
+        public long ValidationReportSummaryId { get; set; }
         public ValidationReportSummary ValidationReportSummary { get; set; }
 
         public ICollection<ValidationErrorSummary> ErrorSummaries { get; set; }

@@ -9,6 +9,11 @@ namespace ValidationWeb.Services
     {
         private ErrorSeverityLookup anError = ValidationPortalDbMigrationConfiguration.ErrorSeverityLookups.First(sev => sev.CodeValue == ErrorSeverity.Error.ToString());
         private ErrorSeverityLookup aWarning = ValidationPortalDbMigrationConfiguration.ErrorSeverityLookups.First(sev => sev.CodeValue == ErrorSeverity.Warning.ToString());
+        protected readonly ValidationPortalDbContext _portalDbContext;
+        public ValidationResultsService(ValidationPortalDbContext portalDbContext)
+        {
+            _portalDbContext = portalDbContext;
+        }
 
         public ValidationReportDetails GetValidationReportDetails(int validationReportId)
         {
@@ -169,35 +174,7 @@ namespace ValidationWeb.Services
 
         public List<ValidationReportSummary> GetValidationReportSummaries(string edOrgId)
         {
-            if (edOrgId == "ISD 622")
-            {
-                return new List<ValidationReportSummary>
-                {
-                    new ValidationReportSummary
-                    {
-                        Collection = "End of Year Collection",
-                        InitiatedBy = "jsmith@k12.isd622.mn.gov",
-                        RequestedWhen = new DateTime(2018, 5, 1, 15, 30, 0),
-                        CompletedWhen = new DateTime(2018, 5, 1, 15, 31, 25),
-                        Id = 2,
-                        Status = "Complete",
-                        ErrorCount = 976,
-                        WarningCount = 424
-                    },
-                    new ValidationReportSummary
-                    {
-                        Collection = "End of Year Collection",
-                        InitiatedBy = "mdoe@k12.isd622.mn.gov",
-                        RequestedWhen = new DateTime(2018, 4, 26, 14, 59, 0),
-                        CompletedWhen = new DateTime(2018, 4, 26, 15, 1, 44),
-                        Id = 1,
-                        Status = "Complete",
-                        ErrorCount = 5038,
-                        WarningCount = 3726
-                    }
-                };
-            }
-            else return Enumerable.Empty<ValidationReportSummary>().ToList();
+            return _portalDbContext.ValidationReportSummaries.Where(vrs => vrs.EdOrgId == edOrgId).ToList();
         }
     }
 }
