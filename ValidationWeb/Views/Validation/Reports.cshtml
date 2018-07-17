@@ -38,6 +38,8 @@
             </div>
         </div>
     </div>
+    
+    <button id ="export" data-export="export" class="btn btn-primary white-heavy-text float-right margin10">Export</button>
 
     <!-- Confirm Validation Modal -->
     <div id="ConfirmNewValidationModal" class="modal fade" role="dialog">
@@ -117,5 +119,11 @@
                 });
             }
         });
+	$(document).ready(function() {
+            $("#export").click(function() {
+                $('#reportsTable').table2csv({ filename: 'validationReports.csv' });
+            });
+        });
+
     </script>
 }

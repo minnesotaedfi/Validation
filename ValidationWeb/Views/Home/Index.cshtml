@@ -6,57 +6,60 @@
         }
 </script>
 
-<div class="row clear-margin">
-    <div class="tbmargin10">
-        <button type="button" class="btn prime-blue district-dropdown dropdown-toggle" data-toggle="dropdown">
-            @(Model.AppUserSession.UserIdentity.FirstName), Click to choose your organization: <span class="badge badge-light">@(Model.FocusedEdOrg.OrganizationName) / @(Model.AuthorizedEdOrgs.Count()) authorized</span>
-        </button>
-        <div class="dropdown-menu prime-blue white-heavy-text">
-            @foreach (var edOrg in Model.AuthorizedEdOrgs)
+<table>
+    <tr class ="row">
+        <td class="clear-margin">
+            <div class="tbmargin10">
+                <button type="button" class="btn prime-blue district-dropdown dropdown-toggle" data-toggle="dropdown">
+                    @(Model.AppUserSession.UserIdentity.FirstName), Click to choose your organization: <span class="badge badge-light">@(Model.FocusedEdOrg.OrganizationName) / @(Model.AuthorizedEdOrgs.Count()) authorized</span>
+                </button>
+                <div class="dropdown-menu prime-blue white-heavy-text">
+                    @foreach (var edOrg in Model.AuthorizedEdOrgs)
             {
-                <span class="dropdown-item white-heavy-text" data-district-chosen="@(edOrg.Id)">@(edOrg.OrganizationName)</span>
-            }      
-        </div>
-    </div>
-    <div class="tbmargin10">
-        <p class="h4">
-            You are logged in as @(Model.AppUserSession.UserIdentity.FullName) with access level: @(Model.AppUserSession.UserIdentity.AppRole?.Name).
-        </p>
-        <p  class="h4">
-            School years open for submission:
-            <span>@( string.Join(", ", Model.YearsOpenForDataSubmission.Select(yr => yr.ToString()).OrderBy(y => y).ToList()))</span>
-        </p>
-    </div>
-</div>
-
-<div class="row tbmargin10 lrmargin0">
-    @{ var rnd = new Random(); }
-    @foreach (var announcement in Model.Announcements.OrderByDescending(a => a.Priority).ToList())
-    {
-        var cardHeader = announcement.IsEmergency ? "Urgent!" : "Announcement";
-        var announcementParagraphs = (announcement.Message ?? string.Empty).Replace("\r", "").Split(new char[] { '\n' });
-        var cardColor = announcement.IsEmergency ? "danger-red" : "accent-soft-blue";
-        var cardId = $"card{rnd.Next(int.MaxValue)}";
-
-        if (announcement.Expiration > DateTime.UtcNow)
-        {
-            <div id="@(cardId)" class="@(cardColor) page-width clear-margin rounded-padded">
-                <h4>@(cardHeader)</h4>
-                @foreach (var paragraph in announcementParagraphs)
-                {
-                    <p>@Html.Raw(paragraph)</p>
-                }
-                @if (!string.IsNullOrWhiteSpace(announcement.LinkUrl))
-                {
-                    <a href="@(announcement.LinkUrl)" target="_blank">@(announcement.LinkUrl)</a>
-                }
-                @if (!string.IsNullOrWhiteSpace(announcement.ContactInfo))
-                {
-                    <span>@(announcement.ContactInfo)</span>  <button type="button" onclick="hideElement('#@(cardId)')" class="btn btn-sm btn-primary btn-light float-right">Dismiss</button>
-                }
+                        <span class="dropdown-item white-heavy-text" data-district-chosen="@(edOrg.Id)">@(edOrg.OrganizationName)</span>
+                    }
+                </div>
             </div>
-            <br />
-        }
-    }
+            <div class="tbmargin10">
+                <p class="h4">
+                    You are logged in as @(Model.AppUserSession.UserIdentity.FullName) with access level: @(Model.AppUserSession.UserIdentity.AppRole?.Name).
+                </p>
+                <p class="h4">
+                    School years open for submission:
+                    <span>@( string.Join(", ", Model.YearsOpenForDataSubmission.Select(yr => yr.ToString()).OrderBy(y => y).ToList()))</span>
+                </p>
+            </div>
+        </td>
+        <td class="tbmargin10" style ="padding-left: 80px">
+            @{ var rnd = new Random(); }
+            @foreach (var announcement in Model.Announcements.OrderByDescending(a => a.Priority).ToList())
+            {
+                var cardHeader = announcement.IsEmergency ? "Urgent!" : "Announcement";
+                var announcementParagraphs = (announcement.Message ?? string.Empty).Replace("\r", "").Split(new char[] { '\n' });
+                var cardColor = announcement.IsEmergency ? "danger-red" : "accent-soft-blue";
+                var cardId = $"card{rnd.Next(int.MaxValue)}";
 
-</div>
+                if (announcement.Expiration > DateTime.UtcNow)
+                {
+                    <div id="@(cardId)" class="@(cardColor) page-width clear-margin rounded-padded">
+                        <h4>@(cardHeader)</h4>
+                        @foreach (var paragraph in announcementParagraphs)
+                    {
+                            <p>@Html.Raw(paragraph)</p>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(announcement.LinkUrl))
+                    {
+                            <a href="@(announcement.LinkUrl)" target="_blank">@(announcement.LinkUrl)</a>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(announcement.ContactInfo))
+                    {
+                            <p>@(announcement.ContactInfo) <button type="button" onclick="hideElement('#@(cardId)')" class="btn btn-sm btn-primary btn-light float-right">Dismiss</button></p>
+                        }
+                    </div>
+                    <br />
+                }
+            }
+
+        </td>
+    </tr>
+</table>

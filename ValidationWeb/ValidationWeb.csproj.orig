@@ -142,10 +142,9 @@
   <ItemGroup>
     <Content Include="Content\Scripts\jquery-3.3.1.js" />
     <Content Include="Content\Scripts\jquery-3.3.1.min.js" />
+<<<<<<< HEAD
     <Content Include="Content\Scripts\jquery-ui.js" />
     <Content Include="Content\Scripts\jquery-ui.min.js" />
-    <Content Include="Content\Scripts\jquery.tabletoCSV.js" />
-    <Content Include="Content\Scripts\table2csv.js" />
     <Content Include="Content\Scripts\tabulator.js" />
     <Content Include="Content\Scripts\tabulator.min.js" />
     <Content Include="Content\Scripts\tabulator\cell.js" />
@@ -209,6 +208,10 @@
     <Content Include="Content\Styles\tabulator_simple.min.css" />
     <Content Include="Content\Styles\tabulator_site.css" />
     <Content Include="Content\Styles\tabulator_site.min.css" />
+=======
+    <Content Include="Content\Scripts\jquery.tabletoCSV.js" />
+    <Content Include="Content\Scripts\table2csv.js" />
+>>>>>>> development
     <Content Include="packages.config" />
     <Content Include="Views\Validation\Report.cshtml" />
     <Content Include="Views\Shared\_BigFooter.cshtml" />
@@ -299,8 +302,6 @@
     <Compile Include="Controllers\RulesController.cs" />
     <Compile Include="Controllers\ValidationController.cs" />
     <Compile Include="Database\EnumLookup.cs" />
-    <Compile Include="Database\RawOdsDbContext.cs" />
-    <Compile Include="Database\ValidatedOdsDbContext.cs" />
     <Compile Include="Database\ValidationPortalDbContext.cs" />
     <Compile Include="Database\ValidationPortalDbMigrationConfiguration.cs" />
     <Compile Include="Filters\PortalAuthenticationFilter .cs" />
@@ -311,9 +312,6 @@
     <Compile Include="Models\EdOrgType.cs" />
     <Compile Include="Models\EdOrg.cs" />
     <Compile Include="Models\ErrorSeverity.cs" />
-    <Compile Include="Models\RuleValidation.cs" />
-    <Compile Include="Models\RuleValidationDetail.cs" />
-    <Compile Include="Models\RuleValidationRuleComponent.cs" />
     <Compile Include="Models\SchoolYear.cs" />
     <Compile Include="Models\SsoUserAuthorization.cs" />
     <Compile Include="Models\Student.cs" />
@@ -324,17 +322,12 @@
     <Compile Include="Services\Implementations\AppUserService.cs" />
     <Compile Include="Services\Implementations\ConfigurationValues.cs" />
     <Compile Include="Services\Implementations\EdOrgService.cs" />
-    <Compile Include="Services\Implementations\EngineSchemaProvider.cs" />
     <Compile Include="Services\Implementations\Fakes\FakeAnnouncementService.cs" />
     <Compile Include="Services\Implementations\Fakes\FakeAppUserService.cs" />
     <Compile Include="Services\Implementations\Fakes\FakeEdOrgService.cs" />
     <Compile Include="Services\Implementations\Fakes\FakeValidatedDataSubmissionService.cs" />
     <Compile Include="Services\Implementations\Fakes\FakeValidationResultsService.cs" />
     <Compile Include="Services\Implementations\HttpContextProvider.cs" />
-    <Compile Include="Services\Implementations\OdsConfigurationValues.cs" />
-    <Compile Include="Services\Implementations\RulesEngineConfigurationValues.cs" />
-    <Compile Include="Services\Implementations\RulesEngineService.cs" />
-    <Compile Include="Services\Implementations\SchoolYearService.cs" />
     <Compile Include="Services\Implementations\ValidatedDataSubmissionService.cs" />
     <Compile Include="Services\Implementations\ValidationResultsService.cs" />
     <Compile Include="Services\Interfaces\IAnnouncementService.cs" />
@@ -342,10 +335,6 @@
     <Compile Include="Services\Interfaces\IConfigurationValues.cs" />
     <Compile Include="Services\Interfaces\IEdOrgService.cs" />
     <Compile Include="Services\Interfaces\IHttpContextProvider.cs" />
-    <Compile Include="Services\Interfaces\IOdsConfigurationValues.cs" />
-    <Compile Include="Services\Interfaces\IRulesEngineConfigurationValues.cs" />
-    <Compile Include="Services\Interfaces\IRulesEngineService.cs" />
-    <Compile Include="Services\Interfaces\ISchoolYearService.cs" />
     <Compile Include="Services\Interfaces\IValidatedDataSubmissionService.cs" />
     <Compile Include="Services\Interfaces\IValidationResultsService.cs" />
     <Compile Include="Utility\ExceptionExtension.cs" />
@@ -363,12 +352,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ApiControllers\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Engine\Engine.csproj">
-      <Project>{7dd0bd93-1ee3-4c63-9d54-e8a9c9b1ad6b}</Project>
-      <Name>Engine</Name>
-    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
