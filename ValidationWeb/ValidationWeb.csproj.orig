@@ -142,10 +142,9 @@
   <ItemGroup>
     <Content Include="Content\Scripts\jquery-3.3.1.js" />
     <Content Include="Content\Scripts\jquery-3.3.1.min.js" />
+<<<<<<< HEAD
     <Content Include="Content\Scripts\jquery-ui.js" />
     <Content Include="Content\Scripts\jquery-ui.min.js" />
-    <Content Include="Content\Scripts\jquery.tabletoCSV.js" />
-    <Content Include="Content\Scripts\table2csv.js" />
     <Content Include="Content\Scripts\tabulator.js" />
     <Content Include="Content\Scripts\tabulator.min.js" />
     <Content Include="Content\Scripts\tabulator\cell.js" />
@@ -209,6 +208,10 @@
     <Content Include="Content\Styles\tabulator_simple.min.css" />
     <Content Include="Content\Styles\tabulator_site.css" />
     <Content Include="Content\Styles\tabulator_site.min.css" />
+=======
+    <Content Include="Content\Scripts\jquery.tabletoCSV.js" />
+    <Content Include="Content\Scripts\table2csv.js" />
+>>>>>>> development
     <Content Include="packages.config" />
     <Content Include="Views\Validation\Report.cshtml" />
     <Content Include="Views\Shared\_BigFooter.cshtml" />

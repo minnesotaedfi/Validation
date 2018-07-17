@@ -46,9 +46,15 @@
     </div>
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
+<<<<<<< HEAD
     @Scripts.Render("~/bundles/jqueryUI")
-    @Scripts.Render("~/bundles/table2CSV")
+
+
     @Scripts.Render("~/bundles/tabulatorScripts")
+=======
+@Scripts.Render("~/bundles/table2CSV")
+>>>>>>> development
+
     @RenderSection("scripts", required: false)
 </body>
 </html>
