@@ -1,8 +1,24 @@
-﻿<div class="row layout layout-footer">
-    <div id="contact" class="noprint justify-content-center">
-        <strong>Minnesota Department of Education</strong>, 1500 Highway 36 West, Roseville MN 55113 | Phone: 651-582-8200 | <a target="" href="mailto:mde.commissioner@state.mn.us">Email the Commissioner</a> | 
-        <a target="" href="http://education.state.mn.us/MDE/about/map/">Directions</a> | <strong>Copyright 2017 MN DOE</strong>
+﻿@{var footerLinkBaseUrl = "https://Education.mn.gov"; }
+<div class="row noprint layout layout-footer container-fluid">
+    <div class="col-md-1 col-sm-12 d-none d-sm-block noprint">&nbsp;</div>
+    <div class="col-md-3 col-sm-12 d-none d-sm-block noprint">
+        <ul class="noDisc">
+            <li>Revision 0.9.0.1234</li>
+        </ul>
     </div>
+    <div class="col-md-3 col-sm-12 d-none d-sm-block noprint">
+        <ul class="noDisc">
+            <li><a href="https://mn.gov/portal/">Minnesota.gov</a></li>
+            <li><a href="@(footerLinkBaseUrl)/MDE/about/004831" target="">Accessibility Policy</a></li>
+            <li><a target="" href="@(footerLinkBaseUrl)/MDE/about/MDEDEV_001315">Privacy Statement</a></li>
+            <li><a target="" href="@(footerLinkBaseUrl)/MDE/about/MDEDEV_001316">Site Disclaimer</a></li>
+            <li><a href="@(footerLinkBaseUrl)/MDE/about/MDEDEV_001317" target="">Help</a></li>
+        </ul>
+    </div>
+    <div class="col-md-3 col-sm-12 d-none d-sm-block noprint">
+        Copyright 2018<br />Minnesota Department of Education<br />1500 Highway 36 West<br />Roseville MN 55113<br />Phone: 651-582-8200
+    </div>
+    <div class="col-md-1 col-sm-12 d-none d-sm-block noprint">&nbsp;</div>
 </div>
 
 

@@ -157,6 +157,8 @@ namespace ValidationWeb
             {
                 // TODO: Align these properties with the Ed Fi "Raw" (Unvalidated) ODS Database
                 Id = ss.StateOrganizationId,
+                OrganizationName = ss.OrganizationName,
+                EdOrgTypeLookupId = (ss.DistrictType.HasValue) ? ValidationPortalDbMigrationConfiguration.EdOrgTypeLookups[ss.DistrictType.Value].Id : 1,
                 // TODO: Align these properties with the Single Sign On data
                 StateOrganizationId = ss.StateOrganizationId,
                 FormattedOrganizationId = ss.FormattedOrganizationId,

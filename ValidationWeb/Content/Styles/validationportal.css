@@ -153,6 +153,23 @@ input, select, textarea {
 
 .navbar-nav a  {
     color: rgb(255, 255, 255);
+    background-color: rgb(0, 56, 101);
+    padding: 0;
+}
+
+div.validation-drowdown-menu 
+{
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    border-color: rgb(120, 190, 33);
+}
+
+/* Removes standard black arrow that has been replaced with a themed one */
+li.dropdown-toggle.nav-item::after
+{
+    display: none;
 }
 /***************************************************************************************/
 
