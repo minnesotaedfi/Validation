@@ -211,9 +211,7 @@
     <Content Include="Content\Styles\tabulator_site.min.css" />
     <Content Include="packages.config" />
     <Content Include="Views\Validation\Report.cshtml" />
-    <Content Include="Views\Shared\_BigFooter.cshtml" />
     <Content Include="Views\Shared\_LittleFooter.cshtml" />
-    <Content Include="Views\Shared\_BigLayout.cshtml" />
     <Content Include="Views\Validation\Submissions.cshtml" />
     <Content Include="Content\Styles\tabulator\bootstrap\functions4.scss" />
     <Content Include="Content\Styles\tabulator\bootstrap\tabulator_bootstrap.scss" />
@@ -236,6 +234,8 @@
     <Content Include="Content\Styles\bootstrap\tabulator_bootstrap.min.css.map" />
     <Content Include="Content\Styles\bootstrap\tabulator_bootstrap4.min.css.map" />
     <Content Include="Content\Styles\semantic-ui\tabulator_semantic-ui.min.css.map" />
+    <Content Include="Views\Home\SelectOrg.cshtml" />
+    <Content Include="Views\Shared\_NavDropDowns.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -295,6 +295,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\NavController.cs" />
     <Compile Include="Controllers\RulesController.cs" />
     <Compile Include="Controllers\ValidationController.cs" />
     <Compile Include="Database\EnumLookup.cs" />
@@ -307,6 +308,7 @@
     <Compile Include="Models\Announcement.cs" />
     <Compile Include="Models\AppRole.cs" />
     <Compile Include="Models\AppUserSession.cs" />
+    <Compile Include="Models\DismissedAnnouncement.cs" />
     <Compile Include="Models\EdOrgType.cs" />
     <Compile Include="Models\EdOrg.cs" />
     <Compile Include="Models\ErrorSeverity.cs" />
@@ -354,6 +356,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\HomeAnnouncementsViewModel.cs" />
     <Compile Include="ViewModels\HomeIndexViewModel.cs" />
+    <Compile Include="ViewModels\NavMenusViewModel.cs" />
+    <Compile Include="ViewModels\SelectOrgViewModel.cs" />
     <Compile Include="ViewModels\ValidationReportDetailsViewModel.cs" />
     <Compile Include="ViewModels\ValidationReportsViewModel.cs" />
   </ItemGroup>

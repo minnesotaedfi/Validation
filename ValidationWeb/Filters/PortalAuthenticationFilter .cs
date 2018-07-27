@@ -189,10 +189,11 @@ namespace ValidationWeb
 
             // Create and add a new user session to the database.
             var firstEdOrg = newUserIdentity.AuthorizedEdOrgs.FirstOrDefault();
+            var firstSchoolYear = newUserIdentity.AuthorizedEdOrgs.FirstOrDefault();
             var newCurrentSession = new AppUserSession
             {
                 Id = Guid.NewGuid().ToString(),
-                DismissedAnnouncements = new HashSet<Announcement>(),
+                DismissedAnnouncements = new HashSet<DismissedAnnouncement>(),
                 ExpiresUtc = DateTime.UtcNow.AddMinutes(30),
                 FocusedEdOrgId = firstEdOrg.Id,
                 UserIdentity = newUserIdentity

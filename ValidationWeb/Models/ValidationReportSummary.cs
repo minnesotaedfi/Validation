@@ -17,6 +17,7 @@ namespace ValidationWeb
         [Required]
         [Index]
         public string EdOrgId { get; set; }
+        public SchoolYear SchoolYear { get; set; }
         public DateTime RequestedWhen { get; set; }
         public string Collection { get; set; }
         public string InitiatedBy { get; set; }

@@ -43,6 +43,17 @@ namespace ValidationWeb
             return View(model);
         }
 
+        public ActionResult SelectOrg()
+        {
+            var model = new SelectOrgViewModel
+            {
+                AppUserSession = _appUserService.GetSession(),
+                AuthorizedEdOrgs = _edOrgService.GetEdOrgs(),
+                FocusedEdOrg = _edOrgService.GetEdOrgById(_appUserService.GetSession().FocusedEdOrgId)
+            };
+            return View(model);
+        }
+
         public ActionResult Announcements()
         {
             var model = new HomeAnnouncementsViewModel
@@ -50,6 +61,12 @@ namespace ValidationWeb
                 Announcements = _announcementService.GetAnnoucements()
             };
             return View(model);
+        }
+
+        public string DismissAnnouncement(int announcement)
+        {
+            _appUserService.DismissAnnouncement(announcement);
+            return string.Empty;
         }
     }
 }

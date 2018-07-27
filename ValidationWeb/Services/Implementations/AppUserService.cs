@@ -21,8 +21,10 @@ namespace ValidationWeb.Services
 
         public void DismissAnnouncement(int announcementId)
         {
-            GetSession().DismissedAnnouncements.Add(_validationPortalDataContext.Announcements.First(ann => ann.Id == announcementId));
+            var session = GetSession();
+            session.DismissedAnnouncements.Add(new DismissedAnnouncement { AnnouncementId = announcementId, AppUserSessionId = session.Id });
             _validationPortalDataContext.SaveChanges();
+            UpdateUserSession(session);
         }
 
         public AppUserSession GetSession()
@@ -33,6 +35,11 @@ namespace ValidationWeb.Services
         public ValidationPortalIdentity GetUser()
         {
             return GetSession().UserIdentity;
+        }
+
+        private void UpdateUserSession(AppUserSession session)
+        {
+            _httpContextProvider.CurrentHttpContext.Items[SessionItemName] = session;
         }
     }
 }

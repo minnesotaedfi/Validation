@@ -13,17 +13,21 @@ namespace ValidationWeb.Services
         protected readonly IRulesEngineConfigurationValues _engineConfig;
         protected readonly Model _engineObjectModel;
         protected readonly IAppUserService _appUserService;
+        protected readonly ISchoolYearService _schoolYearService;
 
         public RulesEngineService(
             IAppUserService appUserService,
+            ISchoolYearService schoolYearService,
             IRulesEngineConfigurationValues engineConfig,
             ValidationPortalDbContext dbContext,
             Model engineObjectModel)
         {
             _dbContext = dbContext;
             _appUserService = appUserService;
+            _schoolYearService = schoolYearService;
             _engineConfig = engineConfig;
             _engineObjectModel = engineObjectModel;
+
         }
 
         public ValidationReportSummary RunEngine(string fourDigitOdsDbYear, string collectionId)
@@ -41,6 +45,7 @@ namespace ValidationWeb.Services
                 WarningCount = null,
                 Id = newRuleValidationExecution.RuleValidationId,
                 EdOrgId = _appUserService.GetSession().FocusedEdOrgId,
+                SchoolYear = _schoolYearService.GetSubmittableSchoolYears().FirstOrDefault(sy => sy.Id == _appUserService.GetSession().FocusedSchoolYearId),
                 InitiatedBy = _appUserService.GetUser().FullName,
                 RequestedWhen = DateTime.UtcNow,
                 Status = "In Progress"

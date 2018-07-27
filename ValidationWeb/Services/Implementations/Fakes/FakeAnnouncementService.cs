@@ -65,7 +65,7 @@ namespace ValidationWeb.Services
 
         public List<Announcement> GetAnnoucements(bool includePreviouslyDismissedAnnouncements = false)
         {
-            var dismissedAnnouncementIds = _appUserService.GetSession().DismissedAnnouncements.Select(da => da.Id).ToArray();
+            var dismissedAnnouncementIds = _appUserService.GetSession().DismissedAnnouncements.Select(da => da.AnnouncementId).ToArray();
             var edOrgIds = _appUserService.GetSession().UserIdentity.AuthorizedEdOrgs.Select(aeo => aeo.Id).ToArray();
             return _fakeAnnouncements.Where(ann => includePreviouslyDismissedAnnouncements
             || (

@@ -7,13 +7,15 @@ namespace ValidationWeb.Services
 {
     public class ValidatedDataSubmissionService : IValidatedDataSubmissionService
     {
+        private readonly ISchoolYearService _schoolYearService;
+        public ValidatedDataSubmissionService(ISchoolYearService schoolYearService)
+        {
+            _schoolYearService = schoolYearService;
+        }
+
         public IEnumerable<SchoolYear> GetYearsOpenForDataSubmission()
         {
-            return new List<SchoolYear>
-            {
-                new SchoolYear("2018", "2019"),
-                new SchoolYear("2019", "2020")
-            };
+            return _schoolYearService.GetSubmittableSchoolYears();
         }
     }
 }

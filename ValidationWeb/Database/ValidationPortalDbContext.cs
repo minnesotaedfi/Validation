@@ -24,6 +24,7 @@ namespace ValidationWeb
         }
         public virtual DbSet<Announcement> Announcements { get; set; }
         public virtual DbSet<AppUserSession> AppUserSessions { get; set; }
+        public virtual DbSet<DismissedAnnouncement> DismissedAnnouncements { get; set; }
         public virtual DbSet<EdOrg> EdOrgs { get; set; }
         public virtual DbSet<EdOrgTypeLookup> EdOrgTypeLookup { get; set; }
         public virtual DbSet<ErrorSeverityLookup> ErrorSeverityLookup { get; set; }
@@ -51,14 +52,10 @@ namespace ValidationWeb
                 });
 
             modelBuilder.Entity<AppUserSession>()
-                .HasMany<Announcement>(aus => aus.DismissedAnnouncements)
-                .WithMany(ann => ann.AppUserSessions)
-                .Map(cs =>
-                {
-                    cs.MapLeftKey("AppUserSessionId");
-                    cs.MapRightKey("EdOrgId");
-                    cs.ToTable("validation.DismissedAnnouncements");
-                });
+                .HasMany<DismissedAnnouncement>(aus => aus.DismissedAnnouncements)
+                .WithRequired(dann => dann.AppUserSession)
+                .HasForeignKey(aus => aus.AppUserSessionId)
+                .WillCascadeOnDelete();
 
             modelBuilder.Entity<RuleValidationDetail>()
                .HasRequired(dt => dt.RuleValidation)

@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Engine", "Engine\Engine.csp
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Rules", "Rules\Rules.shproj", "{DF6C51CA-8B4C-4AA2-8995-BA63224FB0C3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ValidationPortalAuthServer", "ValidationPortalAuthServer\ValidationPortalAuthServer.csproj", "{755B1DDF-D9E8-47C6-98FD-EE2E82887617}"
-EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Rules\Rules.projitems*{df6c51ca-8b4c-4aa2-8995-ba63224fb0c3}*SharedItemsImports = 13
@@ -28,10 +26,6 @@ Global
 		{7DD0BD93-1EE3-4C63-9D54-E8A9C9B1AD6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7DD0BD93-1EE3-4C63-9D54-E8A9C9B1AD6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7DD0BD93-1EE3-4C63-9D54-E8A9C9B1AD6B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{755B1DDF-D9E8-47C6-98FD-EE2E82887617}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{755B1DDF-D9E8-47C6-98FD-EE2E82887617}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{755B1DDF-D9E8-47C6-98FD-EE2E82887617}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{755B1DDF-D9E8-47C6-98FD-EE2E82887617}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

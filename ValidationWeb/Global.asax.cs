@@ -60,7 +60,6 @@ namespace ValidationWeb
                 container.Register<IRulesEngineConfigurationValues, RulesEngineConfigurationValues>(Lifestyle.Scoped);
                 Func<Model> modelCreatorDelegate = () => new ModelBuilder(new DirectoryRulesStreams((new RulesEngineConfigurationValues().RulesFileFolder)).Streams).Build(null, new EngineSchemaProvider());
                 container.Register<Model>(modelCreatorDelegate, Lifestyle.Scoped);
-
             }
             else
             {

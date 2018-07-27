@@ -151,6 +151,10 @@ input, select, textarea {
     padding: 30px;
 }
 
+ul.navbar-nav {
+    width: 100%;
+}
+
 .navbar-nav a  {
     color: rgb(255, 255, 255);
     background-color: rgb(0, 56, 101);
@@ -164,6 +168,11 @@ div.validation-drowdown-menu
     margin-top: 0;
     margin-bottom: 0;
     border-color: rgb(120, 190, 33);
+}
+
+li.dropdown-toggle.nav-item.pull-right
+{
+    float: right !important;
 }
 
 /* Removes standard black arrow that has been replaced with a themed one */

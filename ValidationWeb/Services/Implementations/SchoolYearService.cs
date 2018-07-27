@@ -23,6 +23,5 @@ namespace ValidationWeb.Services
             _validationPortalDataContext.SchoolYears.AddRange(years);
             _validationPortalDataContext.SaveChanges();
         }
-
     }
 }

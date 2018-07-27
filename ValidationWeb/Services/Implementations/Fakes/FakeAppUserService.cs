@@ -10,10 +10,12 @@ namespace ValidationWeb.Services
         private static List<AppUserSession> _openSessions = new List<AppUserSession>();
         private AppUserSession currentSession = null;
         protected readonly IEdOrgService _edOrgService;
+        protected readonly ISchoolYearService _schoolYearService;
 
-        public FakeAppUserService(IEdOrgService edOrgService)
+        public FakeAppUserService(IEdOrgService edOrgService, ISchoolYearService schoolYearService)
         {
             _edOrgService = edOrgService;
+            _schoolYearService = schoolYearService;
         }
         public ValidationPortalIdentity GetUser()
         {
@@ -44,7 +46,7 @@ namespace ValidationWeb.Services
             currentSession = new AppUserSession
             {
                 Id = (new Random()).Next(1, 1000000).ToString(),
-                DismissedAnnouncements = new HashSet<Announcement>(),
+                DismissedAnnouncements = new HashSet<DismissedAnnouncement>(),
                 ExpiresUtc = DateTime.UtcNow.AddHours(1),
                 UserIdentity = new ValidationPortalIdentity
                 {
@@ -58,7 +60,10 @@ namespace ValidationWeb.Services
                     Name = "Jane",
                     UserId = "Jane"
                 },
-                FocusedEdOrgId = specialEdOrg.Id
+                FocusedEdOrgId = specialEdOrg.Id,
+                FocusedSchoolYearId = (_schoolYearService.GetSubmittableSchoolYears().Count() > 0) 
+                    ? _schoolYearService.GetSubmittableSchoolYears().FirstOrDefault().Id 
+                    : 0
             };
 
             _openSessions.Add(currentSession);
@@ -73,7 +78,8 @@ namespace ValidationWeb.Services
 
         public void DismissAnnouncement(int announcementId)
         {
-            GetSession().DismissedAnnouncements.Add(new Announcement { Id = announcementId });
+            var theSession = GetSession();
+            theSession.DismissedAnnouncements.Add(new DismissedAnnouncement { AnnouncementId = announcementId,  AppUserSessionId = theSession.Id });
         }
     }
 }
