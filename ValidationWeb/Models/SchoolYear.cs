@@ -21,6 +21,7 @@ namespace ValidationWeb
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
         public int Id { get; set; }
+        public int? ErrorThreshold { get; set; }
 
         public string StartYear { get; set; }
         public string EndYear { get; set; }

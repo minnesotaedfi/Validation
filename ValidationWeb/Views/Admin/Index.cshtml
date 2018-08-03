@@ -1,0 +1,31 @@
+﻿@model AdminIndexViewModel
+
+<div class="accordion col-6">
+    @foreach (var schoolYear in Model.YearsOpenForDataSubmission.OrderByDescending(x => x.EndYear))
+    {
+        <div class="card">
+            <div class="card-header" id="headingOne">
+                <h5 class="mb-0">
+                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse@(schoolYear.Id)" aria-expanded="true" aria-controls="collapse@(schoolYear.Id)">
+                        @schoolYear.StartYear - @schoolYear.EndYear
+                    </button>
+                </h5>
+            </div>
+
+            <div id="collapse@(schoolYear.Id)" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                <div class="card-body">
+                    <div class="col-6">
+                        Threshold % :
+                        <span id="threshold-value" style="color: red;">
+                            @if (schoolYear.ErrorThreshold == null)
+                            {<text> Not Set</text>}
+                            else
+                            {<text> schoolYear.ErrorThreshold.ToString();</text>}
+                        </span>
+                        <button class="btn btn-primary btn-sm">Edit Error Threshold</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

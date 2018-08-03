@@ -23,5 +23,17 @@ namespace ValidationWeb.Services
             _validationPortalDataContext.SchoolYears.AddRange(years);
             _validationPortalDataContext.SaveChanges();
         }
+
+        public bool UpdateErrorThresholdValue(int id, int thresholdValue)
+        {
+            var schoolYearRecord = _validationPortalDataContext.SchoolYears.FirstOrDefault(schoolYear => schoolYear.Id == id);
+            if (schoolYearRecord == null)
+                return false;
+
+            schoolYearRecord.ErrorThreshold = thresholdValue;
+            _validationPortalDataContext.SaveChanges();
+
+            return true;
+        }
     }
 }
