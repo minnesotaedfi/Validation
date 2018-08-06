@@ -14,5 +14,7 @@ namespace ValidationWeb
         /// </summary>
         public EdOrg FocusedEdOrg { get; set; }
         public SchoolYear FocusedSchoolYear { get; set; }
+        public IEnumerable<SchoolYear> SchoolYears { get; set; }
+        public IEnumerable<EdOrg> EdOrgs { get; set; }
     }
 }

@@ -237,6 +237,7 @@
     <Content Include="Views\Home\SelectOrg.cshtml" />
     <Content Include="Views\Shared\_NavDropDowns.cshtml" />
     <Content Include="Views\Admin\Index.cshtml" />
+    <Content Include="Views\Admin\Partials\ErrorThresholds.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -31,7 +31,7 @@ namespace ValidationWeb
                 AppUserSession = _appUserService.GetSession(),
                 AuthorizedEdOrgs = _edOrgService.GetEdOrgs(),
                 FocusedEdOrg = _edOrgService.GetEdOrgById(_appUserService.GetSession().FocusedEdOrgId),
-                YearsOpenForDataSubmission = _schoolYearService.GetSubmittableSchoolYears()
+                YearsOpenForDataSubmission = _schoolYearService.GetSubmittableSchoolYears().OrderByDescending(x => x.EndYear)
             };
 
             return View(model);

@@ -1,0 +1,12 @@
+﻿@model SchoolYear
+
+<div id="threshold-value" style="color: red;">
+    @if (Model.ErrorThreshold == null)
+    {
+        <div> Not set.</div>
+    }
+    else
+    {
+        <text> @Model.ErrorThreshold</text>
+    }
+</div>

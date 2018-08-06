@@ -39,14 +39,16 @@ namespace ValidationWeb
             var model = new NavMenusViewModel
             {
                 AppUserSession = _appUserService.GetSession(),
-                FocusedEdOrg = _edOrgService.GetEdOrgById(_appUserService.GetSession().FocusedEdOrgId),
-                FocusedSchoolYear = _schoolYearService.GetSubmittableSchoolYears().FirstOrDefault(sy => sy.Id == (_appUserService.GetSession().FocusedSchoolYearId))
+                EdOrgs = _edOrgService.GetEdOrgs(),
+                SchoolYears = _schoolYearService.GetSubmittableSchoolYears().OrderByDescending(x => x.EndYear)
             };
+            
+            // Set focused information after using the service to initailize the model.
+            model.FocusedEdOrg = model.EdOrgs.FirstOrDefault(edOrg => edOrg.Id == _appUserService.GetSession().FocusedEdOrgId);
             // If the user's School Year wasn't available any more, then select the first School Year whose data can be submitted.
-            if (model.FocusedSchoolYear == null)
-            {
-                model.FocusedSchoolYear = _schoolYearService.GetSubmittableSchoolYears().First();
-            }
+            model.FocusedSchoolYear = model.SchoolYears.FirstOrDefault(sy => sy.Id == _appUserService.GetSession().FocusedSchoolYearId) ??
+                                      _schoolYearService.GetSubmittableSchoolYears().First();
+
             return PartialView("_NavDropDowns", model);
         }
 
