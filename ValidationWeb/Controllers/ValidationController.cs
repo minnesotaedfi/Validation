@@ -41,7 +41,8 @@ namespace ValidationWeb
             var rulesCollections = _engineObjectModel.Collections.OrderBy(x => x.CollectionId).ToList();
             var theUser = _appUserService.GetUser();
             var districtName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
-            var reportSummaries = (edOrg == null) ? Enumerable.Empty<ValidationReportSummary>().ToList() : _validationResultsService.GetValidationReportSummaries(edOrg.Id);
+            // Display the latest summary first (by default)
+            var reportSummaries = (edOrg == null) ? Enumerable.Empty<ValidationReportSummary>().ToList() : _validationResultsService.GetValidationReportSummaries(edOrg.Id).OrderByDescending(rs => rs.CompletedWhen).ToList();
             var model = new ValidationReportsViewModel
             {
                 DistrictName = districtName,

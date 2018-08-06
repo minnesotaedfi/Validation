@@ -10,6 +10,7 @@ namespace ValidationWeb
         public ValidationPortalDbMigrationConfiguration()
         {
             AutomaticMigrationsEnabled = true;
+            AutomaticMigrationDataLossAllowed = true;
             ContextKey = "ValidationWeb.ValidationPortalDbContext";
         }
 
