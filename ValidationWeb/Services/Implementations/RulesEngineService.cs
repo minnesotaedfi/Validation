@@ -27,59 +27,65 @@ namespace ValidationWeb.Services
             _schoolYearService = schoolYearService;
             _engineConfig = engineConfig;
             _engineObjectModel = engineObjectModel;
-
         }
 
         public ValidationReportSummary RunEngine(string fourDigitOdsDbYear, string collectionId)
         {
-            // Add a new Validation run to the database, and get an ID back representing this run.
-            var newRuleValidationExecution = new RuleValidation { CollectionId = collectionId };
-            _dbContext.RuleValidations.Add(newRuleValidationExecution);
-            _dbContext.SaveChanges();
-
-            var newReportSummary = new ValidationReportSummary
+            ValidationReportSummary newReportSummary = null;
+            using (var _odsRawDbContext = new RawOdsDbContext(fourDigitOdsDbYear))
             {
-                Collection = collectionId,
-                CompletedWhen = null,
-                ErrorCount = null,
-                WarningCount = null,
-                Id = newRuleValidationExecution.RuleValidationId,
-                EdOrgId = _appUserService.GetSession().FocusedEdOrgId,
-                SchoolYear = _schoolYearService.GetSubmittableSchoolYears().FirstOrDefault(sy => sy.Id == _appUserService.GetSession().FocusedSchoolYearId),
-                InitiatedBy = _appUserService.GetUser().FullName,
-                RequestedWhen = DateTime.UtcNow,
-                Status = "In Progress"
-            };
-            _dbContext.ValidationReportSummaries.Add(newReportSummary);
-            _dbContext.SaveChanges();
+                // Run the rules - This code is adapted from an example in the Rule Engine project.
+                // Add a new Validation run to the database, and get an ID back representing this run.
+                var newRuleValidationExecution = new RuleValidation { CollectionId = collectionId };
+                _odsRawDbContext.RuleValidations.Add(newRuleValidationExecution);
+                _odsRawDbContext.SaveChanges();
 
-            // Now, store each Ruleset ID and Rule ID that the engine will run.
-            var rules = _engineObjectModel.GetRules(collectionId).ToArray();
-            var ruleComponents = rules.SelectMany(r => r.Components.Distinct().Select(c => new { r.RulesetId, r.RuleId, Component = c }));
-            foreach(var singleRuleNeedingToBeValidated in ruleComponents)
-            {
-                _dbContext.RuleValidationRuleComponents.Add(new RuleValidationRuleComponent
+                newReportSummary = new ValidationReportSummary
                 {
-                    RuleValidationId = newRuleValidationExecution.RuleValidationId,
-                    RulesetId = singleRuleNeedingToBeValidated.RulesetId,
-                    RuleId = singleRuleNeedingToBeValidated.RuleId,
-                    Component = singleRuleNeedingToBeValidated.Component
-                });
-            }
-            _dbContext.SaveChanges();
+                    Collection = collectionId,
+                    CompletedWhen = null,
+                    ErrorCount = null,
+                    WarningCount = null,
+                    Id = newRuleValidationExecution.RuleValidationId,
+                    EdOrgId = _appUserService.GetSession().FocusedEdOrgId,
+                    SchoolYear = _schoolYearService.GetSubmittableSchoolYears().FirstOrDefault(sy => sy.StartYear == fourDigitOdsDbYear),
+                    InitiatedBy = _appUserService.GetUser().FullName,
+                    RequestedWhen = DateTime.UtcNow,
+                    Status = "In Progress"
+                };
+                _dbContext.ValidationReportSummaries.Add(newReportSummary);
+                _dbContext.SaveChanges();
 
-            // Run the rules - This code is adapted from an example in the Rule Engine project.
-            using (var dbContext = new RawOdsDbContext(fourDigitOdsDbYear))
-            {
+                // Now, store each Ruleset ID and Rule ID that the engine will run.
+                var rules = _engineObjectModel.GetRules(collectionId).ToArray();
+                var ruleComponents = rules.SelectMany(r => r.Components.Distinct().Select(c => new { r.RulesetId, r.RuleId, Component = c }));
+                foreach (var singleRuleNeedingToBeValidated in ruleComponents)
+                {
+                    _odsRawDbContext.RuleValidationRuleComponents.Add(new RuleValidationRuleComponent
+                    {
+                        RuleValidationId = newRuleValidationExecution.RuleValidationId,
+                        RulesetId = singleRuleNeedingToBeValidated.RulesetId,
+                        RuleId = singleRuleNeedingToBeValidated.RuleId,
+                        Component = singleRuleNeedingToBeValidated.Component
+                    });
+                }
+                _odsRawDbContext.SaveChanges();
+
                 foreach (var rule in rules)
                 {
-                    //var detailParams = new List<SqlParameter>{new SqlParameter("@RuleValidationId", newRuleValidationExecution.RuleValidationId)};
-                    //detailParams.AddRange(_engineObjectModel.GetParameters(collectionId).Select(x => new SqlParameter(x.ParameterName, x.Value)));
-                    //dbContext.Database.CommandTimeout = 60;
-                    // var result = dbContext.Database.ExecuteSqlCommand(rule.ExecSql, detailParams.ToArray());
+                    var detailParams = new List<SqlParameter> { new SqlParameter("@RuleValidationId", newRuleValidationExecution.RuleValidationId) };
+                    detailParams.AddRange(_engineObjectModel.GetParameters(collectionId).Select(x => new SqlParameter(x.ParameterName, x.Value)));
+                    _odsRawDbContext.Database.CommandTimeout = 60;
+                    var result = _odsRawDbContext.Database.ExecuteSqlCommand(rule.ExecSql, detailParams.ToArray());
                 }
-            }
 
+                newReportSummary.CompletedWhen = DateTime.UtcNow;
+                newReportSummary.ErrorCount = _odsRawDbContext.RuleValidationDetails.Where(rvd => rvd.RuleValidation.RuleValidationId == newRuleValidationExecution.RuleValidationId && rvd.IsError).Count();
+                newReportSummary.WarningCount = _odsRawDbContext.RuleValidationDetails.Where(rvd => rvd.RuleValidation.RuleValidationId == newRuleValidationExecution.RuleValidationId && !rvd.IsError).Count();
+                newReportSummary.Status = "Completed";
+
+                _dbContext.SaveChanges();
+            }
             return newReportSummary;
         }
 

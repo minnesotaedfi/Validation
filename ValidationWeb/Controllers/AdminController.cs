@@ -41,7 +41,6 @@ namespace ValidationWeb
         {
             //TODO Ali - Finish updating.
             _schoolYearService.UpdateErrorThresholdValue(id, thresholdValue);
-            
 
             return "";
         }

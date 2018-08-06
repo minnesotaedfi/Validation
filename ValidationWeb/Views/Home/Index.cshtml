@@ -7,20 +7,18 @@
         }
 </script>
 
-<table>
-    <tr class ="row">
-        <td class="clear-margin">
-            <div class="tbmargin10">
-                <p class="h4">
-                    You are logged in as @(Model.AppUserSession.UserIdentity.FullName) with access level: @(Model.AppUserSession.UserIdentity.AppRole?.Name).
-                </p>
-                <p class="h4">
-                    School years open for submission:
-                    <span>@( string.Join(", ", Model.YearsOpenForDataSubmission.Select(yr => yr.ToString()).OrderBy(y => y).ToList()))</span>
-                </p>
+<div class="container-fluid">
+    <div class="row">
+        <div class="tbmargin10 col-8">
+            <div class="h4">
+                You are logged in as @(Model.AppUserSession.UserIdentity.FullName) with access level: @(Model.AppUserSession.UserIdentity.AppRole?.Name).
             </div>
-        </td>
-        <td class="tbmargin10" style ="padding-left: 80px">
+            <div class="h4">
+                School years open for submission:
+                <span>@( string.Join(", ", Model.YearsOpenForDataSubmission.Select(yr => yr.ToString()).OrderBy(y => y).ToList()))</span>
+            </div>
+        </div>
+        <div class="tbmargin10 col-4">
             @{ var rnd = new Random(); }
             @foreach (var announcement in Model.Announcements.OrderByDescending(a => a.Priority).ToList())
             {
@@ -31,7 +29,7 @@
 
                 if (announcement.Expiration > DateTime.UtcNow)
                 {
-                    <div id="@(cardId)" class="@(cardColor) page-width clear-margin rounded-padded">
+                    <div id="@(cardId)" class="@(cardColor) clear-margin rounded-padded">
                         <h4>@(cardHeader)</h4>
                         @foreach (var paragraph in announcementParagraphs)
                     {
@@ -43,13 +41,14 @@
                         }
                         @if (!string.IsNullOrWhiteSpace(announcement.ContactInfo))
                     {
-                            <p>@(announcement.ContactInfo) <button type="button" onclick="hideElement('#@(cardId)',  @(announcement.Id))" class="btn btn-sm btn-primary btn-light float-right">Dismiss</button></p>
-                        }
-                    </div>
-                    <br />
+                            <p>@(announcement.ContactInfo) <!-- <button type="button" onclick="hideElement('#@(cardId)',  @(announcement.Id))" class="btn btn-sm btn-primary btn-light float-right">Dismiss</button>--></p>
+
+                    }
+                        </div>
+                        <br />
                 }
             }
+        </div>
+    </div>
+</div>
 
-        </td>
-    </tr>
-</table>

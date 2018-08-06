@@ -1,35 +1,6 @@
-ruleset Assessment
+ruleset NameChecks
 
-/* OtherGroupCode rules */
-rule 254.552.1 
-	when {Assessment}.[OtherTestType] does not exist then
-	require {Assessment}.[OtherGroupCode] does not exist
-	else 'When an OtherGroupCode characteristic is provided, the corresponding Test Type must be provided.'	
-	
-/* OtherResearchCode1 rules */
-rule 254.553.1
-	when {Assessment}.[OtherTestType] does not exist then
-	require {Assessment}.[OtherResearchCode1] does not exist
-	else 'When an OtherResearchCode1 characteristic is provided, the corresponding Test Type must be provided.'
-	
-/* OtherResearchCode2 rules */
-rule 254.554.1
-	when {Assessment}.[OtherTestType] does not exist then
-	require {Assessment}.[OtherResearchCode2] does not exist
-	else 'When an OtherResearchCode2 characteristic is provided, the corresponding Test Type must be provided.'
-	
-/* OtherTestType */
-rule 254.551.1
-	when {Assessment}.[OtherTestType] = '08' then
-	require {SchoolDemographics}.[GradeSetting] = '00'
-	else 'When Other Test Type is submitted with a value of 08, the grade must be "00" (kindergarten).'
-	
-rule 254.551.2 
-	when {Assessment}.[OtherTestType] = '09' then
-	require {SchoolDemographics}.[GradeSetting] is in ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
-	else 'When Other Test Type is submitted with a value of 09, the grade cannot be "14", "20" or "30".'
-	
-rule 254.551.3
-	when {Assessment}.[OtherTestType] = '10' then
-	require {SchoolDemographics}.[GradeSetting] is in ['01','02']
-	else 'When Other Test Type is submitted with a value of "10", the grade must be "01" (First Grade) or "02" (Second Grade).'
+rule 1.0.0
+when {StudentNames}.[FirstName] = 'Ben'
+require {StudentNames}.[LastSurname] = 'Brady'
+else 'Ben should have last name Brady.'
