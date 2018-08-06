@@ -73,10 +73,10 @@ namespace ValidationWeb.Services
             {
                 foreach (var rule in rules)
                 {
-                    //var detailParams = new List<SqlParameter>{new SqlParameter("@RuleValidationId", newRuleValidationExecution.RuleValidationId)};
-                    //detailParams.AddRange(_engineObjectModel.GetParameters(collectionId).Select(x => new SqlParameter(x.ParameterName, x.Value)));
-                    //dbContext.Database.CommandTimeout = 60;
-                    // var result = dbContext.Database.ExecuteSqlCommand(rule.ExecSql, detailParams.ToArray());
+                    var detailParams = new List<SqlParameter>{new SqlParameter("@RuleValidationId", newRuleValidationExecution.RuleValidationId)};
+                    detailParams.AddRange(_engineObjectModel.GetParameters(collectionId).Select(x => new SqlParameter(x.ParameterName, x.Value)));
+                    _dbContext.Database.CommandTimeout = 60;
+                    var result = _dbContext.Database.ExecuteSqlCommand(rule.ExecSql, detailParams.ToArray());
                 }
             }
 
