@@ -37,12 +37,20 @@ namespace ValidationWeb
             return View(model);
         }
 
-        public string UpdateThresholdErrorValue(int id, int thresholdValue)
+        public bool UpdateThresholdErrorValue(int id, int thresholdValue)
         {
             //TODO Ali - Finish updating.
-            _schoolYearService.UpdateErrorThresholdValue(id, thresholdValue);
+            try
+            {
+                _schoolYearService.UpdateErrorThresholdValue(id, thresholdValue);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
 
-            return "";
+            
         }
     }
 }

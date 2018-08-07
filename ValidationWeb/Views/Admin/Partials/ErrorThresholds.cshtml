@@ -1,12 +1,35 @@
-﻿@model SchoolYear
+﻿@model IEnumerable<SchoolYear>
 
-<div id="threshold-value" style="color: red;">
-    @if (Model.ErrorThreshold == null)
-    {
-        <div> Not set.</div>
-    }
+@helper ShowNotSet(string text) {
+    if (!string.IsNullOrEmpty(text))
+    {<td class="row-data">@text</td>}
     else
-    {
-        <text> @Model.ErrorThreshold</text>
-    }
+    {<td class="row-data">Not Set</td>}
+}
+
+<div class="tab-pane fade show active" id="list-error-threshold" role="tabpanel" aria-labelledby="list-error-threshold-list">
+    <div class="row tbmargin10">
+        <table class="table table-sm table-responsive-md table-bordered" id="reportsTable">
+            <tr class="table-primary">
+                <th>Id</th>
+                <th>School Year</th>
+                <th>Error Threshold %</th>
+                <th>Options</th>
+            </tr>
+            @foreach (var schoolYear in Model)
+            {
+                <tr>
+                    <td>@schoolYear.Id</td>
+                    <td>@schoolYear.ToString()</td>
+                    @ShowNotSet(schoolYear.ErrorThreshold.ToString())
+                    <td>
+                        <span class="edit-row"><a href="#" class="btn btn-link">Edit</a></span>
+
+                        <span class="save-row"><a href="#" class="btn btn-link">Save</a> | </span>
+                        <span class="cancel-row"><a href="#" class="btn btn-link">Cancel</a></span>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
 </div>
