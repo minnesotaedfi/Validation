@@ -10,6 +10,8 @@ namespace ValidationWeb.Services
     {
         IList<SchoolYear> GetSubmittableSchoolYears();
         void SetSubmittableSchoolYears(IEnumerable<SchoolYear> years);
-        bool UpdateErrorThresholdValue(int id, int thresholdValue);
+        bool UpdateErrorThresholdValue(int id, decimal thresholdValue);
+        bool AddNewSchoolYear(string startDate, string endDate);
+        bool RemoveSchoolYear(int id);
     }
 }

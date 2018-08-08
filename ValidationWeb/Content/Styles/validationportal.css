@@ -205,6 +205,10 @@ div.hfooter {
 
 /* Admin/Index */
 
+.id-hide-column {
+    display: none;
+}
+
 #admin-list-tab .active{
     background-color: rgb(120, 190, 33);
     border-color: rgb(120, 190, 33);
