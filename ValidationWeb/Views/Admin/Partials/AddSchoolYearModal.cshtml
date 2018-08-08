@@ -1,5 +1,4 @@
-﻿
-<div id="add-school-year-modal" class="modal fade" role="dialog">
+﻿<div id="add-school-year-modal" class="modal fade" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header bg-primary">
@@ -7,21 +6,23 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
-                <form action="~/Admin/" method="post">
-                    <div id="submission-form-rows">
+                <form id="add-school-years-form" method="post" action="@Url.Action("AddNewSchoolYear", "Admin")">
+                    <div id="submission-form-rows" style="padding: 10px;">
                         <div id="form-row-0" class="form-row">
                             <div class="col">
-                                <input id="add-start-year" type="text" class="form-control" placeholder="Start Year (YYYY)" pattern="\d{4}" required/>
+                                <label for="add-start-year">Start Year</label>
+                                <input id="add-start-year" name="startYear" type="text" class="form-control" placeholder="YYYY" pattern="\d{4}" title="Only 4 year digits" required/>
                             </div>
                             <div class="col">
-                                <input id="add-end-year" type="text" class="form-control" placeholder="End Year (YYYY)" pattern="\d{4}" required/>
+                                <label for="add-end-year">End Year</label>
+                                <input id="add-end-year" name="endYear" type="text" class="form-control" placeholder="YYYY" pattern="\d{4}" title="Only 4 year digits" disabled="" required/>
                             </div>
                         </div>
                     </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn minnesota-green">Add School Year</button>
+                    </div>
                 </form>
-            </div>
-            <div class="modal-footer">
-                <button class="btn minnesota-green" onclick="addNewSchoolYear();" data-dismiss="modal">Add School Year</button>
             </div>
         </div>
     </div>
