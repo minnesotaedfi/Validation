@@ -7,8 +7,6 @@
     {<td class="row-data">Not Set</td>}
 }
 
-
-
 <div class="tab-pane fade show active" id="list-error-threshold" role="tabpanel" aria-labelledby="list-error-threshold-list">
     <div class="row">
         <div class="col-10">
@@ -20,10 +18,7 @@
             </div>
         </div>
         <div class="col-2">
-            <div class="btn-group btn-group-sm">
                 <button class="btn btn-sm minnesota-green" data-toggle="modal" data-target="#add-school-year-modal">Add Year</button>
-                <button class="btn btn-sm danger-red">Remove Year</button>
-            </div>
         </div>
     </div>
     <div class="row tbmargin10">
@@ -42,8 +37,8 @@
                     @ShowNotSet(schoolYear.ErrorThreshold.ToString())
                     <td>
                         <span class="edit-row"><a href="#" class="btn btn-link">Edit</a></span>
-
                         <span class="save-row"><a href="#" class="btn btn-link">Save</a> | </span>
+                        <span class="remove-row"><a href="#" onclick="removeSchoolYear(@schoolYear.Id, '@schoolYear.ToString()');" class="btn btn-link" style="color: red;">Remove</a> | </span>
                         <span class="cancel-row"><a href="#" class="btn btn-link">Cancel</a></span>
                     </td>
                 </tr>

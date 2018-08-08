@@ -42,11 +42,21 @@ namespace ValidationWeb
             return _schoolYearService.UpdateErrorThresholdValue(id, thresholdValue);
         }
 
-        public bool AddNewSchoolYear(string startYear, string endYear)
+        public ActionResult AddNewSchoolYear(FormCollection formCollection)
         {
             //testing
-            return false;
-            return _schoolYearService.AddNewSchoolYear(startYear, endYear);
+            int endDate;
+            var didParse = Int32.TryParse(formCollection["startYear"], out endDate);
+
+            if (didParse)
+            {
+                endDate = endDate + 1;
+                _schoolYearService.AddNewSchoolYear(formCollection["startYear"], endDate.ToString());
+            }
+
+
+
+            return RedirectToAction("Index");
         }
 
         public bool RemoveSchoolYear(int id)

@@ -13,25 +13,25 @@
     <div class="col-10">
         <div class="tab-content" id="nav-tabContent">
             @Html.Partial("Partials/ErrorThresholds", Model.YearsOpenForDataSubmission)
-        <div class="tab-pane fade" id="list-submission-cycles" role="tabpanel" aria-labelledby="list-submission-cycles-list">
-            <h4>Add Submission Cycles</h4>
-            <form>
-                <div id="submission-form-rows">
-                    <div id="form-row-0" class="form-row">
-                        <div class="col">
-                            <input type="text" class="form-control" placeholder="Start Date"/>
+            <div class="tab-pane fade" id="list-submission-cycles" role="tabpanel" aria-labelledby="list-submission-cycles-list">
+                <h4>Add Submission Cycles</h4>
+                <form>
+                    <div id="submission-form-rows">
+                        <div id="form-row-0" class="form-row">
+                            <div class="col">
+                                <input type="text" class="form-control" placeholder="Start Date"/>
+                            </div>
+                            <div class="col">
+                                <input type="text" class="form-control" placeholder="End Date"/>
+                            </div>
+                            <button class="btn btn-sm danger-red" style="float: left; margin-top: 5px;" onclick="removeSubmissionCycleRow(0)">Remove</button>
                         </div>
-                        <div class="col">
-                            <input type="text" class="form-control" placeholder="End Date"/>
-                        </div>
-                        <button class="btn btn-sm danger-red" style="float: left; margin-top: 5px;" onclick="removeSubmissionCycleRow(0)">Remove</button>
                     </div>
-                </div>
-            <button class="btn btn-sm minnesota-green" style="float: right; margin-top: 5px;" onclick="insertNewSubmissionCycleRow()">Add Row</button>
-            </form>
-        </div>
-        <div class="tab-pane fade" id="list-messages" role="tabpanel" aria-labelledby="list-messages-list">...</div>
-        <div class="tab-pane fade" id="list-settings" role="tabpanel" aria-labelledby="list-settings-list">...</div>
+                    <button class="btn btn-sm minnesota-green" style="float: right; margin-top: 5px;" onclick="insertNewSubmissionCycleRow()">Add Row</button>
+                </form>
+            </div>
+            <div class="tab-pane fade" id="list-messages" role="tabpanel" aria-labelledby="list-messages-list">...</div>
+            <div class="tab-pane fade" id="list-settings" role="tabpanel" aria-labelledby="list-settings-list">...</div>
         </div>
     </div>
 </div>
@@ -52,6 +52,7 @@
         $(document).ready(function () {
             $(".save-row").hide();
             $(".cancel-row").hide();
+            $(".remove-row").hide();
 
             $(".edit-row").on("click", function (event) {
                 event.preventDefault();
@@ -59,6 +60,7 @@
 
                 tblRow.find('.save-row').show();
                 tblRow.find('.cancel-row').show();
+                tblRow.find('.remove-row').show();
 
                 tblRow.find('.edit-row').hide();
 
@@ -80,6 +82,7 @@
                 
                 tblRow.find('.save-row').hide();
                 tblRow.find('.cancel-row').hide();
+                tblRow.find('.remove-row').hide();
 
                 tblRow.find('.edit-row').show();
 
@@ -104,7 +107,6 @@
 
                 // Validate and update the threshold
                 if (isNaN(threshold)) {
-                    console.log("error");
                     $('#error-threshold-warning').show();
                 } 
                 else {
@@ -121,6 +123,7 @@
                     else {
                         tblRow.find('.save-row').hide();
                         tblRow.find('.cancel-row').hide();
+                        tblRow.find('.remove-row').hide();
 
                         tblRow.find('.edit-row').show();
 
@@ -132,36 +135,41 @@
                     }
                 }
             });
+
+            // Setting the end year for them.
+            $("#add-start-year").change(function () {
+                $("#add-end-year").val(Number($("#add-start-year").val()) + 1);
+            });
         });
 
         function updateThreshold(id, errorThreshold) {
             var value;
             $.ajax({
                 url: '@(Url.Action("UpdateThresholdErrorValue", "Admin"))',
-                async: false,
+                async: true,
                 data: { Id: id, thresholdValue: errorThreshold },
                 success: function (result) {
                     value = result;
-                }
-                
+                } 
             });
             return value;
         }
-        
-        function addNewSchoolYear() {
-            $.ajax({
-                url: '@(Url.Action("AddNewSchoolYear", "Admin"))',
-                async: true,
-                data: { startYear: $('#add-start-year').val(), endYear: $('#add-end-year').val() },
-                success: function (result) {
-                    // Reload page when done to show the new year
-                    location.reload();
-                }
-            });
+
+        function submitNewSchoolYears() {
+            $("#submit-school-years-form").submit();
         }
 
-        function removeSchoolYear() {
-
+        function removeSchoolYear(id, yearsRange) {
+            if (confirm("Are you sure you want to delete " + yearsRange + "?")) {
+                $.ajax({
+                    url: '@(Url.Action("RemoveSchoolYear", "Admin"))',
+                    async: false,
+                    data: { Id: id },
+                    success: function () {
+                        location.reload();
+                    }
+                });
+            }
         }
         /** End **/
 
