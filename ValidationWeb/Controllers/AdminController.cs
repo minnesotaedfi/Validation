@@ -38,7 +38,8 @@ namespace ValidationWeb
                 AuthorizedEdOrgs = _edOrgService.GetEdOrgs(),
                 FocusedEdOrg = _edOrgService.GetEdOrgById(_appUserService.GetSession().FocusedEdOrgId),
                 YearsOpenForDataSubmission = _schoolYearService.GetSubmittableSchoolYears().OrderByDescending(x => x.EndYear),
-                RuleCollections = _rulesEngineService.GetCollections()
+                RuleCollections = _rulesEngineService.GetCollections(),
+                SubmissionCycles = _submissionCycleService.GetSubmissionCycles()
             };
 
             // Check user authorization, if user is admin then then return admin page if not return the error page.
@@ -67,6 +68,13 @@ namespace ValidationWeb
         public bool RemoveSchoolYear(int id)
         {
             return _schoolYearService.RemoveSchoolYear(id);
+        }
+
+        public ActionResult GetSubmissionCyclesByCollectionId(string collectionId)
+        {
+            var submissionCycles = _submissionCycleService.GetSubmissionCyclesByCollectionId(collectionId);
+
+            return PartialView("Partials/SubmissionCycleList", submissionCycles);
         }
     }
 }

@@ -11,18 +11,27 @@
     </div>
     <div class="col-10">
         <div class="tab-content" id="nav-tabContent">
-            @Html.Partial("Partials/ErrorThresholds", Model.YearsOpenForDataSubmission)
-            <div class="tab-pane fade" id="list-submission-cycles" role="tabpanel" aria-labelledby="list-submission-cycles-list">
-                <h4>Add Submission Cycles</h4>
-                <div class="form-group">
-                    <label for="collection-list">Select Collection</label>
-                    <select class="form-control" id="collection-list">
-                        @foreach (var collection in Model.RuleCollections)
-                        {
-                            <option>@collection.CollectionId</option>
-                        }
-                    </select>
+            <div class="tab-pane fade show active" id="list-error-threshold" role="tabpanel" aria-labelledby="list-error-threshold-list">
+                <div class="row">
+                    <div class="col-4">
+                        <h4>Add Submission Cycles</h4>
+                        <div class="form-group">
+                            <label for="collection-list">Select Collection</label>
+                            <select id="collection-list" class="form-control">
+                                <option>Select a Collection</option>
+                                @foreach (var collection in Model.RuleCollections)
+                                {
+                                    <option value="@collection.CollectionId">@collection.CollectionId</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-8" id="submission-rows"></div>
                 </div>
+                
+            </div>
+            <div class="tab-pane fade" id="list-submission-cycles" role="tabpanel" aria-labelledby="list-submission-cycles-list">
+                @Html.Partial("Partials/ErrorThresholds", Model.YearsOpenForDataSubmission)
             </div>
             <div class="tab-pane fade" id="list-messages" role="tabpanel" aria-labelledby="list-messages-list">...</div>
             <div class="tab-pane fade" id="list-settings" role="tabpanel" aria-labelledby="list-settings-list">...</div>
@@ -167,6 +176,18 @@
         }
         /** End **/
 
+        /** All Submission Row JS Functionality **/
+        $("#collection-list").bind('change', function () {
+            $.ajax({
+                url: '@(Url.Action("GetSubmissionCyclesByCollectionId", "Admin"))',
+                async: true,
+                data: { collectionId: $("#collection-list").val() },
+                success: function (data) {
+                    $("#submission-rows").html(data);
+                }
+            });
+        });
+
         // Inserting and removing rows for submission cycle.
         var rowNum = 0;
         function insertNewSubmissionCycleRow() {
@@ -188,20 +209,7 @@
             $('#form-row-' + rowNumber).remove();
             rowNum--;
         }
+        /** End **/
+
     </script>
 }
-
-@*<form>
-        <div id="submission-form-rows">
-            <div id="form-row-0" class="form-row">
-                <div class="col">
-                    <input type="text" class="form-control" placeholder="Start Date"/>
-                </div>
-                <div class="col">
-                    <input type="text" class="form-control" placeholder="End Date"/>
-                </div>
-                <button class="btn btn-sm danger-red" style="float: left; margin-top: 5px;" onclick="removeSubmissionCycleRow(0)">Remove</button>
-            </div>
-        </div>
-    </form>
-    <button class="btn btn-sm minnesota-green" style="float: right; margin-top: 5px;" onclick="insertNewSubmissionCycleRow()">Add Row</button>*@

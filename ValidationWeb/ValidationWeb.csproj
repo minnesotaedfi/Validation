@@ -240,6 +240,7 @@
     <Content Include="Views\Admin\Partials\ErrorThresholds.cshtml" />
     <Content Include="Views\Admin\Partials\AddSchoolYearModal.cshtml" />
     <Content Include="Views\Admin\Partials\RemoveSchoolYearModal.cshtml" />
+    <Content Include="Views\Admin\Partials\SubmissionCycleList.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

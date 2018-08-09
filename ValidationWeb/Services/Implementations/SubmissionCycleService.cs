@@ -24,6 +24,14 @@ namespace ValidationWeb.Services
             return _validationPortalDataContext.SubmissionCycles.FirstOrDefault(submissionCycle => submissionCycle.SubmissionCycleId == id);
         }
 
+        public bool AddSubmissionCycle(SubmissionCycle submissionCycle)
+        {
+            _validationPortalDataContext.SubmissionCycles.Add(submissionCycle);
+            _validationPortalDataContext.SaveChanges();
+
+            return true;
+        }
+
         public bool AddSubmissionCycle(string collectionId, DateTime startDate, DateTime endDate)
         {
             if (collectionId == null)
@@ -34,6 +42,14 @@ namespace ValidationWeb.Services
             _validationPortalDataContext.SaveChanges();
 
             return true;
+        }
+
+        public IList<SubmissionCycle> GetSubmissionCyclesByCollectionId(string collectionId)
+        {
+            if (collectionId == null)
+                return null;
+
+            return _validationPortalDataContext.SubmissionCycles.Where(submissionCycle => submissionCycle.CollectionId == collectionId).ToList();
         }
 
         public bool RemoveSubmissionCycle(int id)

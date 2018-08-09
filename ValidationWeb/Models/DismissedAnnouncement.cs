@@ -7,7 +7,7 @@ using System.Web;
 
 namespace ValidationWeb
 {
-    [Table("validation.DemissedAnnouncement")]
+    [Table("validation.DismissedAnnouncement")]
     public class DismissedAnnouncement
     {
         [Key]

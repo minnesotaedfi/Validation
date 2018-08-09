@@ -1,0 +1,8 @@
+﻿@model IList<SubmissionCycle>
+
+<ol class="align-middle">
+    @foreach (var submissionCycle in Model)
+    {
+        <li>@submissionCycle.ToString()</li>
+    }
+</ol>

@@ -20,5 +20,6 @@ namespace ValidationWeb
         public IEnumerable<SchoolYear> YearsOpenForDataSubmission { get; set; }
 
         public IEnumerable<Collection> RuleCollections { get; set; }
+        public IEnumerable<SubmissionCycle> SubmissionCycles { get; set; }
     }
 }
