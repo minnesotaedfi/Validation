@@ -34,7 +34,8 @@ namespace ValidationWeb
                 YearsOpenForDataSubmission = _schoolYearService.GetSubmittableSchoolYears().OrderByDescending(x => x.EndYear)
             };
 
-            return View(model);
+            // Check user authorization, if user is admin then then return admin page if not return the error page.
+            return model.AppUserSession.UserIdentity.AppRole.Name == "Administrator" ? View(model) : View("Error");
         }
 
         public bool UpdateThresholdErrorValue(int id, decimal thresholdValue)
@@ -44,7 +45,6 @@ namespace ValidationWeb
 
         public ActionResult AddNewSchoolYear(FormCollection formCollection)
         {
-            //testing
             int endDate;
             var didParse = Int32.TryParse(formCollection["startYear"], out endDate);
 
@@ -53,8 +53,6 @@ namespace ValidationWeb
                 endDate = endDate + 1;
                 _schoolYearService.AddNewSchoolYear(formCollection["startYear"], endDate.ToString());
             }
-
-
 
             return RedirectToAction("Index");
         }
