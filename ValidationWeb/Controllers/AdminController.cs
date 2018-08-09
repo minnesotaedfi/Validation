@@ -12,15 +12,21 @@ namespace ValidationWeb
         private readonly IAppUserService _appUserService;
         private readonly IEdOrgService _edOrgService;
         private readonly ISchoolYearService _schoolYearService;
+        private readonly IRulesEngineService _rulesEngineService;
+        private readonly ISubmissionCycleService _submissionCycleService;
 
         public AdminController(
             IAppUserService appUserService,
             IEdOrgService edOrgService,
-            ISchoolYearService schoolYearService)
+            ISchoolYearService schoolYearService,
+            IRulesEngineService rulesEngineService,
+            ISubmissionCycleService submissionCycleService)
         {
             _appUserService = appUserService;
             _edOrgService = edOrgService;
             _schoolYearService = schoolYearService;
+            _rulesEngineService = rulesEngineService;
+            _submissionCycleService = submissionCycleService;
         }
 
         // GET: Admin
@@ -31,7 +37,8 @@ namespace ValidationWeb
                 AppUserSession = _appUserService.GetSession(),
                 AuthorizedEdOrgs = _edOrgService.GetEdOrgs(),
                 FocusedEdOrg = _edOrgService.GetEdOrgById(_appUserService.GetSession().FocusedEdOrgId),
-                YearsOpenForDataSubmission = _schoolYearService.GetSubmittableSchoolYears().OrderByDescending(x => x.EndYear)
+                YearsOpenForDataSubmission = _schoolYearService.GetSubmittableSchoolYears().OrderByDescending(x => x.EndYear),
+                RuleCollections = _rulesEngineService.GetCollections()
             };
 
             // Check user authorization, if user is admin then then return admin page if not return the error page.

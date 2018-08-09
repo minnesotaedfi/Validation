@@ -1,6 +1,5 @@
 ﻿@model AdminIndexViewModel
 
-
 <div class="row">
     <div class="col-2">
         <div class="list-group" id="admin-list-tab" role="tablist">
@@ -15,20 +14,15 @@
             @Html.Partial("Partials/ErrorThresholds", Model.YearsOpenForDataSubmission)
             <div class="tab-pane fade" id="list-submission-cycles" role="tabpanel" aria-labelledby="list-submission-cycles-list">
                 <h4>Add Submission Cycles</h4>
-                <form>
-                    <div id="submission-form-rows">
-                        <div id="form-row-0" class="form-row">
-                            <div class="col">
-                                <input type="text" class="form-control" placeholder="Start Date"/>
-                            </div>
-                            <div class="col">
-                                <input type="text" class="form-control" placeholder="End Date"/>
-                            </div>
-                            <button class="btn btn-sm danger-red" style="float: left; margin-top: 5px;" onclick="removeSubmissionCycleRow(0)">Remove</button>
-                        </div>
-                    </div>
-                    <button class="btn btn-sm minnesota-green" style="float: right; margin-top: 5px;" onclick="insertNewSubmissionCycleRow()">Add Row</button>
-                </form>
+                <div class="form-group">
+                    <label for="collection-list">Select Collection</label>
+                    <select class="form-control" id="collection-list">
+                        @foreach (var collection in Model.RuleCollections)
+                        {
+                            <option>@collection.CollectionId</option>
+                        }
+                    </select>
+                </div>
             </div>
             <div class="tab-pane fade" id="list-messages" role="tabpanel" aria-labelledby="list-messages-list">...</div>
             <div class="tab-pane fade" id="list-settings" role="tabpanel" aria-labelledby="list-settings-list">...</div>
@@ -196,3 +190,18 @@
         }
     </script>
 }
+
+@*<form>
+        <div id="submission-form-rows">
+            <div id="form-row-0" class="form-row">
+                <div class="col">
+                    <input type="text" class="form-control" placeholder="Start Date"/>
+                </div>
+                <div class="col">
+                    <input type="text" class="form-control" placeholder="End Date"/>
+                </div>
+                <button class="btn btn-sm danger-red" style="float: left; margin-top: 5px;" onclick="removeSubmissionCycleRow(0)">Remove</button>
+            </div>
+        </div>
+    </form>
+    <button class="btn btn-sm minnesota-green" style="float: right; margin-top: 5px;" onclick="insertNewSubmissionCycleRow()">Add Row</button>*@

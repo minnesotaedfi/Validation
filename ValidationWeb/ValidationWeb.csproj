@@ -323,6 +323,7 @@
     <Compile Include="Models\SchoolYear.cs" />
     <Compile Include="Models\SsoUserAuthorization.cs" />
     <Compile Include="Models\Student.cs" />
+    <Compile Include="Models\SubmissionCycle.cs" />
     <Compile Include="Models\ValidationErrorSummary.cs" />
     <Compile Include="Models\ValidationReportDetails.cs" />
     <Compile Include="Models\ValidationReportSummary.cs" />
@@ -341,6 +342,7 @@
     <Compile Include="Services\Implementations\RulesEngineConfigurationValues.cs" />
     <Compile Include="Services\Implementations\RulesEngineService.cs" />
     <Compile Include="Services\Implementations\SchoolYearService.cs" />
+    <Compile Include="Services\Implementations\SubmissionCycleService.cs" />
     <Compile Include="Services\Implementations\ValidatedDataSubmissionService.cs" />
     <Compile Include="Services\Implementations\ValidationResultsService.cs" />
     <Compile Include="Services\Interfaces\IAnnouncementService.cs" />
@@ -352,6 +354,7 @@
     <Compile Include="Services\Interfaces\IRulesEngineConfigurationValues.cs" />
     <Compile Include="Services\Interfaces\IRulesEngineService.cs" />
     <Compile Include="Services\Interfaces\ISchoolYearService.cs" />
+    <Compile Include="Services\Interfaces\ISubmissionCycleService.cs" />
     <Compile Include="Services\Interfaces\IValidatedDataSubmissionService.cs" />
     <Compile Include="Services\Interfaces\IValidationResultsService.cs" />
     <Compile Include="Utility\ExceptionExtension.cs" />

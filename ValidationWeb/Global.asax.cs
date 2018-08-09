@@ -49,6 +49,7 @@ namespace ValidationWeb
                 container.Register<ISchoolYearService, SchoolYearService>(Lifestyle.Scoped);
                 container.Register<IValidatedDataSubmissionService, FakeValidatedDataSubmissionService>(Lifestyle.Scoped);
                 container.Register<IValidationResultsService, FakeValidationResultsService>(Lifestyle.Scoped);
+                container.Register<ISubmissionCycleService, SubmissionCycleService>(Lifestyle.Scoped);
 
                 // Entity Framework Database Contexts
                 container.Register<ValidationPortalDbContext>(Lifestyle.Scoped);
@@ -72,6 +73,7 @@ namespace ValidationWeb
                 container.Register<ISchoolYearService, SchoolYearService>(Lifestyle.Scoped);
                 container.Register<IValidatedDataSubmissionService, ValidatedDataSubmissionService>(Lifestyle.Scoped);
                 container.Register<IValidationResultsService, ValidationResultsService>(Lifestyle.Scoped);
+                container.Register<ISubmissionCycleService, SubmissionCycleService>(Lifestyle.Scoped);
 
                 // Entity Framework Database Contexts
                 container.Register<ValidationPortalDbContext>(Lifestyle.Scoped);

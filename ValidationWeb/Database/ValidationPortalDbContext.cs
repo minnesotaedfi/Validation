@@ -30,6 +30,7 @@ namespace ValidationWeb
         public virtual DbSet<ErrorSeverityLookup> ErrorSeverityLookup { get; set; }
         public virtual DbSet<SchoolYear> SchoolYears { get; set; }
         public virtual DbSet<Student> Students { get; set; }
+        public virtual DbSet<SubmissionCycle> SubmissionCycles { get; set; }
         public virtual DbSet<ValidationErrorSummary> ValidationErrorSummaries { get; set; }
         public virtual DbSet<ValidationReportDetails> ValidationReportDetails { get; set; }
         public virtual DbSet<ValidationReportSummary> ValidationReportSummaries { get; set; }

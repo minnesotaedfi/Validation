@@ -8,6 +8,7 @@ namespace ValidationWeb.Services
     public class SchoolYearService : ISchoolYearService
     {
         protected readonly ValidationPortalDbContext _validationPortalDataContext;
+
         public SchoolYearService(ValidationPortalDbContext validationPortalDataContext)
         {
             _validationPortalDataContext = validationPortalDataContext;
@@ -18,7 +19,7 @@ namespace ValidationWeb.Services
         }
         public void SetSubmittableSchoolYears(IEnumerable<SchoolYear> years)
         {
-            _validationPortalDataContext.SchoolYears.RemoveRange(_validationPortalDataContext.SchoolYears.ToArray()) ;
+            _validationPortalDataContext.SchoolYears.RemoveRange(_validationPortalDataContext.SchoolYears.ToArray());
             _validationPortalDataContext.SaveChanges();
             _validationPortalDataContext.SchoolYears.AddRange(years);
             _validationPortalDataContext.SaveChanges();
