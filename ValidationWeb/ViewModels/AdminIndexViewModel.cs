@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Engine.Models;
 
 namespace ValidationWeb
 {
@@ -17,5 +18,8 @@ namespace ValidationWeb
         /// </summary>
         public EdOrg FocusedEdOrg { get; set; }
         public IEnumerable<SchoolYear> YearsOpenForDataSubmission { get; set; }
+
+        public IEnumerable<Collection> RuleCollections { get; set; }
+        public IEnumerable<SubmissionCycle> SubmissionCycles { get; set; }
     }
 }

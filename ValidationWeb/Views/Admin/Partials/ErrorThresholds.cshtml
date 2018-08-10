@@ -2,47 +2,45 @@
 
 @helper ShowNotSet(string text) {
     if (!string.IsNullOrEmpty(text))
-    {<td class="row-data">@text</td>}
+        {<td class="row-data">@text</td>}
     else
-    {<td class="row-data">Not Set</td>}
+        {<td class="row-data">Not Set</td>}
 }
 
-<div class="tab-pane fade show active" id="list-error-threshold" role="tabpanel" aria-labelledby="list-error-threshold-list">
-    <div class="row">
-        <div class="col-10">
-            <div id="error-threshold-warning" class="alert alert-danger alert-dismissible" style="display:none" role="alert">
-                <strong>Cannot update Error Threshold.</strong> Must be a valid number.
-                <button id="error-threshold-warning-button" type="button" class="close" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-        </div>
-        <div class="col-2">
-                <button class="btn btn-sm minnesota-green" data-toggle="modal" data-target="#add-school-year-modal">Add Year</button>
+<div class="row">
+    <div class="col-10">
+        <div id="error-threshold-warning" class="alert alert-danger alert-dismissible" style="display:none" role="alert">
+            <strong>Cannot update Error Threshold.</strong> Must be a valid number.
+            <button id="error-threshold-warning-button" type="button" class="close" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
         </div>
     </div>
-    <div class="row tbmargin10">
-        <table class="table table-sm table-responsive-md table-bordered" id="reportsTable">
-            <tr class="table-primary">
-                <th class="id-hide-column">Id</th>
-                <th>School Year</th>
-                <th>Error Threshold %</th>
-                <th>Options</th>
+    <div class="col-2">
+            <button class="btn btn-sm minnesota-green" data-toggle="modal" data-target="#add-school-year-modal">Add Year</button>
+    </div>
+</div>
+<div class="row tbmargin10">
+    <table class="table table-sm table-responsive-md table-bordered" id="reportsTable">
+        <tr class="table-primary">
+            <th class="id-hide-column">Id</th>
+            <th>School Year</th>
+            <th>Error Threshold %</th>
+            <th>Options</th>
+        </tr>
+        @foreach (var schoolYear in Model)
+        {
+            <tr>
+                <td class="id-hide-column">@schoolYear.Id</td>
+                <td>@schoolYear.ToString()</td>
+                @ShowNotSet(schoolYear.ErrorThreshold.ToString())
+                <td>
+                    <span class="edit-row"><a href="#" class="btn btn-link">Edit</a></span>
+                    <span class="save-row"><a href="#" class="btn btn-link">Save</a> | </span>
+                    <span class="remove-row"><a href="#" onclick="removeSchoolYear(@schoolYear.Id, '@schoolYear.ToString()');" class="btn btn-link" style="color: red;">Remove</a> | </span>
+                    <span class="cancel-row"><a href="#" class="btn btn-link">Cancel</a></span>
+                </td>
             </tr>
-            @foreach (var schoolYear in Model)
-            {
-                <tr>
-                    <td class="id-hide-column">@schoolYear.Id</td>
-                    <td>@schoolYear.ToString()</td>
-                    @ShowNotSet(schoolYear.ErrorThreshold.ToString())
-                    <td>
-                        <span class="edit-row"><a href="#" class="btn btn-link">Edit</a></span>
-                        <span class="save-row"><a href="#" class="btn btn-link">Save</a> | </span>
-                        <span class="remove-row"><a href="#" onclick="removeSchoolYear(@schoolYear.Id, '@schoolYear.ToString()');" class="btn btn-link" style="color: red;">Remove</a> | </span>
-                        <span class="cancel-row"><a href="#" class="btn btn-link">Cancel</a></span>
-                    </td>
-                </tr>
-            }
-        </table>
-    </div>
+        }
+    </table>
 </div>

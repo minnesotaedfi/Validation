@@ -1,0 +1,13 @@
+﻿@model IList<SubmissionCycle>
+
+<ol>
+    @foreach (var submissionCycle in Model)
+    {
+        <li>@submissionCycle.ToString()
+            <button class="btn btn-link" style="color: red;" onclick="removeSubmissionCycle(@submissionCycle.SubmissionCycleId, '@submissionCycle.CollectionId', '@submissionCycle.ToString()')">
+                Remove
+            </button>
+        </li>
+    }
+    
+</ol>
