@@ -76,5 +76,21 @@ namespace ValidationWeb
 
             return PartialView("Partials/SubmissionCycleList", submissionCycles);
         }
+
+        public ActionResult AddSubmissionCycle(string collectionId, DateTime startDate, DateTime endDate)
+        {
+            _submissionCycleService.AddSubmissionCycle(collectionId, startDate, endDate);
+            var submissionCycles = _submissionCycleService.GetSubmissionCyclesByCollectionId(collectionId);
+
+            return PartialView("Partials/SubmissionCycleList", submissionCycles);
+        }
+
+        public ActionResult RemoveSubmissionCycle(int id, string collectionId)
+        {
+            _submissionCycleService.RemoveSubmissionCycle(id);
+            var submissionCycles = _submissionCycleService.GetSubmissionCyclesByCollectionId(collectionId);
+
+            return PartialView("Partials/SubmissionCycleList", submissionCycles);
+        }
     }
 }

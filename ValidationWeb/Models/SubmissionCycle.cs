@@ -19,6 +19,7 @@ namespace ValidationWeb
             EndDate = endDate;
         }
 
+        // Should be changed to Id
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
         public int SubmissionCycleId { get; set; }
