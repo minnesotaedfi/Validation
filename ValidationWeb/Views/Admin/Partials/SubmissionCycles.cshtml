@@ -1,0 +1,18 @@
+﻿@model IEnumerable<Engine.Models.Collection>
+
+<div class="row">
+    <div class="col-4">
+        <h4>Add Submission Cycles</h4>
+        <div class="form-group">
+            <label for="collection-list">Select Collection</label>
+            <select id="collection-list" class="form-control">
+                <option>Select a Collection</option>
+                @foreach (var collection in Model)
+                {
+                    <option value="@collection.CollectionId">@collection.CollectionId</option>
+                }
+            </select>
+        </div>
+    </div>
+    <div class="col-8" id="submission-rows"></div>
+</div>

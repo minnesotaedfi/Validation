@@ -245,6 +245,7 @@
     <Content Include="Views\Admin\Partials\RemoveSchoolYearModal.cshtml" />
     <Content Include="Views\Admin\Partials\SubmissionCycleList.cshtml" />
     <Content Include="Views\Admin\Partials\AddSubmissionCycleModal.cshtml" />
+    <Content Include="Views\Admin\Partials\SubmissionCycles.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
