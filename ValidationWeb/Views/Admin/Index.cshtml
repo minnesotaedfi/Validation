@@ -40,6 +40,7 @@
 
 @*Modal Section*@
 @Html.Partial("Partials/AddSchoolYearModal")
+@Html.Partial("Partials/AddSubmissionCycleModal")
 
 
 @section scripts {
@@ -138,10 +139,14 @@
                 }
             });
 
-            // Setting the end year for them.
+            // Setting the end year for the user in the add error threshold.
             $("#add-start-year").change(function () {
                 $("#add-end-year").val(Number($("#add-start-year").val()) + 1);
             });
+
+            // Initialise the date pickers for Admin/Partials/AddSubmissionCycleModal.cshtml.
+            $('#start-date-picker').datetimepicker({ format: 'L' });
+            $('#end-date-picker').datetimepicker({ format: 'L' });
         });
 
         function updateThreshold(id, errorThreshold) {
@@ -188,26 +193,6 @@
         });
 
         // Inserting and removing rows for submission cycle.
-        var rowNum = 0;
-        function insertNewSubmissionCycleRow() {
-            rowNum++;
-            var row =
-                '<div id="form-row-' + rowNum + '"' + 'class="form-row">'+
-                    '<div class="col">' +
-                    '<input type="text" class="form-control" placeholder="Start Date"/>' +
-                    '</div>' +
-                    '<div class="col">' +
-                    '<input type="text" class="form-control" placeholder="End Date"/>'+
-                    '</div>' +
-                    '<button class="btn btn-sm danger-red" style="float: left; margin-top: 5px;" onclick="removeSubmissionCycleRow(' + rowNum +')">Remove</button>' +
-                    '</div>';
-            $('#submission-form-rows').append(row);
-        }
-
-        function removeSubmissionCycleRow(rowNumber) {
-            $('#form-row-' + rowNumber).remove();
-            rowNum--;
-        }
 
         function removeSubmissionCycle(id, collectionId, cycleDates) {
             if (confirm("Are you sure you want to delete " + cycleDates + " for " + collectionId +"?")) {
@@ -222,16 +207,17 @@
             }
         }
 
-        @*function addSubmissionCycle(ollectionId, startDate, endDate) {
+        function addSubmissionCycle() {
+            console.log($("#collection-list").val());
             $.ajax({
                 url: '@(Url.Action("AddSubmissionCycle", "Admin"))',
                 async: true,
-                data: { collectionId: collectionId, startDate: startDate, endDate : endDate  },
+                data: { collectionId: $("#collection-list").val(), startDate: $("#start-date-picker").val(), endDate: $("#end-date-picker").val() },
                 success: function (data) {
                     $("#submission-rows").html(data);
                 }
             });
-        }*@
+        }
         /** End **/
 
     </script>

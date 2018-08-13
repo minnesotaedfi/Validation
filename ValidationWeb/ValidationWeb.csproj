@@ -140,11 +140,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\Scripts\bootstrap-datetimepicker.min.js" />
     <Content Include="Content\Scripts\jquery-3.3.1.js" />
     <Content Include="Content\Scripts\jquery-3.3.1.min.js" />
     <Content Include="Content\Scripts\jquery-ui.js" />
     <Content Include="Content\Scripts\jquery-ui.min.js" />
     <Content Include="Content\Scripts\jquery.tabletoCSV.js" />
+    <Content Include="Content\Scripts\moment.js" />
     <Content Include="Content\Scripts\table2csv.js" />
     <Content Include="Content\Scripts\tabulator.js" />
     <Content Include="Content\Scripts\tabulator.min.js" />
@@ -187,6 +189,7 @@
     <Content Include="Content\Scripts\tabulator\polyfills.js" />
     <Content Include="Content\Scripts\tabulator\row.js" />
     <Content Include="Content\Scripts\tabulator\row_manager.js" />
+    <Content Include="Content\Styles\bootstrap-datetimepicker.min.css" />
     <Content Include="Content\Styles\bootstrap\tabulator_bootstrap.css" />
     <Content Include="Content\Styles\bootstrap\tabulator_bootstrap.min.css" />
     <Content Include="Content\Styles\bootstrap\tabulator_bootstrap4.css" />
@@ -241,6 +244,7 @@
     <Content Include="Views\Admin\Partials\AddSchoolYearModal.cshtml" />
     <Content Include="Views\Admin\Partials\RemoveSchoolYearModal.cshtml" />
     <Content Include="Views\Admin\Partials\SubmissionCycleList.cshtml" />
+    <Content Include="Views\Admin\Partials\AddSubmissionCycleModal.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

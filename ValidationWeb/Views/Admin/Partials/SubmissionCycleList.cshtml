@@ -4,10 +4,13 @@
     @foreach (var submissionCycle in Model)
     {
         <li>@submissionCycle.ToString()
-            <button class="btn btn-link" style="color: red;" onclick="removeSubmissionCycle(@submissionCycle.SubmissionCycleId, '@submissionCycle.CollectionId', '@submissionCycle.ToString()')">
+            <button class="btn btn-link" 
+                    style="color: red;" 
+                    onclick="removeSubmissionCycle(@submissionCycle.SubmissionCycleId, '@submissionCycle.CollectionId', '@submissionCycle.ToString()')">
                 Remove
             </button>
         </li>
     }
     
 </ol>
+<button class="btn minnesota-green" data-toggle="modal" data-target="#add-submission-cycle">Add Collection Date</button>

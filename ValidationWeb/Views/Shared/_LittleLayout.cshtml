@@ -8,6 +8,8 @@
     @Styles.Render("~/Content/css")
     @Styles.Render("~/Content/tabulatorCSS")
     @Styles.Render("~/Content/jqueryUICSS")
+    
+    @Styles.Render("~/Content/datePickerCSS")
 
 </head>
 <body>
@@ -59,6 +61,9 @@
     @Scripts.Render("~/bundles/jqueryUI")
     @Scripts.Render("~/bundles/table2CSV")
     @Scripts.Render("~/bundles/tabulatorScripts")
+
+    @Scripts.Render("~/bundles/datePickerJS")
+
     @RenderSection("scripts", required: false)
 </body>
 </html>

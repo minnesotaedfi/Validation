@@ -79,6 +79,9 @@ namespace ValidationWeb
 
         public ActionResult AddSubmissionCycle(string collectionId, DateTime startDate, DateTime endDate)
         {
+            if (endDate < startDate)
+                return null;
+
             _submissionCycleService.AddSubmissionCycle(collectionId, startDate, endDate);
             var submissionCycles = _submissionCycleService.GetSubmissionCyclesByCollectionId(collectionId);
 
