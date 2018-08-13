@@ -127,7 +127,6 @@ input, select, textarea {
 .top-banner {
     background-color: rgb(255, 255, 255);
     color: rgb(0, 0, 0);
-    padding: 10px;
     border-bottom-color: rgb(120, 190, 33);
     border-bottom-width: 10px;
     border-bottom-style: solid;
@@ -136,6 +135,16 @@ input, select, textarea {
     margin-left: 15px;
     margin-right: 15px;
     max-width: 1280px;
+}
+
+/* Makes the blue nav bar exactly 50 pixels which is the same as the MinnesotaDOE site */
+#layout-navbar {
+    padding: 13px;
+}
+
+/* Hovering over tab with a dropdown will show the content inside */
+.dropdown-toggle:hover .dropdown-menu {
+    display: block;
 }
 
 /* Minnesota requires padding to give logo impact. */

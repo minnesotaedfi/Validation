@@ -23,23 +23,18 @@
         </div>
         <div class="row noprint">
             <div class="col-12">
-                <nav class="navbar navbar-expand-sm prime-blue">
+                <nav id="layout-navbar" class="navbar navbar-expand-sm prime-blue">
                     <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#theNavBar" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
                     <div class="collapse navbar-collapse" id="theNavBar">
                         <ul class="navbar-nav">
                             @*<a class="nav-link dropdown-toggle" href="#" id="actionDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Home</a>*@
-                            <li>
-                                @Html.ActionLink("Home", "Index", "Home", new {area = ""}, new {@class = "nav-link"})
-                            </li>
-                            <li></li>
-                            <li></li>
-                            <li></li>
-                            @Html.ActionLink("Validation Reports", "Reports", "Validation", new {area = ""}, new {@class = "nav-link"})
-                            @Html.ActionLink("Data Integrity Reports", "Reports", "Validation", new { area = "" }, new { @class = "nav-link" })
-                            @Html.ActionLink("Data Submissions", "Submissions", "Validation", new {area = ""}, new {@class = "nav-link"})
-                            @Html.ActionLink("Rule Collections", "Collections", "Rules", new {area = ""}, new {@class = "nav-link"})
+                            <li>@Html.ActionLink("Home", "Index", "Home", new {area = ""}, new {@class = "nav-link"})</li>
+                            <li>@Html.ActionLink("Validation Reports", "Reports", "Validation", new { area = "" }, new { @class = "nav-link" })</li>
+                            <li>@Html.ActionLink("Data Integrity Reports", "Reports", "Validation", new { area = "" }, new { @class = "nav-link" })</li>
+                            <li>@Html.ActionLink("Data Submissions", "Submissions", "Validation", new { area = "" }, new { @class = "nav-link" })</li>
+                            <li>@Html.ActionLink("Rule Collections", "Collections", "Rules", new { area = "" }, new { @class = "nav-link" })</li>
                             @*@Html.ActionLink("Rule Editor", "Editor", "Rules", new { area = "" }, new { @class = "nav-item nav-link" })
                             @Html.ActionLink("Announcements", "Announcements", "Home", new { area = "" }, new { @class = "nav-item nav-link" })*@
                             @Html.Action("NavDropDowns", "Nav")
