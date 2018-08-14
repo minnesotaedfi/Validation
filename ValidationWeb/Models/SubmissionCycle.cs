@@ -22,7 +22,7 @@ namespace ValidationWeb
         // Should be changed to Id
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
-        public int SubmissionCycleId { get; set; }
+        public int Id { get; set; }
 
         public string CollectionId { get; set; }
         public DateTime StartDate { get; set; }

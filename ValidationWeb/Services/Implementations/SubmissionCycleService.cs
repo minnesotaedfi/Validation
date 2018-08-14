@@ -21,7 +21,7 @@ namespace ValidationWeb.Services
 
         public SubmissionCycle GetSubmissionCycle(int id)
         {
-            return _validationPortalDataContext.SubmissionCycles.FirstOrDefault(submissionCycle => submissionCycle.SubmissionCycleId == id);
+            return _validationPortalDataContext.SubmissionCycles.FirstOrDefault(submissionCycle => submissionCycle.Id == id);
         }
 
         public bool AddSubmissionCycle(SubmissionCycle submissionCycle)
@@ -54,7 +54,7 @@ namespace ValidationWeb.Services
 
         public bool RemoveSubmissionCycle(int id)
         {
-            var submissionRecord = _validationPortalDataContext.SubmissionCycles.FirstOrDefault(submissionCycle => submissionCycle.SubmissionCycleId == id);
+            var submissionRecord = _validationPortalDataContext.SubmissionCycles.FirstOrDefault(submissionCycle => submissionCycle.Id == id);
 
             if (submissionRecord == null)
                 return false;

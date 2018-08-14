@@ -316,6 +316,14 @@
     <Compile Include="Database\ValidationPortalDbMigrationConfiguration.cs" />
     <Compile Include="Filters\PortalAuthenticationFilter .cs" />
     <Compile Include="Filters\ValidationPortalPrincipal.cs" />
+    <Compile Include="Migrations\201808142126400_UpdateSubmission.cs" />
+    <Compile Include="Migrations\201808142126400_UpdateSubmission.Designer.cs">
+      <DependentUpon>201808142126400_UpdateSubmission.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201808142136301_ReorderColumns.cs" />
+    <Compile Include="Migrations\201808142136301_ReorderColumns.Designer.cs">
+      <DependentUpon>201808142136301_ReorderColumns.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Announcement.cs" />
     <Compile Include="Models\AppRole.cs" />
     <Compile Include="Models\AppUserSession.cs" />
@@ -387,6 +395,14 @@
       <Project>{7dd0bd93-1ee3-4c63-9d54-e8a9c9b1ad6b}</Project>
       <Name>Engine</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201808142126400_UpdateSubmission.resx">
+      <DependentUpon>201808142126400_UpdateSubmission.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201808142136301_ReorderColumns.resx">
+      <DependentUpon>201808142136301_ReorderColumns.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
