@@ -32,7 +32,7 @@ namespace ValidationWeb
     [Serializable]
     public class ValidationPortalIdentity : IIdentity
     {
-        public string AuthenticationType { get { return "MNDOE_SSO"; } }
+        public string AuthenticationType { get { return "Minnesota DOE SSO"; } }
         public bool IsAuthenticated { get { return true; } }
         public string Name { get; set; }
         public AppRole AppRole { get; set; }

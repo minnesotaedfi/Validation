@@ -43,15 +43,16 @@ namespace ValidationWeb
             return View(model);
         }
 
-        public ActionResult SelectOrg()
+        public ActionResult SelectOrg(string selectedEdOrgId)
         {
-            var model = new SelectOrgViewModel
-            {
-                AppUserSession = _appUserService.GetSession(),
-                AuthorizedEdOrgs = _edOrgService.GetEdOrgs(),
-                FocusedEdOrg = _edOrgService.GetEdOrgById(_appUserService.GetSession().FocusedEdOrgId)
-            };
-            return View(model);
+            _appUserService.UpdateFocusedEdOrg(selectedEdOrgId);
+            return RedirectToAction("Index");
+        }
+
+        public ActionResult SelectSchoolYear(int selectedSchoolYearId)
+        {
+            _appUserService.UpdateFocusedSchoolYear(selectedSchoolYearId);
+            return RedirectToAction("Index");
         }
 
         public ActionResult Announcements()

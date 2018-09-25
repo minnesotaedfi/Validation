@@ -11,6 +11,8 @@ namespace ValidationWeb.Services
         void DismissAnnouncement(int announcementId);
         AppUserSession GetSession();
         ValidationPortalIdentity GetUser();
+        void UpdateFocusedEdOrg(string newFocusedEdOrgId);
+        void UpdateFocusedSchoolYear(int newFocusedSchoolYearId);
     }
 }
 

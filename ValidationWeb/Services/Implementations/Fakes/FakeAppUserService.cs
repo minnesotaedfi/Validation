@@ -81,5 +81,17 @@ namespace ValidationWeb.Services
             var theSession = GetSession();
             theSession.DismissedAnnouncements.Add(new DismissedAnnouncement { AnnouncementId = announcementId,  AppUserSessionId = theSession.Id });
         }
+
+        public void UpdateFocusedEdOrg(string newFocusedEdOrgId)
+        {
+            // NOT IMPLEMENTED
+            return;
+        }
+
+        public void UpdateFocusedSchoolYear(int newFocusedSchoolYearId)
+        {
+            // NOT IMPLEMENTED
+            return;
+        }
     }
 }

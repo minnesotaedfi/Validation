@@ -13,23 +13,5 @@ namespace ValidationWeb
         {
             return View();
         }
-
-        // GET: Rules/Detail/id
-        public ActionResult Detail()
-        {
-            return View();
-        }
-
-        // GET: Rules/Editor/{id}
-        public ActionResult Rule()
-        {
-            return View();
-        }
-
-        // GET: Rules/Editor/{id}
-        public ActionResult Editor()
-        {
-            return View();
-        }
     }
 }

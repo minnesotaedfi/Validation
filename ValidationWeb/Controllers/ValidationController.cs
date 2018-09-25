@@ -73,12 +73,15 @@ namespace ValidationWeb
             return Json(summary);
         }
 
-
-        // GET: Validation/Reports
-        public ActionResult Submissions()
-        {
-            return View();
-        }
+        /*
+         * 
+         * While currently not used, expected to be reinstated next year.
+            // GET: Validation/Reports
+            public ActionResult Submissions()
+            {
+                return View();
+            }
+        */
 
         // GET: Validation/GetErrorReportTableData
         public String GetValidationErrorSummaryTableData(int validationReportSummaryId)

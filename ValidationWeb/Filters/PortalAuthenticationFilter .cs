@@ -16,12 +16,30 @@ namespace ValidationWeb
     public class PortalAuthenticationFilter : ActionFilterAttribute, IAuthenticationFilter
     {
         private static readonly AppSettingsFileConfigurationValues _config;
+        /// <summary>
+        /// Used to call the stored procedure that obtains detailed information about the user represented by the single sign-on token/header-value.
+        /// </summary>
         private static readonly string _authorizationStoredProcedureName;
+        /// <summary>
+        /// Used to call the stored procedure that obtains detailed information about the user represented by the single sign-on token/header-value.
+        /// </summary>
         private static readonly string _singleSignOnDatabaseConnectionString;
+        /// <summary>
+        /// The ID of this web application as assigned/recognized by the authentication server.
+        /// </summary>
         private static readonly string _appId;
-        public const string SessionIdentityKey = "LoggedInUserIdentity";
-        public const string SessionKey = "LoggedInUserSessionKey";
+        /// <summary>
+        /// Name of the ASP.NET/OWIN-provided Session object within the HttpContext
+        /// </summary>
         public const string SessionItemName = "Session";
+        /// <summary>
+        /// Key property value of the ASP.NET/OWIN-provided HttpCpntext.Session object for the user's session, if it exists. 
+        /// </summary>
+        public const string SessionKey = "LoggedInUserSessionKey";
+        /// <summary>
+        /// Name of the cached object in the ASP.NET/OWIN-provided HttpCpntext.Session that contains user information that's not specific to the session.
+        /// </summary>
+        public const string SessionIdentityKey = "LoggedInUserIdentity";
 
 
         static PortalAuthenticationFilter()
@@ -41,12 +59,17 @@ namespace ValidationWeb
             var httpContext = filterContext.RequestContext.HttpContext;
             var session = httpContext.Session;
             var request = httpContext.Request;
+            // We will try to set the user's Focused items to the same one's in their previous, expired session, if it is feasible. favorite new session variables to 
+            string previousSessionFocusedEdOrgId = null;
+            int? previousSessionFocusedSchoolYearId = null;
 
             #region If we find the Session Key checks out, then that means they were previously authenticated. 
             // The session has been configured to use SQL Server state - so load balancers/web farms are fine.
             if (!session.IsNewSession && session[SessionKey] != null)
             {
-                // Recall the user's info from the session state.
+                // If the Microsoft Session (configured in Web.Config) has timed out - then IsNewSession would have returned true, and we wouldn't get here.
+                // The cached session is checked against the timeout a bit further down, once the code has retrieved the cached Session
+                // Recall the user's info from the previously stored session state.
                 var userIdentity = session[SessionIdentityKey] as ValidationPortalIdentity;
                 if (userIdentity != null)
                 {
@@ -59,6 +82,8 @@ namespace ValidationWeb
                         var currentSession = dbContext.AppUserSessions.FirstOrDefault(sess => sess.Id == sessIdSought);
                         if (currentSession != null)
                         {
+                            previousSessionFocusedEdOrgId = currentSession.FocusedEdOrgId;
+                            previousSessionFocusedSchoolYearId = currentSession.FocusedSchoolYearId;
                             if (currentSession.ExpiresUtc > DateTime.UtcNow)
                             {
                                 // Extend the current session.
@@ -66,19 +91,24 @@ namespace ValidationWeb
                                 dbContext.SaveChanges();
                                 // Fill in the user's Identity info on the session instance, which is not persisted in the database.
                                 currentSession.UserIdentity = userIdentity;
+                                // Make the session accessible throughout the request.
+                                httpContext.Items[SessionItemName] = currentSession;
+                                return;
                             }
                             else
                             {
-                                // Since the session expired, remove ALL this user's sessions!
+                                // The session has expired from our application's constraint.
                                 dbContext.AppUserSessions.Remove(currentSession);
                                 dbContext.SaveChanges();
+                                // And some clean-up ...
+                                IEnumerable<AppUserSession> expiredUserSessions = dbContext.AppUserSessions.Where(s => s.UserIdentity == null || (s.UserIdentity.UserId == userIdentity.UserId && s.ExpiresUtc < DateTime.UtcNow));
+                                dbContext.AppUserSessions.RemoveRange(expiredUserSessions);
+                                dbContext.SaveChanges();
                             }
-                            // Make the session accessible throughout the request.
-                            httpContext.Items[SessionItemName] = currentSession;
-                            return;
                         }
                     }
                 }
+                // If the code reaches this point, it means the user needs a new session - otherwise the "return" statement would have been executed.
             }
             #endregion If we find the Session Key checks out, then load the user's session, and skip checking the database for authorizations. 
 
@@ -90,6 +120,7 @@ namespace ValidationWeb
 #endif
             if (string.IsNullOrWhiteSpace(authHeaderValue))
             {
+                // Returning without an HttpContext.User being set is going to cause an 401 UNAUTHORIZED HTTP response to occur in the OnAuthenticationChallenge handler below.
                 return;
             }
             #endregion Since there wasn't a session, we will authenticate. Make sure the HTTP header placed by the Login Page is present. 
@@ -134,10 +165,10 @@ namespace ValidationWeb
             }
             #endregion Retrieve user access from single sign on database
 
-            #region Extract data that is common to all records.
+            #region Extract data about the user that is common to all SSO Authorization records.
             // Filter on App ID
             ssoUserAuthorizations.RemoveAll(ss => string.Compare(ss.AppId, _appId, true) != 0);
-            // Role
+            // Role - grab the first one if there are more than one.
             var theRole = ssoUserAuthorizations.FirstOrDefault(ss => ss.RoleId != null).RoleId;
             var appRole = AppRole.CreateAppRole(theRole);
             // Role Description
@@ -151,7 +182,7 @@ namespace ValidationWeb
             var fullName = ssoUserAuthorizations.FirstOrDefault(ss => ss.FullName != null).FullName;
             var theEmail = ssoUserAuthorizations.FirstOrDefault(ss => ss.Email != null).Email;
             var appName = ssoUserAuthorizations.FirstOrDefault(ss => ss.AppName != null).AppName;
-            #endregion Extract data that is common to all records.
+            #endregion Extract data about the user that is common to all SSO Authorization records.
 
             var authorizedEdOrgs = ssoUserAuthorizations.Select(ss => new EdOrg
             {
@@ -164,7 +195,7 @@ namespace ValidationWeb
                 FormattedOrganizationId = ss.FormattedOrganizationId,
                 DistrictName = ss.OrganizationName,
                 Type = (ss.DistrictType.HasValue) ? ValidationPortalDbMigrationConfiguration.EdOrgTypeLookups[ss.DistrictType.Value] : new EdOrgTypeLookup { Id = 1, CodeValue = "EdOrgTypeLookups", Description = "EdOrgTypeLookups" }
-                }).ToList();
+            }).ToList();
 
             if ((appRole == AppRole.Unauthorized) || (appRole == null))
             {
@@ -187,7 +218,17 @@ namespace ValidationWeb
             };
             filterContext.HttpContext.User = new ValidationPortalPrincipal(newUserIdentity);
 
-            // Create and add a new user session to the database.
+            var validYears = new List<SchoolYear>();
+            using (var dbContext = new ValidationPortalDbContext())
+            {
+                validYears.AddRange(dbContext.SchoolYears.Where(sy => sy.Enabled).ToList());
+            }
+            if (validYears.Count == 0)
+            {
+                throw new ApplicationException("No school years were enabled in the Validation Portal's database.");
+            }
+
+            #region Create and add a new user session to the database.
             var firstEdOrg = newUserIdentity.AuthorizedEdOrgs.FirstOrDefault();
             var firstSchoolYear = newUserIdentity.AuthorizedEdOrgs.FirstOrDefault();
             var newCurrentSession = new AppUserSession
@@ -195,7 +236,8 @@ namespace ValidationWeb
                 Id = Guid.NewGuid().ToString(),
                 DismissedAnnouncements = new HashSet<DismissedAnnouncement>(),
                 ExpiresUtc = DateTime.UtcNow.AddMinutes(30),
-                FocusedEdOrgId = firstEdOrg.Id,
+                FocusedEdOrgId = (previousSessionFocusedEdOrgId == null) ? firstEdOrg.Id : previousSessionFocusedEdOrgId,
+                FocusedSchoolYearId = previousSessionFocusedSchoolYearId.HasValue ? previousSessionFocusedSchoolYearId.Value : validYears.First().Id,
                 UserIdentity = newUserIdentity
             };
             // Make the session accessible throughout the request.
@@ -208,6 +250,7 @@ namespace ValidationWeb
                 dbContext.AppUserSessions.Add(newCurrentSession);
                 dbContext.SaveChanges();
             }
+            #endregion Create and add a new user session to the database.
         }
 
         public void OnAuthenticationChallenge(AuthenticationChallengeContext filterContext)

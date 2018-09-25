@@ -21,6 +21,7 @@ namespace ValidationWeb
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
         public int Id { get; set; }
+        public bool Enabled { get; set; }
         public decimal? ErrorThreshold { get; set; }
 
         public string StartYear { get; set; }

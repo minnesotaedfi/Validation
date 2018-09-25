@@ -33,10 +33,11 @@
                             <li>@Html.ActionLink("Home", "Index", "Home", new {area = ""}, new {@class = "nav-link"})</li>
                             <li>@Html.ActionLink("Validation Reports", "Reports", "Validation", new { area = "" }, new { @class = "nav-link" })</li>
                             <li>@Html.ActionLink("Data Integrity Reports", "Reports", "Validation", new { area = "" }, new { @class = "nav-link" })</li>
+                            @*
+                                Thus link may be used in another customer's branch (IDOE)
                             <li>@Html.ActionLink("Data Submissions", "Submissions", "Validation", new { area = "" }, new { @class = "nav-link" })</li>
+                            *@
                             <li>@Html.ActionLink("Rule Collections", "Collections", "Rules", new { area = "" }, new { @class = "nav-link" })</li>
-                            @*@Html.ActionLink("Rule Editor", "Editor", "Rules", new { area = "" }, new { @class = "nav-item nav-link" })
-                            @Html.ActionLink("Announcements", "Announcements", "Home", new { area = "" }, new { @class = "nav-item nav-link" })*@
                             @Html.Action("NavDropDowns", "Nav")
                         </ul>
                     </div>

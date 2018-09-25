@@ -37,6 +37,30 @@ namespace ValidationWeb.Services
             return GetSession().UserIdentity;
         }
 
+        public void UpdateFocusedEdOrg(string newFocusedEdOrgId)
+        {
+            var sessionObj = GetSession();
+            if (sessionObj == null || sessionObj.UserIdentity.AuthorizedEdOrgs.FirstOrDefault(eo => eo.Id == newFocusedEdOrgId) == null)
+            {
+                return;
+            }
+            _validationPortalDataContext.AppUserSessions.Where(sess => sess.Id == sessionObj.Id).First().FocusedEdOrgId = newFocusedEdOrgId;
+            _validationPortalDataContext.SaveChanges();
+        }
+
+        public void UpdateFocusedSchoolYear(int newFocusedSchoolYearId)
+        {
+            var sessionObj = GetSession();
+            int? validSchoolYearId = _validationPortalDataContext.SchoolYears.FirstOrDefault(sy => sy.Enabled && sy.Id == newFocusedSchoolYearId).Id;
+            if (sessionObj == null || !(validSchoolYearId.HasValue))
+            {
+                return;
+            }
+            _validationPortalDataContext.AppUserSessions.Where(sess => sess.Id == sessionObj.Id).First().FocusedSchoolYearId = validSchoolYearId.Value;
+            _validationPortalDataContext.SaveChanges();
+        }
+
+        
         private void UpdateUserSession(AppUserSession session)
         {
             _httpContextProvider.CurrentHttpContext.Items[SessionItemName] = session;

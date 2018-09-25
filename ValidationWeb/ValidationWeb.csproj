@@ -293,8 +293,6 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Rules\Collections.cshtml" />
-    <Content Include="Views\Rules\Detail.cshtml" />
-    <Content Include="Views\Rules\Editor.cshtml" />
     <Content Include="Views\Shared\_LittleLayout.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Validation\Reports.cshtml" />
