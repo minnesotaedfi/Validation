@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Net.Http;
 
 namespace ValidationWeb.Services
 {
@@ -39,7 +40,20 @@ namespace ValidationWeb.Services
         {
             DateTime now = DateTime.UtcNow;
             DateTime currentTime = DateTime.UtcNow;
-            return $"[{currentTime.ToLongTimeString()} {currentTime.ToShortDateString()}] ";
+            string corrId = string.Empty;
+            if (HttpContext.Current != null)
+            {
+                if (HttpContext.Current.Items.Contains("CorrelationID"))
+                {
+                    corrId = HttpContext.Current.Items["CorrelationID"].ToString();
+                }
+                else
+                {
+                    corrId = $"[Request {Guid.NewGuid().ToString("N")}] ";
+                    HttpContext.Current.Items.Add("CorrelationID", corrId);
+                }
+            }
+            return $"[{currentTime.ToLongTimeString()} {corrId}{currentTime.ToShortDateString()}] ";
         }
 
     }

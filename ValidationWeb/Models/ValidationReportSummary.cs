@@ -10,7 +10,7 @@ namespace ValidationWeb
     [Table("validation.ReportSummary")]
     public class ValidationReportSummary
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         [Key]
         public long Id { get; set; }
         [StringLength(48)]
@@ -25,5 +25,6 @@ namespace ValidationWeb
         public DateTime? CompletedWhen { get; set; }
         public int? ErrorCount { get; set; }
         public int? WarningCount { get; set; }
+        public long? TotalCount { get; set; }
     }
 }

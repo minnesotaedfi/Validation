@@ -3,31 +3,57 @@ using SimpleInjector.Integration.Web;
 using SimpleInjector.Integration.Web.Mvc;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Web;
+using System.Web.Http;
+using System.Web.Routing;
 using System.Web.Mvc;
 using System.Web.Optimization;
-using System.Web.Routing;
 using System.Web.Security;
 using System.Web.SessionState;
 using Engine.Language;
-using ValidationWeb.Services;
 using Engine.Utility;
-using System.IO;
 using Engine.Models;
+using ValidationWeb.Services;
+using log4net.Config;
+using SimpleInjector.Lifestyles;
+using SimpleInjector.Integration.WebApi;
+using System.Web.Http.ExceptionHandling;
+using log4net;
+using System.Web.Http.ModelBinding.Binders;
+using ValidationWeb.ApiControllers;
+using System.Web.Http.ModelBinding;
 
 namespace ValidationWeb
 {
     public class Global : System.Web.HttpApplication
     {
         private AppSettingsFileConfigurationValues config = new AppSettingsFileConfigurationValues();
+        private const string LoggerName = "ValidationPortalLogger";
+        public static string ApiUrlPrefixRelative { get { return "~/api"; } }
+
         protected void Application_Start(object sender, EventArgs e)
         {
+            ConfigureLogging();
+
+            // Configure MVC
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             ConfigureDependencyInjection();
             GlobalFilters.Filters.Add(new PortalAuthenticationFilter());
+            
+            // Configure the Web API
+            GlobalConfiguration.Configure(ConfigureWebApi);
+        }
+
+        /// <summary>
+        /// Writes log to C:\ProgramData\ValidationPortal\ValidationPortal.log - or wherever Program Data environmental variable points to.
+        /// </summary>
+        protected virtual void ConfigureLogging()
+        {
+            XmlConfigurator.Configure();
         }
 
         protected void ConfigureDependencyInjection()
@@ -37,6 +63,13 @@ namespace ValidationWeb
             container.Options.DefaultScopedLifestyle = new WebRequestLifestyle();
             // This is an extension method from the MVC integration package.
             container.RegisterMvcControllers(Assembly.GetExecutingAssembly());
+            AddAppServicesToContainer(container);
+            container.Verify();
+            DependencyResolver.SetResolver(new SimpleInjectorDependencyResolver(container));
+        }
+
+        protected void AddAppServicesToContainer(Container container)
+        {
             // Services registered will depend on whether in production or test mode.
             if (config.UseFakeViewModelData)
             {
@@ -87,8 +120,88 @@ namespace ValidationWeb
                 container.Register<Model>(modelCreatorDelegate, Lifestyle.Scoped);
             }
 
-            container.Verify();
-            DependencyResolver.SetResolver(new SimpleInjectorDependencyResolver(container));
+            // Utility
+            var loggerObj = LogManager.GetLogger(LoggerName);
+            container.RegisterInstance<ILog>(loggerObj);
+            container.Register<ILoggingService, LoggingService>(Lifestyle.Singleton);
         }
+
+        protected virtual void ConfigureWebApi(HttpConfiguration config)
+        {
+            #region Configure Dependency injection Container
+            // Creates the Dependency Injection Container, registers implementations, 
+            // and uses it for all Web API object factories (e.g. IControllerFactory.CreateController).
+            // Registers an instance of SimpleInjector.Container to resolve dependencies for Web API, and returns the instance.
+            var container = new Container();
+            // Make the objects per-incoming-Web-Request by default.
+            container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
+            // Web API Controller instances will be created by dependency injection.
+            container.RegisterWebApiControllers(config);
+            // Web API will use this DI container to create everything the framework knows how to inject.
+            config.DependencyResolver = new SimpleInjectorWebApiDependencyResolver(container);
+            // Usually you'd get an HttpRequestMessage from the HttpContext class in System.Web, but Web API doesn't need System.Web.
+            // So we'll let Simple Injector give us access when needed.
+            container.EnableHttpRequestMessageTracking(config);
+            // Allow getting the Request from arbitrary code 
+            container.RegisterInstance<IRequestMessageAccessor>(new RequestMessageAccessor(container));
+            AddAppServicesToContainer(container);
+            // Register a Custom Model Binder.
+            var provider = new SimpleModelBinderProvider(typeof(ValidationErrorFilter), new ValidationErrorFilterModelBinder());
+            config.Services.Insert(typeof(ModelBinderProvider), 0, provider);
+
+            container.Verify();
+            // Web API will use this DI container to create everything the framework knows how to inject.
+            config.DependencyResolver = new SimpleInjectorWebApiDependencyResolver(container);
+            #endregion Configure Dependency injection Container
+
+            AddWebApiRoutes(config);
+            AddResponseFormatters(config);
+            AddFilters(config, container);
+            config.SuppressHostPrincipal();
+        }
+
+        protected virtual void AddWebApiRoutes(HttpConfiguration httpConfiguration)
+        {
+            httpConfiguration.MapHttpAttributeRoutes();
+
+            //httpConfiguration.Routes.MapHttpRoute(
+            //    name: "DefaultApi",
+            //    routeTemplate: "{controller}/{id}"
+            //);
+        }
+
+        protected virtual void AddResponseFormatters(HttpConfiguration httpConfiguration)
+        {
+            // This formatter uses Newtonsoft JSON.Net and handles Camel Casing, returns Enums as Strings, and converts the date into the ISO format JavaScript loves.
+            httpConfiguration.Formatters.Insert(0, new JsonNetFormatter());
+            // Hardcode all responses to use JSON content type (format) by removing XML support
+            httpConfiguration.Formatters.XmlFormatter.SupportedMediaTypes.Clear();
+        }
+
+        protected virtual void AddFilters(HttpConfiguration httpConfiguration, Container container)
+        {
+            httpConfiguration.Filters.Add(new ProfilingFilter(container.GetInstance<ILoggingService>()));
+            httpConfiguration.Filters.Add(new ValidationWebExceptionFilterAttribute(container.GetInstance<IRequestMessageAccessor>(), container.GetInstance<ILoggingService>()));
+            httpConfiguration.Filters.Add(new ValidationAuthenticationFilter(httpConfiguration, container.GetInstance<ILoggingService>()));
+            // Unless marked with AllowAnonymous, all actions require Authenication.
+            httpConfiguration.Filters.Add(new System.Web.Http.AuthorizeAttribute());
+            httpConfiguration.MessageHandlers.Add(new LoggingHandler(container.GetInstance<ILoggingService>()));
+            // httpConfiguration.Services.Replace(typeof(IExceptionHandler), new GlobalExceptionHandler());
+            httpConfiguration.Services.Add(typeof(IExceptionLogger), new ValidationExceptionLogger(container.GetInstance<ILoggingService>(), container.GetInstance<IRequestMessageAccessor>()));
+        }
+
+        #region Require Session for Web API, for security and authentication checks.
+        protected void Application_PostAuthorizeRequest()
+        {
+            if (IsWebApiRequest())
+            {
+                HttpContext.Current.SetSessionStateBehavior(SessionStateBehavior.Required);
+            }
+        }
+        private bool IsWebApiRequest()
+        {
+            return HttpContext.Current.Request.AppRelativeCurrentExecutionFilePath.StartsWith(ApiUrlPrefixRelative);
+        }
+        #endregion Require Session for Web API
     }
 }

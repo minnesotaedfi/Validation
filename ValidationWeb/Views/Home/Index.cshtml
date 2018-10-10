@@ -10,11 +10,11 @@
 <div class="container-fluid">
     <div class="row">
         <div class="tbmargin10 col-8">
-            <div class="h4">
+            <div class="vp-body-header">
                 You are logged in as @(Model.AppUserSession.UserIdentity.FullName) with access level: @(Model.AppUserSession.UserIdentity.AppRole?.Name).
             </div>
-            <div class="h4">
-                School years open for submission:
+            <div class="vp-body-header">
+                School years available to validate:
                 <span>@( string.Join(", ", Model.YearsOpenForDataSubmission.Select(yr => yr.ToString()).OrderBy(y => y).ToList()))</span>
             </div>
         </div>
@@ -30,7 +30,7 @@
                 if (announcement.Expiration > DateTime.UtcNow)
                 {
                     <div id="@(cardId)" class="@(cardColor) clear-margin rounded-padded">
-                        <h4>@(cardHeader)</h4>
+                        <div class="vp-body-header">@(cardHeader)</div>
                         @foreach (var paragraph in announcementParagraphs)
                     {
                             <p>@Html.Raw(paragraph)</p>
@@ -43,8 +43,8 @@
                     {
                             <p>@(announcement.ContactInfo) <!-- <button type="button" onclick="hideElement('#@(cardId)',  @(announcement.Id))" class="btn btn-sm btn-primary btn-light float-right">Dismiss</button>--></p>
 
-                    }
-                        </div>
+                        }
+                    </div>
                         <br />
                 }
             }

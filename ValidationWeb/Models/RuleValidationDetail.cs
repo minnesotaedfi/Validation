@@ -7,6 +7,9 @@ using System.Web;
 
 namespace ValidationWeb
 {
+    /// <summary>
+    /// Represents a single error or warning. The structure of this table is given by the Wells Rules Engine.
+    /// </summary>
     [Table("rules.RuleValidationDetail")]
     public class RuleValidationDetail
     {

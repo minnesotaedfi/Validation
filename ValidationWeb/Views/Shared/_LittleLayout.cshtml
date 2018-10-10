@@ -30,14 +30,11 @@
                     <div class="collapse navbar-collapse" id="theNavBar">
                         <ul class="navbar-nav">
                             @*<a class="nav-link dropdown-toggle" href="#" id="actionDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Home</a>*@
-                            <li>@Html.ActionLink("Home", "Index", "Home", new {area = ""}, new {@class = "nav-link"})</li>
-                            <li>@Html.ActionLink("Validation Reports", "Reports", "Validation", new { area = "" }, new { @class = "nav-link" })</li>
-                            <li>@Html.ActionLink("Data Integrity Reports", "Reports", "Validation", new { area = "" }, new { @class = "nav-link" })</li>
-                            @*
-                                Thus link may be used in another customer's branch (IDOE)
-                            <li>@Html.ActionLink("Data Submissions", "Submissions", "Validation", new { area = "" }, new { @class = "nav-link" })</li>
-                            *@
-                            <li>@Html.ActionLink("Rule Collections", "Collections", "Rules", new { area = "" }, new { @class = "nav-link" })</li>
+                            <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "nav-link validation-nav-link" })</li>
+                            <li>@Html.ActionLink("Validation Reports", "Reports", "Validation", new { area = "" }, new { @class = "nav-link validation-nav-link" })</li>
+                            <li>@Html.ActionLink("ODS Reports", "Reports", "Validation", new { area = "" }, new { @class = "nav-link validation-nav-link" })</li>
+                            @* Thus link may be used in another customer's branch (IDOE)  <li>@Html.ActionLink("Data Submissions", "Submissions", "Validation", new { area = "" }, new { @class = "nav-link validation-nav-link" })</li> *@
+                            <li>@Html.ActionLink("Rule Collections", "Collections", "Rules", new { area = "" }, new { @class = "nav-link validation-nav-link mr-auto" })</li>
                             @Html.Action("NavDropDowns", "Nav")
                         </ul>
                     </div>
@@ -59,6 +56,39 @@
     @Scripts.Render("~/bundles/tabulatorScripts")
 
     @Scripts.Render("~/bundles/datePickerJS")
+    <script>
+        // Supports NavDropDowns, Education Organization/District selection menu dropdown
+        $(document).ready(function () {
+            $(".select-org-link").on('click', function (e) {
+                var chosenLink = $(this);
+                var orgId = (chosenLink.attr("data-org-id"));
+                $.ajax({
+                    url: "@Url.Content("~/api/user-session/ed-org/select")",
+                    type: "Post",
+                    data: orgId,
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (data) { $("#actionDropdownOrg").text(chosenLink.text()); },
+                    error: function () { console.log(`An error occurred when attempting to change Ed Org to ${orgId}.`); }
+                });
+            });
+        });
+
+        // Supports NavDropDowns, School Year selection menu dropdown
+        $(document).ready(function () {
+            $(".select-school-year-link").on('click', function (e) {
+                var chosenLink = $(this);
+                var yearId = (chosenLink.attr("data-year-id"));
+                $.ajax({
+                    url: "@Url.Content("~/api/user-session/school-year/select")",
+                    type: "Post",
+                    data: yearId,
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (data) { $("#actionDropdownYear").text(chosenLink.text()); },
+                    error: function () { console.log(`An error occurred when attempting to change School Year to ${yearId}.`); }
+                });
+            });
+        });
+    </script>
 
     @RenderSection("scripts", required: false)
 </body>

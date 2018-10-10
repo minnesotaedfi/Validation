@@ -21,7 +21,7 @@ namespace ValidationWeb
 
         public string DistrictName { get; set; }
         public string CollectionName { get; set; }
-        public DateTime CompletedWhen { get; set; }
+        public DateTime? CompletedWhen { get; set; }
 
         [ForeignKey("ValidationReportSummary")]
         public long ValidationReportSummaryId { get; set; }

@@ -5,6 +5,9 @@ using System.Web;
 
 namespace ValidationWeb
 {
+    /// <summary>
+    /// Role information and definitions are stored in the Minnesota SSO database. 
+    /// </summary>
     [Serializable]
     public class AppRole
     {

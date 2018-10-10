@@ -11,7 +11,7 @@
         if (announcement.Expiration > DateTime.UtcNow)
         {
             <div id="@(cardId)" class="@(cardColor) page-width clear-margin rounded-padded">
-                <h4>@(cardHeader)</h4>
+                <div class="vp-body-header">@(cardHeader)</div>
                 @foreach (var paragraph in announcementParagraphs)
                 {
                     <p>@Html.Raw(paragraph)</p>

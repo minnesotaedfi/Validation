@@ -16,16 +16,16 @@ namespace ValidationWeb
 
         public static EdOrgTypeLookup[] EdOrgTypeLookups = new EdOrgTypeLookup[]
         {
-            new EdOrgTypeLookup { Id = 0, CodeValue = "School", Description = "School" },
-            new EdOrgTypeLookup { Id = 1, CodeValue = "District", Description = "District" },
-            new EdOrgTypeLookup { Id = 2, CodeValue = "Region", Description = "Region" },
-            new EdOrgTypeLookup { Id = 3, CodeValue = "State", Description = "State" }
+            new EdOrgTypeLookup { Id = (int)EdOrgType.School, CodeValue = "School", Description = "School" },
+            new EdOrgTypeLookup { Id = (int)EdOrgType.District, CodeValue = "District", Description = "District" },
+            new EdOrgTypeLookup { Id = (int)EdOrgType.Region, CodeValue = "Region", Description = "Region" },
+            new EdOrgTypeLookup { Id = (int)EdOrgType.State, CodeValue = "State", Description = "State" }
         };
 
         public static ErrorSeverityLookup[] ErrorSeverityLookups = new ErrorSeverityLookup[]
         {
-            new ErrorSeverityLookup { Id = 0, CodeValue = "Error", Description = "Error" },
-            new ErrorSeverityLookup { Id = 1, CodeValue = "Warning", Description = "Warning" }
+            new ErrorSeverityLookup { Id = (int)ErrorSeverity.Error, CodeValue = "Error", Description = "Error" },
+            new ErrorSeverityLookup { Id = (int)ErrorSeverity.Warning, CodeValue = "Warning", Description = "Warning" }
         };
 
         /// <summary>

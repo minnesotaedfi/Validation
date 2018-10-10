@@ -1,135 +1,348 @@
 ﻿@model ValidationReportDetailsViewModel
 
+<div class="row">
+    <div class="vp-body-header">Validation Report Details for District @Model.Details.DistrictName</div>
+</div>
+
+<div class="row border border-dark tbmargin10">
+    <div class="col-6">
+        <div>Requested On: @Model.Details.ValidationReportSummary.RequestedWhen.ToShortDateString() @Model.Details.ValidationReportSummary.RequestedWhen.ToShortTimeString()</div>
+        <div>Rule Collection Used: @Model.Details.CollectionName</div>
+    </div>
+    <div class="col-6">
+        <div>Initiated By: @Model.Details.ValidationReportSummary.InitiatedBy</div>
+        <div>Status: @Model.Details.ValidationReportSummary.Status</div>
+    </div>
+</div>
+
+
+<div class="row">
+</div>
+
+<div id="errorGridControls" class="row grid-controls">
+    <button id="searchButton" class="btn prime-blue white-heavy-text" type="button">Search</button>
+    <button id="clearButton" class="btn prime-blue white-heavy-text">Clear</button>
+    <button id="firstPageButton" class="btn prime-blue white-heavy-text">&lt;&lt;</button>
+    <button id="previousPageButton" class="btn prime-blue white-heavy-text">&lt;</button>
+    <span id="pageSizeLabel">Page size: </span> 
+    <input class="form-control form-control-sm" id="pageSizeInput" placeholder="30 (records per page)">
+    Page 
+    <input class="form-control form-control-sm" id="pageNumberInput" placeholder="1">
+    of  
+    <span id="totalPageCount">1</span>
+    <button id="nextPageButton" class="btn prime-blue white-heavy-text">&gt;</button>
+    <button id="lastPageButton" class="btn prime-blue white-heavy-text">&gt;&gt;</button>
+    <div class="dropdown ml-auto d-inline-block">
+        <button id="componentViewFilter" class="btn dropdown-toggle validation-drowdown-toggle prime-blue white-heavy-text" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Component: All
+            <span class="caret"></span>
+        </button>
+        <div class="dropdown-menu validation-drowdown-menu" style="margin-top: 0;" aria-labelledby="actionDropdown">
+            <div id="showAllGrid" class="collectionFilter" aria-labelledby="actionDropdown"><a href="#" class="white-heavy-text lrmargin10">All</a></div>
+            <div id="showEnrollment" class="collectionFilter" aria-labelledby="actionDropdown"><a href="#" class="white-heavy-text lrmargin10">Enrollment</a></div>
+            <div id="showDemographics" class="collectionFilter" aria-labelledby="actionDropdown"><a href="#" class="white-heavy-text lrmargin10">Demographics</a></div>
+        </div>
+        <input id="componentViewSelected" type="hidden" value="All">
+    </div>
+    <button id="downloadAsCSV" type="button" class="btn prime-blue white-heavy-text lrmargin10">Export</button>
+</div>
+
+<div id="errorGrid" class="row tbmargin10 error-grid">
+    <table class="table table-sm table-responsive-md table-bordered">
+        <tr class="table-primary">
+            <th>#</th>
+            <th>Student ID</th>
+            <th>Student</th>
+            <th>School</th>
+            <th>Enrollment Dates</th>
+            <th>Grade</th>
+            <th>Severity</th>
+            <th>Rule Number</th>
+            <th>Message</th>
+        </tr>
+        <tr class="table-primary">
+            <th></th>
+            <th><input class="form-control form-control-sm" id="studentIdFilter" placeholder="filter"></th>
+            <th><input class="form-control form-control-sm" id="studentNameFilter" placeholder="filter"></th>
+            <th><input class="form-control form-control-sm" id="schoolFilter" placeholder="filter"></th>
+            <th></th>
+            <th><input class="form-control form-control-sm" id="gradeFilter" placeholder="filter"></th>
+            <th><select class="form-control form-control-sm" id="errorTypeFilter">
+                    <option value="all">All</option>
+                    <option value="error">Errors</option>
+                    <option value="warning">Warnings</option>
+                </select>
+            </th>
+            <th><input class="form-control form-control-sm" id="ruleNumberFilter" placeholder="filter"></th>
+            <th><input class="form-control form-control-sm" id="ruleMessageFilter" placeholder="filter"></th>
+        </tr>
+        <tr class="datarow">
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+        </tr>
+    </table>
+</div>
+
 @section scripts
- {
+{
     <script>
+        // Switch between grids - hide all but the one whose ID is passed here.
+        function ShowGrid(gridId) {
+            let gridIdWithHash = `#${gridId}`;
+            $(".error-grid").hide();
+            $(gridIdWithHash).show();
+            RefreshGrid(gridId, SetFilter());
+        }
+
+        function ClearGrid(gridId) {
+            let gridIdWithHash = `#${gridId}`;
+            $('tr.datarow').remove();
+        }
+
+        // Populate the grid according to filters.
+        function RefreshGrid(gridId, filter) {
+            ClearGrid(gridId);
+            $.ajax({
+                url: "@Url.Content("~/api/validation/error-summaries/all")",
+            type: 'POST',
+            data: JSON.stringify(filter),
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) { ProcessGridDataForDisplay(gridId, data); },
+            error: function () { console.log(`An error occurred when attempting to load error listing from server.`); }
+        });
+        }
+
+        function ClearFilter() {
+            $("input").val("");
+            $("#errorTypeFilter").val("all");
+            $("#componentViewSelected").val("All");
+        }
+
+        function SetFilter() {
+            // Establish the defaults
+            let filter = {
+                reportDetailsId: @(Model.Details.Id),
+                filterColumns: [''],
+                filterTexts: [''],
+                sortColumns: [''],
+                sortDirections: [''],
+                pageStartingOffset: 0,
+                pageSize: 30
+            };
+            if ($("#studentIdFilter").val()) {
+                filter.filterColumns.push("studentid");
+                filter.filterTexts.push($("#studentIdFilter").val());
+            }
+            if ($("#studentNameFilter").val()) {
+                filter.filterColumns.push("studentname");
+                filter.filterTexts.push($("#studentNameFilter").val());
+            }
+            if ($("#schoolFilter").val()) {
+                filter.filterColumns.push("school");
+                filter.filterTexts.push($("#schoolFilter").val());
+            }
+            if ($("#gradeFilter").val()) {
+                filter.filterColumns.push("grade");
+                filter.filterTexts.push($("#gradeFilter").val());
+            }
+            if ($("#ruleNumberFilter").val()) {
+                filter.filterColumns.push("rule");
+                filter.filterTexts.push($("#ruleNumberFilter").val());
+            }
+            if ($("#ruleMessageFilter").val()) {
+                filter.filterColumns.push("errortext");
+                filter.filterTexts.push($("#ruleMessageFilter").val());
+            }
+
+            // Examine for specific constrained values.
+            if ($("#errorTypeFilter").val() === "error") {
+                filter.filterColumns.push("errortype");
+                filter.filterTexts.push("error");
+            }
+            if ($("#errorTypeFilter").val() === "warning") {
+                filter.filterColumns.push("errortype");
+                filter.filterTexts.push("warning");
+            }
+            if ($("#componentViewSelected").val() === "Enrollment") {
+                filter.filterColumns.push("component");
+                filter.filterTexts.push("Enrollment");
+            }
+            if ($("#componentViewSelected").val() === "Demographics") {
+                filter.filterColumns.push("component");
+                filter.filterTexts.push("Demographics");
+            }  
+            
+            // Set paging.
+            if ($("#pageSizeInput").val()) {
+                let pageSizeInt = parseInt($("#pageSizeInput").val());
+                if (pageSizeInt)
+                {
+                    filter.pageSize = pageSizeInt;
+                }
+                else 
+                {
+                    filter.pageSize = 30;
+                }
+            }  
+            // Calculate record offset
+            let desiredPageNumber = 1;
+            let candidatePageNumber = $("#pageNumberInput").val();
+            if (candidatePageNumber)
+            {
+                let candidatePageNumberInt = parseInt(candidatePageNumber);
+                if (candidatePageNumberInt)
+                {
+                    desiredPageNumber = candidatePageNumberInt;
+                }
+            }
+            // -1 to account for the Page Number being "1"-based. The first page is "1", not "0".
+            filter.pageStartingOffset = filter.pageSize * (desiredPageNumber - 1);
+            return filter;
+        }
+
+        function AddSingleBlankRow(gridId) {
+            let gridIdWithHash = `#${gridId}`;
+            $(`${gridIdWithHash} tr:last`).after(`<tr class=\"datarow\"><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>`);
+        }
+
+        function AddSingleDataRow(gridId, errorRecord, recordNumberInFullSet) {
+            let gridIdWithHash = `#${gridId}`;
+            let severity = (errorRecord.severityId == 0) ? "Error" : "Warning";
+            let newTableRowHtml = '<tr class=\"datarow\">'
+            newTableRowHtml = newTableRowHtml + `<td>${recordNumberInFullSet.toString()}</td>`
+            newTableRowHtml = newTableRowHtml + `<td>${errorRecord.studentUniqueId}</td>`
+            newTableRowHtml = newTableRowHtml + `<td>${errorRecord.studentFullName}</td>`
+            newTableRowHtml = newTableRowHtml + `<td>${errorRecord.school}</td>`
+            newTableRowHtml = newTableRowHtml + `<td>${errorRecord.enrollmentDates}</td>`
+            newTableRowHtml = newTableRowHtml + `<td>${errorRecord.grade}</td>`
+            newTableRowHtml = newTableRowHtml + `<td>${severity}</td>`
+            newTableRowHtml = newTableRowHtml + `<td>${errorRecord.errorCode}</td>`
+            newTableRowHtml = newTableRowHtml + `<td>${errorRecord.errorText}</td>`
+            newTableRowHtml = newTableRowHtml + `</tr>`
+            $(`${gridIdWithHash} tr:last`).after(newTableRowHtml);
+        }
+
+        function ProcessGridDataForDisplay(gridId, dataObj) {
+            $("#totalPageCount").text(dataObj.totalPagesCount.toString());
+            $("#pageSizeInput").val(dataObj.pageSize.toString());
+            $("#pageNumberInput").val(dataObj.pageNumber.toString());
+            let recordOffset = dataObj.recordOffset;
+            if (!recordOffset) // 0-based
+            {
+                recordOffset = 0;
+            }
+            for (let errorRecordIndex = 0; errorRecordIndex < dataObj.filteredErrorSummariesPage.length; errorRecordIndex++) {
+                // Add 1 to make the first record appear as "1"
+                AddSingleDataRow(gridId, dataObj.filteredErrorSummariesPage[errorRecordIndex], recordOffset + 1);
+                // And the next record would be 2, etc.
+                recordOffset++;
+            }
+        }
+
+        $(document).ready(function() {
+            // Initially show all errors.
+            ShowGrid("errorGrid");
+            // Register callback to show particular grid based on dropdown selection.
+            $("#showAllGrid").on("click", function(e){
+                $("#componentViewFilter").text("Component: All");
+                $("#componentViewSelected").val("All");
+                ShowGrid("errorGrid");
+            });
+            $("#showEnrollment").on("click", function(e){
+                $("#componentViewFilter").text("Component: Enrollment");
+                $("#componentViewSelected").val("Enrollment");
+                ShowGrid("errorGrid");
+            });
+            $("#showDemographics").on("click", function(e){
+                $("#componentViewFilter").text("Component: Demographics");
+                $("#componentViewSelected").val("Demographics");
+                ShowGrid("errorGrid");
+            });
+            // Register Buttons
+            $("#searchButton").on("click", function(){
+                let currentFilter = SetFilter();
+                RefreshGrid("errorGrid", currentFilter);
+            });
+            $("#clearButton").on("click", function(){
+                ClearFilter();
+                let currentFilter = SetFilter();
+                RefreshGrid("errorGrid", currentFilter);
+            });
+            $("#firstPageButton").on("click", function(){
+                $("#pageNumberInput").val(1);
+                let currentFilter = SetFilter();
+                RefreshGrid("errorGrid", currentFilter);
+            });
+            $("#previousPageButton").on("click", function(){
+                let currentPageVal =  $("#pageNumberInput").val();
+                if (currentPageVal)
+                {
+                    let currentPageValInt = parseInt(currentPageVal);
+                    if (currentPageValInt)
+                    {
+                        $("#pageNumberInput").val(--currentPageValInt);
+                    }
+                    else
+                    {
+                        $("#pageNumberInput").val(1);
+                    }
+                }
+                else
+                {
+                    $("#pageNumberInput").val(1);
+                }
+                let currentFilter = SetFilter();
+                RefreshGrid("errorGrid", currentFilter);
+            });
+            $("#nextPageButton").on("click", function(){
+                let currentPageVal =  $("#pageNumberInput").val();
+                if (currentPageVal)
+                {
+                    let currentPageValInt = parseInt(currentPageVal);
+                    if (currentPageValInt)
+                    {
+                        $("#pageNumberInput").val(++currentPageValInt);
+                    }
+                    else
+                    {
+                        $("#pageNumberInput").val(1);
+                    }
+                }
+                else
+                {
+                    $("#pageNumberInput").val(1);
+                }
+                let currentFilter = SetFilter();
+                RefreshGrid("errorGrid", currentFilter);
+            });
+            $("#lastPageButton").on("click", function(){
+                $("#pageNumberInput").val(parseInt($("#totalPageCount").text()));
+                let currentFilter = SetFilter();
+                RefreshGrid("errorGrid", currentFilter);
+            });
+
+        });
+
+
         $(document).ready(function() {
             $("#export").click(function() {
                 $('#errorTable').table2csv({ filename: 'validationReportDetails.csv' });
             });
         });
-    </script>
-}
-
-<div class="row">
-            <div class="h4">Validation Report Details for District @Model.Details.DistrictName</div>
-        </div>
-        <div class="row">
-            <div>Requested On: @Model.Details.CompletedWhen.ToShortDateString() @Model.Details.CompletedWhen.ToShortTimeString()</div>
-        </div>
-        <div class="row">
-            <div>Initiated By: @Model.Details.ValidationReportSummary.InitiatedBy</div>
-        </div>
-        <div class="row">
-            <div>Submission: @Model.Details.CollectionName</div>
-        </div>
-        <div class="row ">
-            <div>Status: @Model.Details.ValidationReportSummary.Status</div>
-            <div style ="text-align: right">
-                <button id="downloadAsCSV" type="button" class="btn btn-primary white-heavy-text float-right margin10">Export</button>
-            </div>
-        </div>
-@*         <div class="row tbmargin10"> *@
-@*             <table class="table table-sm table-responsive-md table-bordered"> *@
-@*                 <tr class="table-primary"> *@
-@*                     <th>Component</th> *@
-@*                     <th>Student</th> *@
-@*                     <th>School Number</th> *@
-@*                     <th>Grade</th> *@
-@*                     <th>Error Number</th> *@
-@*                     <th>Error</th> *@
-@*                 </tr> *@
-@*                 @foreach (var summary in Model.Details.ErrorSummaries) *@
-@*             { *@
-@*                     <tr> *@
-@*                         <td>@summary.Component</td> *@
-@*                         <td>@summary.Student.GetFullName() <br />@summary.Student.Id</td> *@
-@*                         <td>@summary.School <br />456</td> *@
-@*                         <td>@summary.Grade</td> *@
-@*                         <td>@summary.ErrorCode</td> *@
-@*                         <td>@summary.ErrorText</td> *@
-@*                     </tr> *@
-@*                 } *@
-@*             </table> *@
-@*         </div> *@
 
 
-<div class ="row tbmargin10" id ="testTable">
-</div>
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
-@section scripts
-{
-    <script>
         $("#downloadAsCSV").click(function() {
             $("#testTable").tabulator("download", "csv", "validationReportDetails.csv");
         });
-
-        var studentAutoCompleteFilter = function(cell, onRendered, success, cancel, editorParams)
-        {
-            
-            var tableData = {};
-            $.ajax({
-                url: "../GetValidationErrorSummaryTableData",
-                type: "GET",
-                data: {validationReportSummaryId : @Model.Details.ValidationReportSummaryId},
-                async: false,
-                success: function (data) {
-                    tableData = JSON.parse(data);
-                }
-            });
-
-            var studentNameList = [];
-
-            tableData.forEach(function(item, index) {
-                studentNameList.push(item.Student.FirstName + " " + item.Student.LastName);
-            });
-
-            var container = $("<input id='tags' placeholder='filter column...'>").autocomplete({
-                source: studentNameList
-            });
-            $("#testTable").tabulator("setData");
-            container.css({
-                "padding":"4px",
-                "width":"100%",
-                "box-sizing":"border-box",
-                "-webkit-appearance": "none"
-            });
-
-            return container;
-        }
-       
-        
-      
-        $("#testTable").tabulator({
-            ajaxURL: "../GetValidationErrorSummaryTableData",
-            ajaxParams: { validationReportSummaryId: @Model.Details.ValidationReportSummaryId },
-            layout: "fitColumns",
-            pagination: "local",
-            paginationSize: 4,
-            columns: [
-                { title: "Component", field: "Component", formatter: "textarea" },
-                {
-                    title: "Student",
-                    field: "Student",
-                    formatter: "textarea",
-                    headerFilter: studentAutoCompleteFilter,
-                    headerFilterFunc:"like",
-                    mutator: function(value,
-                        data,
-                        type,
-                        params,
-                        component) {return value.FirstName + " "+ value.LastName;
-                    }
-                },
-                { title: "School", field: "School", formatter: "textarea", headerFilter: "input"},
-                { title: "Grade", field: "Grade", formatter: "textarea" },
-                { title: "Error Number", field: "ErrorCode",formatter: "textarea" },
-                { title: "Error", field: "ErrorText", formatter: "textarea", headerFilter: "input" }
-            ]
-        });
-
-
     </script>
 }

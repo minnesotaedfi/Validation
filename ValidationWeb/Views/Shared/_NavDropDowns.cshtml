@@ -1,41 +1,34 @@
 ﻿@model NavMenusViewModel
 
-<style>
-    /*Fix for the dropdown menus not dropping underneath the parent correctly*/
+    <div class="ml-auto justify-content-end">
+        <li class="nav-item dropdown-toggle pull-right">
+            <a class="nav-link dropdown-toggle validation-dropdown-toggle" href="#" id="actionDropdownProfile" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@Model.AppUserSession.UserIdentity.UserId</a>
+            <div class="dropdown-menu validation-drowdown-menu" style="left: initial;" aria-labelledby="actionDropdown">
+                @*TODO - If admin only show admin page. ASK - Is this ok?*@
+                @if (Model.AppUserSession.UserIdentity.AppRole.Name == "Administrator")
+                {
+                    @Html.ActionLink("Admin page", "Index", "Admin", new { area = "" }, new { @class = "nav-item nav-link" })
+                }
+                @Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "nav-item nav-link" })
+            </div>
+        </li>
+        <li class="nav-item dropdown-toggle pull-right">
+            <a class="nav-link dropdown-toggle validation-dropdown-toggle" href="#" id="actionDropdownOrg" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@Model.FocusedEdOrg.DistrictName</a>
+            <div class="dropdown-menu validation-drowdown-menu" style="left: initial;" aria-labelledby="actionDropdown">
+                @foreach (var edOrg in Model.EdOrgs)
+                {
+                    <a class="nav-item nav-link select-org-link" href="#" data-org-id="@(edOrg.Id)">@(edOrg.DistrictName)</a>
+                }
+            </div>
+        </li>
+        <li class="nav-item dropdown-toggle pull-right">
+            <a class="nav-link dropdown-toggle validation-dropdown-toggle" href="#" id="actionDropdownYear" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@Model.FocusedSchoolYear</a>
+            <div class="dropdown-menu validation-drowdown-menu" style="left: initial;" aria-labelledby="actionDropdown">
+                @foreach (var schoolYear in Model.SchoolYears)
+                {
+                    <a class="nav-item nav-link select-school-year-link" href="#" data-year-id="@(schoolYear.Id.ToString())">@(schoolYear.ToString())</a>
+                }
+            </div>
+        </li>
+    </div>
 
-    .dropdown-menu {
-        left: initial;
-    }
-</style>
-
-<div class="col-6">
-    <li class="nav-item dropdown-toggle pull-right">
-        <a class="nav-link dropdown-toggle" href="#" id="actionDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@Model.AppUserSession.UserIdentity.UserId</a>
-        <div class="dropdown-menu validation-drowdown-menu pull-right" aria-labelledby="actionDropdown">
-            @*TODO - If admin only show admin page. ASK - Is this ok?*@
-            @if (Model.AppUserSession.UserIdentity.AppRole.Name == "Administrator")
-            {
-                @Html.ActionLink("Admin page", "Index", "Admin", new { area = "" }, new { @class = "nav-item nav-link" })
-            }
-            @Html.ActionLink("Home", "Index", "Home", new {area = ""}, new {@class = "nav-item nav-link"})
-        </div>
-    </li>
-    <li class="nav-item dropdown-toggle pull-right">
-        <a class="nav-link dropdown-toggle" href="#" id="actionDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@Model.FocusedEdOrg.DistrictName</a>
-        <div class="dropdown-menu validation-drowdown-menu pull-right" aria-labelledby="actionDropdown">
-            @foreach (var edOrg in Model.EdOrgs)
-            {
-                @Html.ActionLink(edOrg.DistrictName, "SelectOrg", "Home", new {area = "", selectedEdOrgId = edOrg.Id}, new {@class = "nav-item nav-link"})
-            }
-        </div>
-    </li>
-    <li class="nav-item dropdown-toggle pull-right">
-        <a class="nav-link dropdown-toggle" href="#" id="actionDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@Model.FocusedSchoolYear</a>
-        <div class="dropdown-menu validation-drowdown-menu pull-right" aria-labelledby="actionDropdown">
-            @foreach (var schoolYear in Model.SchoolYears)
-            {
-                @Html.ActionLink(schoolYear.ToString(), "SelectSchoolYear", "Home", new {area = "", selectedSchoolYearId = schoolYear.Id }, new {@class = "nav-item nav-link"})
-            }
-        </div>
-    </li>
-</div>

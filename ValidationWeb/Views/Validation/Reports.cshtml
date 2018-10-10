@@ -3,65 +3,78 @@
 <script>
     var collectionIdSelection, schoolYearSelection, lastModalExitButton = 'none';
 </script>
+
+
 <div class="row">
-    <div class="h4">Validation Reports for District @Model.DistrictName</div>
-    <button id="newValidationButton" type="button" class="btn btn-primary white-heavy-text float-right margin10" data-toggle="modal" data-target="#NewValidationModal">Validate</button>
+    <div class="vp-body-header col-8 justify-content-start align-self-center">Validation Reports for District @Model.DistrictName</div>
+    <div class="col-4 justify-content-end">
+        <div class="container-fluid">
+            <div class="row justify-content-end">
+                <!-- New Validation Modal -->
+                <div id="NewValidationModal" class="modal fade" role="dialog">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header bg-primary">
+                                <h4 class="modal-title">Select Collection and School Year</h4>
+                                <button type="button" class="close" onclick="lastModalExitButton='cancel'" data-dismiss="modal">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <label for="collectionIdSelect">Select a collection of rules to validate: </label>
+                                <select id="collectionIdSelect" name="collectionIdSelect">
+                                    @foreach (var coll in Model.RulesCollections)
+                                    {
+                                        <option value="@(coll.CollectionId)">@(coll.CollectionId)</option>
+                                    }
+                                </select>
+                                <label for="schoolYearSelect">Select which school year's data to validate: </label>
+                                <select id="schoolYearSelect" name="schoolYearSelect">
+                                    @foreach (var syear in Model.SchoolYears)
+                                    {
+                                        <option value="@(syear.StartYear)">@(syear.ToString())</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn minnesota-green" data-dismiss="modal" data-toggle="modal" data-target="#ConfirmNewValidationModal">Next &gt;&gt;</button>
+                                <button type="button" class="btn danger-red" data-dismiss="modal" onclick="lastModalExitButton='cancel'">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-    <!-- New Validation Modal -->
-    <div id="NewValidationModal" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header bg-primary">
-                    <h4 class="modal-title">Select Collection and School Year</h4>
-                    <button type="button" class="close" onclick="lastModalExitButton='cancel'" data-dismiss="modal">&times;</button>
+
+                <!-- Confirm Validation Modal -->
+                <div id="ConfirmNewValidationModal" class="modal fade" role="dialog">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header bg-primary">
+                                <h4 class="modal-title">Confirm: Run Validation</h4>
+                                <button type="button" class="close" data-dismiss="modal" onclick="lastModalExitButton='cancel'">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                Please confirm you would like to run a validation for District @(Model.DistrictName), Collection <span class="collectionIdSelection"></span>, School Year <span class="schoolYearSelection"></span>?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn minnesota-green" data-dismiss="modal" onclick="lastModalExitButton='launch'">Launch Validation</button>
+                                <button type="button" class="btn danger-red" data-dismiss="modal" onclick="lastModalExitButton='cancel'">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="modal-body">
-                    <label for="collectionIdSelect">Select a collection of rules to validate: </label>
-                    <select id="collectionIdSelect" name="collectionIdSelect">
-                        @foreach (var coll in Model.RulesCollections)
-                        {
-                            <option value="@(coll.CollectionId)">@(coll.CollectionId)</option>
-                        }
-                    </select>
-                    <label for="schoolYearSelect">Select which school year's data to validate: </label>
-                    <select id="schoolYearSelect" name="schoolYearSelect">
-                        @foreach (var syear in Model.SchoolYears)
-                        {
-                            <option value="@(syear.StartYear)">@(syear.ToString())</option>
-                        }
-                    </select>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn minnesota-green" data-dismiss="modal" data-toggle="modal" data-target="#ConfirmNewValidationModal">Next &gt;&gt;</button>
-                    <button type="button" class="btn danger-red" data-dismiss="modal" onclick="lastModalExitButton='cancel'">Cancel</button>
-                </div>
+
+                <button id="newValidationButton" type="button" class="btn prime-blue white-heavy-text margin10 justify-self-end" data-toggle="modal" data-target="#NewValidationModal">Validate</button>
+                <button id="export" data-export="export" class="btn prime-blue white-heavy-text margin10 justify-self-end">Export</button>
             </div>
         </div>
     </div>
-    
-    <button id ="export" data-export="export" class="btn btn-primary white-heavy-text float-right margin10">Export</button>
-
-    <!-- Confirm Validation Modal -->
-    <div id="ConfirmNewValidationModal" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header bg-primary">
-                    <h4 class="modal-title">Confirm: Run Validation</h4>
-                    <button type="button" class="close" data-dismiss="modal" onclick="lastModalExitButton='cancel'">&times;</button>
-                </div>
-                <div class="modal-body">
-                    Please confirm you would like to run a validation for District @(Model.DistrictName), Collection <span class="collectionIdSelection"></span>, School Year <span class="schoolYearSelection"></span>?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn minnesota-green" data-dismiss="modal" onclick="lastModalExitButton='launch'">Launch Validation</button>
-                    <button type="button" class="btn danger-red" data-dismiss="modal" onclick="lastModalExitButton='cancel'">Cancel</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
 </div>
+
+
+
+
 <div class="row tbmargin10">
+@if (Model.ReportSummaries.Count() > 0)
+{
     <table class="table table-sm table-responsive-md table-bordered" id="reportsTable">
         <tr class="table-primary">
             <th>Request Date/Time</th>
@@ -69,7 +82,6 @@
             <th>Initiated By</th>
             <th>Status</th>
             <th>Completion Date/Time</th>
-            <th>Below Error<br />Threshold</th>
             <th>Error Count</th>
             <th>Warning Count</th>
         </tr>
@@ -87,22 +99,31 @@
                     @(summary.CompletedWhen.HasValue ? summary.CompletedWhen.Value.ToShortDateString() : string.Empty)
                     <br />@(summary.CompletedWhen.HasValue ? summary.CompletedWhen.Value.ToShortTimeString() : string.Empty)
                 </td>
-                <td class="minnesota-green-text">Yes</td>
                 <td>@(summary.ErrorCount.HasValue ? summary.ErrorCount.Value.ToString() : string.Empty)</td>
                 <td>@(summary.WarningCount.HasValue ? summary.WarningCount.Value.ToString() : string.Empty)</td>
             </tr>
         }
     </table>
+}
+else
+{
+    <div class="col-12 vp-body-header">No validations have been run for @(Model.DistrictName).</div>
+}
 </div>
 
 @section scripts {
     <script>
+        // Once the user has clicked the Validate button and chosen a *year* and *collection*, 
+        // This callback records those choices on the second popup (a confirmation dialog/modal).
         $('#NewValidationModal').on('hidden.bs.modal', function (e) {
             collectionIdSelection = $('#collectionIdSelect').val();
             schoolYearSelection = $('#schoolYearSelect').val();
             $('.collectionIdSelection').text(collectionIdSelection);
             $('.schoolYearSelection').text(schoolYearSelection);
-            });
+        });
+
+        // Once the user has already clicked the Validate button and chosen a *year* and *collection*, there is a second, Yes/No confirmation.
+        // This registers a callback to run the validation engine if the user chose YES when dismissing the confirmation dialog. 
         $('#ConfirmNewValidationModal').on('hidden.bs.modal', function (e) {
             if (lastModalExitButton=='launch') {
                 $.ajax({
@@ -119,11 +140,12 @@
                 });
             }
         });
-	$(document).ready(function() {
+
+        // TODO: Puts the table into a downloadable CSV - unfortunately, it doesn't support dates
+        $(document).ready(function () {
             $("#export").click(function() {
                 $('#reportsTable').table2csv({ filename: 'validationReports.csv' });
             });
         });
-
     </script>
 }

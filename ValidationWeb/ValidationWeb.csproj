@@ -70,12 +70,12 @@
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="SimpleInjector, Version=4.2.2.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
-      <HintPath>..\packages\SimpleInjector.4.2.2\lib\net45\SimpleInjector.dll</HintPath>
+    <Reference Include="SimpleInjector, Version=4.3.0.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleInjector.4.3.0\lib\net45\SimpleInjector.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="SimpleInjector.Integration.Web, Version=4.2.2.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
@@ -86,8 +86,17 @@
       <HintPath>..\packages\SimpleInjector.Integration.Web.Mvc.4.2.2\lib\net40\SimpleInjector.Integration.Web.Mvc.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="SimpleInjector.Integration.WebApi, Version=4.3.0.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleInjector.Integration.WebApi.4.3.0\lib\net45\SimpleInjector.Integration.WebApi.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Data.SqlClient, Version=4.4.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Data.SqlClient.4.5.0\lib\net461\System.Data.SqlClient.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Web.DynamicData" />
@@ -101,6 +110,14 @@
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.6\lib\net45\System.Web.Helpers.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.3\lib\net45\System.Web.Http.WebHost.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Web.Mvc, Version=5.2.6.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -202,38 +219,10 @@
     <Content Include="Content\Styles\jquery-ui.theme.min.css" />
     <Content Include="Content\Styles\semantic-ui\tabulator_semantic-ui.css" />
     <Content Include="Content\Styles\semantic-ui\tabulator_semantic-ui.min.css" />
-    <Content Include="Content\Styles\tabulator.css" />
-    <Content Include="Content\Styles\tabulator.min.css" />
-    <Content Include="Content\Styles\tabulator_midnight.css" />
-    <Content Include="Content\Styles\tabulator_midnight.min.css" />
-    <Content Include="Content\Styles\tabulator_modern.css" />
-    <Content Include="Content\Styles\tabulator_modern.min.css" />
-    <Content Include="Content\Styles\tabulator_simple.css" />
-    <Content Include="Content\Styles\tabulator_simple.min.css" />
-    <Content Include="Content\Styles\tabulator_site.css" />
-    <Content Include="Content\Styles\tabulator_site.min.css" />
     <Content Include="packages.config" />
     <Content Include="Views\Validation\Report.cshtml" />
     <Content Include="Views\Shared\_LittleFooter.cshtml" />
     <Content Include="Views\Validation\Submissions.cshtml" />
-    <Content Include="Content\Styles\tabulator\bootstrap\functions4.scss" />
-    <Content Include="Content\Styles\tabulator\bootstrap\tabulator_bootstrap.scss" />
-    <Content Include="Content\Styles\tabulator\bootstrap\tabulator_bootstrap4.scss" />
-    <Content Include="Content\Styles\tabulator\bootstrap\variables.scss" />
-    <Content Include="Content\Styles\tabulator\bootstrap\variables4.scss" />
-    <Content Include="Content\Styles\tabulator\semantic-ui\tabulator_semantic-ui.scss" />
-    <Content Include="Content\Styles\tabulator\semantic-ui\variables.scss" />
-    <Content Include="Content\Styles\tabulator\semantic-ui\variables_table.scss" />
-    <Content Include="Content\Styles\tabulator\tabulator.scss" />
-    <Content Include="Content\Styles\tabulator\tabulator_midnight.scss" />
-    <Content Include="Content\Styles\tabulator\tabulator_modern.scss" />
-    <Content Include="Content\Styles\tabulator\tabulator_simple.scss" />
-    <Content Include="Content\Styles\tabulator\tabulator_site.scss" />
-    <Content Include="Content\Styles\tabulator.min.css.map" />
-    <Content Include="Content\Styles\tabulator_midnight.min.css.map" />
-    <Content Include="Content\Styles\tabulator_modern.min.css.map" />
-    <Content Include="Content\Styles\tabulator_simple.min.css.map" />
-    <Content Include="Content\Styles\tabulator_site.min.css.map" />
     <Content Include="Content\Styles\bootstrap\tabulator_bootstrap.min.css.map" />
     <Content Include="Content\Styles\bootstrap\tabulator_bootstrap4.min.css.map" />
     <Content Include="Content\Styles\semantic-ui\tabulator_semantic-ui.min.css.map" />
@@ -300,7 +289,11 @@
     <Content Include="Views\Home\Announcements.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApiControllers\ModelBinders\ValidationErrorFilterModelBinder.cs" />
+    <Compile Include="ApiControllers\UserSessionController.cs" />
+    <Compile Include="ApiControllers\ValidationController.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="App_Start\JsonNetFormatter.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -308,12 +301,19 @@
     <Compile Include="Controllers\RulesController.cs" />
     <Compile Include="Controllers\ValidationController.cs" />
     <Compile Include="Database\EnumLookup.cs" />
+    <Compile Include="Database\Queries\StudentDataFromId.cs" />
     <Compile Include="Database\RawOdsDbContext.cs" />
     <Compile Include="Database\ValidatedOdsDbContext.cs" />
     <Compile Include="Database\ValidationPortalDbContext.cs" />
     <Compile Include="Database\ValidationPortalDbMigrationConfiguration.cs" />
+    <Compile Include="Filters\AddChallengeOnUnauthorizedResult.cs" />
+    <Compile Include="Filters\LoggingHandler.cs" />
     <Compile Include="Filters\PortalAuthenticationFilter .cs" />
+    <Compile Include="Filters\ProfilingFilter.cs" />
+    <Compile Include="Filters\ValidationAuthenticationFilter.cs" />
+    <Compile Include="Filters\ValidationExceptionLogger.cs" />
     <Compile Include="Filters\ValidationPortalPrincipal.cs" />
+    <Compile Include="Filters\ValidationWebExceptionFilterAttribute.cs" />
     <Compile Include="Models\Announcement.cs" />
     <Compile Include="Models\AppRole.cs" />
     <Compile Include="Models\AppUserSession.cs" />
@@ -321,13 +321,14 @@
     <Compile Include="Models\EdOrgType.cs" />
     <Compile Include="Models\EdOrg.cs" />
     <Compile Include="Models\ErrorSeverity.cs" />
+    <Compile Include="Models\FilteredValidationErrors.cs" />
     <Compile Include="Models\RuleValidation.cs" />
     <Compile Include="Models\RuleValidationDetail.cs" />
     <Compile Include="Models\RuleValidationRuleComponent.cs" />
     <Compile Include="Models\SchoolYear.cs" />
     <Compile Include="Models\SsoUserAuthorization.cs" />
-    <Compile Include="Models\Student.cs" />
     <Compile Include="Models\SubmissionCycle.cs" />
+    <Compile Include="Models\ValidationErrorFilter.cs" />
     <Compile Include="Models\ValidationErrorSummary.cs" />
     <Compile Include="Models\ValidationReportDetails.cs" />
     <Compile Include="Models\ValidationReportSummary.cs" />
@@ -342,7 +343,9 @@
     <Compile Include="Services\Implementations\Fakes\FakeValidatedDataSubmissionService.cs" />
     <Compile Include="Services\Implementations\Fakes\FakeValidationResultsService.cs" />
     <Compile Include="Services\Implementations\HttpContextProvider.cs" />
+    <Compile Include="Services\Implementations\LoggingService.cs" />
     <Compile Include="Services\Implementations\OdsConfigurationValues.cs" />
+    <Compile Include="Services\Implementations\RequestMessageAccessor.cs" />
     <Compile Include="Services\Implementations\RulesEngineConfigurationValues.cs" />
     <Compile Include="Services\Implementations\RulesEngineService.cs" />
     <Compile Include="Services\Implementations\SchoolYearService.cs" />
@@ -354,7 +357,9 @@
     <Compile Include="Services\Interfaces\IConfigurationValues.cs" />
     <Compile Include="Services\Interfaces\IEdOrgService.cs" />
     <Compile Include="Services\Interfaces\IHttpContextProvider.cs" />
+    <Compile Include="Services\Interfaces\ILoggingService.cs" />
     <Compile Include="Services\Interfaces\IOdsConfigurationValues.cs" />
+    <Compile Include="Services\Interfaces\IRequestMessageAccessor.cs" />
     <Compile Include="Services\Interfaces\IRulesEngineConfigurationValues.cs" />
     <Compile Include="Services\Interfaces\IRulesEngineService.cs" />
     <Compile Include="Services\Interfaces\ISchoolYearService.cs" />
@@ -378,7 +383,7 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="ApiControllers\" />
+    <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Engine\Engine.csproj">

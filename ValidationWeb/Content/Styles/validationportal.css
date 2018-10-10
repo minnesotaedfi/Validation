@@ -11,6 +11,10 @@
     margin: 0;
 }
 
+.vp-body-header {
+    font-weight: bold;
+}
+
 .container-fluid, .layout-footer {
     max-width: 1280px;
 }
@@ -75,6 +79,11 @@
     margin-right: 0px;
 }
 
+.lrmargin10 {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
 .page-width {
     width: 100%;
 }
@@ -95,6 +104,15 @@
 /* Set width on the form input elements since they're 100% wide by default */
 input, select, textarea {
     max-width: 280px;
+}
+/***************************************************************************************/
+
+/***************************************************************************************/
+/* Nav */
+.nav-link-label {
+    color: rgb(255, 255, 255);
+    font-weight: bold;
+    text-decoration: underline;
 }
 /***************************************************************************************/
 
@@ -147,6 +165,11 @@ input, select, textarea {
     display: block;
 }
 
+/*Fix for the dropdown menus not dropping underneath the parent correctly*/
+.dropdown-menu {
+    left: initial;
+}
+
 /* Minnesota requires padding to give logo impact. */
 .mdelogo {
     float: left; 
@@ -177,9 +200,22 @@ div.validation-drowdown-menu
     margin-top: 0;
     margin-bottom: 0;
     border-color: rgb(120, 190, 33);
+    left: initial;
+    margin-top: -15px;
 }
 
-li.dropdown-toggle.nav-item.pull-right
+.validation-drowdown-menu > a:hover, .validation-dropdown-toggle:hover, .validation-nav-link:hover
+{
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    border-color: rgb(120, 190, 33);
+    background-color: rgb(164, 188, 194);
+    color: rgb(0, 0, 0);
+} 
+
+li.dropdown.nav-item.pull-right, li.dropdown-toggle.nav-item.pull-right
 {
     float: right !important;
 }
@@ -197,6 +233,7 @@ li.dropdown-toggle.nav-item::after
 div.layout-footer {
     color: rgb(255, 255, 255);
     background-color: rgb(0, 56, 101);
+    padding: 0;
 }
 
 div.layout-footer li a {
@@ -209,6 +246,36 @@ div.hfooter {
     font-weight: bold;
 }
 /***************************************************************************************/
+
+/***************************************************************************************/
+/* Errors Detail Page*/
+div.collectionFilter {
+    color: rgb(255, 255, 255);
+    background-color: rgb(0, 56, 101);
+}
+
+div.collectionFilter:hover {
+    margin-top: 0;
+    margin-bottom: 0;
+    border-color: rgb(120, 190, 33);
+    background-color: rgb(164, 188, 194);
+    color: rgb(0, 0, 0);
+}
+
+div.collectionFilter > a:hover {
+    text-decoration: none;
+    color: rgb(0, 56, 101);
+}
+
+.grid-controls {
+    align-items: center;
+}
+.grid-controls > * {
+    margin: 2px;
+}
+/***************************************************************************************/
+
+
 
 /***************************************************************************************/
 
