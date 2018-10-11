@@ -75,8 +75,8 @@
 }
 
 .lrmargin0 {
-    margin-left: 0px;
-    margin-right: 0px;
+    margin-left: 0;
+    margin-right: 0;
 }
 
 .lrmargin10 {
@@ -149,7 +149,7 @@ input, select, textarea {
     border-bottom-width: 10px;
     border-bottom-style: solid;
     text-align: right;
-    margin-top: 0px;
+    margin-top: 0;
     margin-left: 15px;
     margin-right: 15px;
     max-width: 1280px;
@@ -201,7 +201,6 @@ div.validation-drowdown-menu
     margin-bottom: 0;
     border-color: rgb(120, 190, 33);
     left: initial;
-    margin-top: -15px;
 }
 
 .validation-drowdown-menu > a:hover, .validation-dropdown-toggle:hover, .validation-nav-link:hover
@@ -270,8 +269,36 @@ div.collectionFilter > a:hover {
 .grid-controls {
     align-items: center;
 }
-.grid-controls > * {
+.grid-controls:nth-child(n) {
     margin: 2px;
+}
+
+/* Allows the absolute positioning of child elements like the autocomplete results. */
+th {
+    position: relative;
+}
+
+th > i {
+    float:right;
+}
+
+.autocomplete-suggestions {
+    position: absolute;
+    color: black;
+    background-color: white;
+    z-index: 1000;
+    border: 1px solid rgb(120, 190, 33);
+    overflow-y:visible
+}
+
+.auto-suggestion {
+    border: 1px solid rgb(120, 190, 33);
+    padding-left: 4px;
+    padding-right: 4px;
+}
+.auto-suggestion:hover {
+    background-color: rgb(120, 190, 33);
+    font-weight: bold;
 }
 /***************************************************************************************/
 

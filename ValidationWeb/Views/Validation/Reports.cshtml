@@ -30,7 +30,7 @@
                                 <select id="schoolYearSelect" name="schoolYearSelect">
                                     @foreach (var syear in Model.SchoolYears)
                                     {
-                                        <option value="@(syear.StartYear)">@(syear.ToString())</option>
+                                        <option id="syopt@(syear.StartYear)" class="school-year-option" value="@(syear.StartYear)" @if (syear.Id == Model.FocusedSchoolYearId) { <text> selected </text> }>@(syear.ToString())</option>
                                     }
                                 </select>
                             </div>
@@ -125,6 +125,7 @@ else
         // Once the user has already clicked the Validate button and chosen a *year* and *collection*, there is a second, Yes/No confirmation.
         // This registers a callback to run the validation engine if the user chose YES when dismissing the confirmation dialog. 
         $('#ConfirmNewValidationModal').on('hidden.bs.modal', function (e) {
+            setTimeout(function () { location.reload(true); }, 2000);
             if (lastModalExitButton=='launch') {
                 $.ajax({
                     url: '@(Url.Action("RunEngine", "Validation"))',
@@ -134,8 +135,7 @@ else
                     async: true,
                     data: { collectionId: collectionIdSelection, schoolYear: schoolYearSelection },
                     success: function (result) {
-                        alert(result);
-                        // $('#myTable').append(`<tr>{}<td></td><td>more data</td></tr>`);
+                        location.reload(true);
                     }
                 });
             }

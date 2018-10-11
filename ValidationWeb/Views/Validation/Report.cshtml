@@ -50,31 +50,32 @@
 <div id="errorGrid" class="row tbmargin10 error-grid">
     <table class="table table-sm table-responsive-md table-bordered">
         <tr class="table-primary">
-            <th>#</th>
-            <th>Student ID</th>
-            <th>Student</th>
-            <th>School</th>
+            <th></th>
+            <th class="sortable-table-header" data-sort-column-name="studentid" data-sort-direction="">Student ID<i></i></th>
+            <th class="sortable-table-header" data-sort-column-name="studentname" data-sort-direction="">Student<i></i></th>
+            <th class="sortable-table-header" data-sort-column-name="school" data-sort-direction="">School<i></i></th>
             <th>Enrollment Dates</th>
-            <th>Grade</th>
-            <th>Severity</th>
-            <th>Rule Number</th>
-            <th>Message</th>
+            <th class="sortable-table-header" data-sort-column-name="grade" data-sort-direction="">Grade<i></i></th>
+            <th class="sortable-table-header" data-sort-column-name="errortype" data-sort-direction="">Severity<i></i></th>
+            <th class="sortable-table-header" data-sort-column-name="rule" data-sort-direction="">Rule Number<i></i></th>
+            <th class="sortable-table-header" data-sort-column-name="errortext" data-sort-direction="">Message<i></i></th>
         </tr>
         <tr class="table-primary">
             <th></th>
-            <th><input class="form-control form-control-sm" id="studentIdFilter" placeholder="filter"></th>
-            <th><input class="form-control form-control-sm" id="studentNameFilter" placeholder="filter"></th>
-            <th><input class="form-control form-control-sm" id="schoolFilter" placeholder="filter"></th>
+            <th><input id="studentIdFilter" class="form-control form-control-sm" placeholder="filter"></th>
+            <th><input id="studentNameFilter" class="form-control form-control-sm autocomplete" placeholder="filter" data-autocomplete-column-name="studentname"></th>
+            <th><input id="schoolFilter" class="form-control form-control-sm autocomplete" placeholder="filter" data-autocomplete-column-name="school"></th>
             <th></th>
-            <th><input class="form-control form-control-sm" id="gradeFilter" placeholder="filter"></th>
-            <th><select class="form-control form-control-sm" id="errorTypeFilter">
+            <th><input id="gradeFilter" class="form-control form-control-sm autocomplete" placeholder="filter" data-autocomplete-column-name="grade"></th>
+            <th>
+                <select id="errorTypeFilter" class="form-control form-control-sm" >
                     <option value="all">All</option>
                     <option value="error">Errors</option>
                     <option value="warning">Warnings</option>
                 </select>
             </th>
-            <th><input class="form-control form-control-sm" id="ruleNumberFilter" placeholder="filter"></th>
-            <th><input class="form-control form-control-sm" id="ruleMessageFilter" placeholder="filter"></th>
+            <th><input id="ruleNumberFilter" class="form-control form-control-sm autocomplete" placeholder="filter" data-autocomplete-column-name="rule"></th>
+            <th><input id="ruleMessageFilter" class="form-control form-control-sm autocomplete" placeholder="filter" data-autocomplete-column-name="errortext"></th>
         </tr>
         <tr class="datarow">
             <td>-</td>
@@ -111,29 +112,31 @@
             ClearGrid(gridId);
             $.ajax({
                 url: "@Url.Content("~/api/validation/error-summaries/all")",
-            type: 'POST',
-            data: JSON.stringify(filter),
-            dataType: 'json',
-            contentType: 'application/json; charset=utf-8',
-            success: function (data) { ProcessGridDataForDisplay(gridId, data); },
-            error: function () { console.log(`An error occurred when attempting to load error listing from server.`); }
-        });
+                type: 'POST',
+                data: JSON.stringify(filter),
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                success: function (data) { ProcessGridDataForDisplay(gridId, data); },
+                error: function () { console.log(`An error occurred when attempting to load error listing from server.`); }
+            });
         }
 
         function ClearFilter() {
             $("input").val("");
             $("#errorTypeFilter").val("all");
             $("#componentViewSelected").val("All");
+            $(".sortable-table-header > i").removeClass();
+            $(".sortable-table-header").attr("data-sort-direction", "desc")
         }
 
         function SetFilter() {
             // Establish the defaults
             let filter = {
                 reportDetailsId: @(Model.Details.Id),
-                filterColumns: [''],
-                filterTexts: [''],
-                sortColumns: [''],
-                sortDirections: [''],
+                filterColumns: [],
+                filterTexts: [],
+                sortColumns: [],
+                sortDirections: [],
                 pageStartingOffset: 0,
                 pageSize: 30
             };
@@ -205,6 +208,18 @@
             }
             // -1 to account for the Page Number being "1"-based. The first page is "1", not "0".
             filter.pageStartingOffset = filter.pageSize * (desiredPageNumber - 1);
+
+            // Set Sorting
+            $(".sortable-table-header").each(function(){
+                let sortColName = $(this).attr("data-sort-column-name");
+                let sortColDirection = $(this).attr("data-sort-direction");
+                if (sortColDirection)
+                {
+                    filter.sortColumns.push(sortColName);
+                    filter.sortDirections.push(sortColDirection);
+                }
+            });
+
             return filter;
         }
 
@@ -245,6 +260,47 @@
                 // And the next record would be 2, etc.
                 recordOffset++;
             }
+        }
+
+        function Autocomplete(targetElement) {
+            let wrappedElement = $(targetElement);
+            // Dispose of any old autocomplete lists
+            $(".autocomplete-suggestions").remove();
+            // Prepare ajax call - scope results to the current filtered query.
+            let filter = SetFilter();
+            filter.autocompleteColumn = wrappedElement.attr("data-autocomplete-column-name");
+            filter.autocompleteText = wrappedElement.val();
+            $.ajax({
+                url: "@Url.Content("~/api/validation/error-summaries/autocomplete")",
+                type: 'POST',
+                data: JSON.stringify(filter),
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                success: function (data) {
+                    if (!data.length) {
+                        return;
+                    }
+                    // Create a container for the suggestions
+                    let suggestionsBoxId = `${filter.autocompleteColumn}Suggestions`;
+                    wrappedElement.after(`<div id=\"${suggestionsBoxId}\" class=\"autocomplete-suggestions\"></div>`);
+                    let wrappedSuggestionsBox = $(`#${suggestionsBoxId}`);
+                    for (var suggIndex = 0; suggIndex < data.length; suggIndex++) {
+                        wrappedSuggestionsBox.append(`<div id=\"${suggestionsBoxId}${suggIndex}\" class=\"auto-suggestion\">${data[suggIndex]}</div>`);
+                    }
+                    wrappedSuggestionsBox.css({
+                        top: wrappedElement.outerHeight() + "px",
+                        width: wrappedElement.outerWidth() + "px"
+                    }).show();
+                    $(".auto-suggestion").on('mousedown', function(e){
+                        wrappedElement.val($(this).text());
+                        $("#searchButton").trigger("click");
+                        $(".autocomplete-suggestions").remove();
+                    });
+                },
+                error: function () {
+                    console.log(`An error occurred when attempting to load autocomplete suggestions from server.`); 
+                }
+            });
         }
 
         $(document).ready(function() {
@@ -328,7 +384,44 @@
                 let currentFilter = SetFilter();
                 RefreshGrid("errorGrid", currentFilter);
             });
-
+            $(".sortable-table-header").on("click", function(){
+                let sortDirection = $(this).attr("data-sort-direction");
+                $(".sortable-table-header > i").removeClass();
+                if (!sortDirection)
+                {
+                    $(".sortable-table-header").attr("data-sort-direction", "");
+                    $(this).attr("data-sort-direction", "asc");
+                    $(this).find("i").addClass("fas fa-sort-up");
+                }
+                if (sortDirection.startsWith("a"))
+                {
+                    $(".sortable-table-header").attr("data-sort-direction", "");
+                    $(this).attr("data-sort-direction", "desc");
+                    $(this).find("i").addClass("fas fa-sort-down");
+                }
+                if (sortDirection.startsWith("d"))
+                {
+                    $(".sortable-table-header").attr("data-sort-direction", "");
+                    $(this).attr("data-sort-direction", "asc");
+                    $(this).find("i").addClass("fas fa-sort-up");
+                }
+                let currentFilter = SetFilter();
+                RefreshGrid("errorGrid", currentFilter);
+            });
+            $("#errorTypeFilter").on("change", function() {
+                let currentFilter = SetFilter();
+                RefreshGrid("errorGrid", currentFilter);
+            });
+            $('input.autocomplete').bind('keyup', function(e) {
+                let currentValue = $(this).val();
+                if (currentValue.length && currentValue.length >= 2)
+                {
+                    Autocomplete(e.target);
+                }
+            });
+            $(document).bind('mouseup', function(){
+                $(".autocomplete-suggestions").remove();
+            });
         });
 
 

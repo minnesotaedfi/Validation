@@ -6,9 +6,7 @@
     <title>ASDCS District Data Validation Portal</title>
     <link rel="SHORTCUT ICON" href="~/favicon.ico" />
     @Styles.Render("~/Content/css")
-    @Styles.Render("~/Content/tabulatorCSS")
     @Styles.Render("~/Content/jqueryUICSS")
-    
     @Styles.Render("~/Content/datePickerCSS")
 
 </head>
@@ -29,12 +27,10 @@
                     </button>
                     <div class="collapse navbar-collapse" id="theNavBar">
                         <ul class="navbar-nav">
-                            @*<a class="nav-link dropdown-toggle" href="#" id="actionDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Home</a>*@
-                            <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "nav-link validation-nav-link" })</li>
-                            <li>@Html.ActionLink("Validation Reports", "Reports", "Validation", new { area = "" }, new { @class = "nav-link validation-nav-link" })</li>
-                            <li>@Html.ActionLink("ODS Reports", "Reports", "Validation", new { area = "" }, new { @class = "nav-link validation-nav-link" })</li>
-                            @* Thus link may be used in another customer's branch (IDOE)  <li>@Html.ActionLink("Data Submissions", "Submissions", "Validation", new { area = "" }, new { @class = "nav-link validation-nav-link" })</li> *@
-                            <li>@Html.ActionLink("Rule Collections", "Collections", "Rules", new { area = "" }, new { @class = "nav-link validation-nav-link mr-auto" })</li>
+                            <li>@Html.Raw(Html.ActionLink("LinkText", "Index", "Home", new { area = "" }, new { @class = "nav-link validation-nav-link" }).ToHtmlString().Replace("LinkText", "<i class=\"fas fa-home white-heavy-text\"></i> Home"))</li>
+                            <li>@Html.Raw(Html.ActionLink("LinkText", "Reports", "Validation", new { area = "" }, new { @class = "nav-link validation-nav-link" }).ToHtmlString().Replace("LinkText", "<i class=\"fas fa-file-alt white-heavy-text\"></i>  Validation Reports"))</li>
+                            <li>@Html.Raw(Html.ActionLink("LinkText", "Reports", "Ods", new { area = "" }, new { @class = "nav-link validation-nav-link" }).ToHtmlString().Replace("LinkText", "<i class=\"fas fa-database white-heavy-text\"></i> ODS Reports"))</li>
+                            <li>@Html.Raw(Html.ActionLink("LinkText", "Collections", "Rules", new { area = "" }, new { @class = "nav-link validation-nav-link mr-auto" }).ToHtmlString().Replace("LinkText", "<i class=\"fas fa-list-alt white-heavy-text\"></i> Rule Collections"))</li>
                             @Html.Action("NavDropDowns", "Nav")
                         </ul>
                     </div>
@@ -53,8 +49,6 @@
     @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/bundles/jqueryUI")
     @Scripts.Render("~/bundles/table2CSV")
-    @Scripts.Render("~/bundles/tabulatorScripts")
-
     @Scripts.Render("~/bundles/datePickerJS")
     <script>
         // Supports NavDropDowns, Education Organization/District selection menu dropdown
@@ -67,8 +61,22 @@
                     type: "Post",
                     data: orgId,
                     contentType: 'application/json; charset=utf-8',
-                    success: function (data) { $("#actionDropdownOrg").text(chosenLink.text()); },
-                    error: function () { console.log(`An error occurred when attempting to change Ed Org to ${orgId}.`); }
+                    success: function (data) {
+                        $("#actionDropdownOrg").html("<span class=\"fas fa-landmark white-heavy-text\"></span> " + chosenLink.text());
+                        // If looking at detailed errors, go back to main reports listing for the new district.
+                        if (location.pathname.toLowerCase().indexOf("validation/report/") !== -1) {
+                            location.replace("@Url.Action("Reports","Validation")");
+                            return;
+                        }
+                        // If looking at any other reports, get the listing for the new district.
+                        if (location.pathname.toLowerCase().indexOf("report") !== -1) {
+                            location.reload();
+                            return;
+                        }
+                    },
+                    error: function () {
+                        console.log(`An error occurred when attempting to change Ed Org to ${orgId}.`);
+                    }
                 });
             });
         });
@@ -83,8 +91,27 @@
                     type: "Post",
                     data: yearId,
                     contentType: 'application/json; charset=utf-8',
-                    success: function (data) { $("#actionDropdownYear").text(chosenLink.text()); },
-                    error: function () { console.log(`An error occurred when attempting to change School Year to ${yearId}.`); }
+                    success: function (data) {
+                        $("#actionDropdownYear").html("<span class=\"fas fa-calendar-alt white-heavy-text\"></span> " + chosenLink.text());
+                        $(".school-year-option").prop("selected", false);
+                        try {
+                            $(`#syopt${chosenLink.text().substring(0, 4)}`).prop("selected", true);
+                        }
+                        catch (e) { }
+                        // If looking at detailed errors, go back to main reports listing for the new ODS School Year.
+                        if (location.pathname.toLowerCase().indexOf("validation/report/") !== -1) {
+                            location.replace("@Url.Action("Reports","Validation")");
+                            return;
+                        }
+                        // If looking at any other reports, get the listing for the new ODS School Year.
+                        if (location.pathname.toLowerCase().indexOf("report") !== -1) {
+                            location.reload();
+                            return;
+                        }
+                    },
+                    error: function () {
+                        console.log(`An error occurred when attempting to change School Year to ${yearId}.`);
+                    }
                 });
             });
         });

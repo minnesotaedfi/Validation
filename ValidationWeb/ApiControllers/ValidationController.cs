@@ -26,5 +26,12 @@ namespace ValidationWeb.ApiControllers
         {
             return _validationResultsService.GetFilteredValidationErrorTableData(filter);
         }
+
+        [Route("error-summaries/autocomplete")]
+        [HttpPost]
+        public List<string> GetValidationErrorAutocomplete(ValidationErrorFilter filter)
+        {
+            return _validationResultsService.AutocompleteErrorFilter(filter);
+        }
     }
 }

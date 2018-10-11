@@ -157,6 +157,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\Fonts\fa-solid-900.svg" />
     <Content Include="Content\Scripts\bootstrap-datetimepicker.min.js" />
     <Content Include="Content\Scripts\jquery-3.3.1.js" />
     <Content Include="Content\Scripts\jquery-3.3.1.min.js" />
@@ -167,50 +168,13 @@
     <Content Include="Content\Scripts\table2csv.js" />
     <Content Include="Content\Scripts\tabulator.js" />
     <Content Include="Content\Scripts\tabulator.min.js" />
-    <Content Include="Content\Scripts\tabulator\cell.js" />
-    <Content Include="Content\Scripts\tabulator\column.js" />
-    <Content Include="Content\Scripts\tabulator\column_manager.js" />
-    <Content Include="Content\Scripts\tabulator\core.js" />
-    <Content Include="Content\Scripts\tabulator\extensions\accessor.js" />
-    <Content Include="Content\Scripts\tabulator\extensions\ajax.js" />
-    <Content Include="Content\Scripts\tabulator\extensions\calculation_colums.js" />
-    <Content Include="Content\Scripts\tabulator\extensions\clipboard.js" />
-    <Content Include="Content\Scripts\tabulator\extensions\comms.js" />
-    <Content Include="Content\Scripts\tabulator\extensions\download.js" />
-    <Content Include="Content\Scripts\tabulator\extensions\edit.js" />
-    <Content Include="Content\Scripts\tabulator\extensions\filter.js" />
-    <Content Include="Content\Scripts\tabulator\extensions\format.js" />
-    <Content Include="Content\Scripts\tabulator\extensions\frozen_columns.js" />
-    <Content Include="Content\Scripts\tabulator\extensions\frozen_rows.js" />
-    <Content Include="Content\Scripts\tabulator\extensions\group_rows.js" />
-    <Content Include="Content\Scripts\tabulator\extensions\history.js" />
-    <Content Include="Content\Scripts\tabulator\extensions\html_table_import.js" />
-    <Content Include="Content\Scripts\tabulator\extensions\keybindings.js" />
-    <Content Include="Content\Scripts\tabulator\extensions\layout.js" />
-    <Content Include="Content\Scripts\tabulator\extensions\localize.js" />
-    <Content Include="Content\Scripts\tabulator\extensions\moveable_columns.js" />
-    <Content Include="Content\Scripts\tabulator\extensions\moveable_rows.js" />
-    <Content Include="Content\Scripts\tabulator\extensions\mutator.js" />
-    <Content Include="Content\Scripts\tabulator\extensions\page.js" />
-    <Content Include="Content\Scripts\tabulator\extensions\persistence.js" />
-    <Content Include="Content\Scripts\tabulator\extensions\resize_columns.js" />
-    <Content Include="Content\Scripts\tabulator\extensions\resize_rows.js" />
-    <Content Include="Content\Scripts\tabulator\extensions\resize_table.js" />
-    <Content Include="Content\Scripts\tabulator\extensions\responsive_layout.js" />
-    <Content Include="Content\Scripts\tabulator\extensions\select_row.js" />
-    <Content Include="Content\Scripts\tabulator\extensions\sort.js" />
-    <Content Include="Content\Scripts\tabulator\extensions\validate.js" />
-    <Content Include="Content\Scripts\tabulator\extensions_enabled.js" />
-    <Content Include="Content\Scripts\tabulator\footer_manager.js" />
-    <Content Include="Content\Scripts\tabulator\jquery_wrapper.js" />
-    <Content Include="Content\Scripts\tabulator\polyfills.js" />
-    <Content Include="Content\Scripts\tabulator\row.js" />
-    <Content Include="Content\Scripts\tabulator\row_manager.js" />
     <Content Include="Content\Styles\bootstrap-datetimepicker.min.css" />
     <Content Include="Content\Styles\bootstrap\tabulator_bootstrap.css" />
     <Content Include="Content\Styles\bootstrap\tabulator_bootstrap.min.css" />
     <Content Include="Content\Styles\bootstrap\tabulator_bootstrap4.css" />
     <Content Include="Content\Styles\bootstrap\tabulator_bootstrap4.min.css" />
+    <Content Include="Content\Styles\fa-solid.css" />
+    <Content Include="Content\Styles\fontawesome.css" />
     <Content Include="Content\Styles\jquery-ui.css" />
     <Content Include="Content\Styles\jquery-ui.min.css" />
     <Content Include="Content\Styles\jquery-ui.structure.css" />
@@ -235,6 +199,12 @@
     <Content Include="Views\Admin\Partials\SubmissionCycleList.cshtml" />
     <Content Include="Views\Admin\Partials\AddSubmissionCycleModal.cshtml" />
     <Content Include="Views\Admin\Partials\SubmissionCycles.cshtml" />
+    <Content Include="Content\Fonts\fa-solid-900.eot" />
+    <Content Include="Content\Fonts\fa-solid-900.ttf" />
+    <Content Include="Content\Fonts\fa-solid-900.woff" />
+    <Content Include="Content\Fonts\fa-solid-900.woff2" />
+    <Content Include="Views\Ods\Reports.cshtml" />
+    <Content Include="Views\Ods\Report.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -298,6 +268,7 @@
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\NavController.cs" />
+    <Compile Include="Controllers\OdsController.cs" />
     <Compile Include="Controllers\RulesController.cs" />
     <Compile Include="Controllers\ValidationController.cs" />
     <Compile Include="Database\EnumLookup.cs" />
@@ -375,6 +346,8 @@
     <Compile Include="ViewModels\HomeAnnouncementsViewModel.cs" />
     <Compile Include="ViewModels\HomeIndexViewModel.cs" />
     <Compile Include="ViewModels\NavMenusViewModel.cs" />
+    <Compile Include="ViewModels\OdsReportsViewModel.cs" />
+    <Compile Include="ViewModels\OdsReportViewModel.cs" />
     <Compile Include="ViewModels\SelectOrgViewModel.cs" />
     <Compile Include="ViewModels\ValidationReportDetailsViewModel.cs" />
     <Compile Include="ViewModels\ValidationReportsViewModel.cs" />

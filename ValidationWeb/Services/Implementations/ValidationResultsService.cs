@@ -12,6 +12,7 @@ namespace ValidationWeb.Services
         private ErrorSeverityLookup aWarning = ValidationPortalDbMigrationConfiguration.ErrorSeverityLookups.First(sev => sev.CodeValue == ErrorSeverity.Warning.ToString());
         protected readonly ValidationPortalDbContext _portalDbContext;
         const int MaxPageSize = 10000;
+        const int AutocompleteSuggestionCount = 8;
 
         public ValidationResultsService(ValidationPortalDbContext portalDbContext)
         {
@@ -37,9 +38,32 @@ namespace ValidationWeb.Services
             return reportSummaryList;
         }
 
-        public List<ValidationErrorSummary> GetValidationErrorSummaryTableData(int validationReportSummaryId)
+        public List<string> AutocompleteErrorFilter(ValidationErrorFilter filterSpecification)
         {
-            return _portalDbContext.ValidationErrorSummaries.Where(ves => ves.Id == validationReportSummaryId).ToList();
+            // First limit to errors/warnings of one execution of the rules engine.
+            var filteredErrorQuery = _portalDbContext.ValidationErrorSummaries.Where(er0 => er0.ValidationReportDetailsId == filterSpecification.reportDetailsId);
+            IQueryable<string> autocompleteQuery;
+            switch (filterSpecification.autocompleteColumn)
+            {
+                case "studentname":
+                    autocompleteQuery = filteredErrorQuery.Select(er2 => er2.StudentFullName);
+                    break;
+                case "school":
+                    autocompleteQuery = filteredErrorQuery.Select(er2 => er2.School);
+                    break;
+                case "grade":
+                    autocompleteQuery = filteredErrorQuery.Select(er2 => er2.Grade);
+                    break;
+                case "rule":
+                    autocompleteQuery = filteredErrorQuery.Select(er2 => er2.ErrorCode);
+                    break;
+                case "errortext":
+                    autocompleteQuery = filteredErrorQuery.Select(er2 => er2.ErrorText);
+                    break;
+                default:
+                    return null;
+            }
+            return autocompleteQuery.Where(sg => sg.Contains(filterSpecification.autocompleteText)).Distinct().Take(AutocompleteSuggestionCount).ToList();
         }
 
         public FilteredValidationErrors GetFilteredValidationErrorTableData(ValidationErrorFilter filterSpecification)
@@ -106,69 +130,69 @@ namespace ValidationWeb.Services
                 // Ascending is the default sort direction
                 isDescending = (sortDirections.Length > colIndex) && (sortDirections[colIndex] ?? String.Empty).ToLowerInvariant().StartsWith("d");
 
-                switch (columnNames[colIndex])
+                switch (sortColumnNames[colIndex])
                 {
                     case "studentid":
-                        if (!isDescending && !isSecondarySortColumn) { filteredErrorQuery.OrderBy(er2 => er2.StudentUniqueId); }
-                        else if (isDescending && !isSecondarySortColumn) { filteredErrorQuery.OrderByDescending(er2 => er2.StudentUniqueId); }
-                        else if (!isDescending && isSecondarySortColumn) { (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenBy(er2 => er2.StudentUniqueId); }
-                        else if (isDescending && isSecondarySortColumn) { (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenByDescending(er2 => er2.StudentUniqueId); }
+                        if (!isDescending && !isSecondarySortColumn) { filteredErrorQuery = filteredErrorQuery.OrderBy(er2 => er2.StudentUniqueId); }
+                        else if (isDescending && !isSecondarySortColumn) { filteredErrorQuery = filteredErrorQuery.OrderByDescending(er2 => er2.StudentUniqueId); }
+                        else if (!isDescending && isSecondarySortColumn) { filteredErrorQuery = (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenBy(er2 => er2.StudentUniqueId); }
+                        else if (isDescending && isSecondarySortColumn) { filteredErrorQuery = (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenByDescending(er2 => er2.StudentUniqueId); }
                         else { break; }
                         isSecondarySortColumn = true;
                         break;
                     case "studentname":
-                        if (!isDescending && !isSecondarySortColumn) { filteredErrorQuery.OrderBy(er2 => er2.StudentFullName); }
-                        else if (isDescending && !isSecondarySortColumn) { filteredErrorQuery.OrderByDescending(er2 => er2.StudentFullName); }
-                        else if (!isDescending && isSecondarySortColumn) { (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenBy(er2 => er2.StudentFullName); }
-                        else if (isDescending && isSecondarySortColumn) { (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenByDescending(er2 => er2.StudentFullName); }
+                        if (!isDescending && !isSecondarySortColumn) { filteredErrorQuery = filteredErrorQuery.OrderBy(er2 => er2.StudentFullName); }
+                        else if (isDescending && !isSecondarySortColumn) { filteredErrorQuery = filteredErrorQuery.OrderByDescending(er2 => er2.StudentFullName); }
+                        else if (!isDescending && isSecondarySortColumn) { filteredErrorQuery = (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenBy(er2 => er2.StudentFullName); }
+                        else if (isDescending && isSecondarySortColumn) { filteredErrorQuery = (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenByDescending(er2 => er2.StudentFullName); }
                         else { break; }
                         isSecondarySortColumn = true;
                         break;
                     case "component":
-                        if (!isDescending && !isSecondarySortColumn) { filteredErrorQuery.OrderBy(er2 => er2.Component); }
-                        else if (isDescending && !isSecondarySortColumn) { filteredErrorQuery.OrderByDescending(er2 => er2.Component); }
-                        else if (!isDescending && isSecondarySortColumn) { (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenBy(er2 => er2.Component); }
-                        else if (isDescending && isSecondarySortColumn) { (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenByDescending(er2 => er2.Component); }
+                        if (!isDescending && !isSecondarySortColumn) { filteredErrorQuery = filteredErrorQuery.OrderBy(er2 => er2.Component); }
+                        else if (isDescending && !isSecondarySortColumn) { filteredErrorQuery = filteredErrorQuery.OrderByDescending(er2 => er2.Component); }
+                        else if (!isDescending && isSecondarySortColumn) { filteredErrorQuery = (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenBy(er2 => er2.Component); }
+                        else if (isDescending && isSecondarySortColumn) { filteredErrorQuery = (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenByDescending(er2 => er2.Component); }
                         else { break; }
                         isSecondarySortColumn = true;
                         break;
                     case "school":
-                        if (!isDescending && !isSecondarySortColumn) { filteredErrorQuery.OrderBy(er2 => er2.School); }
-                        else if (isDescending && !isSecondarySortColumn) { filteredErrorQuery.OrderByDescending(er2 => er2.School); }
-                        else if (!isDescending && isSecondarySortColumn) { (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenBy(er2 => er2.School); }
-                        else if (isDescending && isSecondarySortColumn) { (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenByDescending(er2 => er2.School); }
+                        if (!isDescending && !isSecondarySortColumn) { filteredErrorQuery = filteredErrorQuery.OrderBy(er2 => er2.School); }
+                        else if (isDescending && !isSecondarySortColumn) { filteredErrorQuery = filteredErrorQuery.OrderByDescending(er2 => er2.School); }
+                        else if (!isDescending && isSecondarySortColumn) { filteredErrorQuery = (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenBy(er2 => er2.School); }
+                        else if (isDescending && isSecondarySortColumn) { filteredErrorQuery = (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenByDescending(er2 => er2.School); }
                         else { break; }
                         isSecondarySortColumn = true;
                         break;
                     case "grade":
-                        if (!isDescending && !isSecondarySortColumn) { filteredErrorQuery.OrderBy(er2 => er2.Grade); }
-                        else if (isDescending && !isSecondarySortColumn) { filteredErrorQuery.OrderByDescending(er2 => er2.Grade); }
-                        else if (!isDescending && isSecondarySortColumn) { (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenBy(er2 => er2.Grade); }
-                        else if (isDescending && isSecondarySortColumn) { (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenByDescending(er2 => er2.Grade); }
+                        if (!isDescending && !isSecondarySortColumn) { filteredErrorQuery = filteredErrorQuery.OrderBy(er2 => er2.Grade); }
+                        else if (isDescending && !isSecondarySortColumn) { filteredErrorQuery = filteredErrorQuery.OrderByDescending(er2 => er2.Grade); }
+                        else if (!isDescending && isSecondarySortColumn) { filteredErrorQuery = (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenBy(er2 => er2.Grade); }
+                        else if (isDescending && isSecondarySortColumn) { filteredErrorQuery = (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenByDescending(er2 => er2.Grade); }
                         else { break; }
                         isSecondarySortColumn = true;
                         break;
                     case "rule":
-                        if (!isDescending && !isSecondarySortColumn) { filteredErrorQuery.OrderBy(er2 => er2.ErrorCode); }
-                        else if (isDescending && !isSecondarySortColumn) { filteredErrorQuery.OrderByDescending(er2 => er2.ErrorCode); }
-                        else if (!isDescending && isSecondarySortColumn) { (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenBy(er2 => er2.ErrorCode); }
-                        else if (isDescending && isSecondarySortColumn) { (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenByDescending(er2 => er2.ErrorCode); }
+                        if (!isDescending && !isSecondarySortColumn) { filteredErrorQuery = filteredErrorQuery.OrderBy(er2 => er2.ErrorCode); }
+                        else if (isDescending && !isSecondarySortColumn) { filteredErrorQuery = filteredErrorQuery.OrderByDescending(er2 => er2.ErrorCode); }
+                        else if (!isDescending && isSecondarySortColumn) { filteredErrorQuery = (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenBy(er2 => er2.ErrorCode); }
+                        else if (isDescending && isSecondarySortColumn) { filteredErrorQuery = (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenByDescending(er2 => er2.ErrorCode); }
                         else { break; }
                         isSecondarySortColumn = true;
                         break;
                     case "errortext":
-                        if (!isDescending && !isSecondarySortColumn) { filteredErrorQuery.OrderBy(er2 => er2.ErrorText); }
-                        else if (isDescending && !isSecondarySortColumn) { filteredErrorQuery.OrderByDescending(er2 => er2.ErrorText); }
-                        else if (!isDescending && isSecondarySortColumn) { (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenBy(er2 => er2.ErrorText); }
-                        else if (isDescending && isSecondarySortColumn) { (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenByDescending(er2 => er2.ErrorText); }
+                        if (!isDescending && !isSecondarySortColumn) { filteredErrorQuery = filteredErrorQuery.OrderBy(er2 => er2.ErrorText); }
+                        else if (isDescending && !isSecondarySortColumn) { filteredErrorQuery = filteredErrorQuery.OrderByDescending(er2 => er2.ErrorText); }
+                        else if (!isDescending && isSecondarySortColumn) { filteredErrorQuery = (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenBy(er2 => er2.ErrorText); }
+                        else if (isDescending && isSecondarySortColumn) { filteredErrorQuery = (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenByDescending(er2 => er2.ErrorText); }
                         else { break; }
                         isSecondarySortColumn = true;
                         break;
                     case "errortype":
-                        if (!isDescending && !isSecondarySortColumn) { filteredErrorQuery.OrderBy(er2 => er2.SeverityId); }
-                        else if (isDescending && !isSecondarySortColumn) { filteredErrorQuery.OrderByDescending(er2 => er2.SeverityId); }
-                        else if (!isDescending && isSecondarySortColumn) { (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenBy(er2 => er2.SeverityId); }
-                        else if (isDescending && isSecondarySortColumn) { (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenByDescending(er2 => er2.SeverityId); }
+                        if (!isDescending && !isSecondarySortColumn) { filteredErrorQuery = filteredErrorQuery.OrderBy(er2 => er2.SeverityId); }
+                        else if (isDescending && !isSecondarySortColumn) { filteredErrorQuery = filteredErrorQuery.OrderByDescending(er2 => er2.SeverityId); }
+                        else if (!isDescending && isSecondarySortColumn) { filteredErrorQuery = (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenBy(er2 => er2.SeverityId); }
+                        else if (isDescending && isSecondarySortColumn) { filteredErrorQuery = (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenByDescending(er2 => er2.SeverityId); }
                         else { break; }
                         isSecondarySortColumn = true;
                         break;

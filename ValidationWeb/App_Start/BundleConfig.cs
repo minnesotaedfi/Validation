@@ -9,6 +9,8 @@ namespace ValidationWeb
         {
             // STYLE
             bundles.Add(new StyleBundle("~/Content/css").Include(
+                      "~/Content/Styles/fa-solid.css",
+                      "~/Content/Styles/fontawesome.css",
                       "~/Content/Styles/bootstrap.css",
                       "~/Content/Styles/validationportal.css"));
 
@@ -23,8 +25,6 @@ namespace ValidationWeb
                       "~/Content/Scripts/respond.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/table2CSV").Include("~/Content/Scripts/table2csv.js"));
-            bundles.Add(new ScriptBundle("~/bundles/tabulatorScripts").Include("~/Content/Scripts/tabulator.js"));
-            bundles.Add(new StyleBundle("~/Content/tabulatorCSS").Include("~/Content/Styles/tabulator_simple.css"));
             bundles.Add(new ScriptBundle("~/bundles/jqueryUI").Include("~/Content/Scripts/jquery-ui.js"));
             bundles.Add(new StyleBundle("~/Content/jqueryUICSS").Include("~/Content/Styles/jquery-ui.css"));
 

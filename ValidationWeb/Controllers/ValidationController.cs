@@ -49,7 +49,9 @@ namespace ValidationWeb
                 TheUser = theUser,
                 ReportSummaries = reportSummaries,
                 RulesCollections = rulesCollections,
-                SchoolYears = _schoolYearService.GetSubmittableSchoolYears().ToList()
+                SchoolYears = _schoolYearService.GetSubmittableSchoolYears().ToList(),
+                FocusedEdOrgId = _appUserService.GetSession().FocusedEdOrgId,
+                FocusedSchoolYearId = _appUserService.GetSession().FocusedSchoolYearId
             };
             return View(model);
         }
@@ -82,16 +84,5 @@ namespace ValidationWeb
                 return View();
             }
         */
-
-        // GET: Validation/GetErrorReportTableData
-        public String GetValidationErrorSummaryTableData(int validationReportSummaryId)
-        {
-            var jsonSerialiser = new JavaScriptSerializer();
-            List<ValidationErrorSummary> errorSummaryList = _validationResultsService.GetValidationErrorSummaryTableData(validationReportSummaryId);
-            var json = jsonSerialiser.Serialize(errorSummaryList);
-
-            return json;
-        }
-
     }
 }
