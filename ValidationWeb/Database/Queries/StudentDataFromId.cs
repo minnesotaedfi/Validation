@@ -46,32 +46,51 @@ namespace ValidationWeb
                 : $"{singleStudentDataList[0].FirstName} {singleStudentDataList[0].MiddleName} {singleStudentDataList[0].LastSurname}")
                 .Trim();
         }
-        public static string GetSchools(IList<StudentDataFromId> singleStudentDataList)
+        public static List<string> GetSchools(IList<StudentDataFromId> singleStudentDataList)
         {
             if (singleStudentDataList.Count == 0)
             {
-                return string.Empty;
+                return new List<string>();
             }
-            return string.Join(", ", singleStudentDataList.Select(ssd => $"{ssd.NameOfInstitution} ({ssd.SchoolId})").ToList());
+            return singleStudentDataList.Select(ssd => ssd.NameOfInstitution).ToList();
         }
-        public static string GetSchoolEnrollmentDates(IList<StudentDataFromId> singleStudentDataList)
-        {
-            if (singleStudentDataList.Count == 0)
-            {
-                return string.Empty;
-            }
-            var present = "Present";
-            var unknown = "Unknown";
 
-            return string.Join(", ", singleStudentDataList.Select(ssd => $"{(ssd.EntryDate.HasValue ? ssd.EntryDate.Value.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture) : unknown)} - {(ssd.ExitWithdrawDate.HasValue ? ssd.ExitWithdrawDate.Value.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture) : present)}").ToList());
-        }
-        public static string GetGradeLevels(IList<StudentDataFromId> singleStudentDataList)
+        public static List<string> GetSchoolIds(IList<StudentDataFromId> singleStudentDataList)
         {
             if (singleStudentDataList.Count == 0)
             {
-                return string.Empty;
+                return new List<string>();
             }
-            return string.Join(", ", singleStudentDataList.Select(ssd => $"{ssd.GradeLevel}").ToList());
+            return singleStudentDataList.Select(ssd => ssd.SchoolId).ToList();
+        }
+
+        public static List<DateTime?> GetDateEnrolledList(IList<StudentDataFromId> singleStudentDataList)
+        {
+            if (singleStudentDataList.Count == 0)
+            {
+                return new List<DateTime?>();
+            }
+
+            return singleStudentDataList.Select(ssd => ssd.EntryDate).ToList();
+        }
+
+        public static List<DateTime?> GetDateWithdrawnList(IList<StudentDataFromId> singleStudentDataList)
+        {
+            if (singleStudentDataList.Count == 0)
+            {
+                return new List<DateTime?>();
+            }
+
+            return singleStudentDataList.Select(ssd => ssd.ExitWithdrawDate).ToList();
+        }
+
+        public static List<string> GetGradeLevels(IList<StudentDataFromId> singleStudentDataList)
+        {
+            if (singleStudentDataList.Count == 0)
+            {
+                return new List<string>();
+            }
+            return singleStudentDataList.Select(ssd => ssd.GradeLevel).ToList();
         }
     }
 }

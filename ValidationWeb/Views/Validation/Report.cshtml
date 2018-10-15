@@ -20,16 +20,21 @@
 </div>
 
 <div id="errorGridControls" class="row grid-controls">
-    <button id="searchButton" class="btn prime-blue white-heavy-text" type="button">Search</button>
-    <button id="clearButton" class="btn prime-blue white-heavy-text">Clear</button>
+    <button id="clearButton" class="btn prime-blue white-heavy-text">Clear Filters</button>
+    <span id="pageSizeLabel">Results to Display: </span>
+    <input class="form-control form-control-sm" id="pageSizeInput" placeholder="30 (records per page)">
     <button id="firstPageButton" class="btn prime-blue white-heavy-text">&lt;&lt;</button>
     <button id="previousPageButton" class="btn prime-blue white-heavy-text">&lt;</button>
-    <span id="pageSizeLabel">Page size: </span> 
-    <input class="form-control form-control-sm" id="pageSizeInput" placeholder="30 (records per page)">
-    Page 
-    <input class="form-control form-control-sm" id="pageNumberInput" placeholder="1">
-    of  
-    <span id="totalPageCount">1</span>
+    <div class="paging-offset-buttons">
+        <button id="pgoffset-2" class="page-button" data-offset="-2"></button>
+        <button id="pgoffset-1" class="page-button" data-offset="-1"></button>
+        <input class="form-control form-control-sm" id="pageNumberInput" placeholder="1">
+        <button id="searchButton" class="btn btn-sm prime-blue white-heavy-text" style="margin: 0">Go <i class="fas fa-arrow-right"></i></button>
+        <button id="pgoffset1" class="page-button" data-offset="1"></button>
+        <button id="pgoffset2" class="page-button" data-offset="2"></button>
+    </div>
+    <span class="margin4px">&nbsp;of&nbsp;</span>
+    <span id="totalPageCount" class="margin4px"> 1 </span>
     <button id="nextPageButton" class="btn prime-blue white-heavy-text">&gt;</button>
     <button id="lastPageButton" class="btn prime-blue white-heavy-text">&gt;&gt;</button>
     <div class="dropdown ml-auto d-inline-block">
@@ -54,17 +59,21 @@
             <th class="sortable-table-header" data-sort-column-name="studentid" data-sort-direction="">Student ID<i></i></th>
             <th class="sortable-table-header" data-sort-column-name="studentname" data-sort-direction="">Student<i></i></th>
             <th class="sortable-table-header" data-sort-column-name="school" data-sort-direction="">School<i></i></th>
-            <th>Enrollment Dates</th>
+            <th class="sortable-table-header" data-sort-column-name="schoolid" data-sort-direction="">School ID<i></i></th>
+            <th class="sortable-table-header" data-sort-column-name="dateenrolled" data-sort-direction="">Date Enrolled<i></i></th>
+            <th class="sortable-table-header" data-sort-column-name="datewithdrawn" data-sort-direction="">Date Withdrawn<i></i></th>
             <th class="sortable-table-header" data-sort-column-name="grade" data-sort-direction="">Grade<i></i></th>
             <th class="sortable-table-header" data-sort-column-name="errortype" data-sort-direction="">Severity<i></i></th>
             <th class="sortable-table-header" data-sort-column-name="rule" data-sort-direction="">Rule Number<i></i></th>
             <th class="sortable-table-header" data-sort-column-name="errortext" data-sort-direction="">Message<i></i></th>
         </tr>
-        <tr class="table-primary">
+        <tr class="table-primary query-filter-table-row">
             <th></th>
-            <th><input id="studentIdFilter" class="form-control form-control-sm" placeholder="filter"></th>
+            <th><input id="studentIdFilter" class="form-control form-control-sm autocomplete" placeholder="filter" data-autocomplete-column-name="studentid"></th>
             <th><input id="studentNameFilter" class="form-control form-control-sm autocomplete" placeholder="filter" data-autocomplete-column-name="studentname"></th>
             <th><input id="schoolFilter" class="form-control form-control-sm autocomplete" placeholder="filter" data-autocomplete-column-name="school"></th>
+            <th><input id="schoolIdFilter" class="form-control form-control-sm autocomplete" placeholder="filter" data-autocomplete-column-name="schoolid"></th>
+            <th></th>
             <th></th>
             <th><input id="gradeFilter" class="form-control form-control-sm autocomplete" placeholder="filter" data-autocomplete-column-name="grade"></th>
             <th>
@@ -87,6 +96,8 @@
             <td>-</td>
             <td>-</td>
             <td>-</td>
+            <td>-</td>
+            <td>-</td>
         </tr>
     </table>
 </div>
@@ -94,17 +105,25 @@
 @section scripts
 {
     <script>
+        function ClearFilter() {
+            $(".query-filter-table-row input").val("");
+            $("#errorTypeFilter").val("all");
+            $("#componentViewSelected").val("All");
+            $(".sortable-table-header > i").removeClass();
+            $(".sortable-table-header").attr("data-sort-direction", "desc")
+        }
+
+        function ClearGrid(gridId) {
+            let gridIdWithHash = `#${gridId}`;
+            $('tr.datarow').remove();
+        }
+
         // Switch between grids - hide all but the one whose ID is passed here.
         function ShowGrid(gridId) {
             let gridIdWithHash = `#${gridId}`;
             $(".error-grid").hide();
             $(gridIdWithHash).show();
             RefreshGrid(gridId, SetFilter());
-        }
-
-        function ClearGrid(gridId) {
-            let gridIdWithHash = `#${gridId}`;
-            $('tr.datarow').remove();
         }
 
         // Populate the grid according to filters.
@@ -121,14 +140,8 @@
             });
         }
 
-        function ClearFilter() {
-            $("input").val("");
-            $("#errorTypeFilter").val("all");
-            $("#componentViewSelected").val("All");
-            $(".sortable-table-header > i").removeClass();
-            $(".sortable-table-header").attr("data-sort-direction", "desc")
-        }
-
+        // Read the UI and return a object for inputting to the backend API. 
+        // The returned object will represent the user's choices that constrain the query.
         function SetFilter() {
             // Establish the defaults
             let filter = {
@@ -151,6 +164,10 @@
             if ($("#schoolFilter").val()) {
                 filter.filterColumns.push("school");
                 filter.filterTexts.push($("#schoolFilter").val());
+            }
+            if ($("#schoolIdFilter").val()) {
+                filter.filterColumns.push("schoolid");
+                filter.filterTexts.push($("#schoolIdFilter").val());
             }
             if ($("#gradeFilter").val()) {
                 filter.filterColumns.push("grade");
@@ -225,30 +242,96 @@
 
         function AddSingleBlankRow(gridId) {
             let gridIdWithHash = `#${gridId}`;
-            $(`${gridIdWithHash} tr:last`).after(`<tr class=\"datarow\"><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>`);
+            $(`${gridIdWithHash} tr:last`).after(`<tr class=\"datarow\"><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>`);
         }
 
         function AddSingleDataRow(gridId, errorRecord, recordNumberInFullSet) {
             let gridIdWithHash = `#${gridId}`;
             let severity = (errorRecord.severityId == 0) ? "Error" : "Warning";
-            let newTableRowHtml = '<tr class=\"datarow\">'
-            newTableRowHtml = newTableRowHtml + `<td>${recordNumberInFullSet.toString()}</td>`
-            newTableRowHtml = newTableRowHtml + `<td>${errorRecord.studentUniqueId}</td>`
-            newTableRowHtml = newTableRowHtml + `<td>${errorRecord.studentFullName}</td>`
-            newTableRowHtml = newTableRowHtml + `<td>${errorRecord.school}</td>`
-            newTableRowHtml = newTableRowHtml + `<td>${errorRecord.enrollmentDates}</td>`
-            newTableRowHtml = newTableRowHtml + `<td>${errorRecord.grade}</td>`
-            newTableRowHtml = newTableRowHtml + `<td>${severity}</td>`
-            newTableRowHtml = newTableRowHtml + `<td>${errorRecord.errorCode}</td>`
-            newTableRowHtml = newTableRowHtml + `<td>${errorRecord.errorText}</td>`
-            newTableRowHtml = newTableRowHtml + `</tr>`
+            let newTableRowHtml = '<tr class=\"datarow\">';
+            newTableRowHtml = newTableRowHtml + `<td>${recordNumberInFullSet.toString()}</td>`;
+            newTableRowHtml = newTableRowHtml + `<td>${errorRecord.studentUniqueId}</td>`;
+            newTableRowHtml = newTableRowHtml + `<td>${errorRecord.studentFullName}</td>`;
+            let schoolsContent = "";
+            let schoolidsContent = "";
+            let enrollmentDatesContent = "";
+            let withdrawnDatesContent = "";
+            let gradesContent = "";
+            if (!errorRecord.errorEnrollmentDetails) {
+                errorRecord.errorEnrollmentDetails = [];
+            }
+            for (let enrollmentDetailIndex = 0; enrollmentDetailIndex < errorRecord.errorEnrollmentDetails.length; enrollmentDetailIndex++)
+            {
+                let lastRecord = (enrollmentDetailIndex + 1 === errorRecord.errorEnrollmentDetails.length);
+                let lineBreakIfNeeded = lastRecord ? "" : "<br />";
+                let schoolDetail = errorRecord.errorEnrollmentDetails[enrollmentDetailIndex].school + lineBreakIfNeeded;
+                let schoolidDetail = errorRecord.errorEnrollmentDetails[enrollmentDetailIndex].schoolId + lineBreakIfNeeded;
+                let enrolledDateDetail = errorRecord.errorEnrollmentDetails[enrollmentDetailIndex].dateEnrolled;
+                let enrolledDateDetailString = "Unknown" + lineBreakIfNeeded;
+                if (enrolledDateDetail) {
+                    enrolledDateDetailString = FormatDate(enrolledDateDetail) + lineBreakIfNeeded;
+                } 
+                let withdrawnDateDetail = errorRecord.errorEnrollmentDetails[enrollmentDetailIndex].dateWithdrawn;
+                let withdrawnDateDetailString = "Present" + lineBreakIfNeeded;
+                if (withdrawnDateDetail) {
+                    withdrawnDateDetailString = FormatDate(withdrawnDateDetail) + lineBreakIfNeeded;
+                } 
+                let gradeDetail = errorRecord.errorEnrollmentDetails[enrollmentDetailIndex].grade + lineBreakIfNeeded;
+                schoolsContent = schoolsContent + schoolDetail;
+                schoolidsContent = schoolidsContent + schoolidDetail;
+                enrollmentDatesContent = enrollmentDatesContent + enrolledDateDetailString;
+                withdrawnDatesContent = withdrawnDatesContent + withdrawnDateDetailString;
+                gradesContent = gradesContent + gradeDetail;
+            }
+            newTableRowHtml = newTableRowHtml + `<td>${schoolsContent}</td>`;
+            newTableRowHtml = newTableRowHtml + `<td>${schoolidsContent}</td>`;
+            newTableRowHtml = newTableRowHtml + `<td>${enrollmentDatesContent}</td>`;
+            newTableRowHtml = newTableRowHtml + `<td>${withdrawnDatesContent}</td>`;
+            newTableRowHtml = newTableRowHtml + `<td>${gradesContent}</td>`;
+            newTableRowHtml = newTableRowHtml + `<td>${severity}</td>`;
+            newTableRowHtml = newTableRowHtml + `<td>${errorRecord.errorCode}</td>`;
+            newTableRowHtml = newTableRowHtml + `<td>${errorRecord.errorText}</td>`;
+            newTableRowHtml = newTableRowHtml + `</tr>`;
             $(`${gridIdWithHash} tr:last`).after(newTableRowHtml);
         }
 
+        // Populates the grid (gridID) with data received (dataObj)
         function ProcessGridDataForDisplay(gridId, dataObj) {
-            $("#totalPageCount").text(dataObj.totalPagesCount.toString());
+            $("#totalPageCount").text(" " + dataObj.totalPagesCount.toString() + " ");
             $("#pageSizeInput").val(dataObj.pageSize.toString());
             $("#pageNumberInput").val(dataObj.pageNumber.toString());
+            // Page Number Buttons //////////////////////////////////////
+            let pnum = parseInt(dataObj.pageNumber);
+            let totpg = parseInt(dataObj.totalPagesCount);
+            if (pnum - 2 < 1) {
+                $("#pgoffset-2").hide(); 
+            } 
+            else {
+                $("#pgoffset-2").text(pnum - 2);
+                $("#pgoffset-2").show();
+            } 
+            if (pnum - 1 < 1) {
+                $("#pgoffset-1").hide(); 
+            } 
+            else {
+                $("#pgoffset-1").text(pnum - 1);
+                $("#pgoffset-1").show();
+            } 
+            if (pnum + 1 > totpg) {
+                $("#pgoffset1").hide(); 
+            } 
+            else {
+                $("#pgoffset1").text(pnum + 1);
+                $("#pgoffset1").show();
+            } 
+            if (pnum + 2 > totpg) {
+                $("#pgoffset2").hide(); 
+            } 
+            else {
+                $("#pgoffset2").text(pnum + 2);
+                $("#pgoffset2").show();
+            } 
+            //////////////////////////////////////////////////////
             let recordOffset = dataObj.recordOffset;
             if (!recordOffset) // 0-based
             {
@@ -277,7 +360,7 @@
                 dataType: 'json',
                 contentType: 'application/json; charset=utf-8',
                 success: function (data) {
-                    if (!data.length) {
+                    if (!data || !(data.length)) {
                         return;
                     }
                     // Create a container for the suggestions
@@ -293,7 +376,8 @@
                     }).show();
                     $(".auto-suggestion").on('mousedown', function(e){
                         wrappedElement.val($(this).text());
-                        $("#searchButton").trigger("click");
+                        // No refresh needed, because Blur on the Input element refreshes the grid
+                        // $("#searchButton").trigger("click");
                         $(".autocomplete-suggestions").remove();
                     });
                 },
@@ -306,6 +390,7 @@
         $(document).ready(function() {
             // Initially show all errors.
             ShowGrid("errorGrid");
+
             // Register callback to show particular grid based on dropdown selection.
             $("#showAllGrid").on("click", function(e){
                 $("#componentViewFilter").text("Component: All");
@@ -322,6 +407,7 @@
                 $("#componentViewSelected").val("Demographics");
                 ShowGrid("errorGrid");
             });
+
             // Register Buttons
             $("#searchButton").on("click", function(){
                 let currentFilter = SetFilter();
@@ -329,6 +415,29 @@
             });
             $("#clearButton").on("click", function(){
                 ClearFilter();
+                let currentFilter = SetFilter();
+                RefreshGrid("errorGrid", currentFilter);
+            });
+            $(".page-button").on("click", function(){
+                let currentPageVal =  $("#pageNumberInput").val();
+                if (currentPageVal)
+                {
+                    let currentPageValInt = parseInt(currentPageVal);
+                    let offsetAddend = parseInt($(this).attr("data-offset"));
+                    if (currentPageValInt)
+                    {
+                        currentPageValInt = currentPageValInt + offsetAddend;
+                        $("#pageNumberInput").val(currentPageValInt);
+                    }
+                    else
+                    {
+                        $("#pageNumberInput").val(1);
+                    }
+                }
+                else
+                {
+                    $("#pageNumberInput").val(1);
+                }
                 let currentFilter = SetFilter();
                 RefreshGrid("errorGrid", currentFilter);
             });
@@ -412,6 +521,23 @@
                 let currentFilter = SetFilter();
                 RefreshGrid("errorGrid", currentFilter);
             });
+            //$("#pageSizeInput").on("change", function() {
+            //    let currentFilter = SetFilter();
+            //    RefreshGrid("errorGrid", currentFilter);
+            //}); 
+            //$("#pageNumberInput").on("change", function() {
+            //    let currentFilter = SetFilter();
+            //    RefreshGrid("errorGrid", currentFilter);
+            //}); 
+            $("input.form-control").blur(function() {
+                $(".autocomplete-suggestions").remove();
+                let currentFilter = SetFilter();
+                RefreshGrid("errorGrid", currentFilter);
+            });
+            $("#downloadAsCSV").click(function() {
+                $('#errorTable').table2csv({ filename: 'validationReportDetails.csv' });
+            });
+            // Trigger autocomplete when user has typed at least two characters.
             $('input.autocomplete').bind('keyup', function(e) {
                 let currentValue = $(this).val();
                 if (currentValue.length && currentValue.length >= 2)
@@ -419,6 +545,7 @@
                     Autocomplete(e.target);
                 }
             });
+            // Dispose os autocomplete suggestions any time the user clicks the mouse.
             $(document).bind('mouseup', function(){
                 $(".autocomplete-suggestions").remove();
             });
@@ -426,16 +553,17 @@
 
 
         $(document).ready(function() {
-            $("#export").click(function() {
-                $('#errorTable').table2csv({ filename: 'validationReportDetails.csv' });
-            });
         });
 
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        $("#downloadAsCSV").click(function() {
-            $("#testTable").tabulator("download", "csv", "validationReportDetails.csv");
-        });
+        // Credit: Stack Overflow
+        function FormatDate(date) {
+            var d = new Date(date),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+            if (month.length < 2) month = '0' + month;
+            if (day.length < 2) day = '0' + day;
+            return [month, day, year].join('/');
+        }
     </script>
 }

@@ -10,6 +10,11 @@ namespace ValidationWeb
     [Table("validation.ErrorSummary")]
     public class ValidationErrorSummary
     {
+        public ValidationErrorSummary()
+        {
+            ErrorEnrollmentDetails = new HashSet<ValidationErrorEnrollmentDetail>();
+        }
+
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
         public int Id { get; set; }
@@ -20,9 +25,8 @@ namespace ValidationWeb
         public int SeverityId { get; set; }
         public ErrorSeverityLookup Severity { get; set; }
 
-        public string School { get; set; }
-        public string EnrollmentDates { get; set; }
-        public string Grade { get; set; }
+        public ICollection<ValidationErrorEnrollmentDetail> ErrorEnrollmentDetails { get; set; }
+
         public string ErrorCode { get; set; }
         public string ErrorText { get; set; }
 

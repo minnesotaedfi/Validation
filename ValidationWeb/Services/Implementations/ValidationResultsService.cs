@@ -41,18 +41,27 @@ namespace ValidationWeb.Services
         public List<string> AutocompleteErrorFilter(ValidationErrorFilter filterSpecification)
         {
             // First limit to errors/warnings of one execution of the rules engine.
-            var filteredErrorQuery = _portalDbContext.ValidationErrorSummaries.Where(er0 => er0.ValidationReportDetailsId == filterSpecification.reportDetailsId);
+            var filteredErrorQuery = _portalDbContext
+                .ValidationErrorSummaries
+                .Include(ves0 => ves0.ErrorEnrollmentDetails)
+                .Where(er0 => er0.ValidationReportDetailsId == filterSpecification.reportDetailsId);
             IQueryable<string> autocompleteQuery;
             switch (filterSpecification.autocompleteColumn)
             {
+                case "studentid":
+                    autocompleteQuery = filteredErrorQuery.Select(er2 => er2.StudentUniqueId);
+                    break;
                 case "studentname":
                     autocompleteQuery = filteredErrorQuery.Select(er2 => er2.StudentFullName);
                     break;
                 case "school":
-                    autocompleteQuery = filteredErrorQuery.Select(er2 => er2.School);
+                    autocompleteQuery = filteredErrorQuery.SelectMany(er2 => er2.ErrorEnrollmentDetails.Select(eed => eed.School));
+                    break;
+                case "schoolid":
+                    autocompleteQuery = filteredErrorQuery.SelectMany(er2 => er2.ErrorEnrollmentDetails.Select(eed => eed.SchoolId));
                     break;
                 case "grade":
-                    autocompleteQuery = filteredErrorQuery.Select(er2 => er2.Grade);
+                    autocompleteQuery = filteredErrorQuery.SelectMany(er2 => er2.ErrorEnrollmentDetails.Select(eed => eed.Grade));
                     break;
                 case "rule":
                     autocompleteQuery = filteredErrorQuery.Select(er2 => er2.ErrorCode);
@@ -69,9 +78,12 @@ namespace ValidationWeb.Services
         public FilteredValidationErrors GetFilteredValidationErrorTableData(ValidationErrorFilter filterSpecification)
         {
             // First limit to errors/warnings of one execution of the rules engine.
-            var filteredErrorQuery = _portalDbContext.ValidationErrorSummaries.Where(er0 => er0.ValidationReportDetailsId == filterSpecification.reportDetailsId);
+            var filteredErrorQuery = _portalDbContext
+                .ValidationErrorSummaries
+                .Include(ves0 => ves0.ErrorEnrollmentDetails)
+                .Where(er0 => er0.ValidationReportDetailsId == filterSpecification.reportDetailsId);
 
-            #region FIlter on search texts
+            #region Filter on search texts
             var columnNames = filterSpecification.filterColumns ?? new string[0];
             var searchTexts = filterSpecification.filterTexts ?? new string[0];
             for (int colIndex = 0; colIndex < columnNames.Length; colIndex++)
@@ -91,10 +103,13 @@ namespace ValidationWeb.Services
                             filteredErrorQuery = filteredErrorQuery.Where(er2 => er2.Component.Contains(normalizedSearchText));
                             break;
                         case "school":
-                            filteredErrorQuery = filteredErrorQuery.Where(er2 => er2.School.Contains(normalizedSearchText));
+                            filteredErrorQuery = filteredErrorQuery.Where(er2 => er2.ErrorEnrollmentDetails.Select(eed => eed.School).Contains(normalizedSearchText));
+                            break;
+                        case "schoolid":
+                            filteredErrorQuery = filteredErrorQuery.Where(er2 => er2.ErrorEnrollmentDetails.Select(eed => eed.SchoolId).Contains(normalizedSearchText));
                             break;
                         case "grade":
-                            filteredErrorQuery = filteredErrorQuery.Where(er2 => er2.Grade.Contains(normalizedSearchText));
+                            filteredErrorQuery = filteredErrorQuery.Where(er2 => er2.ErrorEnrollmentDetails.Select(eed => eed.Grade).Contains(normalizedSearchText));
                             break;
                         case "rule":
                             filteredErrorQuery = filteredErrorQuery.Where(er2 => er2.ErrorCode.Contains(normalizedSearchText));
@@ -157,18 +172,42 @@ namespace ValidationWeb.Services
                         isSecondarySortColumn = true;
                         break;
                     case "school":
-                        if (!isDescending && !isSecondarySortColumn) { filteredErrorQuery = filteredErrorQuery.OrderBy(er2 => er2.School); }
-                        else if (isDescending && !isSecondarySortColumn) { filteredErrorQuery = filteredErrorQuery.OrderByDescending(er2 => er2.School); }
-                        else if (!isDescending && isSecondarySortColumn) { filteredErrorQuery = (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenBy(er2 => er2.School); }
-                        else if (isDescending && isSecondarySortColumn) { filteredErrorQuery = (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenByDescending(er2 => er2.School); }
+                        if (!isDescending && !isSecondarySortColumn) { filteredErrorQuery = filteredErrorQuery.OrderBy(er2 => er2.ErrorEnrollmentDetails.OrderBy(eed => eed.School).Select(eed => eed.School).FirstOrDefault()); }
+                        else if (isDescending && !isSecondarySortColumn) { filteredErrorQuery = filteredErrorQuery.OrderByDescending(er2 => er2.ErrorEnrollmentDetails.OrderByDescending(eed => eed.School).Select(eed => eed.School).FirstOrDefault()); }
+                        else if (!isDescending && isSecondarySortColumn) { filteredErrorQuery = (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenBy(er2 => er2.ErrorEnrollmentDetails.OrderBy(eed => eed.School).Select(eed => eed.School).FirstOrDefault()); }
+                        else if (isDescending && isSecondarySortColumn) { filteredErrorQuery = (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenByDescending(er2 => er2.ErrorEnrollmentDetails.OrderByDescending(eed => eed.School).Select(eed => eed.School).FirstOrDefault()); }
+                        else { break; }
+                        isSecondarySortColumn = true;
+                        break;
+                    case "schoolid":
+                        if (!isDescending && !isSecondarySortColumn) { filteredErrorQuery = filteredErrorQuery.OrderBy(er2 => er2.ErrorEnrollmentDetails.OrderBy(eed => eed.SchoolId).Select(eed => eed.SchoolId).FirstOrDefault()); }
+                        else if (isDescending && !isSecondarySortColumn) { filteredErrorQuery = filteredErrorQuery.OrderByDescending(er2 => er2.ErrorEnrollmentDetails.OrderByDescending(eed => eed.SchoolId).Select(eed => eed.SchoolId).FirstOrDefault()); }
+                        else if (!isDescending && isSecondarySortColumn) { filteredErrorQuery = (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenBy(er2 => er2.ErrorEnrollmentDetails.OrderBy(eed => eed.SchoolId).Select(eed => eed.SchoolId).FirstOrDefault()); }
+                        else if (isDescending && isSecondarySortColumn) { filteredErrorQuery = (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenByDescending(er2 => er2.ErrorEnrollmentDetails.OrderByDescending(eed => eed.SchoolId).Select(eed => eed.SchoolId).FirstOrDefault()); }
+                        else { break; }
+                        isSecondarySortColumn = true;
+                        break;
+                    case "dateenrolled":
+                        if (!isDescending && !isSecondarySortColumn) { filteredErrorQuery = filteredErrorQuery.OrderBy(er2 => er2.ErrorEnrollmentDetails.OrderBy(eed => eed.DateEnrolled).Select(eed => eed.DateEnrolled).FirstOrDefault()); }
+                        else if (isDescending && !isSecondarySortColumn) { filteredErrorQuery = filteredErrorQuery.OrderByDescending(er2 => er2.ErrorEnrollmentDetails.OrderByDescending(eed => eed.DateEnrolled).Select(eed => eed.DateEnrolled).FirstOrDefault()); }
+                        else if (!isDescending && isSecondarySortColumn) { filteredErrorQuery = (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenBy(er2 => er2.ErrorEnrollmentDetails.OrderBy(eed => eed.DateEnrolled).Select(eed => eed.DateEnrolled).FirstOrDefault()); }
+                        else if (isDescending && isSecondarySortColumn) { filteredErrorQuery = (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenByDescending(er2 => er2.ErrorEnrollmentDetails.OrderByDescending(eed => eed.DateEnrolled).Select(eed => eed.DateEnrolled).FirstOrDefault()); }
+                        else { break; }
+                        isSecondarySortColumn = true;
+                        break;
+                    case "datewithdrawn":
+                        if (!isDescending && !isSecondarySortColumn) { filteredErrorQuery = filteredErrorQuery.OrderBy(er2 => er2.ErrorEnrollmentDetails.OrderBy(eed => eed.DateWithdrawn).Select(eed => eed.DateWithdrawn).FirstOrDefault()); }
+                        else if (isDescending && !isSecondarySortColumn) { filteredErrorQuery = filteredErrorQuery.OrderByDescending(er2 => er2.ErrorEnrollmentDetails.OrderByDescending(eed => eed.DateWithdrawn).Select(eed => eed.DateWithdrawn).FirstOrDefault()); }
+                        else if (!isDescending && isSecondarySortColumn) { filteredErrorQuery = (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenBy(er2 => er2.ErrorEnrollmentDetails.OrderBy(eed => eed.DateWithdrawn).Select(eed => eed.DateWithdrawn).FirstOrDefault()); }
+                        else if (isDescending && isSecondarySortColumn) { filteredErrorQuery = (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenByDescending(er2 => er2.ErrorEnrollmentDetails.OrderByDescending(eed => eed.DateWithdrawn).Select(eed => eed.DateWithdrawn).FirstOrDefault()); }
                         else { break; }
                         isSecondarySortColumn = true;
                         break;
                     case "grade":
-                        if (!isDescending && !isSecondarySortColumn) { filteredErrorQuery = filteredErrorQuery.OrderBy(er2 => er2.Grade); }
-                        else if (isDescending && !isSecondarySortColumn) { filteredErrorQuery = filteredErrorQuery.OrderByDescending(er2 => er2.Grade); }
-                        else if (!isDescending && isSecondarySortColumn) { filteredErrorQuery = (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenBy(er2 => er2.Grade); }
-                        else if (isDescending && isSecondarySortColumn) { filteredErrorQuery = (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenByDescending(er2 => er2.Grade); }
+                        if (!isDescending && !isSecondarySortColumn) { filteredErrorQuery = filteredErrorQuery.OrderBy(er2 => er2.ErrorEnrollmentDetails.OrderBy(eed => eed.Grade).Select(eed => eed.Grade).FirstOrDefault()); }
+                        else if (isDescending && !isSecondarySortColumn) { filteredErrorQuery = filteredErrorQuery.OrderByDescending(er2 => er2.ErrorEnrollmentDetails.OrderByDescending(eed => eed.Grade).Select(eed => eed.Grade).FirstOrDefault()); }
+                        else if (!isDescending && isSecondarySortColumn) { filteredErrorQuery = (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenBy(er2 => er2.ErrorEnrollmentDetails.OrderBy(eed => eed.Grade).Select(eed => eed.Grade).FirstOrDefault()); }
+                        else if (isDescending && isSecondarySortColumn) { filteredErrorQuery = (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenByDescending(er2 => er2.ErrorEnrollmentDetails.OrderByDescending(eed => eed.Grade).Select(eed => eed.Grade).FirstOrDefault()); }
                         else { break; }
                         isSecondarySortColumn = true;
                         break;
@@ -240,7 +279,5 @@ namespace ValidationWeb.Services
 
             return result;
         }
-
-        // TODO: ********** AUTOCOMPLETE ************
     }
 }

@@ -31,25 +31,15 @@ namespace ValidationWeb
         // GET: Ods/Reports
         public ActionResult Reports()
         {
-            //var edOrg = _edOrgService.GetEdOrgById(_appUserService.GetSession().FocusedEdOrgId);
-            //var rulesCollections = _engineObjectModel.Collections.OrderBy(x => x.CollectionId).ToList();
-            //var theUser = _appUserService.GetUser();
-            //var districtName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
-            //// Display the latest summary first (by default)
-            //var reportSummaries = (edOrg == null) ? Enumerable.Empty<ValidationReportSummary>().ToList() : _validationResultsService.GetValidationReportSummaries(edOrg.Id).OrderByDescending(rs => rs.CompletedWhen).ToList();
-            //var model = new ValidationReportsViewModel
-            //{
-            //    DistrictName = districtName,
-            //    TheUser = theUser,
-            //    ReportSummaries = reportSummaries,
-            //    RulesCollections = rulesCollections,
-            //    SchoolYears = _schoolYearService.GetSubmittableSchoolYears().ToList(),
-            //    FocusedEdOrgId = _appUserService.GetSession().FocusedEdOrgId,
-            //    FocusedSchoolYearId = _appUserService.GetSession().FocusedSchoolYearId
-            //};
+            var edOrg = _edOrgService.GetEdOrgById(_appUserService.GetSession().FocusedEdOrgId);
+            var edOrgName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
+            var edOrgId = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
+            var theUser = _appUserService.GetUser();
             var model = new OdsReportsViewModel
             {
-
+                EdOrgId = edOrgId,
+                EdOrgName = edOrgName,
+                User = theUser
             };
             return View(model);
         }

@@ -1,8 +1,114 @@
 ﻿@model OdsReportsViewModel
 
+<div class="row">
+    <div class="vp-body-header col-8 justify-content-start align-self-center">ODS Reports for District @Model.EdOrgName (@Model.EdOrgId)</div>
+</div>
+
+<div class="row">
+    <table class="table table-sm table-responsive-md table-bordered">
+        <tr class="table-primary">
+            <th>Report</th>
+            <th>Description</th>
+        </tr>
+        <tr class="table-primary">
+            <td>
+                <i class="fas fa-chart-bar"></i>
+                <a id="ancestryLink" class="btn btn-sm prime-blue white-heavy-text report-button-link" data-location="@Url.Action("Ancestry", "OdsReports")">Ancestry Ethnic Origin and Race Counts</a>
+            </td>
+        </tr>
+        <tr class="table-primary">
+            <td>
+                <i class="fas fa-chart-bar"></i>
+                <a id="ancestryLink" class="btn btn-sm prime-blue white-heavy-text report-button-link" data-location="@Url.Action("Ancestry", "OdsReports")">Ancestry Ethnic Origin and Race Counts</a>
+            </td>
+        </tr>
+        <tr class="table-primary">
+            <td>
+                <i class="fas fa-chart-bar"></i>
+                <a id="studentProgramsLink" class="btn btn-sm prime-blue white-heavy-text report-button-link" data-location="@Url.Action("StudentPrograms", "OdsReports")">Student Characteristics and Programs</a>
+            </td>
+        </tr>
+        <tr class="table-primary">
+            <td>
+                <i class="fas fa-chart-bar"></i>
+                <a id="changeEnrollmentLink" class="btn btn-sm prime-blue white-heavy-text report-button-link" data-location="@Url.Action("ChangeOfEnrollment", "OdsReports")">Change Of Enrollment</a>
+            </td>
+        </tr>
+        <tr class="table-primary">
+            <td>
+                <i class="fas fa-chart-bar"></i>
+                <a id="residentsElsewhereLink" class="btn btn-sm prime-blue white-heavy-text report-button-link" data-location="@Url.Action("ResidentsEnrolledElsewhere", "OdsReports")">Ancestry Ethnic Origin and Race Counts</a>
+            </td>
+        </tr>
+        <tr class="table-primary">
+            <td>
+                <i class="fas fa-chart-bar"></i>
+                <a id="residentsElsewhereLink" class="btn btn-sm prime-blue white-heavy-text report-button-link" data-location="@Url.Action("ResidentsEnrolledElsewhere", "OdsReports")">Ancestry Ethnic Origin and Race Counts</a>
+            </td>
+        </tr>
+        
+    </table>
+    <div id="requestedReportContent">
+        <table class="table table-sm table-responsive-md table-bordered" id="reportsTable">
+            <tr class="table-primary">
+                <th>Request Date/Time</th>
+                <th>Collection</th>
+                <th>Initiated By</th>
+                <th>Status</th>
+                <th>Completion Date/Time</th>
+                <th>Error Count</th>
+                <th>Warning Count</th>
+            </tr>
+            @*@foreach (var summary in Model.ReportSummaries)
+        {
+                <tr>
+                    <td>
+                        @summary.RequestedWhen.ToShortDateString()
+                        <br />@summary.RequestedWhen.ToShortTimeString()
+                    </td>
+                    <td>@Html.ActionLink(summary.Collection ?? "Unknown", "Report", "Validation", new { area = "", id = summary.Id }, null)</td>
+                    <td>@summary.InitiatedBy</td>
+                    <td>@summary.Status</td>
+                    <td>
+                        @(summary.CompletedWhen.HasValue ? summary.CompletedWhen.Value.ToShortDateString() : string.Empty)
+                        <br />@(summary.CompletedWhen.HasValue ? summary.CompletedWhen.Value.ToShortTimeString() : string.Empty)
+                    </td>
+                    <td>@(summary.ErrorCount.HasValue ? summary.ErrorCount.Value.ToString() : string.Empty)</td>
+                    <td>@(summary.WarningCount.HasValue ? summary.WarningCount.Value.ToString() : string.Empty)</td>
+                </tr>
+            }*@
+        </table>
+    </div>
+</div>
 
 
 @section scripts {
     <script>
+        function loadReport(reportDivId, reportRequestInputParameters) {
+            let wrappedReportLinkDiv = $(`#${reportDivId}`);
+            let wrappedReportContentDiv = $("#requestedReportContent");
+            let reportName = wrappedReportLinkDiv.text();
+            wrappedReportContentDiv.load(wrappedReportLinkDiv.attr("data-location"), reportRequestInputParameters, function () {
+                console.log(`Loaded report ${reportName} with ${JSON.stringify(reportRequestInputParameters)}`);
+            });
+        };
+
+        $(document).ready(function () {
+            $("#ancestryLink").bind("click", function () {
+                loadReport("ancestryLink", {edOrgId = "@Model.EdOrgId"});
+            });
+            $("#dualEnrollmentsLink").bind("click", function () {
+                loadReport("dualEnrollmentsLink", {edOrgId = "@Model.EdOrgId"});
+            });
+            $("#studentProgramsLink").bind("click", function () {
+                loadReport("studentProgramsLink", {edOrgId = "@Model.EdOrgId"});
+            });
+            $("#changeEnrollmentLink").bind("click", function () {
+                loadReport("changeEnrollmentLink", {edOrgId = "@Model.EdOrgId"});
+            });
+            $("#residentsElsewhereLink").bind("click", function () {
+                loadReport("residentsElsewhereLink", {edOrgId = "@Model.EdOrgId"});
+            });
+        });
     </script>
 }

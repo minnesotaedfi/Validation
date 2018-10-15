@@ -269,8 +269,27 @@ div.collectionFilter > a:hover {
 .grid-controls {
     align-items: center;
 }
-.grid-controls:nth-child(n) {
-    margin: 2px;
+.grid-controls button, .grid-controls input, .grid-controls span {
+    margin: 4px;
+}
+
+.paging-offset-buttons {
+    margin: 0px;
+    border: 2px solid black;
+    display: inline-block;
+}
+
+.page-button {
+    width: 20px;
+    margin: 0px;
+    padding: 2px;
+    text-align: center;
+    border: 1px solid black;
+    display: inline;
+}
+#pageSizeInput, #pageNumberInput {
+    max-width: 50px;
+    display: inline;
 }
 
 /* Allows the absolute positioning of child elements like the autocomplete results. */
@@ -302,7 +321,17 @@ th > i {
 }
 /***************************************************************************************/
 
-
+/***************************************************************************************/
+/* Errors Detail Page*/
+.report-button-link {
+    margin-top: 4px;
+    margin-left: 15px;
+    margin-bottom: 2px;
+}
+.report-button-link:hover {
+    background-color: rgb(164, 188, 194);
+}
+/***************************************************************************************/
 
 /***************************************************************************************/
 

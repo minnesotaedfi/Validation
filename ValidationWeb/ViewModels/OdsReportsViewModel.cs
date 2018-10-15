@@ -7,5 +7,8 @@ namespace ValidationWeb
 {
     public class OdsReportsViewModel
     {
+        public ValidationPortalIdentity User { get; set; }
+        public string EdOrgId { get; set; }
+        public string EdOrgName { get; set; }
     }
 }

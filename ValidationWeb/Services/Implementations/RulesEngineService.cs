@@ -146,7 +146,6 @@ namespace ValidationWeb.Services
                 // Retrieve what the Rules Engine recorded - errors or warnings for this particular rule, on this particular execution.
                 var queryResults = rawOdsContext.RuleValidationDetails.Where(rvd => rvd.RuleValidationId == rulesExecutionId && rvd.RuleId == rule.RuleId);
 
-
                 var conn = rawOdsContext.Database.Connection;
                 try
                 {
@@ -158,7 +157,6 @@ namespace ValidationWeb.Services
 
                     foreach (var queryResult in queryResults.ToArray())
                     {
-                        // TODO: call to get student's info - student's school enrollments, grade, start/end dates
                         studentQueryCmd.Parameters["@student_unique_id"].Value = queryResult.Id.ToString();
                         var singleStudentData = new List<StudentDataFromId>();
                         using (var reader = studentQueryCmd.ExecuteReader())
@@ -188,15 +186,23 @@ namespace ValidationWeb.Services
                         {
                             StudentUniqueId = queryResult.Id.ToString(),
                             StudentFullName = StudentDataFromId.GetStudentFullName(singleStudentData),
-                            School = StudentDataFromId.GetSchools(singleStudentData),
-                            EnrollmentDates = StudentDataFromId.GetSchoolEnrollmentDates(singleStudentData),
-                            Grade = StudentDataFromId.GetGradeLevels(singleStudentData),
                             SeverityId = (queryResult.IsError ? (int)ErrorSeverity.Error : (int)ErrorSeverity.Warning),
                             Component = rule.Components[0],
                             ErrorCode = rule.RuleId,
                             ErrorText = queryResult.Message,
-                            ValidationReportDetailsId = reportDetailId
-                        });
+                            ValidationReportDetailsId = reportDetailId,
+                            ErrorEnrollmentDetails = new HashSet<ValidationErrorEnrollmentDetail>(singleStudentData.Select(
+                                    ssd => new ValidationErrorEnrollmentDetail
+                                    {
+                                        School = ssd.NameOfInstitution,
+                                        SchoolId = ssd.SchoolId,
+                                        Grade = ssd.GradeLevel,
+                                        DateEnrolled = ssd.EntryDate,
+                                        DateWithdrawn = ssd.ExitWithdrawDate
+                                    }
+                                )
+                            ),
+                       });
                         #endregion Record the error (warning) with additional details taken from the ODS database.
                     }
                 }

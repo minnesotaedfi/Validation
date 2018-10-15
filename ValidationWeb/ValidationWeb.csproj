@@ -240,7 +240,9 @@
     <Content Include="Content\Styles\validationportal.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Content\Scripts\jquery-3.2.1.min.map" />
     <Content Include="Content\Scripts\jquery-3.2.1.slim.min.map" />
     <Content Include="Content\Styles\bootstrap-grid.css.map" />
@@ -299,6 +301,7 @@
     <Compile Include="Models\SchoolYear.cs" />
     <Compile Include="Models\SsoUserAuthorization.cs" />
     <Compile Include="Models\SubmissionCycle.cs" />
+    <Compile Include="Models\ValidationErrorEnrollmentDetail.cs" />
     <Compile Include="Models\ValidationErrorFilter.cs" />
     <Compile Include="Models\ValidationErrorSummary.cs" />
     <Compile Include="Models\ValidationReportDetails.cs" />
