@@ -1,0 +1,57 @@
+﻿@model OdsDemographicsReportViewModel
+
+<div class="row">
+    <div class="vp-body-header col-8 justify-content-start align-self-center">Ancestry Ethnic Origin and Race Counts for District @Model.EdOrgName (@Model.EdOrgId)</div>
+</div>
+
+<div id="requestedReportContent">
+    <table class="table table-sm table-responsive-md table-bordered" id="reportsTable">
+        <tr class="table-primary">
+            <th>District/School</th>
+            <th>Enrollments</th>
+            <th>Demographics Records</th>
+            <th>Students with Race Submitted</th>
+            <th>Students with AEO Submitted</th>
+        </tr>
+        @if (Model.Results.Count > 0)
+        {
+            <tr>
+                <td>@(Model.Results[0].DistrictName)</td>
+                <td>@(Model.Results.Sum(r => r.EnrollmentCount))</td>
+                <td>@(Model.Results.Sum(r => r.DemographicsCount))</td>
+                <td>@(Model.Results.Sum(r => r.RaceGivenCount))</td>
+                <td>@(Model.Results.Sum(r => r.AncestryGivenCount))</td>
+            </tr>
+        }
+        else
+        {
+            <tr>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+            </tr>
+        }
+        @foreach (var result in Model.Results)
+        {
+            <tr>
+                <td>@(result.SchoolName)</td>
+                <td>@(result.EnrollmentCount)</td>
+                <td>@(result.DemographicsCount)</td>
+                <td>@(result.RaceGivenCount)</td>
+                <td>@(result.AncestryGivenCount)</td>
+            </tr>
+        }
+    </table>
+    @if (Model.Results.Count == 0)
+    {    
+        <div class="vp-body-header col-8 justify-content-start align-self-center">No records were found.</div>
+    }
+</div>
+
+
+@section scripts {
+    <script>
+    </script>
+}

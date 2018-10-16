@@ -13,6 +13,8 @@
 
 .vp-body-header {
     font-weight: bold;
+    font-size: 1.2em;
+    margin-bottom: 8px;
 }
 
 .container-fluid, .layout-footer {
@@ -24,6 +26,9 @@
     background-color: rgb(0, 56, 101);
 }   
 
+.prime-blue-text {
+    color: rgb(0, 56, 101);
+}
 .accent-blue {
     background-color: rgb(164, 188, 194);
 }   
@@ -322,19 +327,13 @@ th > i {
 /***************************************************************************************/
 
 /***************************************************************************************/
-/* Errors Detail Page*/
+/* ODS Reports Page*/
 .report-button-link {
-    margin-top: 4px;
-    margin-left: 15px;
-    margin-bottom: 2px;
-}
-.report-button-link:hover {
-    background-color: rgb(164, 188, 194);
+    margin-left: 4px;
 }
 /***************************************************************************************/
 
 /***************************************************************************************/
-
 /* Admin/Index */
 
 .id-hide-column {
@@ -353,3 +352,4 @@ th > i {
 #add-submission-cycle-button {
     float: right;
 }
+/***************************************************************************************/

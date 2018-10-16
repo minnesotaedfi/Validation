@@ -7,108 +7,72 @@
 <div class="row">
     <table class="table table-sm table-responsive-md table-bordered">
         <tr class="table-primary">
-            <th>Report</th>
+            <th style="width:33%">Report</th>
             <th>Description</th>
         </tr>
-        <tr class="table-primary">
+        <tr>
             <td>
-                <i class="fas fa-chart-bar"></i>
-                <a id="ancestryLink" class="btn btn-sm prime-blue white-heavy-text report-button-link" data-location="@Url.Action("Ancestry", "OdsReports")">Ancestry Ethnic Origin and Race Counts</a>
+                <a id="ancestryLink" class="report-button-link" href="@Url.Action("DemographicsReport", "Ods")"><i class="fas fa-chart-bar"></i> Ancestry Ethnic Origin and Race Counts</a>
+            </td>
+            <td>
+                For schools and district(s), see the number of enrolled students who have submitted their demographics information, race, and ancestry/ethnic origin.
             </td>
         </tr>
-        <tr class="table-primary">
+        <tr>
             <td>
-                <i class="fas fa-chart-bar"></i>
-                <a id="ancestryLink" class="btn btn-sm prime-blue white-heavy-text report-button-link" data-location="@Url.Action("Ancestry", "OdsReports")">Ancestry Ethnic Origin and Race Counts</a>
+                <a id="dualEnrollmentsLink" class="report-button-link" href="@Url.Action("MultipleEnrollmentsReport", "Ods")"><i class="fas fa-chart-bar"></i> Dual Enrollment Students</a>
+            </td>
+            <td>
+                See the number of students currently enrolled in more than one school or district.
             </td>
         </tr>
-        <tr class="table-primary">
+        <tr>
             <td>
-                <i class="fas fa-chart-bar"></i>
-                <a id="studentProgramsLink" class="btn btn-sm prime-blue white-heavy-text report-button-link" data-location="@Url.Action("StudentPrograms", "OdsReports")">Student Characteristics and Programs</a>
+                <a id="studentProgramsLink" class="report-button-link" href="@Url.Action("StudentProgramsReport", "Ods")"><i class="fas fa-chart-bar"></i> Student Characteristics and Programs</a>
+            </td>
+            <td>
+                See the number of enrolled students participating in programs (or having characteristics) such as Active Duty Parent,
+                American Indian/Alaskan Native, Migrant, Immigrant, Homeless, SLIFE, Recently Arrived English Learner, English Learner Served,
+                Independent Study, Section 504 Placement, and Title I Part A.
             </td>
         </tr>
-        <tr class="table-primary">
+        <tr>
             <td>
-                <i class="fas fa-chart-bar"></i>
-                <a id="changeEnrollmentLink" class="btn btn-sm prime-blue white-heavy-text report-button-link" data-location="@Url.Action("ChangeOfEnrollment", "OdsReports")">Change Of Enrollment</a>
+                <a id="changeEnrollmentLink" class="report-button-link" href="@Url.Action("ChangeOfEnrollmentReport", "Ods")"><i class="fas fa-chart-bar"></i> Change Of Enrollment</a>
+            </td>
+            <td>
+                View students that have recently enrolled in another school, and request that the previous school forward relevant files, assessment results, and/or immunization information.
             </td>
         </tr>
-        <tr class="table-primary">
+        <tr>
             <td>
-                <i class="fas fa-chart-bar"></i>
-                <a id="residentsElsewhereLink" class="btn btn-sm prime-blue white-heavy-text report-button-link" data-location="@Url.Action("ResidentsEnrolledElsewhere", "OdsReports")">Ancestry Ethnic Origin and Race Counts</a>
+                <a id="residentsElsewhereLink" class="report-button-link" href="@Url.Action("ResidentsEnrolledElsewhereReport", "Ods")"><i class="fas fa-chart-bar"></i> Residents Enrolled Elsewhere</a>
+            </td>
+            <td>
+                View students who reside in the district's boundaries and are enrolled in another district.
             </td>
         </tr>
-        <tr class="table-primary">
+        <tr>
             <td>
-                <i class="fas fa-chart-bar"></i>
-                <a id="residentsElsewhereLink" class="btn btn-sm prime-blue white-heavy-text report-button-link" data-location="@Url.Action("ResidentsEnrolledElsewhere", "OdsReports")">Ancestry Ethnic Origin and Race Counts</a>
+                <a id="identityIssuesLink" class="report-button-link" href="@Url.Action("IdentityIssuesReport", "Ods")"><i class="fas fa-chart-bar"></i> Student Identity Issues</a>
+            </td>
+            <td>
+                View student identity issues flagged by ACDCS during data submissions from client software such as student information software systems.
             </td>
         </tr>
-        
+        <tr>
+            <td>
+                <a id="level1IssuesLink" class="report-button-link" href="@Url.Action("Level1IssuesReport", "Ods")"><i class="fas fa-chart-bar"></i> Level 1 Validation Issues</a>
+            </td>
+            <td>
+                View Level 1 issues flagged by ACDCS - errors rejected data submissions to ACDCS from client software such as student information software systems.
+            </td>
+        </tr>
     </table>
-    <div id="requestedReportContent">
-        <table class="table table-sm table-responsive-md table-bordered" id="reportsTable">
-            <tr class="table-primary">
-                <th>Request Date/Time</th>
-                <th>Collection</th>
-                <th>Initiated By</th>
-                <th>Status</th>
-                <th>Completion Date/Time</th>
-                <th>Error Count</th>
-                <th>Warning Count</th>
-            </tr>
-            @*@foreach (var summary in Model.ReportSummaries)
-        {
-                <tr>
-                    <td>
-                        @summary.RequestedWhen.ToShortDateString()
-                        <br />@summary.RequestedWhen.ToShortTimeString()
-                    </td>
-                    <td>@Html.ActionLink(summary.Collection ?? "Unknown", "Report", "Validation", new { area = "", id = summary.Id }, null)</td>
-                    <td>@summary.InitiatedBy</td>
-                    <td>@summary.Status</td>
-                    <td>
-                        @(summary.CompletedWhen.HasValue ? summary.CompletedWhen.Value.ToShortDateString() : string.Empty)
-                        <br />@(summary.CompletedWhen.HasValue ? summary.CompletedWhen.Value.ToShortTimeString() : string.Empty)
-                    </td>
-                    <td>@(summary.ErrorCount.HasValue ? summary.ErrorCount.Value.ToString() : string.Empty)</td>
-                    <td>@(summary.WarningCount.HasValue ? summary.WarningCount.Value.ToString() : string.Empty)</td>
-                </tr>
-            }*@
-        </table>
-    </div>
 </div>
 
 
 @section scripts {
     <script>
-        function loadReport(reportDivId, reportRequestInputParameters) {
-            let wrappedReportLinkDiv = $(`#${reportDivId}`);
-            let wrappedReportContentDiv = $("#requestedReportContent");
-            let reportName = wrappedReportLinkDiv.text();
-            wrappedReportContentDiv.load(wrappedReportLinkDiv.attr("data-location"), reportRequestInputParameters, function () {
-                console.log(`Loaded report ${reportName} with ${JSON.stringify(reportRequestInputParameters)}`);
-            });
-        };
-
-        $(document).ready(function () {
-            $("#ancestryLink").bind("click", function () {
-                loadReport("ancestryLink", {edOrgId = "@Model.EdOrgId"});
-            });
-            $("#dualEnrollmentsLink").bind("click", function () {
-                loadReport("dualEnrollmentsLink", {edOrgId = "@Model.EdOrgId"});
-            });
-            $("#studentProgramsLink").bind("click", function () {
-                loadReport("studentProgramsLink", {edOrgId = "@Model.EdOrgId"});
-            });
-            $("#changeEnrollmentLink").bind("click", function () {
-                loadReport("changeEnrollmentLink", {edOrgId = "@Model.EdOrgId"});
-            });
-            $("#residentsElsewhereLink").bind("click", function () {
-                loadReport("residentsElsewhereLink", {edOrgId = "@Model.EdOrgId"});
-            });
-        });
     </script>
 }

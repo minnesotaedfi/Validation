@@ -1,0 +1,125 @@
+﻿@model OdsStudentProgramsReportViewModel
+
+<div class="row">
+    <div class="vp-body-header col-8 justify-content-start align-self-center">Students with Multiple Open Enrollments for District @Model.EdOrgName (@Model.EdOrgId)</div>
+</div>
+
+<div id="requestedReportContent">
+    <table class="table table-sm table-responsive-md table-bordered" id="reportsTable1">
+        <tr class="table-primary">
+            <th>District/School</th>
+            <th>Enrollments</th>
+            <th>Demographic Records</th>
+            <th>Active Duty Parents (ADP)</th>
+            <th>American Indian - Alaskan Native (Minnesota)</th>
+            <th>Migrant</th>
+            <th>Immigrant</th>
+            <th>Homeless</th>
+        </tr>
+        @if (Model.Results.Count > 0)
+        {
+            <tr>
+                <td>@(Model.Results[0].DistrictName)</td>
+                <td>@(Model.Results.Sum(r => r.EnrollmentCount))</td>
+                <td>@(Model.Results.Sum(r => r.DemographicsCount))</td>
+                <td>@(Model.Results.Sum(r => r.ADParentCount))</td>
+                <td>@(Model.Results.Sum(r => r.IndianNativeCount))</td>
+                <td>@(Model.Results.Sum(r => r.MigrantCount))</td>
+                <td>@(Model.Results.Sum(r => r.ImmigrantCount))</td>
+                <td>@(Model.Results.Sum(r => r.HomelessCount))</td>
+            </tr>
+        }
+        else
+        {
+            <tr>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+            </tr>
+        }
+        @foreach (var result in Model.Results)
+        {
+            <tr>
+                <td>@(result.SchoolName)</td>
+                <td>@(result.EnrollmentCount)</td>
+                <td>@(result.DemographicsCount)</td>
+                <td>@(result.ADParentCount)</td>
+                <td>@(result.IndianNativeCount)</td>
+                <td>@(result.MigrantCount)</td>
+                <td>@(result.ImmigrantCount)</td>
+                <td>@(result.HomelessCount)</td>
+            </tr>
+        }
+    </table>
+    <div id="requestedReportContent">
+        <table class="table table-sm table-responsive-md table-bordered" id="reportsTable2">
+            <tr class="table-primary">
+                <th>District/School</th>
+                <th>Enrollments</th>
+                <th>Demographic Records</th>
+                <th>Recently Arrived English Learner (RAEL)</th>
+                <th>English Learner Served</th>
+                <th>SLIFE</th>
+                <th>Independent Study</th>
+                <th>Section 504 Placement</th>
+                <th>Title 1, Part A</th>
+            </tr>
+            @if (Model.Results.Count > 0)
+            {
+                <tr>
+                    <td>@(Model.Results[0].DistrictName)</td>
+                    <td>@(Model.Results.Sum(r => r.EnrollmentCount))</td>
+                    <td>@(Model.Results.Sum(r => r.DemographicsCount))</td>
+                    <td>@(Model.Results.Sum(r => r.EnglishLearnerCount))</td>
+                    <td>@(Model.Results.Sum(r => r.EnglishLearnerServedCount))</td>
+                    <td>@(Model.Results.Sum(r => r.SLIFECount))</td>
+                    <td>@(Model.Results.Sum(r => r.IndependentStudyCount))</td>
+                    <td>@(Model.Results.Sum(r => r.Section504Count))</td>
+                    <td>@(Model.Results.Sum(r => r.Title1PartACount))</td>
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                </tr>
+            }
+            @foreach (var result in Model.Results)
+            {
+                <tr>
+                    <td>@(result.SchoolName)</td>
+                    <td>@(result.EnrollmentCount)</td>
+                    <td>@(result.DemographicsCount)</td>
+                    <td>@(result.EnglishLearnerCount)</td>
+                    <td>@(result.EnglishLearnerServedCount)</td>
+                    <td>@(result.SLIFECount)</td>
+                    <td>@(result.IndependentStudyCount)</td>
+                    <td>@(result.Section504Count)</td>
+                    <td>@(result.Title1PartACount)</td>
+                </tr>
+            }
+        </table>
+        @if (Model.Results.Count == 0)
+        {
+            <div class="vp-body-header col-8 justify-content-start align-self-center">No records were found.</div>
+        }
+    </div>
+
+
+@section scripts {
+    <script>
+    </script>
+}

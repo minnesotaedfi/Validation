@@ -264,6 +264,7 @@ namespace ValidationWeb.Services
             // maxRecordOffset is the start of the last page.
             var maxRecordOffset = ((result.TotalFilteredErrorCount - 1) / filterSpecification.pageSize) * filterSpecification.pageSize;
             result.RecordOffset = Math.Min(maxRecordOffset, result.RecordOffset);
+            result.RecordOffset = Math.Max(filterSpecification.pageStartingOffset, 0);
             #endregion Record Offset
 
             #region Page Number
@@ -272,7 +273,7 @@ namespace ValidationWeb.Services
             #endregion Page Number
 
             result.TotalPagesCount = (result.TotalFilteredErrorCount / result.PageSize) + ((result.TotalFilteredErrorCount % result.PageSize == 0) ? 0 : 1);
-            var maxToReturn = Math.Min(recordsRemaining, filterSpecification.pageSize);
+            var maxToReturn = Math.Max(Math.Min(recordsRemaining, filterSpecification.pageSize), 0);
             result.FilteredErrorSummariesPage = filteredErrorQuery.Skip(result.RecordOffset).Take(maxToReturn).ToList();
 
             #endregion Page results

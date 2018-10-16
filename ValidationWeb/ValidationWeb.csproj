@@ -204,7 +204,13 @@
     <Content Include="Content\Fonts\fa-solid-900.woff" />
     <Content Include="Content\Fonts\fa-solid-900.woff2" />
     <Content Include="Views\Ods\Reports.cshtml" />
-    <Content Include="Views\Ods\Report.cshtml" />
+    <Content Include="Views\Ods\DemographicsReport.cshtml" />
+    <Content Include="Views\Ods\MultipleEnrollmentsReport.cshtml" />
+    <Content Include="Views\Ods\StudentProgramsReport.cshtml" />
+    <Content Include="Views\Ods\ChangeOfEnrollmentReport.cshtml" />
+    <Content Include="Views\Ods\ResidentsEnrolledElsewhereReport.cshtml" />
+    <Content Include="Views\Ods\IdentityIssuesReport.cshtml" />
+    <Content Include="Views\Ods\Level1IssuesReport.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -274,7 +280,10 @@
     <Compile Include="Controllers\RulesController.cs" />
     <Compile Include="Controllers\ValidationController.cs" />
     <Compile Include="Database\EnumLookup.cs" />
+    <Compile Include="Database\Queries\DemographicsCountReportQuery.cs" />
+    <Compile Include="Database\Queries\MultipleEnrollmentsCountReportQuery.cs" />
     <Compile Include="Database\Queries\StudentDataFromId.cs" />
+    <Compile Include="Database\Queries\StudentProgramsCountReportQuery.cs" />
     <Compile Include="Database\RawOdsDbContext.cs" />
     <Compile Include="Database\ValidatedOdsDbContext.cs" />
     <Compile Include="Database\ValidationPortalDbContext.cs" />
@@ -319,6 +328,7 @@
     <Compile Include="Services\Implementations\HttpContextProvider.cs" />
     <Compile Include="Services\Implementations\LoggingService.cs" />
     <Compile Include="Services\Implementations\OdsConfigurationValues.cs" />
+    <Compile Include="Services\Implementations\OdsDataService.cs" />
     <Compile Include="Services\Implementations\RequestMessageAccessor.cs" />
     <Compile Include="Services\Implementations\RulesEngineConfigurationValues.cs" />
     <Compile Include="Services\Implementations\RulesEngineService.cs" />
@@ -333,6 +343,7 @@
     <Compile Include="Services\Interfaces\IHttpContextProvider.cs" />
     <Compile Include="Services\Interfaces\ILoggingService.cs" />
     <Compile Include="Services\Interfaces\IOdsConfigurationValues.cs" />
+    <Compile Include="Services\Interfaces\IOdsDataService.cs" />
     <Compile Include="Services\Interfaces\IRequestMessageAccessor.cs" />
     <Compile Include="Services\Interfaces\IRulesEngineConfigurationValues.cs" />
     <Compile Include="Services\Interfaces\IRulesEngineService.cs" />
@@ -349,8 +360,14 @@
     <Compile Include="ViewModels\HomeAnnouncementsViewModel.cs" />
     <Compile Include="ViewModels\HomeIndexViewModel.cs" />
     <Compile Include="ViewModels\NavMenusViewModel.cs" />
+    <Compile Include="ViewModels\OdsChangeOfEnrollmentReportViewModel.cs" />
+    <Compile Include="ViewModels\OdsIdentityIssuesReportViewModel.cs" />
+    <Compile Include="ViewModels\OdsLevel1IssuesReportViewModel.cs" />
+    <Compile Include="ViewModels\OdsMultipleEnrollmentsReportViewModel.cs" />
     <Compile Include="ViewModels\OdsReportsViewModel.cs" />
-    <Compile Include="ViewModels\OdsReportViewModel.cs" />
+    <Compile Include="ViewModels\OdsDemographicsReportViewModel.cs" />
+    <Compile Include="ViewModels\OdsResidentsEnrolledElsewhereReportViewModel.cs" />
+    <Compile Include="ViewModels\OdsStudentProgramsReportViewModel.cs" />
     <Compile Include="ViewModels\SelectOrgViewModel.cs" />
     <Compile Include="ViewModels\ValidationReportDetailsViewModel.cs" />
     <Compile Include="ViewModels\ValidationReportsViewModel.cs" />

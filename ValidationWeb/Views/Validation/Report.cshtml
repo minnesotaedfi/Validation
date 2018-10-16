@@ -20,24 +20,9 @@
 </div>
 
 <div id="errorGridControls" class="row grid-controls">
-    <button id="clearButton" class="btn prime-blue white-heavy-text">Clear Filters</button>
-    <span id="pageSizeLabel">Results to Display: </span>
+    <span id="pageSizeLabel">Rows: </span>
     <input class="form-control form-control-sm" id="pageSizeInput" placeholder="30 (records per page)">
-    <button id="firstPageButton" class="btn prime-blue white-heavy-text">&lt;&lt;</button>
-    <button id="previousPageButton" class="btn prime-blue white-heavy-text">&lt;</button>
-    <div class="paging-offset-buttons">
-        <button id="pgoffset-2" class="page-button" data-offset="-2"></button>
-        <button id="pgoffset-1" class="page-button" data-offset="-1"></button>
-        <input class="form-control form-control-sm" id="pageNumberInput" placeholder="1">
-        <button id="searchButton" class="btn btn-sm prime-blue white-heavy-text" style="margin: 0">Go <i class="fas fa-arrow-right"></i></button>
-        <button id="pgoffset1" class="page-button" data-offset="1"></button>
-        <button id="pgoffset2" class="page-button" data-offset="2"></button>
-    </div>
-    <span class="margin4px">&nbsp;of&nbsp;</span>
-    <span id="totalPageCount" class="margin4px"> 1 </span>
-    <button id="nextPageButton" class="btn prime-blue white-heavy-text">&gt;</button>
-    <button id="lastPageButton" class="btn prime-blue white-heavy-text">&gt;&gt;</button>
-    <div class="dropdown ml-auto d-inline-block">
+    <div class="dropdown d-inline-block">
         <button id="componentViewFilter" class="btn dropdown-toggle validation-drowdown-toggle prime-blue white-heavy-text" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Component: All
             <span class="caret"></span>
@@ -49,7 +34,23 @@
         </div>
         <input id="componentViewSelected" type="hidden" value="All">
     </div>
+    <button id="clearButton" class="btn prime-blue white-heavy-text">Clear Filters</button>
     <button id="downloadAsCSV" type="button" class="btn prime-blue white-heavy-text lrmargin10">Export</button>
+    <button id="firstPageButton" class="btn prime-blue white-heavy-text ml-auto">&lt;&lt;</button>
+    <button id="previousPageButton" class="btn prime-blue white-heavy-text">&lt;</button>
+    <span class="margin4px">&nbsp;Page&nbsp;</span>
+    <input class="form-control form-control-sm" id="pageNumberInput" placeholder="1">
+    <span class="margin4px">&nbsp;of&nbsp;</span>
+    <span id="totalPageCount" class="margin4px"> 1 </span>
+    <button id="nextPageButton" class="btn prime-blue white-heavy-text">&gt;</button>
+    <button id="lastPageButton" class="btn prime-blue white-heavy-text">&gt;&gt;</button>
+    @*<div class="paging-offset-buttons">
+        <button id="pgoffset-2" class="page-button" data-offset="-2"></button>
+        <button id="pgoffset-1" class="page-button" data-offset="-1"></button>
+        <button id="searchButton" class="btn btn-sm prime-blue white-heavy-text" style="margin: 0">Go <i class="fas fa-arrow-right"></i></button>
+        <button id="pgoffset1" class="page-button" data-offset="1"></button>
+        <button id="pgoffset2" class="page-button" data-offset="2"></button>
+    </div>*@
 </div>
 
 <div id="errorGrid" class="row tbmargin10 error-grid">
@@ -126,8 +127,22 @@
             RefreshGrid(gridId, SetFilter());
         }
 
+        // If the filters haven't changed, or last refresh was less than one second ago, then no call to the server will be made.
+        let lastFilterForComparaison = [];
+        let lastRefreshTime = "initialRefresh";
+
         // Populate the grid according to filters.
         function RefreshGrid(gridId, filter) {
+            // If the filters haven't changed, or last refresh was less than one second ago, then no call to the server will be made.
+            let currentRefreshTime = new Date().toLocaleTimeString();
+            if (JSON.stringify(filter) === JSON.stringify(lastFilterForComparaison)
+                || currentRefreshTime === lastRefreshTime) {
+                return;
+            }
+            else {
+                lastFilterForComparaison = filter;
+                lastRefreshTime = currentRefreshTime;
+            }
             ClearGrid(gridId);
             $.ajax({
                 url: "@Url.Content("~/api/validation/error-summaries/all")",
@@ -300,37 +315,6 @@
             $("#totalPageCount").text(" " + dataObj.totalPagesCount.toString() + " ");
             $("#pageSizeInput").val(dataObj.pageSize.toString());
             $("#pageNumberInput").val(dataObj.pageNumber.toString());
-            // Page Number Buttons //////////////////////////////////////
-            let pnum = parseInt(dataObj.pageNumber);
-            let totpg = parseInt(dataObj.totalPagesCount);
-            if (pnum - 2 < 1) {
-                $("#pgoffset-2").hide(); 
-            } 
-            else {
-                $("#pgoffset-2").text(pnum - 2);
-                $("#pgoffset-2").show();
-            } 
-            if (pnum - 1 < 1) {
-                $("#pgoffset-1").hide(); 
-            } 
-            else {
-                $("#pgoffset-1").text(pnum - 1);
-                $("#pgoffset-1").show();
-            } 
-            if (pnum + 1 > totpg) {
-                $("#pgoffset1").hide(); 
-            } 
-            else {
-                $("#pgoffset1").text(pnum + 1);
-                $("#pgoffset1").show();
-            } 
-            if (pnum + 2 > totpg) {
-                $("#pgoffset2").hide(); 
-            } 
-            else {
-                $("#pgoffset2").text(pnum + 2);
-                $("#pgoffset2").show();
-            } 
             //////////////////////////////////////////////////////
             let recordOffset = dataObj.recordOffset;
             if (!recordOffset) // 0-based
@@ -521,15 +505,7 @@
                 let currentFilter = SetFilter();
                 RefreshGrid("errorGrid", currentFilter);
             });
-            //$("#pageSizeInput").on("change", function() {
-            //    let currentFilter = SetFilter();
-            //    RefreshGrid("errorGrid", currentFilter);
-            //}); 
-            //$("#pageNumberInput").on("change", function() {
-            //    let currentFilter = SetFilter();
-            //    RefreshGrid("errorGrid", currentFilter);
-            //}); 
-            $("input.form-control").blur(function() {
+            $("input.form-control, #pageSizeInput").blur(function() {
                 $(".autocomplete-suggestions").remove();
                 let currentFilter = SetFilter();
                 RefreshGrid("errorGrid", currentFilter);

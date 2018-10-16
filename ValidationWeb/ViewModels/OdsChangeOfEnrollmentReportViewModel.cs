@@ -5,7 +5,7 @@ using System.Web;
 
 namespace ValidationWeb
 {
-    public class OdsReportViewModel
+    public class OdsChangeOfEnrollmentReportViewModel
     {
     }
 }

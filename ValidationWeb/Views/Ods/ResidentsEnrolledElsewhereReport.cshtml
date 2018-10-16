@@ -1,0 +1,97 @@
+﻿@model OdsResidentsEnrolledElsewhereReportViewModel
+
+<div class="row">
+    <div class="vp-body-header col-8 justify-content-start align-self-center">Residents Enrolled Elsewhere for District @Model.EdOrgName (@Model.EdOrgId)</div>
+</div>
+
+<div id="requestedReportContent">
+    <table class="table table-sm table-responsive-md table-bordered" id="reportsTable1">
+        <tr class="table-primary">
+            <th>District of Enrollment</th>
+            <th>Residence Enrolled</th>
+        </tr>
+        @if (Model.Results.Count > 0)
+        {
+            <tr>
+                <td>@(Model.Results[0].DistrictName)</td>
+                <td>@(Model.Results.Sum(r => r.EnrollmentCount))</td>
+            </tr>
+        }
+        else
+        {
+            <tr>
+                <td>-</td>
+                <td>-</td>
+            </tr>
+        }
+        @foreach (var result in Model.Results)
+        {
+            <tr>
+                <td>@(result.SchoolName)</td>
+                <td>@(result.EnrollmentCount)</td>
+            </tr>
+        }
+    </table>
+    <table class="table table-sm table-responsive-md table-bordered" id="reportsTable2">
+        <tr class="table-primary">
+            <th>Student Name</th>
+            <th>Student ID</th>
+            <th>District</th>
+            <th>District ID</th>
+            <th>Entry Date</th>
+            <th>Withdraw Date</th>
+            <th>State Aid Category</th>
+            <th>Special Ed Status</th>
+        </tr>
+        @if (Model.Results.Count > 0)
+        {
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        }
+        else
+        {
+            <tr>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+            </tr>
+        }
+        @foreach (var result in Model.Results)
+        {
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        }
+    </table>
+    @if (Model.Results.Count == 0)
+    {
+        <div class="vp-body-header col-8 justify-content-start align-self-center">No records were found.</div>
+    }
+
+</div>
+
+
+@section scripts {
+    <script>
+    </script>
+}

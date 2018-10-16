@@ -119,6 +119,7 @@ namespace ValidationWeb
                 Func<Model> modelCreatorDelegate = () => new ModelBuilder(new DirectoryRulesStreams((new RulesEngineConfigurationValues().RulesFileFolder)).Streams).Build(null, new EngineSchemaProvider());
                 container.Register<Model>(modelCreatorDelegate, Lifestyle.Scoped);
             }
+            container.Register<IOdsDataService, OdsDataService>(Lifestyle.Scoped);
 
             // Utility
             var loggerObj = LogManager.GetLogger(LoggerName);

@@ -1,0 +1,53 @@
+﻿@model OdsMultipleEnrollmentsReportViewModel
+
+<div class="row">
+    <div class="vp-body-header col-8 justify-content-start align-self-center">Students with Multiple Open Enrollments for District @Model.EdOrgName (@Model.EdOrgId)</div>
+</div>
+
+<div id="requestedReportContent">
+    <table class="table table-sm table-responsive-md table-bordered" id="reportsTable">
+        <tr class="table-primary">
+            <th>District/School</th>
+            <th>Enrollments</th>
+            <th>Students enrolled at multiple schools within district</th>
+            <th>Students enrolled outside district</th>
+        </tr>
+        @if (Model.Results.Count > 0)
+        {
+            <tr>
+                <td>@(Model.Results[0].DistrictName)</td>
+                <td>@(Model.Results.Sum(r => r.EnrollmentCount))</td>
+                <td>@(Model.Results.Sum(r => r.MultiWithinDistrictCount))</td>
+                <td>@(Model.Results.Sum(r => r.MultiOutsideDistrictCount))</td>
+            </tr>
+        }
+        else
+        {
+            <tr>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+            </tr>
+        }
+        @foreach (var result in Model.Results)
+        {
+            <tr>
+                <td>@(result.SchoolName)</td>
+                <td>@(result.EnrollmentCount)</td>
+                <td>@(result.MultiWithinDistrictCount)</td>
+                <td>@(result.MultiOutsideDistrictCount)</td>
+            </tr>
+        }
+    </table>
+    @if (Model.Results.Count == 0)
+    {
+        <div class="vp-body-header col-8 justify-content-start align-self-center">No records were found.</div>
+    }
+</div>
+
+
+@section scripts {
+    <script>
+    </script>
+}

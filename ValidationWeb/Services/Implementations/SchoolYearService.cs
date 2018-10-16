@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using static System.Int32;
@@ -75,6 +76,12 @@ namespace ValidationWeb.Services
             _validationPortalDataContext.SchoolYears.Remove(schoolYearRecord);
             _validationPortalDataContext.SaveChanges();
             return true;
+        }
+
+        public SchoolYear GetSchoolYearById(int id)
+        {
+            return _validationPortalDataContext.SchoolYears.FirstOrDefault(schoolYear => schoolYear.Id == id);
+
         }
     }
 }
