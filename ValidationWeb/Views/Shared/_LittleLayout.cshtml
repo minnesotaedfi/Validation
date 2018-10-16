@@ -30,7 +30,11 @@
                             <li>@Html.Raw(Html.ActionLink("LinkText", "Index", "Home", new { area = "" }, new { @class = "nav-link validation-nav-link" }).ToHtmlString().Replace("LinkText", "<i class=\"fas fa-home white-heavy-text\"></i> Home"))</li>
                             <li>@Html.Raw(Html.ActionLink("LinkText", "Reports", "Validation", new { area = "" }, new { @class = "nav-link validation-nav-link" }).ToHtmlString().Replace("LinkText", "<i class=\"fas fa-file-alt white-heavy-text\"></i>  Validation Reports"))</li>
                             <li>@Html.Raw(Html.ActionLink("LinkText", "Reports", "Ods", new { area = "" }, new { @class = "nav-link validation-nav-link" }).ToHtmlString().Replace("LinkText", "<i class=\"fas fa-database white-heavy-text\"></i> ODS Reports"))</li>
+                            <!--
+                                
                             <li>@Html.Raw(Html.ActionLink("LinkText", "Collections", "Rules", new { area = "" }, new { @class = "nav-link validation-nav-link" }).ToHtmlString().Replace("LinkText", "<i class=\"fas fa-list-alt white-heavy-text\"></i> Rule Collections"))</li>
+                            
+                            -->
                             <li class="mr-auto"><a class="nav-link validation-nav-link mr-auto" href="https://w1.education.state.mn.us/MIDMSWEB/MDELogin.html"><i class="fas fa-coins white-heavy-text"></i> MARSS WES</a></li>
                             @Html.Action("NavDropDowns", "Nav")
                         </ul>

@@ -7,5 +7,9 @@ namespace ValidationWeb
 {
     public class OdsChangeOfEnrollmentReportViewModel
     {
+        public ValidationPortalIdentity User { get; set; }
+        public string EdOrgId { get; set; }
+        public string EdOrgName { get; set; }
+        public List<DemographicsCountReportQuery> Results { get; set; }
     }
 }

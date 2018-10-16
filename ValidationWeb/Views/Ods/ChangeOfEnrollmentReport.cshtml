@@ -1,34 +1,80 @@
 ﻿@model OdsChangeOfEnrollmentReportViewModel
+
+<div class="row">
+    <div class="vp-body-header col-8 justify-content-start align-self-center">Ancestry Ethnic Origin and Race Counts for District @Model.EdOrgName (@Model.EdOrgId)</div>
+</div>
+
 <div id="requestedReportContent">
     <table class="table table-sm table-responsive-md table-bordered" id="reportsTable">
         <tr class="table-primary">
-            <th>Request Date/Time</th>
-            <th>Collection</th>
-            <th>Initiated By</th>
-            <th>Status</th>
-            <th>Completion Date/Time</th>
-            <th>Error Count</th>
-            <th>Warning Count</th>
+            <th>Last Name</th>
+            <th>First Name</th>
+            <th>Middle Name</th>
+            <th>State Reporting Number</th>
+            <th>Birthdate</th>
         </tr>
-        @*@foreach (var summary in Model.ReportSummaries)
-            {
-                    <tr>
-                        <td>
-                            @summary.RequestedWhen.ToShortDateString()
-                            <br />@summary.RequestedWhen.ToShortTimeString()
-                        </td>
-                        <td>@Html.ActionLink(summary.Collection ?? "Unknown", "Report", "Validation", new { area = "", id = summary.Id }, null)</td>
-                        <td>@summary.InitiatedBy</td>
-                        <td>@summary.Status</td>
-                        <td>
-                            @(summary.CompletedWhen.HasValue ? summary.CompletedWhen.Value.ToShortDateString() : string.Empty)
-                            <br />@(summary.CompletedWhen.HasValue ? summary.CompletedWhen.Value.ToShortTimeString() : string.Empty)
-                        </td>
-                        <td>@(summary.ErrorCount.HasValue ? summary.ErrorCount.Value.ToString() : string.Empty)</td>
-                        <td>@(summary.WarningCount.HasValue ? summary.WarningCount.Value.ToString() : string.Empty)</td>
-                    </tr>
-                }*@
+        @if (Model.Results.Count > 0)
+        {
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        }
+        else
+        {
+            <tr>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+            </tr>
+        }
+        @foreach (var result in Model.Results)
+        {
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        }
     </table>
+    @if (Model.Results.Count == 0)
+    {
+        <div class="vp-body-header col-8 justify-content-start align-self-center">No records were found.</div>
+    }
 </div>
 
 

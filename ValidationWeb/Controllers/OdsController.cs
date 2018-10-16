@@ -110,9 +110,18 @@ namespace ValidationWeb
         // GET: Ods/ChangeOfEnrollmentReport
         public ActionResult ChangeOfEnrollmentReport()
         {
+            var edOrg = _edOrgService.GetEdOrgById(_appUserService.GetSession().FocusedEdOrgId);
+            var schoolYear = _schoolYearService.GetSchoolYearById(_appUserService.GetSession().FocusedSchoolYearId);
+            var edOrgName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
+            var edOrgId = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.Id;
+            var theUser = _appUserService.GetUser();
+            var results = _odsDataService.GetMultipleEnrollmentCounts(edOrgId, schoolYear.StartYear);
             var model = new OdsChangeOfEnrollmentReportViewModel
             {
-
+                EdOrgId = edOrgId,
+                EdOrgName = edOrgName,
+                User = theUser,
+                Results = new List<DemographicsCountReportQuery>()
             };
             return View(model);
         }
