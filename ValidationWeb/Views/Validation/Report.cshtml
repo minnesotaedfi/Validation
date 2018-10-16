@@ -101,6 +101,9 @@
             <td>-</td>
         </tr>
     </table>
+
+    <div id="noRecords" style="display: none" class="vp-body-header col-8 justify-content-start align-self-center">No records were found.</div>
+
 </div>
 
 @section scripts
@@ -326,6 +329,12 @@
                 AddSingleDataRow(gridId, dataObj.filteredErrorSummariesPage[errorRecordIndex], recordOffset + 1);
                 // And the next record would be 2, etc.
                 recordOffset++;
+            }
+            if (dataObj.filteredErrorSummariesPage.length) {
+                $("#noRecords").hide();
+            }
+            else {
+                $("#noRecords").show();
             }
         }
 
