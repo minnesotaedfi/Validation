@@ -15,10 +15,6 @@
     </div>
 </div>
 
-
-<div class="row">
-</div>
-
 <div id="errorGridControls" class="row grid-controls">
     <span id="pageSizeLabel">Rows: </span>
     <input class="form-control form-control-sm" id="pageSizeInput" placeholder="30 (records per page)">
@@ -146,19 +142,19 @@
                 lastFilterForComparaison = filter;
                 lastRefreshTime = currentRefreshTime;
             }
-            ClearGrid(gridId);
+            overlayOn();
             $.ajax({
                 url: "@Url.Content("~/api/validation/error-summaries/all")",
                 type: 'POST',
                 data: JSON.stringify(filter),
                 dataType: 'json',
                 contentType: 'application/json; charset=utf-8',
-                success: function (data) { ProcessGridDataForDisplay(gridId, data); },
+                success: function (data) { ClearGrid(gridId); ProcessGridDataForDisplay(gridId, data); overlayOff();},
                 error: function () { console.log(`An error occurred when attempting to load error listing from server.`); }
             });
         }
 
-        // Read the UI and return a object for inputting to the backend API. 
+        // Read the UI and return a object for inputting to the backend API.
         // The returned object will represent the user's choices that constrain the query.
         function SetFilter() {
             // Establish the defaults
@@ -215,9 +211,10 @@
             }
             if ($("#componentViewSelected").val() === "Demographics") {
                 filter.filterColumns.push("component");
-                filter.filterTexts.push("Demographics");
-            }  
-            
+                @* Demographic SINGULAR is important because that's the way the view was named by the database developer *@
+                filter.filterTexts.push("Demographic");
+            }
+
             // Set paging.
             if ($("#pageSizeInput").val()) {
                 let pageSizeInt = parseInt($("#pageSizeInput").val());
@@ -225,11 +222,11 @@
                 {
                     filter.pageSize = pageSizeInt;
                 }
-                else 
+                else
                 {
                     filter.pageSize = 30;
                 }
-            }  
+            }
             // Calculate record offset
             let desiredPageNumber = 1;
             let candidatePageNumber = $("#pageNumberInput").val();
@@ -288,12 +285,12 @@
                 let enrolledDateDetailString = "Unknown" + lineBreakIfNeeded;
                 if (enrolledDateDetail) {
                     enrolledDateDetailString = FormatDate(enrolledDateDetail) + lineBreakIfNeeded;
-                } 
+                }
                 let withdrawnDateDetail = errorRecord.errorEnrollmentDetails[enrollmentDetailIndex].dateWithdrawn;
                 let withdrawnDateDetailString = "Present" + lineBreakIfNeeded;
                 if (withdrawnDateDetail) {
                     withdrawnDateDetailString = FormatDate(withdrawnDateDetail) + lineBreakIfNeeded;
-                } 
+                }
                 let gradeDetail = errorRecord.errorEnrollmentDetails[enrollmentDetailIndex].grade + lineBreakIfNeeded;
                 schoolsContent = schoolsContent + schoolDetail;
                 schoolidsContent = schoolidsContent + schoolidDetail;
@@ -375,7 +372,7 @@
                     });
                 },
                 error: function () {
-                    console.log(`An error occurred when attempting to load autocomplete suggestions from server.`); 
+                    console.log(`An error occurred when attempting to load autocomplete suggestions from server.`);
                 }
             });
         }
@@ -444,7 +441,7 @@
                 if (currentPageVal)
                 {
                     let currentPageValInt = parseInt(currentPageVal);
-                    if (currentPageValInt)
+                    if (currentPageValInt > 1)
                     {
                         $("#pageNumberInput").val(--currentPageValInt);
                     }
@@ -465,13 +462,14 @@
                 if (currentPageVal)
                 {
                     let currentPageValInt = parseInt(currentPageVal);
-                    if (currentPageValInt)
+                    let maxPageValInt = parseInt($("#totalPageCount").text());
+                    if (currentPageValInt < maxPageValInt)
                     {
                         $("#pageNumberInput").val(++currentPageValInt);
                     }
                     else
                     {
-                        $("#pageNumberInput").val(1);
+                        $("#pageNumberInput").val(maxPageValInt);
                     }
                 }
                 else
@@ -482,7 +480,8 @@
                 RefreshGrid("errorGrid", currentFilter);
             });
             $("#lastPageButton").on("click", function(){
-                $("#pageNumberInput").val(parseInt($("#totalPageCount").text()));
+                let maxPageValInt = parseInt($("#totalPageCount").text());
+                $("#pageNumberInput").val(maxPageValInt);
                 let currentFilter = SetFilter();
                 RefreshGrid("errorGrid", currentFilter);
             });

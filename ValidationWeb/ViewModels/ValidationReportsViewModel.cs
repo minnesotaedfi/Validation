@@ -13,7 +13,7 @@ namespace ValidationWeb
         public IEnumerable<ValidationReportSummary> ReportSummaries { get; set; }
         public List<Collection> RulesCollections { get; set; }
         public List<SchoolYear> SchoolYears { get; set; }
-        public string FocusedEdOrgId { get; set; }
+        public int FocusedEdOrgId { get; set; }
         public int FocusedSchoolYearId { get; set; }
     }
 }

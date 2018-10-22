@@ -39,12 +39,13 @@ namespace ValidationWeb.Services
 
         public void UpdateFocusedEdOrg(string newFocusedEdOrgId)
         {
+            var desiredEdOrgId = int.Parse(newFocusedEdOrgId);
             var sessionObj = GetSession();
-            if (sessionObj == null || sessionObj.UserIdentity.AuthorizedEdOrgs.FirstOrDefault(eo => eo.Id == newFocusedEdOrgId) == null)
+            if (sessionObj == null || sessionObj.UserIdentity.AuthorizedEdOrgs.FirstOrDefault(eo => eo.Id == desiredEdOrgId) == null)
             {
                 return;
             }
-            _validationPortalDataContext.AppUserSessions.Where(sess => sess.Id == sessionObj.Id).First().FocusedEdOrgId = newFocusedEdOrgId;
+            _validationPortalDataContext.AppUserSessions.Where(sess => sess.Id == sessionObj.Id).First().FocusedEdOrgId = desiredEdOrgId;
             _validationPortalDataContext.SaveChanges();
         }
 

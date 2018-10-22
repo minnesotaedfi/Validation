@@ -13,10 +13,9 @@ namespace ValidationWeb
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         [Key]
         public long Id { get; set; }
-        [StringLength(48)]
         [Required]
         [Index]
-        public string EdOrgId { get; set; }
+        public int EdOrgId { get; set; }
         public SchoolYear SchoolYear { get; set; }
         public DateTime RequestedWhen { get; set; }
         public string Collection { get; set; }

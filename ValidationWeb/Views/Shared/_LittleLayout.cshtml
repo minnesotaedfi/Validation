@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
-    <title>ASDCS District Data Validation Portal</title>
+    <title>MN DOE District Data Validation Portal</title>
     <link rel="SHORTCUT ICON" href="~/favicon.ico" />
     @Styles.Render("~/Content/css")
     @Styles.Render("~/Content/jqueryUICSS")
@@ -16,7 +16,7 @@
             <div class="top-banner col-12">
                 <img src="~/Content/Images/mdelogo450.png" class="img-fluid mdelogo" />
                 <p><a href="#skipnavigation">Skip navigation</a></p>
-                <div class="app-title clear-margin">ASDCS District Data Validation Portal</div>
+                <div class="app-title clear-margin">District Data Validation Portal</div>
             </div>
         </div>
         <div class="row noprint">
@@ -27,15 +27,15 @@
                     </button>
                     <div class="collapse navbar-collapse" id="theNavBar">
                         <ul class="navbar-nav">
-                            <li>@Html.Raw(Html.ActionLink("LinkText", "Index", "Home", new { area = "" }, new { @class = "nav-link validation-nav-link" }).ToHtmlString().Replace("LinkText", "<i class=\"fas fa-home white-heavy-text\"></i> Home"))</li>
-                            <li>@Html.Raw(Html.ActionLink("LinkText", "Reports", "Validation", new { area = "" }, new { @class = "nav-link validation-nav-link" }).ToHtmlString().Replace("LinkText", "<i class=\"fas fa-file-alt white-heavy-text\"></i>  Validation Reports"))</li>
-                            <li>@Html.Raw(Html.ActionLink("LinkText", "Reports", "Ods", new { area = "" }, new { @class = "nav-link validation-nav-link" }).ToHtmlString().Replace("LinkText", "<i class=\"fas fa-database white-heavy-text\"></i> ODS Reports"))</li>
+                            <li>@Html.Raw(Html.ActionLink("LinkText", "Index", "Home", new { area = "" }, new { @class = "nav-link validation-nav-link show-page-loading" }).ToHtmlString().Replace("LinkText", "<i class=\"fas fa-home white-heavy-text\"></i> Home"))</li>
+                            <li>@Html.Raw(Html.ActionLink("LinkText", "Reports", "Validation", new { area = "" }, new { @class = "nav-link validation-nav-link show-page-loading" }).ToHtmlString().Replace("LinkText", "<i class=\"fas fa-file-alt white-heavy-text\"></i>  Validation Reports"))</li>
+                            <li>@Html.Raw(Html.ActionLink("LinkText", "Reports", "Ods", new { area = "" }, new { @class = "nav-link validation-nav-link show-page-loading" }).ToHtmlString().Replace("LinkText", "<i class=\"fas fa-database white-heavy-text\"></i> ODS Reports"))</li>
                             <!--
                                 
                             <li>@Html.Raw(Html.ActionLink("LinkText", "Collections", "Rules", new { area = "" }, new { @class = "nav-link validation-nav-link" }).ToHtmlString().Replace("LinkText", "<i class=\"fas fa-list-alt white-heavy-text\"></i> Rule Collections"))</li>
                             
                             -->
-                            <li class="mr-auto"><a class="nav-link validation-nav-link mr-auto" href="https://w1.education.state.mn.us/MIDMSWEB/MDELogin.html"><i class="fas fa-coins white-heavy-text"></i> MARSS WES</a></li>
+                            <li class="mr-auto"><a class="nav-link validation-nav-link mr-auto show-page-loading" href="https://w1.education.state.mn.us/MIDMSWEB/MDELogin.html"><i class="fas fa-coins white-heavy-text"></i> MARSS WES</a></li>
                             @Html.Action("NavDropDowns", "Nav")
                         </ul>
                     </div>
@@ -50,14 +50,27 @@
         </div>
         @Html.Partial("_LittleFooter")
     </div>
+    <!-- Turn this overlay on and off when loading new data asynchronously or screens. -->
+    <div id="overlay"><span id="overlay-text">Loading ... <i class="fas fa-cog"></i></span></div>
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/bundles/jqueryUI")
     @Scripts.Render("~/bundles/table2CSV")
     @Scripts.Render("~/bundles/datePickerJS")
     <script>
-        // Supports NavDropDowns, Education Organization/District selection menu dropdown
+        @*  The contents of this script tag are not in a separate file because portions are generated on the sever side with ASP.NET MVC *@
+        // Supports overlay
+        function overlayOn() { $("#overlay").fadeIn(100); }
+        function overlayDelayedOn() { $("#overlay").delay(1000).fadeIn(100); }
+        function overlayOff() { $("#overlay").hide(); }
+
         $(document).ready(function () {
+            // Eliminate any lingering overlay effect. Show it hen leaving page.
+            overlayOff();
+            $(".show-page-loading").bind('click', function () { overlayDelayedOn(); });
+            $(".show-data-loading").bind('click', function () { overlayOn(); });
+
+            // Supports NavDropDowns, Education Organization/District selection menu dropdown
             $(".select-org-link").on('click', function (e) {
                 var chosenLink = $(this);
                 var orgId = (chosenLink.attr("data-org-id"));
@@ -84,10 +97,7 @@
                     }
                 });
             });
-        });
-
-        // Supports NavDropDowns, School Year selection menu dropdown
-        $(document).ready(function () {
+            // Supports NavDropDowns, School Year selection menu dropdown
             $(".select-school-year-link").on('click', function (e) {
                 var chosenLink = $(this);
                 var yearId = (chosenLink.attr("data-year-id"));

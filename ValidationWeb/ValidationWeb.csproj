@@ -168,6 +168,7 @@
     <Content Include="Content\Scripts\table2csv.js" />
     <Content Include="Content\Scripts\tabulator.js" />
     <Content Include="Content\Scripts\tabulator.min.js" />
+    <Content Include="Content\Scripts\validationportal.js" />
     <Content Include="Content\Styles\bootstrap-datetimepicker.min.css" />
     <Content Include="Content\Styles\bootstrap\tabulator_bootstrap.css" />
     <Content Include="Content\Styles\bootstrap\tabulator_bootstrap.min.css" />
@@ -281,6 +282,7 @@
     <Compile Include="Controllers\ValidationController.cs" />
     <Compile Include="Database\EnumLookup.cs" />
     <Compile Include="Database\Queries\DemographicsCountReportQuery.cs" />
+    <Compile Include="Database\Queries\EdOrgQuery.cs" />
     <Compile Include="Database\Queries\MultipleEnrollmentsCountReportQuery.cs" />
     <Compile Include="Database\Queries\StudentDataFromId.cs" />
     <Compile Include="Database\Queries\StudentProgramsCountReportQuery.cs" />
@@ -320,11 +322,6 @@
     <Compile Include="Services\Implementations\ConfigurationValues.cs" />
     <Compile Include="Services\Implementations\EdOrgService.cs" />
     <Compile Include="Services\Implementations\EngineSchemaProvider.cs" />
-    <Compile Include="Services\Implementations\Fakes\FakeAnnouncementService.cs" />
-    <Compile Include="Services\Implementations\Fakes\FakeAppUserService.cs" />
-    <Compile Include="Services\Implementations\Fakes\FakeEdOrgService.cs" />
-    <Compile Include="Services\Implementations\Fakes\FakeValidatedDataSubmissionService.cs" />
-    <Compile Include="Services\Implementations\Fakes\FakeValidationResultsService.cs" />
     <Compile Include="Services\Implementations\HttpContextProvider.cs" />
     <Compile Include="Services\Implementations\LoggingService.cs" />
     <Compile Include="Services\Implementations\OdsConfigurationValues.cs" />

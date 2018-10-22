@@ -11,7 +11,7 @@ namespace ValidationWeb
         public static string StudentDataQueryFromId =
 @"SELECT s.[FirstName], s.[MiddleName], s.[LastSurname], 
     eorg.NameOfInstitution, ssa.SchoolId, ssa.EntryDate, ssa.ExitWithdrawDate, 
-	d.ShortDescription AS GradeLevel
+	d.CodeValue AS GradeLevel
     FROM edfi.Student s 
     LEFT OUTER JOIN edfi.StudentSchoolAssociation ssa ON ssa.StudentUSI = s.StudentUSI
     LEFT OUTER JOIN edfi.School sch ON sch.SchoolId = ssa.SchoolId

@@ -1,6 +1,0 @@
-ruleset NameChecks
-
-rule 1.1.1
-when {StudentNames}.[FirstName] == 'Ben' then
-require {StudentNames}.[LastSurname] == 'Brady'
-else 'Ben should have last name Brady.'

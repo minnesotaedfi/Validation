@@ -12,17 +12,20 @@ namespace ValidationWeb
         private readonly IAnnouncementService _announcementService;
         private readonly IAppUserService _appUserService;
         private readonly IEdOrgService _edOrgService;
+        private readonly ISchoolYearService _schoolYearService;
         private readonly IValidatedDataSubmissionService _validatedDataSubmissionService;
 
         public HomeController(
             IAnnouncementService announcementService,
             IAppUserService appUserService,
             IEdOrgService edOrgService,
+            ISchoolYearService schoolYearService,
             IValidatedDataSubmissionService validatedDataSubmissionService)
         {
             _announcementService = announcementService;
             _appUserService = appUserService;
             _edOrgService = edOrgService;
+            _schoolYearService = schoolYearService;
             _validatedDataSubmissionService = validatedDataSubmissionService;
         }
 
@@ -34,7 +37,7 @@ namespace ValidationWeb
                 Announcements = _announcementService.GetAnnoucements(),
                 YearsOpenForDataSubmission = _validatedDataSubmissionService.GetYearsOpenForDataSubmission(),
                 AuthorizedEdOrgs = _edOrgService.GetEdOrgs(),
-                FocusedEdOrg = _edOrgService.GetEdOrgById(_appUserService.GetSession().FocusedEdOrgId)
+                FocusedEdOrg = _edOrgService.GetEdOrgById(_appUserService.GetSession().FocusedEdOrgId, _schoolYearService.GetSchoolYearById(_appUserService.GetSession().FocusedSchoolYearId).Id)
             };
             if (model.AuthorizedEdOrgs.Count() == 0)
             {

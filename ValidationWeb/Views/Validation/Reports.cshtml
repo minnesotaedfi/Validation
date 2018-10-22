@@ -92,7 +92,7 @@
                     @summary.RequestedWhen.ToShortDateString()
                     <br />@summary.RequestedWhen.ToShortTimeString()
                 </td>
-                <td>@Html.ActionLink(summary.Collection ?? "Unknown", "Report", "Validation", new { area = "", id = summary.Id }, null)</td>
+                <td>@Html.ActionLink(summary.Collection ?? "Unknown", "Report", "Validation", new { area = "", id = summary.Id, @class = "show-data-loading"}, null)</td>
                 <td>@summary.InitiatedBy</td>
                 <td>@summary.Status</td>
                 <td>
@@ -125,7 +125,8 @@ else
         // Once the user has already clicked the Validate button and chosen a *year* and *collection*, there is a second, Yes/No confirmation.
         // This registers a callback to run the validation engine if the user chose YES when dismissing the confirmation dialog. 
         $('#ConfirmNewValidationModal').on('hidden.bs.modal', function (e) {
-            setTimeout(function () { location.reload(true); }, 2000);
+            overlayOn();
+            setTimeout(function () { location.reload(true); overlayOff(); }, 2000);
             if (lastModalExitButton=='launch') {
                 $.ajax({
                     url: '@(Url.Action("RunEngine", "Validation"))',
@@ -136,6 +137,10 @@ else
                     data: { collectionId: collectionIdSelection, schoolYear: schoolYearSelection },
                     success: function (result) {
                         location.reload(true);
+                        overlayOff();
+                    },
+                    error: function () {
+                        overlayOff();
                     }
                 });
             }

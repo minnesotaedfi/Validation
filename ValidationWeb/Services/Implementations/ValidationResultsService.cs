@@ -27,7 +27,7 @@ namespace ValidationWeb.Services
             return reportDetails;
         }
 
-        public List<ValidationReportSummary> GetValidationReportSummaries(string edOrgId)
+        public List<ValidationReportSummary> GetValidationReportSummaries(int edOrgId)
         {
             var reportSummaryList = _portalDbContext.ValidationReportSummaries.Where(vrs => vrs.EdOrgId == edOrgId).ToList();
             reportSummaryList.ForEach(rsum => 
@@ -240,10 +240,15 @@ namespace ValidationWeb.Services
                         break;
                 }
             }
-            // If still unsorted - add default sorting, necessary for LINQ-to-Entities paging to function correctly.
+            // IMPORTANT! If still unsorted - add default sorting, necessary for LINQ-to-Entities paging to function correctly.
+            // If already sorted, still needs to be secondary-sorted by a UNIQUE field, otherwise rows will be repeated on subsequent pages.
             if (!isSecondarySortColumn)
             {
-                filteredErrorQuery = filteredErrorQuery.OrderBy(er2 => er2.ErrorCode);
+                filteredErrorQuery = filteredErrorQuery.OrderBy(er2 => er2.Id);
+            }
+            else 
+            {
+                filteredErrorQuery = (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenBy(er2 => er2.Id);
             }
             #endregion Sort results
 
@@ -263,8 +268,8 @@ namespace ValidationWeb.Services
             result.RecordOffset = Math.Max(filterSpecification.pageStartingOffset, 0);
             // maxRecordOffset is the start of the last page.
             var maxRecordOffset = ((result.TotalFilteredErrorCount - 1) / filterSpecification.pageSize) * filterSpecification.pageSize;
-            result.RecordOffset = Math.Min(maxRecordOffset, result.RecordOffset);
             result.RecordOffset = Math.Max(filterSpecification.pageStartingOffset, 0);
+            result.RecordOffset = Math.Min(maxRecordOffset, result.RecordOffset);
             #endregion Record Offset
 
             #region Page Number

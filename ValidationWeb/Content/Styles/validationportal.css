@@ -21,6 +21,33 @@
     max-width: 1280px;
 }
 
+#overlay {
+    /* From W3CSchools */
+    position: fixed; /* Sit on top of the page content */
+    display: none; /* Hidden by default */
+    width: 100%; /* Full width (cover the whole page) */
+    height: 100%; /* Full height (cover the whole page) */
+    top: 0; 
+    left: 0;
+    right: 0;
+    bottom: 0;
+    box-shadow: black 2px 2px inset;
+    background-color: rgba(0,0,0,0.3); /* Black background with opacity */
+    z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
+    cursor: pointer; /* Add a pointer on hover */
+}
+
+#overlay-text{
+    /* From W3CSchools */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    font-size: 50px;
+    color: white;
+    transform: translate(-50%,-50%);
+    -ms-transform: translate(-50%,-50%);
+}
+
 /* Background Colors */
 .prime-blue {
     background-color: rgb(0, 56, 101);
@@ -118,6 +145,17 @@ input, select, textarea {
     color: rgb(255, 255, 255);
     font-weight: bold;
     text-decoration: underline;
+}
+
+.back-link {
+    background-color: rgb(0, 56, 101);
+    border-radius: 4px;
+    padding: 4px;
+    color: white;
+}
+.back-link:hover {
+    background-color: rgb(164, 188, 194);
+    border-color: rgb(120, 190, 33);
 }
 /***************************************************************************************/
 

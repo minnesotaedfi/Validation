@@ -89,7 +89,7 @@ namespace ValidationWeb.Services
                 var newReportDetails = new ValidationReportDetails
                 {
                     CollectionName = collectionId,
-                    DistrictName = $"{_edOrgService.GetEdOrgById(newReportSummary.EdOrgId).OrganizationName} ({newReportSummary.EdOrgId.ToString()})",
+                    DistrictName = $"{_edOrgService.GetEdOrgById(newReportSummary.EdOrgId, newReportSummary.SchoolYear.Id).OrganizationName} ({newReportSummary.EdOrgId.ToString()})",
                     ValidationReportSummaryId = newReportSummary.Id
                 };
                 _dbContext.ValidationReportDetails.Add(newReportDetails);

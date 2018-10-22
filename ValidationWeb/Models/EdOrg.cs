@@ -19,16 +19,19 @@ namespace ValidationWeb
         /// <summary>
         /// Not database generated - but comes from ODS - comes from assignment via code, or bulk-loading this table.
         /// </summary>
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         [Key]
-        public string Id { get; set; }
+        public int Id { get; set; }
         public string OrganizationName { get; set; }
-        public string StateOrganizationId { get; set; }
-        public string FormattedOrganizationId { get; set; }
-        public string DistrictName { get; set; }
-
-        // Foreign Key configured in Fluent API OnModelCreating method
-        public string ParentId { get; set; }
-        public EdOrg Parent { get; set; }
+        public string OrganizationShortName { get; set; }
+        public int? StateOrganizationId { get; set; }
+        public int? ParentId { get; set; }
+        public int? StateLevelOrganizationId { get; set; }
+        // Orgs can be different depending on the particular ODS you are referencing. The ODS is determined by the School Year (2019 means 2019-2020).
+        public int SchoolYearId { get; set; }
+        public bool IsStateLevelEdOrg { get; set; }
+        public string OrgTypeCodeValue { get; set; }
+        public string OrgTypeShortDescription { get; set; }
 
         [ForeignKey("Type")]
         public int EdOrgTypeLookupId { get; set; }

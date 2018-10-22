@@ -44,7 +44,6 @@ namespace ValidationWeb
         public string FullName { get; set; }
         public string Email { get; set; }
         public ICollection<EdOrg> AuthorizedEdOrgs { get; set; }
-
     }
 }
 

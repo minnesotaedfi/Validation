@@ -1,5 +1,5 @@
 collection FallCollection includes
-NameChecks
+SampleChecks
 
 collection EOYCollection includes
-NameChecks
+SampleChecks

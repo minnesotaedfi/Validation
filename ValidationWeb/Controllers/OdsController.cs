@@ -15,7 +15,7 @@ namespace ValidationWeb
         protected readonly IEdOrgService _edOrgService;
         protected readonly IOdsDataService _odsDataService;
         protected readonly IRulesEngineService _rulesEngineService;
-        protected readonly ISchoolYearService _schoolYearService;
+        protected readonly ISchoolYearService _schoolyearService;
         protected readonly Model _engineObjectModel;
 
         public OdsController(
@@ -23,7 +23,7 @@ namespace ValidationWeb
             IEdOrgService edOrgService,
             IOdsDataService odsDataService,
             IRulesEngineService rulesEngineService,
-            ISchoolYearService schoolYearService,
+            ISchoolYearService schoolyearService,
             Model engineObjectModel)
         {
             _appUserService = appUserService;
@@ -31,15 +31,16 @@ namespace ValidationWeb
             _odsDataService = odsDataService;
             _engineObjectModel = engineObjectModel;
             _rulesEngineService = rulesEngineService;
-            _schoolYearService = schoolYearService;
+            _schoolyearService = schoolyearService;
         }
 
         // GET: Ods/Reports
         public ActionResult Reports()
         {
-            var edOrg = _edOrgService.GetEdOrgById(_appUserService.GetSession().FocusedEdOrgId);
+            var session = _appUserService.GetSession();
+            var edOrg = _edOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
             var edOrgName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
-            var edOrgId = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.Id;
+            var edOrgId = edOrg.Id;
             var theUser = _appUserService.GetUser();
             var model = new OdsReportsViewModel
             {
@@ -53,12 +54,13 @@ namespace ValidationWeb
         // GET: Ods/DemographicsReport
         public ActionResult DemographicsReport()
         {
-            var edOrg = _edOrgService.GetEdOrgById(_appUserService.GetSession().FocusedEdOrgId);
-            var schoolYear = _schoolYearService.GetSchoolYearById(_appUserService.GetSession().FocusedSchoolYearId);
+            var session = _appUserService.GetSession();
+            var edOrg = _edOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
             var edOrgName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
-            var edOrgId = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.Id;
+            var edOrgId = edOrg.Id;
+            var fourDigitSchoolYear = _schoolyearService.GetSchoolYearById(session.FocusedSchoolYearId).StartYear;
             var theUser = _appUserService.GetUser();
-            var results = _odsDataService.GetDistrictAncestryRaceCounts(edOrgId, schoolYear.StartYear);
+            var results = _odsDataService.GetDistrictAncestryRaceCounts(edOrgId, fourDigitSchoolYear);
             var model = new OdsDemographicsReportViewModel
             {
                 EdOrgId = edOrgId,
@@ -72,12 +74,13 @@ namespace ValidationWeb
         // GET: Ods/MultipleEnrollmentsReport
         public ActionResult MultipleEnrollmentsReport()
         {
-            var edOrg = _edOrgService.GetEdOrgById(_appUserService.GetSession().FocusedEdOrgId);
-            var schoolYear = _schoolYearService.GetSchoolYearById(_appUserService.GetSession().FocusedSchoolYearId);
+            var session = _appUserService.GetSession();
+            var edOrg = _edOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
             var edOrgName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
-            var edOrgId = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.Id;
+            var edOrgId = edOrg.Id;
+            var fourDigitSchoolYear = _schoolyearService.GetSchoolYearById(session.FocusedSchoolYearId).StartYear;
             var theUser = _appUserService.GetUser();
-            var results = _odsDataService.GetMultipleEnrollmentCounts(edOrgId, schoolYear.StartYear);
+            var results = _odsDataService.GetMultipleEnrollmentCounts(edOrgId, fourDigitSchoolYear);
             var model = new OdsMultipleEnrollmentsReportViewModel
             {
                 EdOrgId = edOrgId,
@@ -91,12 +94,13 @@ namespace ValidationWeb
         // GET: Ods/StudentProgramsReport
         public ActionResult StudentProgramsReport()
         {
-            var edOrg = _edOrgService.GetEdOrgById(_appUserService.GetSession().FocusedEdOrgId);
-            var schoolYear = _schoolYearService.GetSchoolYearById(_appUserService.GetSession().FocusedSchoolYearId);
+            var session = _appUserService.GetSession();
+            var edOrg = _edOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
             var edOrgName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
-            var edOrgId = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.Id;
+            var edOrgId = edOrg.Id;
+            var fourDigitSchoolYear = _schoolyearService.GetSchoolYearById(session.FocusedSchoolYearId).StartYear;
             var theUser = _appUserService.GetUser();
-            var results = _odsDataService.GetStudentProgramsCounts(edOrgId, schoolYear.StartYear);
+            var results = _odsDataService.GetStudentProgramsCounts(edOrgId, fourDigitSchoolYear);
             var model = new OdsStudentProgramsReportViewModel
             {
                 EdOrgId = edOrgId,
@@ -110,12 +114,13 @@ namespace ValidationWeb
         // GET: Ods/ChangeOfEnrollmentReport
         public ActionResult ChangeOfEnrollmentReport()
         {
-            var edOrg = _edOrgService.GetEdOrgById(_appUserService.GetSession().FocusedEdOrgId);
-            var schoolYear = _schoolYearService.GetSchoolYearById(_appUserService.GetSession().FocusedSchoolYearId);
+            var session = _appUserService.GetSession();
+            var edOrg = _edOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
             var edOrgName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
-            var edOrgId = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.Id;
+            var edOrgId = edOrg.Id;
+            var fourDigitSchoolYear = _schoolyearService.GetSchoolYearById(session.FocusedSchoolYearId).StartYear;
             var theUser = _appUserService.GetUser();
-            var results = _odsDataService.GetMultipleEnrollmentCounts(edOrgId, schoolYear.StartYear);
+            var results = _odsDataService.GetMultipleEnrollmentCounts(edOrgId, fourDigitSchoolYear);
             var model = new OdsChangeOfEnrollmentReportViewModel
             {
                 EdOrgId = edOrgId,
@@ -129,12 +134,13 @@ namespace ValidationWeb
         // GET: Ods/ResidentsEnrolledElsewhereReport
         public ActionResult ResidentsEnrolledElsewhereReport()
         {
-            var edOrg = _edOrgService.GetEdOrgById(_appUserService.GetSession().FocusedEdOrgId);
-            var schoolYear = _schoolYearService.GetSchoolYearById(_appUserService.GetSession().FocusedSchoolYearId);
+            var session = _appUserService.GetSession();
+            var edOrg = _edOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
             var edOrgName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
-            var edOrgId = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.Id;
+            var edOrgId = edOrg.Id;
+            var fourDigitSchoolYear = _schoolyearService.GetSchoolYearById(session.FocusedSchoolYearId).StartYear;
             var theUser = _appUserService.GetUser();
-            var results = _odsDataService.GetMultipleEnrollmentCounts(edOrgId, schoolYear.StartYear);
+            var results = _odsDataService.GetMultipleEnrollmentCounts(edOrgId, fourDigitSchoolYear);
             var model = new OdsResidentsEnrolledElsewhereReportViewModel
             {
                 EdOrgId = edOrgId,

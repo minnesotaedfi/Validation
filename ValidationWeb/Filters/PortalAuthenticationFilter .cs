@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SimpleInjector;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -40,6 +41,8 @@ namespace ValidationWeb
         /// Name of the cached object in the ASP.NET/OWIN-provided HttpCpntext.Session that contains user information that's not specific to the session.
         /// </summary>
         public const string SessionIdentityKey = "LoggedInUserIdentity";
+        private readonly IEdOrgService _edOrgService;
+        private readonly ILoggingService _loggingService;
 
 
         static PortalAuthenticationFilter()
@@ -48,6 +51,12 @@ namespace ValidationWeb
             _authorizationStoredProcedureName = _config.AuthorizationStoredProcedureName;
             _singleSignOnDatabaseConnectionString = _config.SingleSignOnDatabaseConnectionString;
             _appId = _config.AppId;
+        }
+
+        public PortalAuthenticationFilter(Container container)
+        {
+            _edOrgService = container.GetInstance<IEdOrgService>();
+            _loggingService = container.GetInstance<ILoggingService>();
         }
 
         /// <summary>
@@ -60,8 +69,18 @@ namespace ValidationWeb
             var session = httpContext.Session;
             var request = httpContext.Request;
             // We will try to set the user's Focused items to the same one's in their previous, expired session, if it is feasible. favorite new session variables to 
-            string previousSessionFocusedEdOrgId = null;
+            int previousSessionFocusedEdOrgId = 0;
             int? previousSessionFocusedSchoolYearId = null;
+
+            var validYears = new List<SchoolYear>();
+            using (var dbContext = new ValidationPortalDbContext())
+            {
+                validYears.AddRange(dbContext.SchoolYears.Where(sy => sy.Enabled).ToList());
+            }
+            if (validYears.Count == 0)
+            {
+                throw new ApplicationException("No school years were enabled in the Validation Portal's database. Data is separated by school year, and so the system must know which school years are available for users.");
+            }
 
             #region If we find the Session Key checks out, then that means they were previously authenticated. 
             // The session has been configured to use SQL Server state - so load balancers/web farms are fine.
@@ -184,18 +203,24 @@ namespace ValidationWeb
             var appName = ssoUserAuthorizations.FirstOrDefault(ss => ss.AppName != null).AppName;
             #endregion Extract data about the user that is common to all SSO Authorization records.
 
-            var authorizedEdOrgs = ssoUserAuthorizations.Select(ss => new EdOrg
+            var authorizedEdOrgs = new List<EdOrg>();
+            foreach (var ssoUserOrg in ssoUserAuthorizations)
             {
-                // TODO: Align these properties with the Ed Fi "Raw" (Unvalidated) ODS Database
-                Id = ss.StateOrganizationId,
-                OrganizationName = ss.OrganizationName,
-                EdOrgTypeLookupId = (ss.DistrictType.HasValue) ? ValidationPortalDbMigrationConfiguration.EdOrgTypeLookups[ss.DistrictType.Value].Id : 1,
-                // TODO: Align these properties with the Single Sign On data
-                StateOrganizationId = ss.StateOrganizationId,
-                FormattedOrganizationId = ss.FormattedOrganizationId,
-                DistrictName = ss.OrganizationName,
-                Type = (ss.DistrictType.HasValue) ? ValidationPortalDbMigrationConfiguration.EdOrgTypeLookups[ss.DistrictType.Value] : new EdOrgTypeLookup { Id = 1, CodeValue = "EdOrgTypeLookups", Description = "EdOrgTypeLookups" }
-            }).ToList();
+                int schoolYearId = 0;
+                try
+                {
+                    int authorizedEdOrgId;
+                    if (int.TryParse(ssoUserOrg.StateOrganizationId, out authorizedEdOrgId))
+                    {
+                        schoolYearId = previousSessionFocusedSchoolYearId.HasValue ? previousSessionFocusedSchoolYearId.Value : validYears.First().Id;
+                        authorizedEdOrgs.Add(_edOrgService.GetEdOrgById(authorizedEdOrgId, schoolYearId));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _loggingService.LogErrorMessage($"A user was authorized an Ed Org with the StateOrganizationId: {ssoUserOrg.StateOrganizationId}, but this Ed Org doesn't exist in the ODS database for school year {schoolYearId}. Error: {ex.ChainInnerExceptionMessages()}");
+                }
+            }
 
             if ((appRole == AppRole.Unauthorized) || (appRole == null))
             {
@@ -218,16 +243,6 @@ namespace ValidationWeb
             };
             filterContext.HttpContext.User = new ValidationPortalPrincipal(newUserIdentity);
 
-            var validYears = new List<SchoolYear>();
-            using (var dbContext = new ValidationPortalDbContext())
-            {
-                validYears.AddRange(dbContext.SchoolYears.Where(sy => sy.Enabled).ToList());
-            }
-            if (validYears.Count == 0)
-            {
-                throw new ApplicationException("No school years were enabled in the Validation Portal's database.");
-            }
-
             #region Create and add a new user session to the database.
             var firstEdOrg = newUserIdentity.AuthorizedEdOrgs.FirstOrDefault();
             var firstSchoolYear = newUserIdentity.AuthorizedEdOrgs.FirstOrDefault();
@@ -236,7 +251,7 @@ namespace ValidationWeb
                 Id = Guid.NewGuid().ToString(),
                 DismissedAnnouncements = new HashSet<DismissedAnnouncement>(),
                 ExpiresUtc = DateTime.UtcNow.AddMinutes(30),
-                FocusedEdOrgId = (previousSessionFocusedEdOrgId == null) ? firstEdOrg.Id : previousSessionFocusedEdOrgId,
+                FocusedEdOrgId = (previousSessionFocusedEdOrgId == 0) ? firstEdOrg.Id : previousSessionFocusedEdOrgId,
                 FocusedSchoolYearId = previousSessionFocusedSchoolYearId.HasValue ? previousSessionFocusedSchoolYearId.Value : validYears.First().Id,
                 UserIdentity = newUserIdentity
             };

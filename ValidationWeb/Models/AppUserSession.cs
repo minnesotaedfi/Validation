@@ -30,7 +30,7 @@ namespace ValidationWeb
         /// <summary>
         /// This is the EdOrg that the user is acting on/viewing ... chosen in the application/website.
         /// </summary>
-        public string FocusedEdOrgId { get; set; }
+        public int FocusedEdOrgId { get; set; }
 
         /// <summary>
         /// This is the SchoolYear that the user is acting on/viewing ... chosen in the application/website.

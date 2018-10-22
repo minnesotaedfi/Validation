@@ -1,7 +1,11 @@
 ﻿@model OdsMultipleEnrollmentsReportViewModel
 
+<div class="row tbmargin10">
+    <div><a href="@Url.Action("Reports")" class="back-link"><i class="fas fa-arrow-alt-circle-left"></i> Back to ODS Reports</a></div>
+</div>
+
 <div class="row">
-    <div class="vp-body-header col-8 justify-content-start align-self-center">Students with Multiple Open Enrollments for District @Model.EdOrgName (@Model.EdOrgId)</div>
+    <div class="vp-body-header justify-content-start align-self-center">Students with Multiple Open Enrollments for District @Model.EdOrgName (@Model.EdOrgId.ToString())</div>
 </div>
 
 <div id="requestedReportContent">

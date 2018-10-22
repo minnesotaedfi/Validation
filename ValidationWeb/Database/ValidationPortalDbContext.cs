@@ -53,9 +53,6 @@ namespace ValidationWeb
                 .WithRequired(dann => dann.AppUserSession)
                 .HasForeignKey(aus => aus.AppUserSessionId)
                 .WillCascadeOnDelete();
-
-            modelBuilder.Entity<EdOrg>()
-               .HasOptional(dt => dt.Parent);
         }
     }
 }

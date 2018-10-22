@@ -37,7 +37,7 @@ namespace ValidationWeb
         // GET: Validation/Reports
         public ActionResult Reports()
         {
-            var edOrg = _edOrgService.GetEdOrgById(_appUserService.GetSession().FocusedEdOrgId);
+            var edOrg = _edOrgService.GetEdOrgById(_appUserService.GetSession().FocusedEdOrgId, _appUserService.GetSession().FocusedSchoolYearId);
             var rulesCollections = _engineObjectModel.Collections.OrderBy(x => x.CollectionId).ToList();
             var theUser = _appUserService.GetUser();
             var districtName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;

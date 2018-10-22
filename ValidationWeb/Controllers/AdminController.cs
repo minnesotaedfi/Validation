@@ -36,7 +36,7 @@ namespace ValidationWeb
             {
                 AppUserSession = _appUserService.GetSession(),
                 AuthorizedEdOrgs = _edOrgService.GetEdOrgs(),
-                FocusedEdOrg = _edOrgService.GetEdOrgById(_appUserService.GetSession().FocusedEdOrgId),
+                FocusedEdOrg = _edOrgService.GetEdOrgById(_appUserService.GetSession().FocusedEdOrgId, _schoolYearService.GetSchoolYearById(_appUserService.GetSession().FocusedSchoolYearId).Id),
                 YearsOpenForDataSubmission = _schoolYearService.GetSubmittableSchoolYears().OrderByDescending(x => x.EndYear),
                 RuleCollections = _rulesEngineService.GetCollections(),
                 SubmissionCycles = _submissionCycleService.GetSubmissionCycles()

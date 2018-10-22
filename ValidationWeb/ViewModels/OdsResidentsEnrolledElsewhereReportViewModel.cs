@@ -8,7 +8,7 @@ namespace ValidationWeb
     public class OdsResidentsEnrolledElsewhereReportViewModel
     {
         public ValidationPortalIdentity User { get; set; }
-        public string EdOrgId { get; set; }
+        public int EdOrgId { get; set; }
         public string EdOrgName { get; set; }
         public List<MultipleEnrollmentsCountReportQuery> Results { get; set; }
     }

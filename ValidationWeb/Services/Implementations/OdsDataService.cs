@@ -14,7 +14,7 @@ namespace ValidationWeb.Services
             _loggingService = loggingService;
         }
 
-        public List<DemographicsCountReportQuery> GetDistrictAncestryRaceCounts(string districtEdOrgId, string fourDigitOdsDbYear)
+        public List<DemographicsCountReportQuery> GetDistrictAncestryRaceCounts(int districtEdOrgId, string fourDigitOdsDbYear)
         {
             using (var rawOdsContext = new RawOdsDbContext(fourDigitOdsDbYear))
             {
@@ -26,7 +26,7 @@ namespace ValidationWeb.Services
                     ancestryQueryCmd.CommandType = System.Data.CommandType.Text;
                     ancestryQueryCmd.CommandText = DemographicsCountReportQuery.DistrictAncestryRaceCountsQuery;
                     ancestryQueryCmd.Parameters.Add(new SqlParameter("@distid", System.Data.SqlDbType.Int));
-                    ancestryQueryCmd.Parameters["@distid"].Value = int.Parse(districtEdOrgId);
+                    ancestryQueryCmd.Parameters["@distid"].Value = districtEdOrgId;
                     var reportData = new List<DemographicsCountReportQuery>();
                     using (var reader = ancestryQueryCmd.ExecuteReader())
                     {
@@ -64,7 +64,7 @@ namespace ValidationWeb.Services
             }
         }
 
-        public List<MultipleEnrollmentsCountReportQuery> GetMultipleEnrollmentCounts(string districtEdOrgId, string fourDigitOdsDbYear)
+        public List<MultipleEnrollmentsCountReportQuery> GetMultipleEnrollmentCounts(int districtEdOrgId, string fourDigitOdsDbYear)
         {
             using (var rawOdsContext = new RawOdsDbContext(fourDigitOdsDbYear))
             {
@@ -76,7 +76,7 @@ namespace ValidationWeb.Services
                     ancestryQueryCmd.CommandType = System.Data.CommandType.Text;
                     ancestryQueryCmd.CommandText = MultipleEnrollmentsCountReportQuery.MultipleEnrollmentsCountQuery;
                     ancestryQueryCmd.Parameters.Add(new SqlParameter("@distid", System.Data.SqlDbType.Int));
-                    ancestryQueryCmd.Parameters["@distid"].Value = int.Parse(districtEdOrgId);
+                    ancestryQueryCmd.Parameters["@distid"].Value = districtEdOrgId;
                     var reportData = new List<MultipleEnrollmentsCountReportQuery>();
                     using (var reader = ancestryQueryCmd.ExecuteReader())
                     {
@@ -113,7 +113,7 @@ namespace ValidationWeb.Services
             }
         }
 
-        public List<StudentProgramsCountReportQuery> GetStudentProgramsCounts(string districtEdOrgId, string fourDigitOdsDbYear)
+        public List<StudentProgramsCountReportQuery> GetStudentProgramsCounts(int districtEdOrgId, string fourDigitOdsDbYear)
         {
             using (var rawOdsContext = new RawOdsDbContext(fourDigitOdsDbYear))
             {
@@ -125,7 +125,7 @@ namespace ValidationWeb.Services
                     studentProgsCmd.CommandType = System.Data.CommandType.Text;
                     studentProgsCmd.CommandText = StudentProgramsCountReportQuery.StudentProgramsCountQuery;
                     studentProgsCmd.Parameters.Add(new SqlParameter("@distid", System.Data.SqlDbType.Int));
-                    studentProgsCmd.Parameters["@distid"].Value = int.Parse(districtEdOrgId);
+                    studentProgsCmd.Parameters["@distid"].Value = districtEdOrgId;
                     var reportData = new List<StudentProgramsCountReportQuery>();
                     using (var reader = studentProgsCmd.ExecuteReader())
                     {

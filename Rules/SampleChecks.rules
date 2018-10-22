@@ -1,0 +1,12 @@
+ruleset SampleChecks
+/* 
+  American Indian - Alaskan Native (Minnesota) rules 
+*/
+rule 10.1.1 
+	when {StudentDemographic}.[EthnicCode] = 'American Indian - Alaskan Native (Minnesota)' then
+	require {StudentDemographic}.[IndianIndicator] = 1
+	else '425. When the student\'s EthnicCode is \'American Indian - Alaskan Native (Minnesota)\', the IndianIndicator must be set to true.'
+
+rule 10.10.62381
+	when {StudentEnrollment}.[StatusEnd] is in ['21','25','27','28','29','30'] then	require that {StudentEnrollment}.[StudentGradeLevel] = 'EC'	else '230. Status End Codes 21, 25, 27, 28, 29, 30 (Early Childhood withdrawals) require that the grade level of the student be EC. Check the grade level or the Status End code.'
+
