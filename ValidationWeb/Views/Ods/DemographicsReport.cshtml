@@ -41,7 +41,7 @@ else
                     {
                         if (result.EdOrgId.HasValue && result.OrgType == OrgType.District)
                         {
-                            <a href="@Url.Action("DemographicsReport", "Ods", new { isStateMode = false })">@(result.EdOrgId.Value.ToString())</a>
+                            <a href="@Url.Action("DemographicsReport", "Ods", new { isStateMode = false, districtToDisplay = result.EdOrgId.Value})">@(result.EdOrgId.Value.ToString())</a>
                         }
                         else
                         {

@@ -52,12 +52,17 @@ namespace ValidationWeb
         }
 
         // GET: Ods/DemographicsReport
-        public ActionResult DemographicsReport(bool isStateMode = false)
+        public ActionResult DemographicsReport(bool isStateMode = false, int? districtToDisplay = null)
         {
             var session = _appUserService.GetSession();
             var edOrg = _edOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
             var edOrgName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
             var edOrgId = edOrg.Id;
+            // A state user can look at any district via a link, without changing the default district.
+            if (districtToDisplay.HasValue && session.UserIdentity.AuthorizedEdOrgs.Select(eorg => eorg.Id).Contains(districtToDisplay.Value))
+            {
+                edOrgId = districtToDisplay.Value;
+            }
             var fourDigitSchoolYear = _schoolyearService.GetSchoolYearById(session.FocusedSchoolYearId).StartYear;
             var theUser = _appUserService.GetUser();
             var results = _odsDataService.GetDistrictAncestryRaceCounts(isStateMode ? (int?)null : edOrgId, fourDigitSchoolYear);
