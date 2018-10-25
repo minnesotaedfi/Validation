@@ -52,7 +52,7 @@ namespace ValidationWeb
         }
 
         // GET: Ods/DemographicsReport
-        public ActionResult DemographicsReport()
+        public ActionResult DemographicsReport(bool isStateMode = false)
         {
             var session = _appUserService.GetSession();
             var edOrg = _edOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
@@ -60,19 +60,20 @@ namespace ValidationWeb
             var edOrgId = edOrg.Id;
             var fourDigitSchoolYear = _schoolyearService.GetSchoolYearById(session.FocusedSchoolYearId).StartYear;
             var theUser = _appUserService.GetUser();
-            var results = _odsDataService.GetDistrictAncestryRaceCounts(edOrgId, fourDigitSchoolYear);
+            var results = _odsDataService.GetDistrictAncestryRaceCounts(isStateMode ? (int?)null : edOrgId, fourDigitSchoolYear);
             var model = new OdsDemographicsReportViewModel
             {
                 EdOrgId = edOrgId,
                 EdOrgName = edOrgName,
                 User = theUser,
-                Results = results
+                Results = results,
+                IsStateMode = isStateMode
             };
             return View(model);
         }
 
         // GET: Ods/MultipleEnrollmentsReport
-        public ActionResult MultipleEnrollmentsReport()
+        public ActionResult MultipleEnrollmentsReport(bool isStateMode = false)
         {
             var session = _appUserService.GetSession();
             var edOrg = _edOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
@@ -86,7 +87,8 @@ namespace ValidationWeb
                 EdOrgId = edOrgId,
                 EdOrgName = edOrgName,
                 User = theUser,
-                Results = results
+                Results = results,
+                IsStateMode = isStateMode
             };
             return View(model);
         }

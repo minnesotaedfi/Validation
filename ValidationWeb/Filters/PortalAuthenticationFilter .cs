@@ -121,7 +121,8 @@ namespace ValidationWeb
                                 dbContext.SaveChanges();
                                 // And some clean-up ...
                                 IEnumerable<AppUserSession> expiredUserSessions = dbContext.AppUserSessions.Where(s => s.UserIdentity == null || (s.UserIdentity.UserId == userIdentity.UserId && s.ExpiresUtc < DateTime.UtcNow));
-                                dbContext.AppUserSessions.RemoveRange(expiredUserSessions);
+                                // TODO - IDENTITIES NOT IN EF
+                                //dbContext.AppUserSessions.RemoveRange(expiredUserSessions);
                                 dbContext.SaveChanges();
                             }
                         }

@@ -147,13 +147,14 @@ input, select, textarea {
     text-decoration: underline;
 }
 
-.back-link {
+.back-link, .vp-page-link {
     background-color: rgb(0, 56, 101);
     border-radius: 4px;
     padding: 4px;
     color: white;
+    margin-right: 4px;
 }
-.back-link:hover {
+.back-link:hover, .vp-page-link:hover {
     background-color: rgb(164, 188, 194);
     border-color: rgb(120, 190, 33);
 }

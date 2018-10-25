@@ -1,46 +1,59 @@
 ﻿@model OdsDemographicsReportViewModel
 
-<div class="row tbmargin10">
+<div id="pagetop" class="row tbmargin10">
     <div><a href="@Url.Action("Reports")" class="back-link"><i class="fas fa-arrow-alt-circle-left"></i> Back to ODS Reports</a></div>
+    <div><a href="#notes" class="vp-page-link"><i class="fas fa-arrow-alt-circle-down"></i> See notes</a></div>
+    @if (Model.IsStateMode)
+    {
+        <div><a href="@Url.Action("DemographicsReport", "Ods", new { isStateMode = false })" class="vp-page-link show-data-loading"><i class="fas fa-chalkboard-teacher"></i> View Single District</a></div>
+    }
+    else
+    {
+        <div><a href="@Url.Action("DemographicsReport", "Ods", new { isStateMode = true })" class="vp-page-link show-data-loading"><i class="fas fa-sitemap"></i> View All Districts</a></div>
+    }
+    
 </div>
-
-<div class="row">
+<div class="row tbmargin10">
+@if (Model.IsStateMode)
+{
+    <div class="vp-body-header justify-content-start align-self-center">Ancestry Ethnic Origin and Race Counts for All Minnesota Districts</div>
+}
+else
+{
     <div class="vp-body-header justify-content-start align-self-center">Ancestry Ethnic Origin and Race Counts for District @Model.EdOrgName (@Model.EdOrgId.ToString())</div>
+}
 </div>
-
-<div id="requestedReportContent">
+<div id="requestedReportContent" class="row">
     <table class="table table-sm table-responsive-md table-bordered" id="reportsTable">
         <tr class="table-primary">
+            <th>ID</th>
             <th>District/School</th>
-            <th>Enrollments</th>
+            <th>Cumulative Enrollments</th>
             <th>Demographics Records</th>
             <th>Students with Race Submitted</th>
             <th>Students with AEO Submitted</th>
         </tr>
-        @if (Model.Results.Count > 0)
-        {
-            <tr>
-                <td>@(Model.Results[0].DistrictName)</td>
-                <td>@(Model.Results.Sum(r => r.EnrollmentCount))</td>
-                <td>@(Model.Results.Sum(r => r.DemographicsCount))</td>
-                <td>@(Model.Results.Sum(r => r.RaceGivenCount))</td>
-                <td>@(Model.Results.Sum(r => r.AncestryGivenCount))</td>
-            </tr>
-        }
-        else
-        {
-            <tr>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-            </tr>
-        }
         @foreach (var result in Model.Results)
         {
             <tr>
-                <td>@(result.SchoolName)</td>
+                <td>
+                    @if (Model.IsStateMode)
+                    {
+                        if (result.EdOrgId.HasValue && result.OrgType == OrgType.District)
+                        {
+                            <a href="@Url.Action("DemographicsReport", "Ods", new { isStateMode = false })">@(result.EdOrgId.Value.ToString())</a>
+                        }
+                        else
+                        {
+                            @(result.EdOrgId.HasValue ? result.EdOrgId.Value.ToString() : string.Empty)
+                        }
+                    }
+                    else
+                    {
+                        @(result.EdOrgId.HasValue ? result.EdOrgId.Value.ToString() : string.Empty)
+                    }
+                </td>
+                <td>@(result.LEASchool)</td>
                 <td>@(result.EnrollmentCount)</td>
                 <td>@(result.DemographicsCount)</td>
                 <td>@(result.RaceGivenCount)</td>
@@ -52,6 +65,16 @@
     {    
         <div class="vp-body-header col-8 justify-content-start align-self-center">No records were found.</div>
     }
+</div>
+<div id="notes" class="row">
+    <div class="vp-body-header">Notes:</div>
+</div>
+<div class="row">(1) A student enrolled in multiple schools within the district is only counted once.</div>
+<div class="row">(2) A student is counted as enrolled if the student was enrolled at least once during the school year.</div>
+<div class="row">(3) Students are counted only once per table cell for the particular school/district/state.</div>
+<div class="row tbmargin10">
+    <a href="@Url.Action("Reports")" class="back-link"><i class="fas fa-arrow-alt-circle-left"></i> Back to ODS Reports</a>
+    <a href="#pagetop" class="vp-page-link"><i class="fas fa-arrow-alt-circle-up"></i> Back to Top</a>
 </div>
 
 

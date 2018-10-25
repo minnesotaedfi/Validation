@@ -1,46 +1,63 @@
 ﻿@model OdsMultipleEnrollmentsReportViewModel
 
-<div class="row tbmargin10">
+<div id="pagetop" class="row tbmargin10">
     <div><a href="@Url.Action("Reports")" class="back-link"><i class="fas fa-arrow-alt-circle-left"></i> Back to ODS Reports</a></div>
-</div>
+    <div><a href="#notes" class="vp-page-link"><i class="fas fa-arrow-alt-circle-down"></i> See notes</a></div>
+    @if (Model.IsStateMode)
+    {
+        <div><a href="@Url.Action("MultipleEnrollmentsReport", "Ods", new { isStateMode = false })" class="vp-page-link show-data-loading"><i class="fas fa-chalkboard-teacher"></i> View Single District</a></div>
+    }
+    else
+    {
+        <div><a href="@Url.Action("MultipleEnrollmentsReport", "Ods", new { isStateMode = true })" class="vp-page-link show-data-loading"><i class="fas fa-sitemap"></i> View All Districts</a></div>
+    }
 
-<div class="row">
-    <div class="vp-body-header justify-content-start align-self-center">Students with Multiple Open Enrollments for District @Model.EdOrgName (@Model.EdOrgId.ToString())</div>
 </div>
-
-<div id="requestedReportContent">
+<div class="row tbmargin10">
+    @if (Model.IsStateMode)
+    {
+        <div class="vp-body-header justify-content-start align-self-center">Students with Multiple Open Enrollment for All Minnesota Districts</div>
+    }
+    else
+    {
+        <div class="vp-body-header justify-content-start align-self-center">Students with Multiple Open Enrollments for District @Model.EdOrgName (@Model.EdOrgId.ToString())</div>
+    }
+</div>
+<div id="requestedReportContent" class="row">
     <table class="table table-sm table-responsive-md table-bordered" id="reportsTable">
         <tr class="table-primary">
+            <th>ID</th>
             <th>District/School</th>
-            <th>Enrollments</th>
-            <th>Students enrolled at multiple schools within district</th>
-            <th>Students enrolled outside district</th>
+            <th>Cumulative Enrollments<br />including multiple<br />schools-per-student</th>
+            <th>Cumulative Enrollments</th>
+            <th>Students enrolled<br />at multiple schools<br />within the district</th>
+            <th>Students enrolled<br />at other districts</th>
         </tr>
-        @if (Model.Results.Count > 0)
-        {
-            <tr>
-                <td>@(Model.Results[0].DistrictName)</td>
-                <td>@(Model.Results.Sum(r => r.EnrollmentCount))</td>
-                <td>@(Model.Results.Sum(r => r.MultiWithinDistrictCount))</td>
-                <td>@(Model.Results.Sum(r => r.MultiOutsideDistrictCount))</td>
-            </tr>
-        }
-        else
-        {
-            <tr>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-            </tr>
-        }
         @foreach (var result in Model.Results)
         {
             <tr>
-                <td>@(result.SchoolName)</td>
-                <td>@(result.EnrollmentCount)</td>
-                <td>@(result.MultiWithinDistrictCount)</td>
-                <td>@(result.MultiOutsideDistrictCount)</td>
+                <td>
+                    @if (Model.IsStateMode)
+                    {
+                        if (result.EdOrgId.HasValue && result.OrgType == OrgType.District)
+                        {
+                            <a href="@Url.Action("MultipleEnrollmentsReport", "Ods", new { isStateMode = false })">@(result.EdOrgId.Value.ToString())</a>
+                        }
+                        else
+                        {
+                            @(result.EdOrgId.HasValue ? result.EdOrgId.Value.ToString() : string.Empty)
+                        }
+                    }
+                    else
+                    {
+                        @(result.EdOrgId.HasValue ? result.EdOrgId.Value.ToString() : string.Empty)
+                    }
+                </td>
+                <td>@(result.LEASchool)</td>
+                <td>@(result.TotalEnrollmentCount)</td>
+                <td>@(result.DistinctEnrollmentCount)</td>
+                <td>@(result.EnrolledInOtherSchoolsCount)</td>
+                <td>@(result.EnrolledInOtherDistrictsCount)</td>
             </tr>
         }
     </table>
@@ -49,7 +66,14 @@
         <div class="vp-body-header col-8 justify-content-start align-self-center">No records were found.</div>
     }
 </div>
-
+<div id="notes" class="row">
+    <div class="vp-body-header">Notes:</div>
+</div>
+<div class="row">School values might not sum to District values. This is expected because a particular student may be counted separately at all schools where that student has been enrolled.</div>
+<div class="row tbmargin10">
+    <a href="@Url.Action("Reports")" class="back-link"><i class="fas fa-arrow-alt-circle-left"></i> Back to ODS Reports</a>
+    <a href="#pagetop" class="vp-page-link"><i class="fas fa-arrow-alt-circle-up"></i> Back to Top</a>
+</div>
 
 @section scripts {
     <script>

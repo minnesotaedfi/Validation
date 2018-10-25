@@ -11,5 +11,6 @@ namespace ValidationWeb
         public int EdOrgId { get; set; }
         public string EdOrgName { get; set; }
         public List<MultipleEnrollmentsCountReportQuery> Results { get; set; }
+        public bool IsStateMode { get; set; }
     }
 }

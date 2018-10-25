@@ -14,7 +14,7 @@ namespace ValidationWeb.Services
             _loggingService = loggingService;
         }
 
-        public List<DemographicsCountReportQuery> GetDistrictAncestryRaceCounts(int districtEdOrgId, string fourDigitOdsDbYear)
+        public List<DemographicsCountReportQuery> GetDistrictAncestryRaceCounts(int? districtEdOrgId, string fourDigitOdsDbYear)
         {
             using (var rawOdsContext = new RawOdsDbContext(fourDigitOdsDbYear))
             {
@@ -23,21 +23,28 @@ namespace ValidationWeb.Services
                 {
                     conn.Open();
                     var ancestryQueryCmd = conn.CreateCommand();
-                    ancestryQueryCmd.CommandType = System.Data.CommandType.Text;
+                    ancestryQueryCmd.CommandType = System.Data.CommandType.StoredProcedure;
                     ancestryQueryCmd.CommandText = DemographicsCountReportQuery.DistrictAncestryRaceCountsQuery;
                     ancestryQueryCmd.Parameters.Add(new SqlParameter("@distid", System.Data.SqlDbType.Int));
-                    ancestryQueryCmd.Parameters["@distid"].Value = districtEdOrgId;
+                    ancestryQueryCmd.Parameters["@distid"].Value = districtEdOrgId.HasValue ? (object)districtEdOrgId.Value : (object)DBNull.Value;
                     var reportData = new List<DemographicsCountReportQuery>();
                     using (var reader = ancestryQueryCmd.ExecuteReader())
                     {
                         while (reader.Read())
                         {
+                            int? theEdOrgValue = null;
+                            var edOrgIdObj = reader[DemographicsCountReportQuery.EdOrgIdColumnName];
+                            if (! (edOrgIdObj is DBNull))
+                            {
+                                theEdOrgValue = System.Convert.ToInt32(reader[DemographicsCountReportQuery.EdOrgIdColumnName]);
+                            }
                             reportData.Add(new DemographicsCountReportQuery
                             {
-                                SchoolName = reader[DemographicsCountReportQuery.SchoolNameColumnName].ToString(),
-                                DistrictName = reader[DemographicsCountReportQuery.DistrictNameColumnName].ToString(),
-                                DemographicsCount = System.Convert.ToInt32(reader[DemographicsCountReportQuery.DemographicsCountColumnName]),
-                                EnrollmentCount = System.Convert.ToInt32(reader[DemographicsCountReportQuery.EnrollmentCountColumnName]),
+                                OrgType = (OrgType)(System.Convert.ToInt32(reader[DemographicsCountReportQuery.OrgTypeColumnName])),
+                                EdOrgId = theEdOrgValue,
+                                LEASchool = reader[DemographicsCountReportQuery.LEASchoolColumnName].ToString(),
+                                DemographicsCount = System.Convert.ToInt32(reader[DemographicsCountReportQuery.DistinctEnrollmentCountColumnName]),
+                                EnrollmentCount = System.Convert.ToInt32(reader[DemographicsCountReportQuery.DistinctDemographicsCountColumnName]),
                                 AncestryGivenCount = System.Convert.ToInt32(reader[DemographicsCountReportQuery.AncestryGivenCountColumnName]),
                                 RaceGivenCount = System.Convert.ToInt32(reader[DemographicsCountReportQuery.RaceGivenCountColumnName])
                             });
@@ -72,23 +79,31 @@ namespace ValidationWeb.Services
                 try
                 {
                     conn.Open();
-                    var ancestryQueryCmd = conn.CreateCommand();
-                    ancestryQueryCmd.CommandType = System.Data.CommandType.Text;
-                    ancestryQueryCmd.CommandText = MultipleEnrollmentsCountReportQuery.MultipleEnrollmentsCountQuery;
-                    ancestryQueryCmd.Parameters.Add(new SqlParameter("@distid", System.Data.SqlDbType.Int));
-                    ancestryQueryCmd.Parameters["@distid"].Value = districtEdOrgId;
+                    var multipleEnrolledQueryCmd = conn.CreateCommand();
+                    multipleEnrolledQueryCmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    multipleEnrolledQueryCmd.CommandText = MultipleEnrollmentsCountReportQuery.MultipleEnrollmentsCountQuery;
+                    multipleEnrolledQueryCmd.Parameters.Add(new SqlParameter("@distid", System.Data.SqlDbType.Int));
+                    multipleEnrolledQueryCmd.Parameters["@distid"].Value = districtEdOrgId;
                     var reportData = new List<MultipleEnrollmentsCountReportQuery>();
-                    using (var reader = ancestryQueryCmd.ExecuteReader())
+                    using (var reader = multipleEnrolledQueryCmd.ExecuteReader())
                     {
                         while (reader.Read())
                         {
+                            int? theEdOrgValue = null;
+                            var edOrgIdObj = reader[MultipleEnrollmentsCountReportQuery.EdOrgIdColumnName];
+                            if (!(edOrgIdObj is DBNull))
+                            {
+                                theEdOrgValue = System.Convert.ToInt32(reader[MultipleEnrollmentsCountReportQuery.EdOrgIdColumnName]);
+                            }
                             reportData.Add(new MultipleEnrollmentsCountReportQuery
                             {
-                                SchoolName = reader[MultipleEnrollmentsCountReportQuery.SchoolNameColumnName].ToString(),
-                                DistrictName = reader[MultipleEnrollmentsCountReportQuery.DistrictNameColumnName].ToString(),
-                                EnrollmentCount = System.Convert.ToInt32(reader[MultipleEnrollmentsCountReportQuery.EnrollmentCountColumnName]),
-                                MultiWithinDistrictCount = System.Convert.ToInt32(reader[MultipleEnrollmentsCountReportQuery.MultiWithinDistrictCountColumnName]),
-                                MultiOutsideDistrictCount = System.Convert.ToInt32(reader[MultipleEnrollmentsCountReportQuery.MultiOutsideDistrictCountColumnName])
+                                OrgType = (OrgType)(System.Convert.ToInt32(reader[MultipleEnrollmentsCountReportQuery.OrgTypeColumnName])),
+                                EdOrgId = theEdOrgValue,
+                                LEASchool = reader[MultipleEnrollmentsCountReportQuery.SchoolNameColumnName].ToString(),
+                                TotalEnrollmentCount = System.Convert.ToInt32(reader[MultipleEnrollmentsCountReportQuery.TotalEnrollmentCountColumnName]),
+                                DistinctEnrollmentCount = System.Convert.ToInt32(reader[MultipleEnrollmentsCountReportQuery.DistinctEnrollmentCountColumnName]),
+                                EnrolledInOtherSchoolsCount = System.Convert.ToInt32(reader[MultipleEnrollmentsCountReportQuery.EnrolledInOtherSchoolsCountColumnName]),
+                                EnrolledInOtherDistrictsCount = System.Convert.ToInt32(reader[MultipleEnrollmentsCountReportQuery.EnrolledInOtherDistrictsCountColumnName])
                             });
                         }
                     }
