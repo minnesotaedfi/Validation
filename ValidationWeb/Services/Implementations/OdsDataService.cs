@@ -71,7 +71,7 @@ namespace ValidationWeb.Services
             }
         }
 
-        public List<MultipleEnrollmentsCountReportQuery> GetMultipleEnrollmentCounts(int districtEdOrgId, string fourDigitOdsDbYear)
+        public List<MultipleEnrollmentsCountReportQuery> GetMultipleEnrollmentCounts(int? districtEdOrgId, string fourDigitOdsDbYear)
         {
             using (var rawOdsContext = new RawOdsDbContext(fourDigitOdsDbYear))
             {
@@ -83,7 +83,7 @@ namespace ValidationWeb.Services
                     multipleEnrolledQueryCmd.CommandType = System.Data.CommandType.StoredProcedure;
                     multipleEnrolledQueryCmd.CommandText = MultipleEnrollmentsCountReportQuery.MultipleEnrollmentsCountQuery;
                     multipleEnrolledQueryCmd.Parameters.Add(new SqlParameter("@distid", System.Data.SqlDbType.Int));
-                    multipleEnrolledQueryCmd.Parameters["@distid"].Value = districtEdOrgId;
+                    multipleEnrolledQueryCmd.Parameters["@distid"].Value = districtEdOrgId.HasValue ? (object)districtEdOrgId.Value : (object)DBNull.Value;
                     var reportData = new List<MultipleEnrollmentsCountReportQuery>();
                     using (var reader = multipleEnrolledQueryCmd.ExecuteReader())
                     {
