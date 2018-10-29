@@ -19,7 +19,7 @@ namespace ValidationWeb
 
         static NavController()
         {
-            _version = new Version(FileVersionInfo.GetVersionInfo(Assembly.GetCallingAssembly().Location).ProductVersion).ToString();
+            _version = "1.0.0.0"; // new Version(FileVersionInfo.GetVersionInfo(Assembly.GetCallingAssembly().Location).ProductVersion).ToString();
         }
 
         public NavController(

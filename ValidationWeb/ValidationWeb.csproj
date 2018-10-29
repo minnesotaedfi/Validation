@@ -26,6 +26,7 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <TypeScriptToolsVersion>2.3</TypeScriptToolsVersion>
+    <DeployIisAppPath>Default Web Site/ValidationPortal</DeployIisAppPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -41,11 +42,11 @@
         <ObjectGroup Name="ValidationPortalDbContext-Deployment" Order="1">
           <Destination Path="Data Source=MN-DEV.doubleline.us%3bInitial Catalog=ValidationPortal%3bIntegrated Security=True%3bApplication Name=EntityFramework" />
           <Object Type="DbFullSql">
-            <PreSource Path="Data Source=localhost%3bInitial Catalog=ValidationPortal%3bIntegrated Security=True%3bApplication Name=EntityFramework" ScriptSchema="True" ScriptData="False" CopyAllFullTextCatalogs="False" DriDefaults="True" />
-            <Source Path="obj\Debug\AutoScripts\ValidationPortalDbContext-Deployment_SchemaOnly.sql" Transacted="True" />
+            <PreSource Path="Data Source=localhost%3bInitial Catalog=ValidationPortal%3bIntegrated Security=True%3bApplication Name=EntityFramework" ScriptSchema="False" ScriptData="True" CopyAllFullTextCatalogs="False" DriDefaults="True" />
+            <Source Path="obj\Debug\AutoScripts\ValidationPortalDbContext-Deployment_DataOnly.sql" Transacted="True" />
           </Object>
-          <Object Type="DbFullSql">
-            <Source Path="Database\SQLScriptsForDeployment\CreateEmptyRulesSchema.sql" Transacted="False" />
+          <Object Type="DbFullSql" xmlns="">
+            <Source Path="Deployment\SQLScripts\CreateEmptyRulesSchema.sql" Transacted="False" />
           </Object>
         </ObjectGroup>
         <ObjectGroup Name="SingleSignOnDatabase-Deployment" Order="2">
@@ -57,6 +58,7 @@
         </ObjectGroup>
       </Objects>
     </PublishDatabaseSettings>
+    <ExcludeGeneratedDebugSymbol>false</ExcludeGeneratedDebugSymbol>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -65,6 +67,26 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PublishDatabaseSettings>
+      <Objects>
+        <ObjectGroup Name="ValidationPortalDbContext-Deployment" Order="1" xmlns="">
+          <Destination Path="Data Source=mn-dev.doubleline.us%3bInitial Catalog=ValidationPortal%3bIntegrated Security=True%3bApplication Name=EntityFramework" />
+          <Object Type="DbFullSql" Enabled="False">
+            <PreSource Path="Data Source=localhost%3bInitial Catalog=ValidationPortal%3bIntegrated Security=True%3bApplication Name=EntityFramework" ScriptSchema="True" ScriptData="False" CopyAllFullTextCatalogs="False" DriDefaults="True" />
+            <Source Path="obj\Release\AutoScripts\ValidationPortalDbContext-Deployment_SchemaOnly.sql" Transacted="True" />
+          </Object>
+        </ObjectGroup>
+        <ObjectGroup Name="SingleSignOnDatabase-Deployment" Order="2" xmlns="">
+          <Destination Path="Data Source=mn-dev.doubleline.us%3bInitial Catalog=ValidationPortalSsoMock%3bIntegrated Security=True" />
+          <Object Type="DbFullSql">
+            <PreSource Path="Data Source=localhost%3bInitial Catalog=ValidationPortalSsoMock%3bIntegrated Security=True" ScriptSchema="True" ScriptData="True" CopyAllFullTextCatalogs="False" DriDefaults="True" />
+            <Source Path="obj\Release\AutoScripts\SingleSignOnDatabase-Deployment_SchemaAndData.sql" Transacted="True" />
+          </Object>
+        </ObjectGroup>
+      </Objects>
+    </PublishDatabaseSettings>
+    <FilesToIncludeForPublish>AllFilesInTheProject</FilesToIncludeForPublish>
+    <IncludeIisSettings>false</IncludeIisSettings>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Antlr3.Runtime, Version=3.4.1.9004, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
@@ -185,9 +207,7 @@
     <Content Include="Content\Scripts\jquery-3.3.1.min.js" />
     <Content Include="Content\Scripts\jquery-ui.js" />
     <Content Include="Content\Scripts\jquery-ui.min.js" />
-    <Content Include="Content\Scripts\jquery.tabletoCSV.js" />
     <Content Include="Content\Scripts\moment.js" />
-    <Content Include="Content\Scripts\table2csv.js" />
     <Content Include="Content\Scripts\tabulator.js" />
     <Content Include="Content\Scripts\tabulator.min.js" />
     <Content Include="Content\Scripts\validationportal.js" />
@@ -206,8 +226,11 @@
     <Content Include="Content\Styles\jquery-ui.theme.min.css" />
     <Content Include="Content\Styles\semantic-ui\tabulator_semantic-ui.css" />
     <Content Include="Content\Styles\semantic-ui\tabulator_semantic-ui.min.css" />
-    <Content Include="Database\SQLScriptsForDeployment\CreateEmptyRulesSchema.sql" />
+    <Content Include="Deployment\SQLScripts\CreateEmptyRulesSchema.sql" />
     <Content Include="packages.config" />
+    <Content Include="parameters.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Views\Validation\Report.cshtml" />
     <Content Include="Views\Shared\_LittleFooter.cshtml" />
     <Content Include="Views\Validation\Submissions.cshtml" />
@@ -219,7 +242,6 @@
     <Content Include="Views\Admin\Index.cshtml" />
     <Content Include="Views\Admin\Partials\ErrorThresholds.cshtml" />
     <Content Include="Views\Admin\Partials\AddSchoolYearModal.cshtml" />
-    <Content Include="Views\Admin\Partials\RemoveSchoolYearModal.cshtml" />
     <Content Include="Views\Admin\Partials\SubmissionCycleList.cshtml" />
     <Content Include="Views\Admin\Partials\AddSubmissionCycleModal.cshtml" />
     <Content Include="Views\Admin\Partials\SubmissionCycles.cshtml" />
@@ -235,6 +257,8 @@
     <Content Include="Views\Ods\ResidentsEnrolledElsewhereReport.cshtml" />
     <Content Include="Views\Ods\IdentityIssuesReport.cshtml" />
     <Content Include="Views\Ods\Level1IssuesReport.cshtml" />
+    <Content Include="Deployment\DeployToMnDev.proj" />
+    <Content Include="Deployment\DeployToQA.proj" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

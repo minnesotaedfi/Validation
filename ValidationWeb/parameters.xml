@@ -1,0 +1,109 @@
+﻿<!-- 
+    This file specifies deployment variables and their values for a particulr environment. 
+    Use XPATH to specify the configuration file path and parameter to change.
+    In addition to this PARAMETERS.xml file, you need a SetParameters file 
+    that depends on the destination environment you are deploying to, 
+    to pass to MSDeploy.exe at deployment time. 
+    
+    Inside the *.csproj MSBuild file, <project> element, change Default Targets to "Build;Package".
+    When the package target gets run at build time, the SetParameters file will be created for you.
+    Make one SetParameters time per destination environment, and pass the path to the appropriate
+    SetParameters file to MSDeploy.exe when deploying the package. 
+    
+    You could also deploy in a more manual way by running the command line found in the *.deploy.cmd
+    file that was also generated at build time - it calls MSBuild, add the SetParameters file as a
+    command line option.
+-->
+<!-- App Settings -->
+<parameters>
+  <parameter
+      name="IIS Web Application Name"
+      description="IIS Web Application Name"
+      defaultValue="IIS Web Application Name">
+    <parameterEntry
+          kind="XmlFile"
+          scope="Web.config"
+          match="/configuration/appSettings/add[@key='IIS Web Application Name']/@value"
+         />
+  </parameter>
+  <parameter
+      name="AuthenticationServerRedirectUrl"
+      description="URL to sign in with the Single Sign On autorization server. Redirect users here when not authenticated."
+      defaultValue="http://www.wearedoubleline.com/">
+    <parameterEntry
+          kind="XmlFile"
+          scope="Web.config"
+          match="/configuration/appSettings/add[@key='AuthenticationServerRedirectUrl']/@value"
+         />
+  </parameter>
+  <parameter
+      name="AuthorizationStoredProcedureName"
+      description="Name of the stored procedure to call in the Single Sign On database to retrieve which resources the user is authorized to access."
+      defaultValue="apps.GetAuthorizations">
+    <parameterEntry
+          kind="XmlFile"
+          scope="Web.config"
+          match="/configuration/appSettings/add[@key='AuthorizationStoredProcedureName']/@value"
+         />
+  </parameter>
+  <parameter
+      name="SsoAppId"
+      description="How the Single Sign On database refers to this web application.."
+      defaultValue="VAL">
+    <parameterEntry
+          kind="XmlFile"
+          scope="Web.config"
+          match="/configuration/appSettings/add[@key='SsoAppId']/@value"
+         />
+  </parameter>
+  <parameter
+      name="RulesFileFolder"
+      description="Full path to the directory containing the *.rules files (required for the Rules Engine)."
+      defaultValue="C:\inetput\wwwroot\ValidationPortal\Content\Rules">
+    <parameterEntry
+          kind="XmlFile"
+          scope="Web.config"
+          match="/configuration/appSettings/add[@key='RulesFileFolder']/@value"
+         />
+  </parameter>
+  <parameter
+      name="RuleEngineResultsSchema"
+      description="Database schema inside the ODS database that stores the Rules engine output."
+      defaultValue="rules">
+    <parameterEntry
+          kind="XmlFile"
+          scope="Web.config"
+          match="/configuration/appSettings/add[@key='RuleEngineResultsSchema']/@value"
+         />
+  </parameter>
+  <parameter
+      name="UseFakeViewModelData"
+      description="If true, dependency injection containers will register Test or Mock version of services for simple unit testing."
+      defaultValue="false">
+    <parameterEntry
+          kind="XmlFile"
+          scope="Web.config"
+          match="/configuration/appSettings/add[@key='UseFakeViewModelData']/@value"
+         />
+  </parameter>
+  <parameter
+      name="UseSimulatedSSO"
+      description="If true, will override all requests, passing in the name of the simulated SSO User."
+      defaultValue="false">
+    <parameterEntry
+          kind="XmlFile"
+          scope="Web.config"
+          match="/configuration/appSettings/add[@key='UseSimulatedSSO']/@value"
+         />
+  </parameter>
+  <parameter
+      name="SimulatedUserName"
+      description="If UseSimulatedSSO is true, then chooses the user name to simulate for all requests."
+      defaultValue="jane">
+    <parameterEntry
+          kind="XmlFile"
+          scope="Web.config"
+          match="/configuration/appSettings/add[@key='SimulatedUserName']/@value"
+         />
+  </parameter>
+</parameters>

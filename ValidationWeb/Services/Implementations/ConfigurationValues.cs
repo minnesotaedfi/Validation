@@ -13,6 +13,8 @@ namespace ValidationWeb.Services
         private static string _authorizationStoredProcedureName;
         private static string _singleSignOnDatabaseConnectionString;
         private static bool _useFakeViewModelData;
+        private static bool _isSsoSimulated;
+        private static string _ssoSimulatedUserName;
 
         static AppSettingsFileConfigurationValues()
         {
@@ -21,6 +23,8 @@ namespace ValidationWeb.Services
             _authorizationStoredProcedureName = ConfigurationManager.AppSettings["AuthorizationStoredProcedureName"]?.ToString();
             _singleSignOnDatabaseConnectionString = ConfigurationManager.ConnectionStrings["SingleSignOnDatabase"]?.ConnectionString;
             _useFakeViewModelData = ConfigurationManager.AppSettings["UseFakeViewModelData"] == "true";
+            _isSsoSimulated = ConfigurationManager.AppSettings["UseSimulatedSSO"] == "true";
+            _ssoSimulatedUserName = ConfigurationManager.AppSettings["SimulatedUserName"]?.ToString();
         }
 
         public string AppId
@@ -64,6 +68,21 @@ namespace ValidationWeb.Services
             get
             {
                 return _useFakeViewModelData;
+            }
+        }
+
+        public bool UseSimulatedSSO
+        {
+            get
+            {
+                return _isSsoSimulated;
+            }
+        }
+        public string SimulatedUserName
+        {
+            get
+            {
+                return _ssoSimulatedUserName;
             }
         }
 

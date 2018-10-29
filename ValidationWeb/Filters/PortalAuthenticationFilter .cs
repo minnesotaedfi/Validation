@@ -134,10 +134,11 @@ namespace ValidationWeb
 
             #region Since there wasn't a session, we will authenticate. Make sure the HTTP header placed by the Login Page is present. 
             var authHeaderValue = request.Headers["Authorization"];
-#if DEBUG
-            // TODO: Remove this line
-            authHeaderValue = "jane";
-#endif
+            if (_config.UseSimulatedSSO)
+            {
+                authHeaderValue = _config.SimulatedUserName;
+            }
+
             if (string.IsNullOrWhiteSpace(authHeaderValue))
             {
                 // Returning without an HttpContext.User being set is going to cause an 401 UNAUTHORIZED HTTP response to occur in the OnAuthenticationChallenge handler below.
