@@ -227,6 +227,7 @@
     <Content Include="Content\Styles\semantic-ui\tabulator_semantic-ui.css" />
     <Content Include="Content\Styles\semantic-ui\tabulator_semantic-ui.min.css" />
     <Content Include="Deployment\SQLScripts\CreateEmptyRulesSchema.sql" />
+    <Content Include="Deployment\SQLScripts\ValidationPortalOdsReportSprocs.sql" />
     <Content Include="packages.config" />
     <Content Include="parameters.xml">
       <SubType>Designer</SubType>

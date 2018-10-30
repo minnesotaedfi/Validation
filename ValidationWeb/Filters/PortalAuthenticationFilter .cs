@@ -68,7 +68,7 @@ namespace ValidationWeb
             var httpContext = filterContext.RequestContext.HttpContext;
             var session = httpContext.Session;
             var request = httpContext.Request;
-            // We will try to set the user's Focused items to the same one's in their previous, expired session, if it is feasible. favorite new session variables to 
+            // We will try to set the user's Focused items to the same one's in their previous, expired session, if it is feasible. 
             int previousSessionFocusedEdOrgId = 0;
             int? previousSessionFocusedSchoolYearId = null;
 
@@ -86,7 +86,8 @@ namespace ValidationWeb
             // The session has been configured to use SQL Server state - so load balancers/web farms are fine.
             if (!session.IsNewSession && session[SessionKey] != null)
             {
-                // If the Microsoft Session (configured in Web.Config) has timed out - then IsNewSession would have returned true, and we wouldn't get here.
+                // If the Microsoft Session (configured in Web.Config) has timed out - then IsNewSession would have returned true, 
+                // and we wouldn't get here.
                 // The cached session is checked against the timeout a bit further down, once the code has retrieved the cached Session
                 // Recall the user's info from the previously stored session state.
                 var userIdentity = session[SessionIdentityKey] as ValidationPortalIdentity;
@@ -94,6 +95,7 @@ namespace ValidationWeb
                 {
                     // IMPORTANT - tell ASP.NET we know who the user is - prevents from redirecting the user to login page in a subsequent handler.
                     httpContext.User = new ValidationPortalPrincipal(userIdentity);
+                    _loggingService.LogInfoMessage($"MVC request authenticated for user {userIdentity.FullName}.");
                     using (var dbContext = new ValidationPortalDbContext())
                     {
                         // Get the user's session from the database.
@@ -108,15 +110,18 @@ namespace ValidationWeb
                                 // Extend the current session.
                                 currentSession.ExpiresUtc = currentSession.ExpiresUtc.AddMinutes(30);
                                 dbContext.SaveChanges();
+                                _loggingService.LogInfoMessage($"Existing session extended for user {userIdentity.FullName}.");
                                 // Fill in the user's Identity info on the session instance, which is not persisted in the database.
                                 currentSession.UserIdentity = userIdentity;
                                 // Make the session accessible throughout the request.
                                 httpContext.Items[SessionItemName] = currentSession;
+                                // No need to create a new session - so exit the method now.
                                 return;
                             }
                             else
                             {
                                 // The session has expired from our application's constraint.
+                                _loggingService.LogInfoMessage($"Expired session for user {userIdentity.FullName} removed.");
                                 dbContext.AppUserSessions.Remove(currentSession);
                                 dbContext.SaveChanges();
                                 // And some clean-up ...
@@ -137,6 +142,11 @@ namespace ValidationWeb
             if (_config.UseSimulatedSSO)
             {
                 authHeaderValue = _config.SimulatedUserName;
+                _loggingService.LogInfoMessage($"Test mock for Single Sign On is activated - simulated user is {authHeaderValue}");
+            }
+            else
+            {
+                _loggingService.LogInfoMessage($"Single Sign On user found in header - simulated user is {authHeaderValue ?? "null"}");
             }
 
             if (string.IsNullOrWhiteSpace(authHeaderValue))
@@ -146,63 +156,86 @@ namespace ValidationWeb
             }
             #endregion Since there wasn't a session, we will authenticate. Make sure the HTTP header placed by the Login Page is present. 
 
-            #region If no session, then Retrieve user access information from single sign on database.
+            #region If no session, then retrieve user access information from single sign on database.
+            _loggingService.LogInfoMessage($"New session for {authHeaderValue}, retrieving authorizations remotely.");
             var ssoUserAuthorizations = new List<SsoUserAuthorization>();
-            using (var ssoDatabaseConnection = new SqlConnection(_singleSignOnDatabaseConnectionString))
+            try
             {
-                var ssoCommand = new SqlCommand(_authorizationStoredProcedureName, ssoDatabaseConnection);
-                ssoCommand.CommandType = CommandType.StoredProcedure;
-                var userIdInput = ssoCommand.Parameters.Add("@UserId", SqlDbType.VarChar);
-                userIdInput.Value = authHeaderValue;
-                ssoDatabaseConnection.Open();
-                var ssoReader = ssoCommand.ExecuteReader();
-                while (ssoReader.Read())
+                using (var ssoDatabaseConnection = new SqlConnection(_singleSignOnDatabaseConnectionString))
                 {
-                    int districtNumber, districtType;
-                    var hasDistrictNumber = int.TryParse(ssoReader["DistrictNumber"]?.ToString(), out districtNumber);
-                    var hasDistrictType = int.TryParse(ssoReader["DistrictType"]?.ToString(), out districtType);
-                    ssoUserAuthorizations.Add(
-                        new SsoUserAuthorization
+                    var ssoCommand = new SqlCommand(_authorizationStoredProcedureName, ssoDatabaseConnection);
+                    ssoCommand.CommandType = CommandType.StoredProcedure;
+                    var userIdInput = ssoCommand.Parameters.Add("@UserId", SqlDbType.VarChar);
+                    userIdInput.Value = authHeaderValue;
+                    ssoDatabaseConnection.Open();
+                    var ssoReader = ssoCommand.ExecuteReader();
+                    while (ssoReader.Read())
+                    {
+                        int districtNumber, districtType;
+                        var hasDistrictNumber = int.TryParse(ssoReader["DistrictNumber"]?.ToString(), out districtNumber);
+                        var hasDistrictType = int.TryParse(ssoReader["DistrictType"]?.ToString(), out districtType);
+                        var theAppName = ssoReader["AppName"]?.ToString();
+                        if (string.Compare(theAppName, _config.AppId, true) == 0)
                         {
-                            AppId = ssoReader["AppId"]?.ToString(),
-                            AppName = ssoReader["AppName"]?.ToString(),
-                            DistrictNumber = hasDistrictNumber ? (int?)districtNumber : null,
-                            DistrictType = hasDistrictType ? (int?)districtType : null,
-                            Email = ssoReader["Email"]?.ToString(),
-                            FirstName = ssoReader["FirstName"]?.ToString(),
-                            MiddleName = ssoReader["MiddleName"]?.ToString(),
-                            LastName = ssoReader["LastName"]?.ToString(),
-                            FullName = ssoReader["FullName"]?.ToString(),
-                            UserId = ssoReader["UserId"]?.ToString(),
-                            StateOrganizationId = ssoReader["StateOrganizationId"]?.ToString(),
-                            FormattedOrganizationId = ssoReader["FormattedOrganizationId"]?.ToString(),
-                            OrganizationName = ssoReader["OrganizationName"]?.ToString(),
-                            RoleDescription = ssoReader["RoleDescription"]?.ToString(),
-                            RoleId = ssoReader["RoleId"]?.ToString()
-                        });
+                        ssoUserAuthorizations.Add(
+                            new SsoUserAuthorization
+                            {
+                                AppId = ssoReader["AppId"]?.ToString(),
+                                AppName = ssoReader["AppName"]?.ToString(),
+                                DistrictNumber = hasDistrictNumber ? (int?)districtNumber : null,
+                                DistrictType = hasDistrictType ? (int?)districtType : null,
+                                Email = ssoReader["Email"]?.ToString(),
+                                FirstName = ssoReader["FirstName"]?.ToString(),
+                                MiddleName = ssoReader["MiddleName"]?.ToString(),
+                                LastName = ssoReader["LastName"]?.ToString(),
+                                FullName = ssoReader["FullName"]?.ToString(),
+                                UserId = ssoReader["UserId"]?.ToString(),
+                                StateOrganizationId = ssoReader["StateOrganizationId"]?.ToString(),
+                                FormattedOrganizationId = ssoReader["FormattedOrganizationId"]?.ToString(),
+                                OrganizationName = ssoReader["OrganizationName"]?.ToString(),
+                                RoleDescription = ssoReader["RoleDescription"]?.ToString(),
+                                RoleId = ssoReader["RoleId"]?.ToString()
+                            });
+                        }
+                    }
+                    ssoReader.Close();
+                    ssoDatabaseConnection.Close();
                 }
-                ssoReader.Close();
-                ssoDatabaseConnection.Close();
+            }
+            catch(Exception ex)
+            {
+                _loggingService.LogErrorMessage($"Error occurred when retrieving authorization for user {authHeaderValue}. {ex.ChainInnerExceptionMessages()}");
             }
             #endregion Retrieve user access from single sign on database
 
             #region Extract data about the user that is common to all SSO Authorization records.
+            _loggingService.LogDebugMessage($"Extracting authorization information from remote authorization response for {authHeaderValue}.");
             // Filter on App ID
             ssoUserAuthorizations.RemoveAll(ss => string.Compare(ss.AppId, _appId, true) != 0);
-            // Role - grab the first one if there are more than one.
+            // Role - grab the first one if there are more than one. This is okay because above we filter records 
+            //        to the Validation Portal application only.
             var theRole = ssoUserAuthorizations.FirstOrDefault(ss => ss.RoleId != null).RoleId;
+            _loggingService.LogDebugMessage($"User: {authHeaderValue}, Role: {theRole}.");
             var appRole = AppRole.CreateAppRole(theRole);
             // Role Description
             var theRoleDescription = ssoUserAuthorizations.FirstOrDefault(ss => ss.RoleDescription != null).RoleDescription;
+            _loggingService.LogDebugMessage($"User: {authHeaderValue}, Role Description: {theRoleDescription}.");
             // UserId
             var theUserId = ssoUserAuthorizations.FirstOrDefault(ss => ss.UserId != null).UserId;
+            _loggingService.LogDebugMessage($"User: {authHeaderValue}, UserId: {theUserId}.");
             // Names and Addresses
             var firstName = ssoUserAuthorizations.FirstOrDefault(ss => ss.FirstName != null).FirstName;
+            _loggingService.LogDebugMessage($"User: {authHeaderValue}, First Name: {firstName}.");
             var middleName = ssoUserAuthorizations.FirstOrDefault(ss => ss.MiddleName != null).MiddleName;
+            _loggingService.LogDebugMessage($"User: {authHeaderValue}, Middle Name: {middleName}.");
             var lastName = ssoUserAuthorizations.FirstOrDefault(ss => ss.LastName != null).LastName;
+            _loggingService.LogDebugMessage($"User: {authHeaderValue}, Last Name: {lastName}.");
             var fullName = ssoUserAuthorizations.FirstOrDefault(ss => ss.FullName != null).FullName;
+            _loggingService.LogDebugMessage($"User: {authHeaderValue}, Full Name: {fullName}.");
             var theEmail = ssoUserAuthorizations.FirstOrDefault(ss => ss.Email != null).Email;
+            _loggingService.LogDebugMessage($"User: {authHeaderValue}, Email: {theEmail}.");
             var appName = ssoUserAuthorizations.FirstOrDefault(ss => ss.AppName != null).AppName;
+            _loggingService.LogDebugMessage($"User: {authHeaderValue}, Application Name: {appName}.");
             #endregion Extract data about the user that is common to all SSO Authorization records.
 
             var authorizedEdOrgs = new List<EdOrg>();
@@ -211,11 +244,21 @@ namespace ValidationWeb
                 int schoolYearId = 0;
                 try
                 {
+                    _loggingService.LogDebugMessage($"User: {authHeaderValue}, Ed Organization ID: {ssoUserOrg?.StateOrganizationId ?? "null"}.");
                     int authorizedEdOrgId;
                     if (int.TryParse(ssoUserOrg.StateOrganizationId, out authorizedEdOrgId))
                     {
+                        // A school year is needed to identify which Ed Fi ODS database to pull organizational information from.
                         schoolYearId = previousSessionFocusedSchoolYearId.HasValue ? previousSessionFocusedSchoolYearId.Value : validYears.First().Id;
-                        authorizedEdOrgs.Add(_edOrgService.GetEdOrgById(authorizedEdOrgId, schoolYearId));
+                        _loggingService.LogDebugMessage($"User: {authHeaderValue}, Taking informationation from the ODS associated with school year ID number {schoolYearId.ToString()}.");
+                        try
+                        {
+                            authorizedEdOrgs.Add(_edOrgService.GetEdOrgById(authorizedEdOrgId, schoolYearId));
+                        }
+                        catch(Exception ex)
+                        {
+                            _loggingService.LogErrorMessage($"When retrieving the information for Organization ID {authorizedEdOrgId} from the ODS associated with school year ID {schoolYearId} for user {authHeaderValue}, an error occurred: {ex.ChainInnerExceptionMessages()}");
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -227,6 +270,7 @@ namespace ValidationWeb
             if ((appRole == AppRole.Unauthorized) || (appRole == null))
             {
                 // Do not set the HttpContext User property, so the user will be redirected to Login Page
+                _loggingService.LogInfoMessage($"The user {authHeaderValue} wasn't authorized - no SSO authorizations applied to the application {appName} with a valid role and organization combination.");
                 return;
             }
 
@@ -244,6 +288,7 @@ namespace ValidationWeb
                 UserId = theUserId
             };
             filterContext.HttpContext.User = new ValidationPortalPrincipal(newUserIdentity);
+            _loggingService.LogInfoMessage($"Successfully retrieved at least one organization authorization for user {authHeaderValue}; now creating a new session.");
 
             #region Create and add a new user session to the database.
             var firstEdOrg = newUserIdentity.AuthorizedEdOrgs.FirstOrDefault();
@@ -262,17 +307,20 @@ namespace ValidationWeb
             // Let ASP.NET save these objects in the session state for the next request.
             session[SessionKey] = newCurrentSession.Id;
             session[SessionIdentityKey] = newUserIdentity;
+            _loggingService.LogInfoMessage($"User {authHeaderValue}; session {newCurrentSession.Id} created.");
             using (var dbContext = new ValidationPortalDbContext())
             {
                 dbContext.AppUserSessions.Add(newCurrentSession);
                 dbContext.SaveChanges();
             }
+            _loggingService.LogInfoMessage($"User {authHeaderValue}; session {newCurrentSession.Id} saved.");
             #endregion Create and add a new user session to the database.
         }
 
         public void OnAuthenticationChallenge(AuthenticationChallengeContext filterContext)
         {
             var user = filterContext.HttpContext.User;
+            _loggingService.LogInfoMessage($"User unauthenticated. Redirecting to login page {_config.AuthenticationServerRedirectUrl ?? "null"} and return URL {filterContext.HttpContext.Request.Url.ToString()}.");
             if (user == null || !user.Identity.IsAuthenticated)
             {
                 var redirectUrl = $"{_config.AuthenticationServerRedirectUrl}?returnUrl={System.Net.WebUtility.UrlEncode(filterContext.HttpContext.Request.Url.ToString())}";

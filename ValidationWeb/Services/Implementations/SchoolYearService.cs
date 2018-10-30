@@ -81,7 +81,6 @@ namespace ValidationWeb.Services
         public SchoolYear GetSchoolYearById(int id)
         {
             return _validationPortalDataContext.SchoolYears.FirstOrDefault(schoolYear => schoolYear.Id == id);
-
         }
     }
 }

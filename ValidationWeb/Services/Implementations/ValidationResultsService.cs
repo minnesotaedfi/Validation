@@ -11,30 +11,42 @@ namespace ValidationWeb.Services
         private ErrorSeverityLookup anError = ValidationPortalDbMigrationConfiguration.ErrorSeverityLookups.First(sev => sev.CodeValue == ErrorSeverity.Error.ToString());
         private ErrorSeverityLookup aWarning = ValidationPortalDbMigrationConfiguration.ErrorSeverityLookups.First(sev => sev.CodeValue == ErrorSeverity.Warning.ToString());
         protected readonly ValidationPortalDbContext _portalDbContext;
+        protected readonly ILoggingService _loggingService;
         const int MaxPageSize = 10000;
         const int AutocompleteSuggestionCount = 8;
 
-        public ValidationResultsService(ValidationPortalDbContext portalDbContext)
+        public ValidationResultsService(
+            ValidationPortalDbContext portalDbContext,
+            ILoggingService loggingService)
         {
             _portalDbContext = portalDbContext;
+            _loggingService = loggingService;
+#if DEBUG
+            // Log the SQL in DEBUG mode
+            _portalDbContext.Database.Log = s => _loggingService.LogDebugMessage(s);
+#endif
         }
 
         public ValidationReportDetails GetValidationReportDetails(int validationReportId)
         {
+            _loggingService.LogDebugMessage($"Retrieving Validation Report Details for report with ID number: {validationReportId.ToString()}");
             var reportDetails = _portalDbContext.ValidationReportDetails.Include(vrds => vrds.ValidationReportSummary).FirstOrDefault(vrd => vrd.ValidationReportSummaryId == validationReportId);
             reportDetails.CompletedWhen = reportDetails.CompletedWhen.HasValue ? reportDetails.CompletedWhen.Value.ToLocalTime() : reportDetails.CompletedWhen;
             reportDetails.ValidationReportSummary.RequestedWhen = reportDetails.ValidationReportSummary.RequestedWhen.ToLocalTime();
+            _loggingService.LogDebugMessage($"Successfully retrieved Validation Report Details for report with ID number: {validationReportId.ToString()}");
             return reportDetails;
         }
 
         public List<ValidationReportSummary> GetValidationReportSummaries(int edOrgId)
         {
+            _loggingService.LogDebugMessage($"Retrieving a list of Validation Reportsfor the Ed Org ID number: {edOrgId.ToString()}");
             var reportSummaryList = _portalDbContext.ValidationReportSummaries.Where(vrs => vrs.EdOrgId == edOrgId).ToList();
             reportSummaryList.ForEach(rsum => 
             {
                 rsum.CompletedWhen = rsum.CompletedWhen?.ToLocalTime();
                 rsum.RequestedWhen = rsum.RequestedWhen.ToLocalTime();
             });
+            _loggingService.LogDebugMessage($"Successfully retrieved a list of Validation Reportsfor the Ed Org ID number: {edOrgId.ToString()}");
             return reportSummaryList;
         }
 
@@ -83,7 +95,7 @@ namespace ValidationWeb.Services
                 .Include(ves0 => ves0.ErrorEnrollmentDetails)
                 .Where(er0 => er0.ValidationReportDetailsId == filterSpecification.reportDetailsId);
 
-            #region Filter on search texts
+#region Filter on search texts
             var columnNames = filterSpecification.filterColumns ?? new string[0];
             var searchTexts = filterSpecification.filterTexts ?? new string[0];
             for (int colIndex = 0; colIndex < columnNames.Length; colIndex++)
@@ -133,9 +145,9 @@ namespace ValidationWeb.Services
                     }
                 }
             }
-            #endregion Filter on search texts
+#endregion Filter on search texts
 
-            #region Sort results
+#region Sort results
             var sortColumnNames = filterSpecification.sortColumns ?? new string[0];
             var sortDirections = filterSpecification.sortDirections ?? new string[0];
             var isDescending = false;
@@ -250,38 +262,37 @@ namespace ValidationWeb.Services
             {
                 filteredErrorQuery = (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenBy(er2 => er2.Id);
             }
-            #endregion Sort results
+#endregion Sort results
 
-            #region Count results
+#region Count results
             var result = new FilteredValidationErrors { TotalFilteredErrorCount = filteredErrorQuery.Count() };
-            #endregion Count results
+#endregion Count results
 
-            #region Page results & Sanity checks
+#region Page results & Sanity checks
 
-            #region Page Size
+#region Page Size
             if (filterSpecification.pageSize <= 0 || filterSpecification.pageSize > MaxPageSize) filterSpecification.pageSize = MaxPageSize;
             result.PageSize = filterSpecification.pageSize;
-            #endregion Page Size
+#endregion Page Size
 
-            #region Record Offset
+#region Record Offset
             // Record offset can be no farther than the last page, and no lower than 0.
             result.RecordOffset = Math.Max(filterSpecification.pageStartingOffset, 0);
             // maxRecordOffset is the start of the last page.
             var maxRecordOffset = ((result.TotalFilteredErrorCount - 1) / filterSpecification.pageSize) * filterSpecification.pageSize;
             result.RecordOffset = Math.Max(filterSpecification.pageStartingOffset, 0);
             result.RecordOffset = Math.Min(maxRecordOffset, result.RecordOffset);
-            #endregion Record Offset
+#endregion Record Offset
 
-            #region Page Number
+#region Page Number
             var recordsRemaining = result.TotalFilteredErrorCount - result.RecordOffset;
             result.PageNumber = (result.RecordOffset / result.PageSize) + 1;
-            #endregion Page Number
+#endregion Page Number
 
             result.TotalPagesCount = (result.TotalFilteredErrorCount / result.PageSize) + ((result.TotalFilteredErrorCount % result.PageSize == 0) ? 0 : 1);
             var maxToReturn = Math.Max(Math.Min(recordsRemaining, filterSpecification.pageSize), 0);
             result.FilteredErrorSummariesPage = filteredErrorQuery.Skip(result.RecordOffset).Take(maxToReturn).ToList();
-
-            #endregion Page results
+#endregion Page results
 
             return result;
         }

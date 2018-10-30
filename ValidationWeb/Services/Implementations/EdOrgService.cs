@@ -119,28 +119,35 @@ namespace ValidationWeb.Services
         private List<EdOrg> ReadEdOrgs(DbCommand edOrgQueryCmd, int schoolYearId)
         {
             var result = new List<EdOrg>();
-            using (var reader = edOrgQueryCmd.ExecuteReader())
+            try
             {
-                while (reader.Read())
+                using (var reader = edOrgQueryCmd.ExecuteReader())
                 {
-                    var theId = int.Parse(reader[EdOrgQuery.IdColumnName].ToString());
-                    var theStateAgency = reader[EdOrgQuery.StateOrganizationIdColumnName] as int?;
-                    var isStateAgency = (theStateAgency != null) && (theId == theStateAgency); 
-                    result.Add(new EdOrg
+                    while (reader.Read())
                     {
-                        Id = theId,
-                        OrganizationName = reader[EdOrgQuery.OrganizationNameColumnName].ToString(),
-                        OrganizationShortName = reader[EdOrgQuery.OrganizationShortNameColumnName].ToString(),
-                        StateOrganizationId = theStateAgency,
-                        ParentId = reader[EdOrgQuery.ParentIdColumnName] as int?,
-                        StateLevelOrganizationId = reader[EdOrgQuery.StateLevelOrganizationIdColumnName] as int?,
-                        SchoolYearId = schoolYearId,
-                        IsStateLevelEdOrg = isStateAgency,
-                        OrgTypeCodeValue = reader[EdOrgQuery.OrganizationShortNameColumnName].ToString(),
-                        OrgTypeShortDescription = reader[EdOrgQuery.OrganizationShortNameColumnName].ToString(),
-                        EdOrgTypeLookupId = isStateAgency ? (int)EdOrgType.State : (int) EdOrgType.District
-                    });
+                        var theId = int.Parse(reader[EdOrgQuery.IdColumnName].ToString());
+                        var theStateAgency = reader[EdOrgQuery.StateOrganizationIdColumnName] as int?;
+                        var isStateAgency = (theStateAgency != null) && (theId == theStateAgency);
+                        result.Add(new EdOrg
+                        {
+                            Id = theId,
+                            OrganizationName = reader[EdOrgQuery.OrganizationNameColumnName].ToString(),
+                            OrganizationShortName = reader[EdOrgQuery.OrganizationShortNameColumnName].ToString(),
+                            StateOrganizationId = theStateAgency,
+                            ParentId = reader[EdOrgQuery.ParentIdColumnName] as int?,
+                            StateLevelOrganizationId = reader[EdOrgQuery.StateLevelOrganizationIdColumnName] as int?,
+                            SchoolYearId = schoolYearId,
+                            IsStateLevelEdOrg = isStateAgency,
+                            OrgTypeCodeValue = reader[EdOrgQuery.OrganizationShortNameColumnName].ToString(),
+                            OrgTypeShortDescription = reader[EdOrgQuery.OrganizationShortNameColumnName].ToString(),
+                            EdOrgTypeLookupId = isStateAgency ? (int)EdOrgType.State : (int)EdOrgType.District
+                        });
+                    }
                 }
+            }
+            catch(Exception ex)
+            {
+                _loggingService.LogErrorMessage($"An error occurred while trying to read the Ed Org information from the Ed Fi ODS referring to the school year with ID {schoolYearId}: {ex.ChainInnerExceptionMessages()}");
             }
             return result;
         }

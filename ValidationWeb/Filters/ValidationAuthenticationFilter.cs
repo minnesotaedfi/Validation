@@ -75,6 +75,7 @@ namespace ValidationWeb
                             var currentSession = dbContext.AppUserSessions.FirstOrDefault(sess => sess.Id == sessIdSought);
                             if (currentSession != null)
                             {
+                                _logger.LogInfoMessage($"User {userIdentity.FullName} making a request on an existing session.");
                                 if (currentSession.ExpiresUtc > DateTime.UtcNow)
                                 {
                                     // Extend the current session.
@@ -87,6 +88,7 @@ namespace ValidationWeb
                                 }
                                 else
                                 {
+                                    _logger.LogInfoMessage($"User {userIdentity.FullName} last session was expired and removed from the database during an API call.");
                                     // The session has expired from our application's constraint.
                                     dbContext.AppUserSessions.Remove(currentSession);
                                     dbContext.SaveChanges();
@@ -94,6 +96,7 @@ namespace ValidationWeb
                                     IEnumerable<AppUserSession> expiredUserSessions = dbContext.AppUserSessions.Where(s => s.ExpiresUtc < DateTime.UtcNow);
                                     dbContext.AppUserSessions.RemoveRange(expiredUserSessions);
                                     dbContext.SaveChanges();
+                                    throw new ApplicationException("Session timeout detected - user must refresh web page to reauthenticate first.");
                                 }
                             }
                         }
