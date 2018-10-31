@@ -174,13 +174,12 @@ namespace ValidationWeb
                         int districtNumber, districtType;
                         var hasDistrictNumber = int.TryParse(ssoReader["DistrictNumber"]?.ToString(), out districtNumber);
                         var hasDistrictType = int.TryParse(ssoReader["DistrictType"]?.ToString(), out districtType);
-                        var theAppName = ssoReader["AppName"]?.ToString();
-                        if (string.Compare(theAppName, _config.AppId, true) == 0)
-                        {
+                        var theAppId = ssoReader["AppId"]?.ToString();
+                        if (string.Compare(theAppId, _config.AppId, true) ==0)
                         ssoUserAuthorizations.Add(
                             new SsoUserAuthorization
                             {
-                                AppId = ssoReader["AppId"]?.ToString(),
+                                AppId = theAppId,
                                 AppName = ssoReader["AppName"]?.ToString(),
                                 DistrictNumber = hasDistrictNumber ? (int?)districtNumber : null,
                                 DistrictType = hasDistrictType ? (int?)districtType : null,
@@ -195,8 +194,8 @@ namespace ValidationWeb
                                 OrganizationName = ssoReader["OrganizationName"]?.ToString(),
                                 RoleDescription = ssoReader["RoleDescription"]?.ToString(),
                                 RoleId = ssoReader["RoleId"]?.ToString()
-                            });
-                        }
+                            }
+                        );
                     }
                     ssoReader.Close();
                     ssoDatabaseConnection.Close();
@@ -320,9 +319,9 @@ namespace ValidationWeb
         public void OnAuthenticationChallenge(AuthenticationChallengeContext filterContext)
         {
             var user = filterContext.HttpContext.User;
-            _loggingService.LogInfoMessage($"User unauthenticated. Redirecting to login page {_config.AuthenticationServerRedirectUrl ?? "null"} and return URL {filterContext.HttpContext.Request.Url.ToString()}.");
             if (user == null || !user.Identity.IsAuthenticated)
             {
+                _loggingService.LogInfoMessage($"User unauthenticated. Redirecting to login page {_config.AuthenticationServerRedirectUrl ?? "null"} and return URL {filterContext.HttpContext.Request.Url.ToString()}.");
                 var redirectUrl = $"{_config.AuthenticationServerRedirectUrl}?returnUrl={System.Net.WebUtility.UrlEncode(filterContext.HttpContext.Request.Url.ToString())}";
                 filterContext.Result = new RedirectResult(redirectUrl);
             }
