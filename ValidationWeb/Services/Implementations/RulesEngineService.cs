@@ -144,7 +144,8 @@ namespace ValidationWeb.Services
                 _loggingService.LogDebugMessage($"Saving status {newReportSummary.Status}.");
 
                 // Log Execution Errors
-                _loggingService.LogErrorMessage(GetLogExecutionErrorsMessage(rulesEngineExecutionExceptions));
+                _loggingService.LogErrorMessage(GetLogExecutionErrorsMessage(rulesEngineExecutionExceptions, newReportSummary.Id));
+
                 newReportDetails.CompletedWhen = newReportDetails.CompletedWhen ?? DateTime.UtcNow;
                 _dbContext.SaveChanges();
                 _loggingService.LogDebugMessage($"Saved status.");
@@ -152,11 +153,11 @@ namespace ValidationWeb.Services
             return newReportSummary;
         }
 
-        protected string GetLogExecutionErrorsMessage(IList<RulesEngineExecutionException> rulesEngineExecutionExceptions)
+        protected string GetLogExecutionErrorsMessage(IList<RulesEngineExecutionException> rulesEngineExecutionExceptions, long reportId)
         {
                 var logMessageBuilder = new StringBuilder();
                 logMessageBuilder.AppendLine("=================================================");
-                logMessageBuilder.AppendLine($"Rules Engine Execution Errors Reported for Validation Report Summary # {newReportSummary.Id.ToString()}:");
+                logMessageBuilder.AppendLine($"Rules Engine Execution Errors Reported for Validation Report Summary # {reportId.ToString()}:");
                 foreach (var execError in rulesEngineExecutionExceptions)
                 {
                     logMessageBuilder.AppendLine();
@@ -168,6 +169,7 @@ namespace ValidationWeb.Services
                     logMessageBuilder.AppendLine(execError.ChainedErrorMessages ?? "null");
                 }
                 logMessageBuilder.AppendLine("=================================================");
+            return logMessageBuilder.ToString();
         }
 
         public List<Collection> GetCollections()
