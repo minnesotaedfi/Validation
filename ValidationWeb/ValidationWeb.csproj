@@ -355,6 +355,7 @@
     <Compile Include="Models\EdOrg.cs" />
     <Compile Include="Models\ErrorSeverity.cs" />
     <Compile Include="Models\FilteredValidationErrors.cs" />
+    <Compile Include="Models\RulesEngineExecutionException.cs" />
     <Compile Include="Models\RuleValidation.cs" />
     <Compile Include="Models\RuleValidationDetail.cs" />
     <Compile Include="Models\RuleValidationRuleComponent.cs" />

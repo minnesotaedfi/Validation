@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Text;
 using System.Web;
 
 namespace ValidationWeb.Services
@@ -103,19 +104,34 @@ namespace ValidationWeb.Services
                 #endregion The ValidationReportDetails is one-for-one with the ValidationReportSummary - it should be refactored away. It contains the error/warning details.
 
                 #region Execute each individual rule.
+                List<RulesEngineExecutionException> rulesEngineExecutionExceptions = new List<RulesEngineExecutionException>();
                 foreach (var rule in rules)
                 {
-                    _loggingService.LogDebugMessage($"Executing Rule {rule.RuleId}.");
-                    _loggingService.LogDebugMessage($"Executing Rule SQL {rule.Sql}.");
-                    var detailParams = new List<SqlParameter> { new SqlParameter("@RuleValidationId", newRuleValidationExecution.RuleValidationId) };
-                    detailParams.AddRange(_engineObjectModel.GetParameters(collectionId).Select(x => new SqlParameter(x.ParameterName, x.Value)));
-                    _odsRawDbContext.Database.CommandTimeout = 60;
-                    var result = _odsRawDbContext.Database.ExecuteSqlCommand(rule.ExecSql, detailParams.ToArray());
-                    _loggingService.LogDebugMessage($"Executing Rule {rule.RuleId} rows affected = {result}.");
+                    try
+                    {
+                        _loggingService.LogDebugMessage($"Executing Rule {rule.RuleId}.");
+                        _loggingService.LogDebugMessage($"Executing Rule SQL {rule.Sql}.");
+                        var detailParams = new List<SqlParameter> { new SqlParameter("@RuleValidationId", newRuleValidationExecution.RuleValidationId) };
+                        detailParams.AddRange(_engineObjectModel.GetParameters(collectionId).Select(x => new SqlParameter(x.ParameterName, x.Value)));
+                        _odsRawDbContext.Database.CommandTimeout = 60;
+                        var result = _odsRawDbContext.Database.ExecuteSqlCommand(rule.ExecSql, detailParams.ToArray());
+                        _loggingService.LogDebugMessage($"Executing Rule {rule.RuleId} rows affected = {result}.");
 
-                    #region Record the results of this rule in the Validation Portal database, accompanied by more detailed information.
-                    PopulateErrorDetailsFromViews(rule, _odsRawDbContext, newRuleValidationExecution.RuleValidationId, newReportDetails.Id);
-                    #endregion Record the results of this rule in the Validation Portal database, accompanied by more detailed information.
+                        #region Record the results of this rule in the Validation Portal database, accompanied by more detailed information.
+                        PopulateErrorDetailsFromViews(rule, _odsRawDbContext, newRuleValidationExecution.RuleValidationId, newReportDetails.Id);
+                        #endregion Record the results of this rule in the Validation Portal database, accompanied by more detailed information.
+                    }
+                    catch(Exception ex)
+                    {
+                        rulesEngineExecutionExceptions.Add(new RulesEngineExecutionException
+                        {
+                            RuleId = rule.RuleId,
+                            Sql = rule.Sql,
+                            ExecSql = rule.ExecSql,
+                            DataSourceName = $"Database Server: {_odsRawDbContext.Database.Connection.DataSource}{Environment.NewLine} Database: {_odsRawDbContext.Database.Connection.Database}",
+                            ChainedErrorMessages = ex.ChainInnerExceptionMessages()
+                        });
+                    }
                 }
                 #endregion Execute each individual rule.
 
@@ -123,15 +139,35 @@ namespace ValidationWeb.Services
                 newReportSummary.CompletedWhen = DateTime.UtcNow;
                 newReportSummary.ErrorCount = _odsRawDbContext.RuleValidationDetails.Where(rvd => rvd.RuleValidation.RuleValidationId == newRuleValidationExecution.RuleValidationId && rvd.IsError).Count();
                 newReportSummary.WarningCount = _odsRawDbContext.RuleValidationDetails.Where(rvd => rvd.RuleValidation.RuleValidationId == newRuleValidationExecution.RuleValidationId && !rvd.IsError).Count();
-                newReportSummary.Status = "Completed";
-                _loggingService.LogDebugMessage($"Saving COMPLETED status.");
+                var hasExecutionErrors = (rulesEngineExecutionExceptions.Count > 0);
+                newReportSummary.Status = hasExecutionErrors ? $"Completed - {rulesEngineExecutionExceptions.Count} rules did not execute, ask an administrator to check the log for errors, Report Summary Number {newReportSummary.Id.ToString()}" : "Completed";
+                _loggingService.LogDebugMessage($"Saving status {newReportSummary.Status}.");
 
-                // TODO: Fix this with real values
+                // Log Execution Errors
+                _loggingService.LogErrorMessage(GetLogExecutionErrorsMessage(rulesEngineExecutionExceptions));
                 newReportDetails.CompletedWhen = newReportDetails.CompletedWhen ?? DateTime.UtcNow;
                 _dbContext.SaveChanges();
-                _loggingService.LogDebugMessage($"Saved COMPLETED status.");
+                _loggingService.LogDebugMessage($"Saved status.");
             }
             return newReportSummary;
+        }
+
+        protected string GetLogExecutionErrorsMessage(IList<RulesEngineExecutionException> rulesEngineExecutionExceptions)
+        {
+                var logMessageBuilder = new StringBuilder();
+                logMessageBuilder.AppendLine("=================================================");
+                logMessageBuilder.AppendLine($"Rules Engine Execution Errors Reported for Validation Report Summary # {newReportSummary.Id.ToString()}:");
+                foreach (var execError in rulesEngineExecutionExceptions)
+                {
+                    logMessageBuilder.AppendLine();
+                    logMessageBuilder.AppendLine($"Rule ID: {execError.RuleId ?? "null"}");
+                    logMessageBuilder.AppendLine($"Server and Database: {execError.DataSourceName ?? "null"}");
+                    logMessageBuilder.AppendLine($"SQL: {execError.Sql ?? "null"}");
+                    logMessageBuilder.AppendLine($"Executed SQL: {execError.ExecSql ?? "null"}");
+                    logMessageBuilder.AppendLine($"Chained Error Message and Stack Trace:");
+                    logMessageBuilder.AppendLine(execError.ChainedErrorMessages ?? "null");
+                }
+                logMessageBuilder.AppendLine("=================================================");
         }
 
         public List<Collection> GetCollections()
