@@ -126,7 +126,7 @@ else
         // This registers a callback to run the validation engine if the user chose YES when dismissing the confirmation dialog. 
         $('#ConfirmNewValidationModal').on('hidden.bs.modal', function (e) {
             overlayOn();
-            setTimeout(function () { location.reload(true); overlayOff(); }, 2000);
+            setTimeout(function () { overlayOff(); }, 2000);
             if (lastModalExitButton=='launch') {
                 $.ajax({
                     url: '@(Url.Action("RunEngine", "Validation"))',
@@ -144,6 +144,7 @@ else
                     }
                 });
             }
+            window.location.reload(true);
         });
 
         // TODO: Puts the table into a downloadable CSV - unfortunately, it doesn't support dates
