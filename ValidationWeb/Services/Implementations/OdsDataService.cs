@@ -34,7 +34,7 @@ namespace ValidationWeb.Services
                         {
                             int? theEdOrgValue = null;
                             var edOrgIdObj = reader[DemographicsCountReportQuery.EdOrgIdColumnName];
-                            if (! (edOrgIdObj is DBNull))
+                            if (!(edOrgIdObj is DBNull))
                             {
                                 theEdOrgValue = System.Convert.ToInt32(reader[DemographicsCountReportQuery.EdOrgIdColumnName]);
                             }
@@ -128,7 +128,7 @@ namespace ValidationWeb.Services
             }
         }
 
-        public List<StudentProgramsCountReportQuery> GetStudentProgramsCounts(int districtEdOrgId, string fourDigitOdsDbYear)
+        public List<StudentProgramsCountReportQuery> GetStudentProgramsCounts(int? districtEdOrgId, string fourDigitOdsDbYear)
         {
             using (var rawOdsContext = new RawOdsDbContext(fourDigitOdsDbYear))
             {
@@ -137,7 +137,7 @@ namespace ValidationWeb.Services
                 {
                     conn.Open();
                     var studentProgsCmd = conn.CreateCommand();
-                    studentProgsCmd.CommandType = System.Data.CommandType.Text;
+                    studentProgsCmd.CommandType = System.Data.CommandType.StoredProcedure;
                     studentProgsCmd.CommandText = StudentProgramsCountReportQuery.StudentProgramsCountQuery;
                     studentProgsCmd.Parameters.Add(new SqlParameter("@distid", System.Data.SqlDbType.Int));
                     studentProgsCmd.Parameters["@distid"].Value = districtEdOrgId;
@@ -146,23 +146,33 @@ namespace ValidationWeb.Services
                     {
                         while (reader.Read())
                         {
+                            int? theEdOrgValue = null;
+                            var edOrgIdObj = reader[DemographicsCountReportQuery.EdOrgIdColumnName];
+                            if (!(edOrgIdObj is DBNull))
+                            {
+                                theEdOrgValue = System.Convert.ToInt32(reader[DemographicsCountReportQuery.EdOrgIdColumnName]);
+                            }
                             reportData.Add(new StudentProgramsCountReportQuery
                             {
-                                SchoolName = reader[StudentProgramsCountReportQuery.SchoolNameColumnName].ToString(),
-                                DistrictName = reader[StudentProgramsCountReportQuery.DistrictNameColumnName].ToString(),
-                                EnrollmentCount = System.Convert.ToInt32(reader[StudentProgramsCountReportQuery.EnrollmentCountColumnName]),
-                                DemographicsCount = System.Convert.ToInt32(reader[StudentProgramsCountReportQuery.DemographicsCountColumnName]),
+                                OrgType = (OrgType)(System.Convert.ToInt32(reader[StudentProgramsCountReportQuery.OrgTypeColumnName])),
+                                EdOrgId = theEdOrgValue,
+                                LEASchool = reader[StudentProgramsCountReportQuery.LEASchoolColumnName].ToString(),
+                                DemographicsCount = System.Convert.ToInt32(reader[StudentProgramsCountReportQuery.DistinctEnrollmentCountColumnName]),
+                                DistinctEnrollmentCount = System.Convert.ToInt32(reader[StudentProgramsCountReportQuery.DistinctEnrollmentCountColumnName]),
+                                DistinctDemographicsCount = System.Convert.ToInt32(reader[StudentProgramsCountReportQuery.DistinctDemographicsCountColumnName]),
                                 ADParentCount = System.Convert.ToInt32(reader[StudentProgramsCountReportQuery.ADParentCountColumnName]),
                                 IndianNativeCount = System.Convert.ToInt32(reader[StudentProgramsCountReportQuery.IndianNativeCountColumnName]),
                                 MigrantCount = System.Convert.ToInt32(reader[StudentProgramsCountReportQuery.MigrantCountColumnName]),
                                 HomelessCount = System.Convert.ToInt32(reader[StudentProgramsCountReportQuery.HomelessCountColumnName]),
                                 ImmigrantCount = System.Convert.ToInt32(reader[StudentProgramsCountReportQuery.ImmigrantCountColumnName]),
-                                EnglishLearnerCount = System.Convert.ToInt32(reader[StudentProgramsCountReportQuery.EnglishLearnerCountColumnName]),
+                                EnglishLearnerIdentifiedCount = System.Convert.ToInt32(reader[StudentProgramsCountReportQuery.EnglishLearnerIdentifiedCountColumnName]),
                                 EnglishLearnerServedCount = System.Convert.ToInt32(reader[StudentProgramsCountReportQuery.EnglishLearnerServedCountColumnName]),
+                                RecentEnglishCount = System.Convert.ToInt32(reader[StudentProgramsCountReportQuery.RecentEnglishCountColumnName]),
                                 SLIFECount = System.Convert.ToInt32(reader[StudentProgramsCountReportQuery.SLIFECountColumnName]),
                                 IndependentStudyCount = System.Convert.ToInt32(reader[StudentProgramsCountReportQuery.IndependentStudyCountColumnName]),
                                 Section504Count = System.Convert.ToInt32(reader[StudentProgramsCountReportQuery.Section504CountColumnName]),
-                                Title1PartACount = System.Convert.ToInt32(reader[StudentProgramsCountReportQuery.Title1PartACountColumnName])
+                                Title1PartACount = System.Convert.ToInt32(reader[StudentProgramsCountReportQuery.Title1PartACountColumnName]),
+                                FreeReducedCount = System.Convert.ToInt32(reader[StudentProgramsCountReportQuery.FreeReducedColumnName])
                             });
                         }
                     }
@@ -170,7 +180,81 @@ namespace ValidationWeb.Services
                 }
                 catch (Exception ex)
                 {
-                    _loggingService.LogErrorMessage($"While compiling report on multiple enrollments: {ex.ChainInnerExceptionMessages()}");
+                    _loggingService.LogErrorMessage($"While compiling report on student characteristics and programs: {ex.ChainInnerExceptionMessages()}");
+                    throw;
+                }
+                finally
+                {
+                    if (conn != null && conn.State != System.Data.ConnectionState.Closed)
+                    {
+                        try
+                        {
+                            conn.Close();
+                        }
+                        catch (Exception) { }
+                    }
+                }
+            }
+        }
+
+        public List<ChangeOfEnrollmentReportQuery> GetChangeOfEnrollmentReport(int districtEdOrgId, string fourDigitOdsDbYear)
+        {
+            using (var rawOdsContext = new RawOdsDbContext(fourDigitOdsDbYear))
+            {
+                var conn = rawOdsContext.Database.Connection;
+                try
+                {
+                    conn.Open();
+                    var chgOfEnrollmentQueryCmd = conn.CreateCommand();
+                    chgOfEnrollmentQueryCmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    chgOfEnrollmentQueryCmd.CommandText = ChangeOfEnrollmentReportQuery.ChangeOfEnrollmentQuery;
+                    chgOfEnrollmentQueryCmd.Parameters.Add(new SqlParameter("@distid", System.Data.SqlDbType.Int));
+                    chgOfEnrollmentQueryCmd.Parameters["@distid"].Value = districtEdOrgId;
+                    var reportData = new List<ChangeOfEnrollmentReportQuery>();
+                    using (var reader = chgOfEnrollmentQueryCmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            reportData.Add(new ChangeOfEnrollmentReportQuery
+                            {
+                                IsCurrentDistrict = System.Convert.ToBoolean(reader[ChangeOfEnrollmentReportQuery.IsCurrentDistrictColumnName]),
+                                CurrentDistEdOrgId = System.Convert.ToInt32(reader[ChangeOfEnrollmentReportQuery.CurrentDistEdOrgIdColumnName]),
+                                CurrentDistrictName = reader[ChangeOfEnrollmentReportQuery.CurrentDistrictNameColumnName].ToString(),
+                                CurrentSchoolEdOrgId = System.Convert.ToInt32(reader[ChangeOfEnrollmentReportQuery.CurrentSchoolEdOrgIdColumnName]),
+                                CurrentSchoolName = reader[ChangeOfEnrollmentReportQuery.CurrentSchoolNameColumnName].ToString(),
+                                CurrentEdOrgEnrollmentDate = (reader[ChangeOfEnrollmentReportQuery.CurrentEdOrgEnrollmentDateColumnName] is DBNull)
+                                    ? (DateTime?)null
+                                    : System.Convert.ToDateTime(reader[ChangeOfEnrollmentReportQuery.CurrentEdOrgEnrollmentDateColumnName]),
+                                CurrentEdOrgExitDate = (reader[ChangeOfEnrollmentReportQuery.CurrentEdOrgExitDateColumnName] is DBNull)
+                                    ? (DateTime?)null
+                                    : System.Convert.ToDateTime(reader[ChangeOfEnrollmentReportQuery.CurrentEdOrgExitDateColumnName]),
+                                CurrentGrade = reader[ChangeOfEnrollmentReportQuery.CurrentGradeColumnName].ToString(),
+                                PastDistEdOrgId = System.Convert.ToInt32(reader[ChangeOfEnrollmentReportQuery.PastDistEdOrgIdColumnName]),
+                                PastDistrictName = reader[ChangeOfEnrollmentReportQuery.PastDistrictNameColumnName].ToString(),
+                                PastSchoolEdOrgId = System.Convert.ToInt32(reader[ChangeOfEnrollmentReportQuery.PastSchoolEdOrgIdColumnName]),
+                                PastSchoolName = reader[ChangeOfEnrollmentReportQuery.PastSchoolNameColumnName].ToString(),
+                                PastEdOrgEnrollmentDate = (reader[ChangeOfEnrollmentReportQuery.PastEdOrgEnrollmentDateColumnName] is DBNull)
+                                    ? (DateTime?)null
+                                    : System.Convert.ToDateTime(reader[ChangeOfEnrollmentReportQuery.PastEdOrgEnrollmentDateColumnName]),
+                                PastEdOrgExitDate = (reader[ChangeOfEnrollmentReportQuery.PastEdOrgExitDateColumnName] is DBNull)
+                                    ? (DateTime?)null
+                                    : System.Convert.ToDateTime(reader[ChangeOfEnrollmentReportQuery.CurrentEdOrgExitDateColumnName]),
+                                PastGrade = reader[ChangeOfEnrollmentReportQuery.PastGradeColumnName].ToString(),
+                                StudentID = reader[ChangeOfEnrollmentReportQuery.StudentIDColumnName].ToString(),
+                                StudentLastName = reader[ChangeOfEnrollmentReportQuery.StudentLastNameColumnName].ToString(),
+                                StudentFirstName = reader[ChangeOfEnrollmentReportQuery.StudentFirstNameColumnName].ToString(),
+                                StudentMiddleName = reader[ChangeOfEnrollmentReportQuery.StudentMiddleNameColumnName].ToString(),
+                                StudentBirthDate = (reader[ChangeOfEnrollmentReportQuery.StudentBirthDateColumnName] is DBNull)
+                                    ? (DateTime?)null
+                                    : System.Convert.ToDateTime(reader[ChangeOfEnrollmentReportQuery.StudentBirthDateColumnName]),
+                            });
+                        }
+                    }
+                    return reportData;
+                }
+                catch (Exception ex)
+                {
+                    _loggingService.LogErrorMessage($"While compiling report on changes of enrollment: {ex.ChainInnerExceptionMessages()}");
                     throw;
                 }
                 finally

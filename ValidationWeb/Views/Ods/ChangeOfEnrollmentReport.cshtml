@@ -1,88 +1,174 @@
 ﻿@model OdsChangeOfEnrollmentReportViewModel
 
-<div class="row tbmargin10">
+<div id="pagetop" class="row tbmargin10">
     <div><a href="@Url.Action("Reports")" class="back-link"><i class="fas fa-arrow-alt-circle-left"></i> Back to ODS Reports</a></div>
+    <div><a href="#notes" class="vp-page-link"><i class="fas fa-arrow-alt-circle-down"></i> See notes</a></div>
 </div>
-
-<div class="row">
-    <div class="vp-body-header justify-content-start align-self-center">Ancestry Ethnic Origin and Race Counts for District @Model.EdOrgName (@Model.EdOrgId.ToString())</div>
+<div class="row tbmargin10">
+    <div class="vp-body-header justify-content-start align-self-center">Changes of Enrollment in the Last 30 Days for District @Model.EdOrgName (@Model.EdOrgId.ToString())</div>
 </div>
-
-<div id="requestedReportContent">
+<div class="row tbmargin10">
+    <div class="vp-body-header justify-content-start align-self-center">Enrolling</div>
+</div>
+<div id="requestedReportContent" class="row">
     <table class="table table-sm table-responsive-md table-bordered" id="reportsTable">
         <tr class="table-primary">
-            <th>Last Name</th>
-            <th>First Name</th>
-            <th>Middle Name</th>
             <th>State Reporting Number</th>
-            <th>Birthdate</th>
+            <th>Student<br />Last Name</th>
+            <th>Student<br />First Name</th>
+            <th>Student<br />Middle Name</th>
+            <th>Birth Date</th>
+            <th class="d-none">Current<br />District ID</th>
+            <th class="d-none">Current<br />District Name</th>
+            <th class="d-none">Current<br />School ID</th>
+            <th class="d-none">Current<br />School Name</th>
+            <th>Current<br />Enrollment</th>
+            <th class="d-none">Current<br />Withdraw</th>
+            <th>Current<br />Grade</th>
+            <th>Previous<br />District ID</th>
+            <th>Previous<br />District Name</th>
+            <th class="d-none">Previous<br />School ID</th>
+            <th class="d-none">Previous<br />School Name</th>
+            <th>Previous<br />Enrollment</th>
+            <th>Previous<br />Withdraw</th>
+            <th class="d-none">Previous<br />Grade</th>
+            <th>Request</th>
+            <th></th>
         </tr>
-        @if (Model.Results.Count > 0)
+        <tr>
+            <td>123456789</td>
+            <td>Doe</td>
+            <td>John</td>
+            <td>Quincy</td>
+            <td>12/31/2005</td>
+            <td class="d-none">Current<br />District ID</td>
+            <td class="d-none">Current<br />District Name</td>
+            <td class="d-none">Current<br />School ID</td>
+            <td class="d-none">Current<br />School Name</td>
+            <td>11/01/2018</td>
+            <td class="d-none">Current<br />Withdraw</td>
+            <td>8</td>
+            <td>99999</td>
+            <td>Minneapolis Public Schools</td>
+            <td class="d-none">Previous<br />School ID</td>
+            <td class="d-none">Previous<br />School Name</td>
+            <td>09/01/2018</td>
+            <td>10/25/2018</td>
+            <td class="d-none">Previous<br />Grade</td>
+            <td style="padding-left: 1.5rem;">
+                <input type="checkbox" class="form-check-input" name="requestAssessments" value="10625|123456789"> Assessment Results<br />
+                <input type="checkbox" class="form-check-input" name="requestImmunizations" value="10625|123456789"> Immunizations<br />
+                <input type="checkbox" class="form-check-input" name="requestCumulativeFiles" value="10625|123456789"> Cumulative Files
+            </td>
+            <td style="vertical-align: middle;"><button class="btn btn-sm btn-primary">Send</button></td>
+        </tr>
+        @foreach (var result in Model.Results.Where(r=>r.IsCurrentDistrict).ToList())
         {
             <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-        }
-        else
-        {
-            <tr>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-            </tr>
-        }
-        @foreach (var result in Model.Results)
-        {
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td>@(result.StudentID ?? string.Empty)</td>
+                <td>@(result.StudentLastName ?? string.Empty)</td>
+                <td>@(result.StudentFirstName ?? string.Empty)</td>
+                <td>@(result.StudentMiddleName ?? string.Empty)</td>
+                <td>@(result.StudentBirthDate.HasValue ? result.StudentBirthDate.Value.ToString("MM/dd/yyyy") : "Unknown")</td>
+                <td class="d-none">@(result.CurrentDistEdOrgId.ToString())</td>
+                <td class="d-none">@(result.CurrentDistrictName ?? string.Empty)</td>
+                <td class="d-none">@(result.CurrentSchoolEdOrgId.ToString())</td>
+                <td class="d-none">@(result.CurrentSchoolName ?? string.Empty)</td>
+                <td>@(result.CurrentEdOrgEnrollmentDate.HasValue ? result.CurrentEdOrgEnrollmentDate.Value.ToString("MM/dd/yyyy") : "Unknown")</td>
+                <td class="d-none">@(result.CurrentEdOrgExitDate.HasValue ? result.CurrentEdOrgExitDate.Value.ToString("MM/dd/yyyy") : "Unknown")</td>
+                <td>@(result.CurrentGrade ?? string.Empty)</td>
+                <td>@(result.PastDistEdOrgId.ToString())</td>
+                <td>@(result.PastDistrictName ?? string.Empty)</td>
+                <td class="d-none">@(result.PastSchoolEdOrgId.ToString())</td>
+                <td class="d-none">@(result.PastSchoolName ?? string.Empty)</td>
+                <td>@(result.PastEdOrgEnrollmentDate.HasValue ? result.PastEdOrgEnrollmentDate.Value.ToString("MM/dd/yyyy") : "Unknown")</td>
+                <td>@(result.PastEdOrgExitDate.HasValue ? result.PastEdOrgExitDate.Value.ToString("MM/dd/yyyy") : "Unknown")</td>
+                <td class="d-none">@(result.PastGrade ?? string.Empty)</td>
+                <td style="padding-left: 1.25rem;">
+                    <input type="checkbox" class="form-check-input" name="requestAssessments" value="@(result.PastDistEdOrgId.ToString())|@(result.StudentID)"> Assessment Results<br />
+                    <input type="checkbox" class="form-check-input" name="requestImmunizations" value="@(result.PastDistEdOrgId.ToString())|@(result.StudentID)"> Immunizations<br />
+                    <input type="checkbox" class="form-check-input" name="requestCumulativeFiles" value="@(result.PastDistEdOrgId.ToString())|@(result.StudentID)"> Cumulative Files
+                </td>
+                <td style="vertical-align: middle;"><button class="btn btn-sm btn-primary">Send</button></td>
             </tr>
         }
     </table>
-    @if (Model.Results.Count == 0)
+
+    @if (Model.Results.Where(r => r.IsCurrentDistrict).Count() == 0)
     {
         <div class="vp-body-header col-8 justify-content-start align-self-center">No records were found.</div>
     }
+</div>
+<div class="row tbmargin10">
+    <div class="vp-body-header justify-content-start align-self-center">Withdrawing</div>
+</div>
+<div id="requestedReportContent" class="row">
+    <table class="table table-sm table-responsive-md table-bordered" id="reportsTable">
+        <tr class="table-primary">
+            <th>State Reporting Number</th>
+            <th>Student<br />Last Name</th>
+            <th>Student<br />First Name</th>
+            <th>Student<br />Middle Name</th>
+            <th>Birth Date</th>
+            <th>Current<br />District ID</th>
+            <th>Current<br />District Name</th>
+            <th>Current<br />School ID</th>
+            <th>Current<br />School Name</th>
+            <th>Current<br />Enrollment</th>
+            <th>Current<br />Withdraw</th>
+            <th>Current<br />Grade</th>
+            <th>Previous<br />District ID</th>
+            <th>Previous<br />District Name</th>
+            <th>Previous<br />School ID</th>
+            <th>Previous<br />School Name</th>
+            <th>Previous<br />Enrollment</th>
+            <th>Previous<br />Withdraw</th>
+            <th>Previous<br />Grade</th>
+        </tr>
+        @foreach (var result in Model.Results.Where(r => !r.IsCurrentDistrict).ToList())
+        {
+            <tr>
+                <td>@(result.StudentID ?? string.Empty)</td>
+                <td>@(result.StudentLastName ?? string.Empty)</td>
+                <td>@(result.StudentFirstName ?? string.Empty)</td>
+                <td>@(result.StudentMiddleName ?? string.Empty)</td>
+                <td>@(result.StudentBirthDate.HasValue ? result.StudentBirthDate.Value.ToString("MM/dd/yyyy") : "Unknown")</td>
+                <td>@(result.CurrentDistEdOrgId.ToString())</td>
+                <td>@(result.CurrentDistrictName ?? string.Empty)</td>
+                <td>@(result.CurrentSchoolEdOrgId.ToString())</td>
+                <td>@(result.CurrentSchoolName ?? string.Empty)</td>
+                <td>@(result.CurrentEdOrgEnrollmentDate.HasValue ? result.CurrentEdOrgEnrollmentDate.Value.ToString("MM/dd/yyyy") : "Unknown")</td>
+                <td>@(result.CurrentEdOrgExitDate.HasValue ? result.CurrentEdOrgExitDate.Value.ToString("MM/dd/yyyy") : "Unknown")</td>
+                <td>@(result.CurrentGrade ?? string.Empty)</td>
+                <td>@(result.PastDistEdOrgId.ToString())</td>
+                <td>@(result.PastDistrictName ?? string.Empty)</td>
+                <td>@(result.PastSchoolEdOrgId.ToString())</td>
+                <td>@(result.PastSchoolName ?? string.Empty)</td>
+                <td>@(result.PastEdOrgEnrollmentDate.HasValue ? result.PastEdOrgEnrollmentDate.Value.ToString("MM/dd/yyyy") : "Unknown")</td>
+                <td>@(result.PastEdOrgExitDate.HasValue ? result.PastEdOrgExitDate.Value.ToString("MM/dd/yyyy") : "Unknown")</td>
+                <td>@(result.PastGrade ?? string.Empty)</td>
+            </tr>
+        }
+    </table>
+
+    @if (Model.Results.Where(r => !r.IsCurrentDistrict).Count() == 0)
+    {
+        <div class="vp-body-header col-8 justify-content-start align-self-center">No records were found.</div>
+    }
+</div>
+
+<div id="notes" class="row">
+    <div class="vp-body-header">Notes:</div>
+</div>
+<div class="row">(1) Enrolling students are those who enrolled in a district school in the past 30 days and had enrolled in some other school in the state prior to 30 days ago.</div>
+<div class="row">(2) Withdrawing students are those that withdrew in the past thirty days and subsequently enrolled elsewhere in the state.</div>
+<div class="row tbmargin10">
+    <a href="@Url.Action("Reports")" class="back-link"><i class="fas fa-arrow-alt-circle-left"></i> Back to ODS Reports</a>
+    <a href="#pagetop" class="vp-page-link"><i class="fas fa-arrow-alt-circle-up"></i> Back to Top</a>
 </div>
 
 
 @section scripts {
     <script>
     </script>
-}
+}}

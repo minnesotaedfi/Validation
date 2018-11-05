@@ -9,6 +9,7 @@ namespace ValidationWeb.Services
     {
         List<DemographicsCountReportQuery> GetDistrictAncestryRaceCounts(int? districtEdOrgId, string fourDigitOdsDbYear);
         List<MultipleEnrollmentsCountReportQuery> GetMultipleEnrollmentCounts(int? districtEdOrgId, string fourDigitOdsDbYear);
-        List<StudentProgramsCountReportQuery> GetStudentProgramsCounts(int districtEdOrgId, string fourDigitOdsDbYear);
+        List<StudentProgramsCountReportQuery> GetStudentProgramsCounts(int? districtEdOrgId, string fourDigitOdsDbYear);
+        List<ChangeOfEnrollmentReportQuery> GetChangeOfEnrollmentReport(int districtEdOrgId, string fourDigitOdsDbYear);
     }
 }

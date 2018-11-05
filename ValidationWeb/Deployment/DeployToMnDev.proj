@@ -16,7 +16,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PublishPackages Include="ValidationPortal.deploy.cmd">
-      <ParametersXml>..\obj\Release\Package\ValidationWeb.SetParameters.xml</ParametersXml>
+      <ParametersXml>..\obj\$(Configuration)\Package\ValidationWeb.SetParameters.xml</ParametersXml>
       <IisWebAppNameParamValue>$(ValidationPortalIisPath)</IisWebAppNameParamValue>
       <ValidationPortalIisPathToRootParamName>ValidationPortalIisPathToRoot</ValidationPortalIisPathToRootParamName>
       <ValidationPortalIisPathToRootParamValue>D:\ValidationPortal</ValidationPortalIisPathToRootParamValue>
@@ -105,6 +105,6 @@
 			XmlInputPath="%(PublishPackages.ParametersXml)"
 			Query="//parameters/setParameter[@name='SimulatedUserName']/@value"
 			Value="jane" />
-    <Exec Command="..\obj\Release\Package\ValidationWeb.deploy.cmd /Y /M:mn-dev.doubleline.us" /> 
+    <Exec Condition="'$(Configuration)'!='Debug'" Command="..\obj\$(Configuration)\Package\ValidationWeb.deploy.cmd /Y /M:mn-dev.doubleline.us" /> 
 	</Target>
 </Project>

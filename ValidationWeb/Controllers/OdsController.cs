@@ -108,21 +108,29 @@ namespace ValidationWeb
         }
 
         // GET: Ods/StudentProgramsReport
-        public ActionResult StudentProgramsReport()
+        public ActionResult StudentProgramsReport(bool isStateMode = false, int? districtToDisplay = null)
         {
             var session = _appUserService.GetSession();
             var edOrg = _edOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
             var edOrgName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
             var edOrgId = edOrg.Id;
+            // A state user can look at any district via a link, without changing the default district.
+            if (districtToDisplay.HasValue && session.UserIdentity.AuthorizedEdOrgs.Select(eorg => eorg.Id).Contains(districtToDisplay.Value))
+            {
+                edOrgId = districtToDisplay.Value;
+                edOrg = _edOrgService.GetEdOrgById(edOrgId, session.FocusedSchoolYearId);
+                edOrgName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
+            }
             var fourDigitSchoolYear = _schoolyearService.GetSchoolYearById(session.FocusedSchoolYearId).StartYear;
             var theUser = _appUserService.GetUser();
-            var results = _odsDataService.GetStudentProgramsCounts(edOrgId, fourDigitSchoolYear);
+            var results = _odsDataService.GetStudentProgramsCounts(isStateMode ? (int?)null : edOrgId, fourDigitSchoolYear);
             var model = new OdsStudentProgramsReportViewModel
             {
                 EdOrgId = edOrgId,
                 EdOrgName = edOrgName,
                 User = theUser,
-                Results = results
+                Results = results,
+                IsStateMode = isStateMode
             };
             return View(model);
         }
@@ -136,13 +144,13 @@ namespace ValidationWeb
             var edOrgId = edOrg.Id;
             var fourDigitSchoolYear = _schoolyearService.GetSchoolYearById(session.FocusedSchoolYearId).StartYear;
             var theUser = _appUserService.GetUser();
-            var results = _odsDataService.GetMultipleEnrollmentCounts(edOrgId, fourDigitSchoolYear);
+            var results = _odsDataService.GetChangeOfEnrollmentReport(edOrgId, fourDigitSchoolYear);
             var model = new OdsChangeOfEnrollmentReportViewModel
             {
                 EdOrgId = edOrgId,
                 EdOrgName = edOrgName,
                 User = theUser,
-                Results = new List<DemographicsCountReportQuery>()
+                Results = results
             };
             return View(model);
         }

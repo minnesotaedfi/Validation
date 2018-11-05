@@ -330,6 +330,7 @@
     <Compile Include="Controllers\RulesController.cs" />
     <Compile Include="Controllers\ValidationController.cs" />
     <Compile Include="Database\EnumLookup.cs" />
+    <Compile Include="Database\Queries\ChangeOfEnrollmentReportQuery.cs" />
     <Compile Include="Database\Queries\DemographicsCountReportQuery.cs" />
     <Compile Include="Database\Queries\EdOrgQuery.cs" />
     <Compile Include="Database\Queries\MultipleEnrollmentsCountReportQuery.cs" />

@@ -1,127 +1,146 @@
 ﻿@model OdsStudentProgramsReportViewModel
 
-<div class="row tbmargin10">
+<div id="pagetop" class="row tbmargin10">
     <div><a href="@Url.Action("Reports")" class="back-link"><i class="fas fa-arrow-alt-circle-left"></i> Back to ODS Reports</a></div>
+    <div><a href="#notes" class="vp-page-link"><i class="fas fa-arrow-alt-circle-down"></i> See notes</a></div>
+    @if (Model.IsStateMode)
+    {
+        <div><a href="@Url.Action("StudentProgramsReport", "Ods", new { isStateMode = false })" class="vp-page-link show-data-loading"><i class="fas fa-chalkboard-teacher"></i> View Single District</a></div>
+    }
+    else
+    {
+        <div><a href="@Url.Action("StudentProgramsReport", "Ods", new { isStateMode = true })" class="vp-page-link show-data-loading"><i class="fas fa-sitemap"></i> View All Districts</a></div>
+    }
 </div>
-
-<div class="row">
-    <div class="vp-body-header justify-content-start align-self-center">Students Characteristics and Programs for District @Model.EdOrgName (@Model.EdOrgId.ToString())</div>
+<div class="row tbmargin10">
+    @if (Model.IsStateMode)
+    {
+        <div class="vp-body-header justify-content-start align-self-center">Students Characteristics and Programs for All Minnesota Districts</div>
+    }
+    else
+    {
+        <div class="vp-body-header justify-content-start align-self-center">Students Characteristics and Programs for District @Model.EdOrgName (@Model.EdOrgId.ToString())</div>
+    }
 </div>
-
-<div id="requestedReportContent">
+<div class="row tbmargin10">
+    <div><a href="#reportsTable1" class="vp-page-link"><i class="fas fa-arrow-alt-circle-down"></i> See Characteristics</a></div>
+    <div><a href="#reportsTable2" class="vp-page-link"><i class="fas fa-arrow-alt-circle-down"></i> See Program Participation</a></div>
+</div>
+<div class="row tbmargin10">
+    <div class="vp-body-header justify-content-start align-self-center">Characteristics:</div>
+</div>
+<div id="requestedReportContent1" class="row">
     <table class="table table-sm table-responsive-md table-bordered" id="reportsTable1">
         <tr class="table-primary">
+            <th>ID</th>
             <th>District/School</th>
-            <th>Enrollments</th>
+            <th>Cumulative Enrollments</th>
             <th>Demographic Records</th>
             <th>Active Duty Parents (ADP)</th>
             <th>American Indian - Alaskan Native (Minnesota)</th>
             <th>Migrant</th>
-            <th>Immigrant</th>
             <th>Homeless</th>
+            <th>Immigrant</th>
+            <th>Recently Arrived<br />English Learner</th>
+            <th>SLIFE</th>
         </tr>
-        @if (Model.Results.Count > 0)
-        {
-            <tr>
-                <td>@(Model.Results[0].DistrictName)</td>
-                <td>@(Model.Results.Sum(r => r.EnrollmentCount))</td>
-                <td>@(Model.Results.Sum(r => r.DemographicsCount))</td>
-                <td>@(Model.Results.Sum(r => r.ADParentCount))</td>
-                <td>@(Model.Results.Sum(r => r.IndianNativeCount))</td>
-                <td>@(Model.Results.Sum(r => r.MigrantCount))</td>
-                <td>@(Model.Results.Sum(r => r.ImmigrantCount))</td>
-                <td>@(Model.Results.Sum(r => r.HomelessCount))</td>
-            </tr>
-        }
-        else
-        {
-            <tr>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-            </tr>
-        }
         @foreach (var result in Model.Results)
         {
             <tr>
-                <td>@(result.SchoolName)</td>
-                <td>@(result.EnrollmentCount)</td>
-                <td>@(result.DemographicsCount)</td>
+                <td>
+                    @if (Model.IsStateMode)
+                    {
+                        if (result.EdOrgId.HasValue && result.OrgType == OrgType.District)
+                        {
+                            <a href="@Url.Action("DemographicsReport", "Ods", new { isStateMode = false, districtToDisplay = result.EdOrgId.Value })" class="show-data-loading">@(result.EdOrgId.Value.ToString())</a>
+                        }
+                        else
+                        {
+                            @(result.EdOrgId.HasValue ? result.EdOrgId.Value.ToString() : string.Empty)
+                        }
+                    }
+                    else
+                    {
+                        @(result.EdOrgId.HasValue ? result.EdOrgId.Value.ToString() : string.Empty)
+                    }
+                </td>
+                <td>@(result.LEASchool)</td>
+                <td>@(result.DistinctEnrollmentCount)</td>
+                <td>@(result.DistinctDemographicsCount)</td>
                 <td>@(result.ADParentCount)</td>
                 <td>@(result.IndianNativeCount)</td>
                 <td>@(result.MigrantCount)</td>
-                <td>@(result.ImmigrantCount)</td>
                 <td>@(result.HomelessCount)</td>
+                <td>@(result.ImmigrantCount)</td>
+                <td>@(result.RecentEnglishCount)</td>
+                <td>@(result.SLIFECount)</td>
             </tr>
         }
     </table>
-    <div id="requestedReportContent">
-        <table class="table table-sm table-responsive-md table-bordered" id="reportsTable2">
-            <tr class="table-primary">
-                <th>District/School</th>
-                <th>Enrollments</th>
-                <th>Demographic Records</th>
-                <th>Recently Arrived English Learner (RAEL)</th>
-                <th>English Learner Served</th>
-                <th>SLIFE</th>
-                <th>Independent Study</th>
-                <th>Section 504 Placement</th>
-                <th>Title 1, Part A</th>
-            </tr>
-            @if (Model.Results.Count > 0)
-            {
-                <tr>
-                    <td>@(Model.Results[0].DistrictName)</td>
-                    <td>@(Model.Results.Sum(r => r.EnrollmentCount))</td>
-                    <td>@(Model.Results.Sum(r => r.DemographicsCount))</td>
-                    <td>@(Model.Results.Sum(r => r.EnglishLearnerCount))</td>
-                    <td>@(Model.Results.Sum(r => r.EnglishLearnerServedCount))</td>
-                    <td>@(Model.Results.Sum(r => r.SLIFECount))</td>
-                    <td>@(Model.Results.Sum(r => r.IndependentStudyCount))</td>
-                    <td>@(Model.Results.Sum(r => r.Section504Count))</td>
-                    <td>@(Model.Results.Sum(r => r.Title1PartACount))</td>
-                </tr>
-            }
-            else
-            {
-                <tr>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                </tr>
-            }
-            @foreach (var result in Model.Results)
-            {
-                <tr>
-                    <td>@(result.SchoolName)</td>
-                    <td>@(result.EnrollmentCount)</td>
-                    <td>@(result.DemographicsCount)</td>
-                    <td>@(result.EnglishLearnerCount)</td>
-                    <td>@(result.EnglishLearnerServedCount)</td>
-                    <td>@(result.SLIFECount)</td>
-                    <td>@(result.IndependentStudyCount)</td>
-                    <td>@(result.Section504Count)</td>
-                    <td>@(result.Title1PartACount)</td>
-                </tr>
-            }
-        </table>
-        @if (Model.Results.Count == 0)
+</div>
+<div class="row tbmargin10">
+    <div><a href="#reportsTable1" class="vp-page-link"><i class="fas fa-arrow-alt-circle-down"></i> See Characteristics</a></div>
+    <div><a href="#reportsTable2" class="vp-page-link"><i class="fas fa-arrow-alt-circle-down"></i> See Program Participation</a></div>
+</div>
+<div class="row tbmargin10">
+    <div class="vp-body-header justify-content-start align-self-center">Program Participation:</div>
+</div>
+<div id="requestedReportContent2" class="row">
+    <table class="table table-sm table-responsive-md table-bordered" id="reportsTable2">
+        <tr class="table-primary">
+            <th>ID</th>
+            <th>District/School</th>
+            <th>English Learner Identified</th>
+            <th>English Learner Served</th>
+            <th>Independent Study</th>
+            <th>Section 504 Placement</th>
+            <th>Title I Part A</th>
+            <th>Eligible for Free and Reduced Meals</th>
+        </tr>
+        @foreach (var result in Model.Results)
         {
-            <div class="vp-body-header col-8 justify-content-start align-self-center">No records were found.</div>
+            <tr>
+                <td>
+                    @if (Model.IsStateMode)
+                    {
+                        if (result.EdOrgId.HasValue && result.OrgType == OrgType.District)
+                        {
+                            <a href="@Url.Action("DemographicsReport", "Ods", new { isStateMode = false, districtToDisplay = result.EdOrgId.Value })" class="show-data-loading">@(result.EdOrgId.Value.ToString())</a>
+                        }
+                        else
+                        {
+                            @(result.EdOrgId.HasValue ? result.EdOrgId.Value.ToString() : string.Empty)
+                        }
+                    }
+                    else
+                    {
+                        @(result.EdOrgId.HasValue ? result.EdOrgId.Value.ToString() : string.Empty)
+                    }
+                </td>
+                <td>@(result.LEASchool)</td>
+                <td>@(result.EnglishLearnerIdentifiedCount)</td>
+                <td>@(result.EnglishLearnerServedCount)</td>
+                <td>@(result.IndependentStudyCount)</td>
+                <td>@(result.Section504Count)</td>
+                <td>@(result.Title1PartACount)</td>
+                <td>@(result.FreeReducedCount)</td>
+            </tr>
         }
-    </div>
-
+    </table>
+</div>
+<div class="row tbmargin10">
+    <div><a href="#reportsTable1" class="vp-page-link"><i class="fas fa-arrow-alt-circle-down"></i> See Characteristics</a></div>
+    <div><a href="#reportsTable2" class="vp-page-link"><i class="fas fa-arrow-alt-circle-down"></i> See Program Participation</a></div>
+</div>
+<div id="notes" class="row">
+    <div class="vp-body-header">Notes:</div>
+</div>
+<div class="row">(1) A student is counted as enrolled if the student was enrolled at least once during the school year.</div>
+<div class="row">(2) Students are counted only once per table cell for the particular school/district/state.</div>
+<div class="row tbmargin10">
+    <a href="@Url.Action("Reports")" class="back-link"><i class="fas fa-arrow-alt-circle-left"></i> Back to ODS Reports</a>
+    <a href="#pagetop" class="vp-page-link"><i class="fas fa-arrow-alt-circle-up"></i> Back to Top</a>
+</div>
 
 @section scripts {
     <script>

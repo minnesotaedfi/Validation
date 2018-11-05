@@ -1,5 +1,5 @@
 ﻿<!-- 
-    This file specifies deployment variables and their values for a particulr environment. 
+    This file specifies deployment variables and their values for a particular environment. 
     Use XPATH to specify the configuration file path and parameter to change.
     In addition to this PARAMETERS.xml file, you need a SetParameters file 
     that depends on the destination environment you are deploying to, 
