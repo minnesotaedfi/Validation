@@ -156,21 +156,29 @@ namespace ValidationWeb
         }
 
         // GET: Ods/ResidentsEnrolledElsewhereReport
-        public ActionResult ResidentsEnrolledElsewhereReport()
+        public ActionResult ResidentsEnrolledElsewhereReport(bool isStateMode = false, int? districtToDisplay = null)
         {
             var session = _appUserService.GetSession();
             var edOrg = _edOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
             var edOrgName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
             var edOrgId = edOrg.Id;
+            // A state user can look at any district via a link, without changing the default district.
+            if (districtToDisplay.HasValue && session.UserIdentity.AuthorizedEdOrgs.Select(eorg => eorg.Id).Contains(districtToDisplay.Value))
+            {
+                edOrgId = districtToDisplay.Value;
+                edOrg = _edOrgService.GetEdOrgById(edOrgId, session.FocusedSchoolYearId);
+                edOrgName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
+            }
             var fourDigitSchoolYear = _schoolyearService.GetSchoolYearById(session.FocusedSchoolYearId).StartYear;
             var theUser = _appUserService.GetUser();
-            var results = _odsDataService.GetMultipleEnrollmentCounts(edOrgId, fourDigitSchoolYear);
+            var results = _odsDataService.GetResidentsEnrolledElsewhereReport(isStateMode ? (int?)null : edOrgId, fourDigitSchoolYear);
             var model = new OdsResidentsEnrolledElsewhereReportViewModel
             {
                 EdOrgId = edOrgId,
                 EdOrgName = edOrgName,
                 User = theUser,
-                Results = results
+                Results = results,
+                IsStateMode = isStateMode
             };
             return View(model);
         }

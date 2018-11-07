@@ -10,6 +10,7 @@ namespace ValidationWeb
         public ValidationPortalIdentity User { get; set; }
         public int EdOrgId { get; set; }
         public string EdOrgName { get; set; }
-        public List<MultipleEnrollmentsCountReportQuery> Results { get; set; }
+        public List<ResidentsEnrolledElsewhereReportQuery> Results { get; set; }
+        public bool IsStateMode { get; set; }
     }
 }

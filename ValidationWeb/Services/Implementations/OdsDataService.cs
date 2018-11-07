@@ -270,5 +270,61 @@ namespace ValidationWeb.Services
                 }
             }
         }
+
+        public List<ResidentsEnrolledElsewhereReportQuery> GetResidentsEnrolledElsewhereReport(int? districtEdOrgId, string fourDigitOdsDbYear)
+        {
+            using (var rawOdsContext = new RawOdsDbContext(fourDigitOdsDbYear))
+            {
+                var conn = rawOdsContext.Database.Connection;
+                try
+                {
+                    conn.Open();
+                    var residentsElseWhereQueryCmd = conn.CreateCommand();
+                    residentsElseWhereQueryCmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    residentsElseWhereQueryCmd.CommandText = ResidentsEnrolledElsewhereReportQuery.ResidentsEnrolledElsewhereQuery;
+                    residentsElseWhereQueryCmd.Parameters.Add(new SqlParameter("@distid", System.Data.SqlDbType.Int));
+                    residentsElseWhereQueryCmd.Parameters["@distid"].Value = districtEdOrgId.HasValue ? (object)districtEdOrgId.Value : (object)DBNull.Value;
+                    var reportData = new List<ResidentsEnrolledElsewhereReportQuery>();
+                    using (var reader = residentsElseWhereQueryCmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            int? theEdOrgValue = null;
+                            var edOrgIdObj = reader[ResidentsEnrolledElsewhereReportQuery.EdOrgIdColumnName];
+                            if (!(edOrgIdObj is DBNull))
+                            {
+                                theEdOrgValue = System.Convert.ToInt32(reader[ResidentsEnrolledElsewhereReportQuery.EdOrgIdColumnName]);
+                            }
+                            reportData.Add(new ResidentsEnrolledElsewhereReportQuery
+                            {
+                                OrgType = (OrgType)(System.Convert.ToInt32(reader[ResidentsEnrolledElsewhereReportQuery.OrgTypeColumnName])),
+                                EdOrgId = theEdOrgValue,
+                                EdOrgName = reader[ResidentsEnrolledElsewhereReportQuery.EdOrgNameColumnName].ToString(),
+                                DistrictOfEnrollmentId = System.Convert.ToInt32(reader[ResidentsEnrolledElsewhereReportQuery.DistrictOfEnrollmentIdColumnName]),
+                                DistrictOfEnrollmentName = reader[ResidentsEnrolledElsewhereReportQuery.DistrictOfEnrollmentNameColumnName].ToString(),
+                                ResidentsEnrolled = System.Convert.ToInt32(reader[ResidentsEnrolledElsewhereReportQuery.ResidentsEnrolledColumnName])
+                            });
+                        }
+                    }
+                    return reportData;
+                }
+                catch (Exception ex)
+                {
+                    _loggingService.LogErrorMessage($"While compiling report on residents enrolled elsewhere: {ex.ChainInnerExceptionMessages()}");
+                    throw;
+                }
+                finally
+                {
+                    if (conn != null && conn.State != System.Data.ConnectionState.Closed)
+                    {
+                        try
+                        {
+                            conn.Close();
+                        }
+                        catch (Exception) { }
+                    }
+                }
+            }
+        }
     }
 }

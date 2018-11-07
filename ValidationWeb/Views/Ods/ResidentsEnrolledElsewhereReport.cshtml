@@ -1,89 +1,60 @@
 ﻿@model OdsResidentsEnrolledElsewhereReportViewModel
 
-<div class="row tbmargin10">
+<div id="pagetop" class="row tbmargin10">
     <div><a href="@Url.Action("Reports")" class="back-link"><i class="fas fa-arrow-alt-circle-left"></i> Back to ODS Reports</a></div>
+    <div><a href="#notes" class="vp-page-link"><i class="fas fa-arrow-alt-circle-down"></i> See notes</a></div>
+    @if (Model.IsStateMode)
+    {
+        <div><a href="@Url.Action("ResidentsEnrolledElsewhereReport", "Ods", new { isStateMode = false })" class="vp-page-link show-data-loading"><i class="fas fa-chalkboard-teacher"></i> View Single District</a></div>
+    }
+    else
+    {
+        <div><a href="@Url.Action("ResidentsEnrolledElsewhereReport", "Ods", new { isStateMode = true })" class="vp-page-link show-data-loading"><i class="fas fa-sitemap"></i> View All Districts</a></div>
+    }
 </div>
-
-<div class="row">
-    <div class="vp-body-header justify-content-start align-self-center">Residents Enrolled Elsewhere for District @Model.EdOrgName (@Model.EdOrgId.ToString())</div>
+<div class="row tbmargin10">
+    @if (Model.IsStateMode)
+    {
+        <div class="vp-body-header justify-content-start align-self-center">Residents Enrolled Elsewhere for All Minnesota Districts</div>
+    }
+    else
+    {
+        <div class="vp-body-header justify-content-start align-self-center">Residents Enrolled Elsewhere for District @Model.EdOrgName (@Model.EdOrgId.ToString())</div>
+    }
 </div>
-
-<div id="requestedReportContent">
-    <table class="table table-sm table-responsive-md table-bordered" id="reportsTable1">
+<div id="requestedReportContent" class="row">
+    <table class="table table-sm table-responsive-md table-bordered" id="reportsTable">
         <tr class="table-primary">
+            <th>ID</th>
+            <th>Resident District</th>
+            <th>District of Enrollment ID</th>
             <th>District of Enrollment</th>
-            <th>Residence Enrolled</th>
+            <th>Residents Enrolled</th>
         </tr>
-        @if (Model.Results.Count > 0)
-        {
-            <tr>
-                <td>@(Model.Results[0].DistrictName)</td>
-                <td>@(Model.Results.Sum(r => r.EnrollmentCount))</td>
-            </tr>
-        }
-        else
-        {
-            <tr>
-                <td>-</td>
-                <td>-</td>
-            </tr>
-        }
         @foreach (var result in Model.Results)
         {
             <tr>
-                <td>@(result.SchoolName)</td>
-                <td>@(result.EnrollmentCount)</td>
-            </tr>
-        }
-    </table>
-    <table class="table table-sm table-responsive-md table-bordered" id="reportsTable2">
-        <tr class="table-primary">
-            <th>Student Name</th>
-            <th>Student ID</th>
-            <th>District</th>
-            <th>District ID</th>
-            <th>Entry Date</th>
-            <th>Withdraw Date</th>
-            <th>State Aid Category</th>
-            <th>Special Ed Status</th>
-        </tr>
-        @if (Model.Results.Count > 0)
-        {
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-        }
-        else
-        {
-            <tr>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-            </tr>
-        }
-        @foreach (var result in Model.Results)
-        {
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td>
+                    @if (Model.IsStateMode)
+                    {
+                        if (result.EdOrgId.HasValue && result.OrgType == OrgType.District)
+                        {
+                            <a href="@Url.Action("ResidentsEnrolledElsewhereReport", "Ods", new { isStateMode = false, districtToDisplay = result.EdOrgId.Value})" class="show-data-loading">@(result.EdOrgId.Value.ToString())</a>
+                        }
+                        else
+                        {
+                            @(result.EdOrgId.HasValue ? result.EdOrgId.Value.ToString() : string.Empty)
+                        }
+                    }
+                    else
+                    {
+                        @(result.EdOrgId.HasValue ? result.EdOrgId.Value.ToString() : string.Empty)
+                    }
+                </td>
+                <td>@(result.EdOrgName)</td>
+                <td>@(result.DistrictOfEnrollmentId.ToString())</td>
+                <td>@(result.DistrictOfEnrollmentName)</td>
+                <td>@(result.ResidentsEnrolled.ToString())</td>
             </tr>
         }
     </table>
@@ -91,7 +62,14 @@
     {
         <div class="vp-body-header col-8 justify-content-start align-self-center">No records were found.</div>
     }
-
+</div>
+<div id="notes" class="row">
+    <div class="vp-body-header">Notes:</div>
+</div>
+<div class="row">The district where the student resides is determined from the student-school association extensions in the Ed Fi ODS database.</div>
+<div class="row tbmargin10">
+    <a href="@Url.Action("Reports")" class="back-link"><i class="fas fa-arrow-alt-circle-left"></i> Back to ODS Reports</a>
+    <a href="#pagetop" class="vp-page-link"><i class="fas fa-arrow-alt-circle-up"></i> Back to Top</a>
 </div>
 
 
