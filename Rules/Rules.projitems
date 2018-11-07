@@ -9,11 +9,9 @@
     <Import_RootNamespace>Rules</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)NameChecks.rules">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
     <None Include="$(MSBuildThisFileDirectory)Collections.rules">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
+    <None Include="$(MSBuildThisFileDirectory)SampleChecks.rules" />
   </ItemGroup>
 </Project>
