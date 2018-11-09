@@ -14,10 +14,12 @@ namespace ValidationWeb.ApiControllers
     public class ValidationController : ApiController
     {
         public readonly IValidationResultsService _validationResultsService;
+        private readonly IEdOrgService _edOrgService;
 
-        public ValidationController(IValidationResultsService validationResultsService)
+        public ValidationController(IValidationResultsService validationResultsService, IEdOrgService edOrgService)
         {
             _validationResultsService = validationResultsService;
+            _edOrgService = edOrgService;
         }
 
         [Route("error-summaries/{mode}")]
@@ -33,5 +35,14 @@ namespace ValidationWeb.ApiControllers
         {
             return _validationResultsService.AutocompleteErrorFilter(filter);
         }
+
+        [Route("edorgs/autocomplete")]
+        [HttpGet]
+        //public List<EdOrg> GetEdOrgs()
+        public IHttpActionResult GetEdOrgs()
+        {
+            return Json(_edOrgService.GetEdOrgs());
+        }
+
     }
 }
