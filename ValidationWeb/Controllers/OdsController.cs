@@ -156,7 +156,7 @@ namespace ValidationWeb
         }
 
         // GET: Ods/ResidentsEnrolledElsewhereReport
-        public ActionResult ResidentsEnrolledElsewhereReport(bool isStateMode = false, int? districtToDisplay = null)
+        public ActionResult ResidentsEnrolledElsewhereReport(bool isStateMode = false, int? districtToDisplay = null, bool isStudentDrillDown = false)
         {
             var session = _appUserService.GetSession();
             var edOrg = _edOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
@@ -171,6 +171,19 @@ namespace ValidationWeb
             }
             var fourDigitSchoolYear = _schoolyearService.GetSchoolYearById(session.FocusedSchoolYearId).StartYear;
             var theUser = _appUserService.GetUser();
+            if (isStudentDrillDown)
+            {
+                var studentDrillDownResults = _odsDataService.GetResidentsEnrolledElsewhereReport(isStateMode ? (int?)null : edOrgId, fourDigitSchoolYear);
+                var studentDrillDownModel = new StudentDrillDownViewModel
+                {
+                    EdOrgId = edOrgId,
+                    EdOrgName = edOrgName,
+                    User = theUser,
+                    Results = results,
+                    IsStateMode = isStateMode
+                };
+                return View("ResidentsElsewhereStudentDrillDown", studentDrillDownResults);
+            }
             var results = _odsDataService.GetResidentsEnrolledElsewhereReport(isStateMode ? (int?)null : edOrgId, fourDigitSchoolYear);
             var model = new OdsResidentsEnrolledElsewhereReportViewModel
             {
