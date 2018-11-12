@@ -326,5 +326,7 @@ namespace ValidationWeb.Services
                 }
             }
         }
+
+        List<ResidentsEnrolledElsewhereReportQuery> GetResidentsEnrolledElsewhereStudentDrillDown(int? districtEdOrgId, string fourDigitOdsDbYear, string uniqueStudentId)
     }
 }
