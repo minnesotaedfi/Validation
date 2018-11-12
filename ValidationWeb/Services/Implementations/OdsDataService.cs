@@ -327,6 +327,9 @@ namespace ValidationWeb.Services
             }
         }
 
-        List<ResidentsEnrolledElsewhereReportQuery> GetResidentsEnrolledElsewhereStudentDrillDown(int? districtEdOrgId, string fourDigitOdsDbYear, string uniqueStudentId)
+        public List<StudentDrillDownViewModel> GetResidentsEnrolledElsewhereStudentDrillDown(int? districtEdOrgId, string fourDigitOdsDbYear, string uniqueStudentId)
+        {
+            return new List<StudentDrillDownViewModel>();
+        }
     }
 }
