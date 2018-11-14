@@ -30,7 +30,7 @@
 @Html.Partial("Partials/AddSubmissionCycleModal")
 @Html.Partial("Partials/AnnouncementEditModal")
 
-@Html.Hidden("tabParam", @Request.QueryString["tab"]);
+@Html.Hidden("tabParam", @Request.QueryString["tab"])
 
 
 @section scripts {
@@ -46,12 +46,15 @@
             //var url = window.location.href;
             //let currentTab = $('#tabParam');
             let currentTab = $("[name='tabParam']");
-            if (currentTab) {
-                let tabId = `#list-${currentTab.val()}`;
-                $(tabId).addClass("show active");
+            if (currentTab.val()) {
+                let tabContentId = `#list-${currentTab.val()}`;
+                $(tabContentId).addClass("show active");
+                let tabId = `#list-${currentTab.val()}-list`;
+                $(tabId).addClass("active");
             }
             else {
                 $('#list-error-threshold').addClass("show active");
+                $('#list-error-threshold-list').addClass("active");
             }           
       
             $(".save-row").hide();
