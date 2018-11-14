@@ -9,5 +9,7 @@ namespace ValidationWeb.Services
     public interface IAnnouncementService
     {
         List<Announcement> GetAnnoucements(bool includePreviouslyDismissedAnnouncements = false);
+        bool AddAnnouncement(int priority, string message, string contactInfo, string linkUrl, string expirationDateStr);
+        bool AddAnnouncementFromBody(Announcement announcement);
     }
 }

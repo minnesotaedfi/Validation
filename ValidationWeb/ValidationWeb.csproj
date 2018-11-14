@@ -262,6 +262,8 @@
     <Content Include="Deployment\DeployToMnDev.proj" />
     <Content Include="Deployment\DeployToQA.proj" />
     <Content Include="Views\Ods\ResidentsElsewhereStudentDrillDown.cshtml" />
+    <Content Include="Views\Admin\Partials\Announcements.cshtml" />
+    <Content Include="Views\Admin\Partials\AnnouncementEditModal.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

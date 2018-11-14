@@ -25,7 +25,6 @@
         <tr class="table-primary">
             <th class="id-hide-column">Id</th>
             <th>School Year</th>
-            <th>Error Threshold %</th>
             <th>Options</th>
         </tr>
         @foreach (var schoolYear in Model)
@@ -33,12 +32,8 @@
             <tr>
                 <td class="id-hide-column">@schoolYear.Id</td>
                 <td>@schoolYear.ToString()</td>
-                @ShowNotSet(schoolYear.ErrorThreshold.ToString())
                 <td>
-                    <span class="edit-row"><a href="#" class="btn btn-link">Edit</a></span>
-                    <span class="save-row"><a href="#" class="btn btn-link">Save</a> | </span>
-                    <span class="remove-row"><a href="#" onclick="removeSchoolYear(@schoolYear.Id, '@schoolYear.ToString()');" class="btn btn-link" style="color: red;">Remove</a> | </span>
-                    <span class="cancel-row"><a href="#" class="btn btn-link">Cancel</a></span>
+                    <span class="remove-row-school-year"><a href="#" onclick="removeSchoolYear(@schoolYear.Id, '@schoolYear.ToString()');" class="btn btn-link" style="color: red;">Remove</a></span>
                 </td>
             </tr>
         }
