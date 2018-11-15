@@ -52,7 +52,7 @@ namespace ValidationWeb
         }
 
         // GET: Ods/DemographicsReport
-        public ActionResult DemographicsReport(bool isStateMode = false, int? districtToDisplay = null)
+        public ActionResult DemographicsReport(bool isStateMode = false, int? districtToDisplay = null, bool isStudentDrillDown = false, int? schoolId = null, int? drillDownColumnIndex = null)
         {
             var session = _appUserService.GetSession();
             var edOrg = _edOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
@@ -67,6 +67,20 @@ namespace ValidationWeb
             }
             var fourDigitSchoolYear = _schoolyearService.GetSchoolYearById(session.FocusedSchoolYearId).StartYear;
             var theUser = _appUserService.GetUser();
+            if (isStudentDrillDown)
+            {
+                var studentDrillDownResults = _odsDataService.GetDistrictAncestryRaceStudentDrillDown(schoolId, drillDownColumnIndex, isStateMode ? (int?)null : edOrgId, fourDigitSchoolYear);
+                var studentDrillDownModel = new StudentDrillDownViewModel
+                {
+                    ReportName = "Race and Ancestry Ethnic Origin",
+                    EdOrgId = edOrgId,
+                    EdOrgName = edOrgName,
+                    User = theUser,
+                    Results = studentDrillDownResults,
+                    IsStateMode = isStateMode
+                };
+                return View("StudentDrillDown", studentDrillDownModel);
+            }
             var results = _odsDataService.GetDistrictAncestryRaceCounts(isStateMode ? (int?)null : edOrgId, fourDigitSchoolYear);
             var model = new OdsDemographicsReportViewModel
             {
@@ -156,45 +170,46 @@ namespace ValidationWeb
         }
 
         // GET: Ods/ResidentsEnrolledElsewhereReport
-        //public ActionResult ResidentsEnrolledElsewhereReport(bool isStateMode = false, int? districtToDisplay = null, bool isStudentDrillDown = false)
-        //{
-        //    var session = _appUserService.GetSession();
-        //    var edOrg = _edOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
-        //    var edOrgName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
-        //    var edOrgId = edOrg.Id;
-        //    // A state user can look at any district via a link, without changing the default district.
-        //    if (districtToDisplay.HasValue && session.UserIdentity.AuthorizedEdOrgs.Select(eorg => eorg.Id).Contains(districtToDisplay.Value))
-        //    {
-        //        edOrgId = districtToDisplay.Value;
-        //        edOrg = _edOrgService.GetEdOrgById(edOrgId, session.FocusedSchoolYearId);
-        //        edOrgName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
-        //    }
-        //    var fourDigitSchoolYear = _schoolyearService.GetSchoolYearById(session.FocusedSchoolYearId).StartYear;
-        //    var theUser = _appUserService.GetUser();
-        //    if (isStudentDrillDown)
-        //    {
-        //        var studentDrillDownResults = _odsDataService.GetResidentsEnrolledElsewhereReport(isStateMode ? (int?)null : edOrgId, fourDigitSchoolYear);
-        //        var studentDrillDownModel = new StudentDrillDownViewModel
-        //        {
-        //            EdOrgId = edOrgId,
-        //            EdOrgName = edOrgName,
-        //            User = theUser,
-        //            Results = results,
-        //            IsStateMode = isStateMode
-        //        };
-        //        return View("ResidentsElsewhereStudentDrillDown", studentDrillDownResults);
-        //    }
-        //    var results = _odsDataService.GetResidentsEnrolledElsewhereReport(isStateMode ? (int?)null : edOrgId, fourDigitSchoolYear);
-        //    var model = new OdsResidentsEnrolledElsewhereReportViewModel
-        //    {
-        //        EdOrgId = edOrgId,
-        //        EdOrgName = edOrgName,
-        //        User = theUser,
-        //        Results = results,
-        //        IsStateMode = isStateMode
-        //    };
-        //    return View(model);
-        //}
+        public ActionResult ResidentsEnrolledElsewhereReport(bool isStateMode = false, int? districtToDisplay = null, bool isStudentDrillDown = false)
+        {
+            var session = _appUserService.GetSession();
+            var edOrg = _edOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
+            var edOrgName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
+            var edOrgId = edOrg.Id;
+            // A state user can look at any district via a link, without changing the default district.
+            if (districtToDisplay.HasValue && session.UserIdentity.AuthorizedEdOrgs.Select(eorg => eorg.Id).Contains(districtToDisplay.Value))
+            {
+                edOrgId = districtToDisplay.Value;
+                edOrg = _edOrgService.GetEdOrgById(edOrgId, session.FocusedSchoolYearId);
+                edOrgName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
+            }
+            var fourDigitSchoolYear = _schoolyearService.GetSchoolYearById(session.FocusedSchoolYearId).StartYear;
+            var theUser = _appUserService.GetUser();
+            if (isStudentDrillDown)
+            {
+                var studentDrillDownResults = _odsDataService.GetResidentsEnrolledElsewhereStudentDrillDown(isStateMode ? (int?)null : edOrgId, fourDigitSchoolYear);
+                var studentDrillDownModel = new StudentDrillDownViewModel
+                {
+                    ReportName = "Residents Enrolled Elsewhere",
+                    EdOrgId = edOrgId,
+                    EdOrgName = edOrgName,
+                    User = theUser,
+                    Results = studentDrillDownResults,
+                    IsStateMode = isStateMode
+                };
+                return View("StudentDrillDown", studentDrillDownModel);
+            }
+            var results = _odsDataService.GetResidentsEnrolledElsewhereReport(isStateMode ? (int?)null : edOrgId, fourDigitSchoolYear);
+            var model = new OdsResidentsEnrolledElsewhereReportViewModel
+            {
+                EdOrgId = edOrgId,
+                EdOrgName = edOrgName,
+                User = theUser,
+                Results = results,
+                IsStateMode = isStateMode
+            };
+            return View(model);
+        }
 
         // GET: Ods/IdentityIssuesReport
         public ActionResult IdentityIssuesReport()

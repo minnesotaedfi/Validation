@@ -8,6 +8,7 @@ namespace ValidationWeb
     public class ResidentsEnrolledElsewhereReportQuery
     {
         public static string ResidentsEnrolledElsewhereQuery = "rules.ResidentsEnrolledElsewhereReport";
+        public static string ResidentsEnrolledElsewhereStudentDetailsQuery = "rules.ResidentsEnrolledElsewhereStudentDetailsReport";
         public const string OrgTypeColumnName = "OrgType";
         public const string EdOrgIdColumnName = "EdOrgId";
         public const string EdOrgNameColumnName = "EdOrgName";

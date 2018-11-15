@@ -8,9 +8,11 @@ namespace ValidationWeb.Services
     public interface IOdsDataService
     {
         List<DemographicsCountReportQuery> GetDistrictAncestryRaceCounts(int? districtEdOrgId, string fourDigitOdsDbYear);
+        List<StudentDrillDownQuery> GetDistrictAncestryRaceStudentDrillDown(int? schoolEdOrgId, int? districtEdOrgId, int? columnIndex, string fourDigitOdsDbYear);
         List<MultipleEnrollmentsCountReportQuery> GetMultipleEnrollmentCounts(int? districtEdOrgId, string fourDigitOdsDbYear);
         List<StudentProgramsCountReportQuery> GetStudentProgramsCounts(int? districtEdOrgId, string fourDigitOdsDbYear);
         List<ChangeOfEnrollmentReportQuery> GetChangeOfEnrollmentReport(int districtEdOrgId, string fourDigitOdsDbYear);
-        List<StudentDrillDownViewModel> GetResidentsEnrolledElsewhereStudentDrillDown(int? districtEdOrgId, string fourDigitOdsDbYear, string uniqueStudentId);
+        List<ResidentsEnrolledElsewhereReportQuery> GetResidentsEnrolledElsewhereReport(int? districtEdOrgId, string fourDigitOdsDbYear);
+        List<StudentDrillDownQuery> GetResidentsEnrolledElsewhereStudentDrillDown(int? districtEdOrgId, string fourDigitOdsDbYear);
     }
 }

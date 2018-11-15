@@ -1,3 +1,9 @@
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- PROCEDURE:  Race and Ancestral Ethnic Origin  ------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 IF OBJECT_ID ( 'rules.RaceAEOReport', 'P' ) IS NOT NULL   
     DROP PROCEDURE rules.RaceAEOReport;  
 GO  
@@ -146,60 +152,69 @@ END
 			anc_distinct.quantity
 	;
 
-	----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	-- STATE LEVEL ----------------------------------------------------------------------------------------------------------------------------------------------------
-	----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	IF @distid IS NULL
+	BEGIN
+		----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+		-- STATE LEVEL ----------------------------------------------------------------------------------------------------------------------------------------------------
+		----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-	-- Load School information, rolling up to District - if District is NULL, then ALL Districts in the State.
-	-- REGARDLESS of whether they have any enrollments or demographics.
-	INSERT INTO @RaceAEOTable(
-		OrgType, 
-		EdOrgId, 
-		SchoolName,      -- Actually, the District name needed here.
-		DistrictEdOrgId, -- NULL for District Level
-		DistrictName,    -- NULL for District Level
-		DistinctEnrollmentCount, 
-		DistinctDemographicsCount,
-		RaceGivenCount,
-		AncestryGivenCount)
-		SELECT 
-			300, -- STATE LEVEL
-			NULL AS DistrictEdOrgId,
-			'State of Minnesota' AS SchoolName,
-			NULL,
-			NULL,
-			DistinctEnrollmentCount = enr_distinct.quantity,
-			DistinctDemographicsCount = dem_distinct.quantity,
-			RaceGivenCount = rac_distinct.quantity,
-			AncestryGivenCount = anc_distinct.quantity
-		FROM 
-			edfi.EducationOrganization eorgdist 
-			LEFT OUTER JOIN edfi.School sch ON sch.LocalEducationAgencyId  = eorgdist.EducationOrganizationId
-			-- To include duplicates (multiple records per student), use COUNT(1) instead
-			OUTER APPLY (SELECT COUNT(DISTINCT ssa.StudentUSI) AS quantity 
-				FROM edfi.Student s 
-				LEFT OUTER JOIN edfi.StudentSchoolAssociation ssa ON ssa.StudentUSI = s.StudentUSI) enr_distinct
-			OUTER APPLY (SELECT COUNT(DISTINCT seoa.StudentUSI) AS quantity 
-				FROM edfi.Student s 
-				LEFT OUTER JOIN edfi.StudentEducationOrganizationAssociation seoa ON seoa.StudentUSI = s.StudentUSI) dem_distinct
-			OUTER APPLY (SELECT COUNT(DISTINCT seoar.StudentUSI) AS quantity 
-				FROM edfi.Student s 
-				LEFT OUTER JOIN edfi.StudentEducationOrganizationAssociation seoa ON seoa.StudentUSI = s.StudentUSI
-				LEFT OUTER JOIN extension.StudentEducationOrganizationAssociationRace seoar ON seoar.StudentUSI = s.StudentUSI) rac_distinct
-			OUTER APPLY (SELECT COUNT(DISTINCT seoaeo.StudentUSI) AS quantity 
-				FROM edfi.Student s 
-				LEFT OUTER JOIN edfi.StudentEducationOrganizationAssociation seoa ON seoa.StudentUSI = s.StudentUSI
-				LEFT OUTER JOIN extension.StudentEducationOrganizationAssociationAncestryEthnicOrigin seoaeo ON seoaeo.StudentUSI = s.StudentUSI) anc_distinct
-		GROUP BY 
-			enr_distinct.quantity, 
-			dem_distinct.quantity,
-			rac_distinct.quantity,
-			anc_distinct.quantity
-	;
+		-- Load School information, rolling up to District - if District is NULL, then ALL Districts in the State.
+		-- REGARDLESS of whether they have any enrollments or demographics.
+		INSERT INTO @RaceAEOTable(
+			OrgType, 
+			EdOrgId, 
+			SchoolName,      -- Actually, the District name needed here.
+			DistrictEdOrgId, -- NULL for District Level
+			DistrictName,    -- NULL for District Level
+			DistinctEnrollmentCount, 
+			DistinctDemographicsCount,
+			RaceGivenCount,
+			AncestryGivenCount)
+			SELECT 
+				300, -- STATE LEVEL
+				NULL AS DistrictEdOrgId,
+				'State of Minnesota' AS SchoolName,
+				NULL,
+				NULL,
+				DistinctEnrollmentCount = enr_distinct.quantity,
+				DistinctDemographicsCount = dem_distinct.quantity,
+				RaceGivenCount = rac_distinct.quantity,
+				AncestryGivenCount = anc_distinct.quantity
+			FROM 
+				edfi.EducationOrganization eorgdist 
+				LEFT OUTER JOIN edfi.School sch ON sch.LocalEducationAgencyId  = eorgdist.EducationOrganizationId
+				-- To include duplicates (multiple records per student), use COUNT(1) instead
+				OUTER APPLY (SELECT COUNT(DISTINCT ssa.StudentUSI) AS quantity 
+					FROM edfi.Student s 
+					LEFT OUTER JOIN edfi.StudentSchoolAssociation ssa ON ssa.StudentUSI = s.StudentUSI) enr_distinct
+				OUTER APPLY (SELECT COUNT(DISTINCT seoa.StudentUSI) AS quantity 
+					FROM edfi.Student s 
+					LEFT OUTER JOIN edfi.StudentEducationOrganizationAssociation seoa ON seoa.StudentUSI = s.StudentUSI) dem_distinct
+				OUTER APPLY (SELECT COUNT(DISTINCT seoar.StudentUSI) AS quantity 
+					FROM edfi.Student s 
+					LEFT OUTER JOIN edfi.StudentEducationOrganizationAssociation seoa ON seoa.StudentUSI = s.StudentUSI
+					LEFT OUTER JOIN extension.StudentEducationOrganizationAssociationRace seoar ON seoar.StudentUSI = s.StudentUSI) rac_distinct
+				OUTER APPLY (SELECT COUNT(DISTINCT seoaeo.StudentUSI) AS quantity 
+					FROM edfi.Student s 
+					LEFT OUTER JOIN edfi.StudentEducationOrganizationAssociation seoa ON seoa.StudentUSI = s.StudentUSI
+					LEFT OUTER JOIN extension.StudentEducationOrganizationAssociationAncestryEthnicOrigin seoaeo ON seoaeo.StudentUSI = s.StudentUSI) anc_distinct
+			GROUP BY 
+				enr_distinct.quantity, 
+				dem_distinct.quantity,
+				rac_distinct.quantity,
+				anc_distinct.quantity
+		;
+	END
 
 	SELECT * FROM @RaceAEOTable ORDER BY OrgType DESC, SchoolName;
 END
 GO
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- PROCEDURE:  Multiple Enrollments  ------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 IF OBJECT_ID ( 'rules.MultipleEnrollmentReport', 'P' ) IS NOT NULL   
     DROP PROCEDURE rules.MultipleEnrollmentReport;  
@@ -352,56 +367,59 @@ BEGIN
 			enr_multiple_district.quantity
 	;
 
-	----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	-- STATE LEVEL ----------------------------------------------------------------------------------------------------------------------------------------------------
-	----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	IF @distid IS NULL
+	BEGIN
+		----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+		-- STATE LEVEL ----------------------------------------------------------------------------------------------------------------------------------------------------
+		----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-	INSERT INTO @MultipleEnrollmentsTable(
-		OrgType, 
-		EdOrgId, 
-		SchoolName, 
-		DistrictEdOrgId, 
-		DistrictName,
-		TotalEnrollmentCount, 
-		DistinctEnrollmentCount,
-		EnrolledInOtherSchoolsCount,
-		EnrolledInOtherDistrictsCount
-		)
-		SELECT 
-			300, -- STATE LEVEL
-			NULL AS DistrictEdOrgId,
-			'State of Minnesota' AS SchoolName,
-			NULL,
-			NULL,
-			TotalEnrollmentCount = enr.quantity_all,
-			DistinctEnrollmentCount = enr.quantity,
-			EnrolledInOtherSchoolsCount = enr_multiple_school.quantity,
-			EnrolledInOtherDistrictssCount = enr_multiple_district.quantity
-		FROM 
-			edfi.EducationOrganization eorgdist 
-			LEFT OUTER JOIN edfi.School sch ON sch.LocalEducationAgencyId  = eorgdist.EducationOrganizationId
-			-- To include duplicates (multiple records per student), use COUNT(1) instead
-			OUTER APPLY (SELECT COUNT(1) AS quantity_all, COUNT(DISTINCT s.StudentUSI) AS quantity
-				FROM edfi.Student s 
-				LEFT OUTER JOIN edfi.StudentSchoolAssociation ssa ON ssa.StudentUSI = s.StudentUSI) enr
-			OUTER APPLY (SELECT COUNT(DISTINCT s.StudentUSI) AS quantity 
-				FROM edfi.Student s 
-				INNER JOIN edfi.StudentSchoolAssociation ssa ON ssa.StudentUSI = s.StudentUSI
-				INNER JOIN edfi.School sch ON ssa.SchoolId = sch.SchoolId
-				GROUP BY s.StudentUSI, sch.LocalEducationAgencyId
-				HAVING COUNT(*) > 1) enr_multiple_school
-			OUTER APPLY (SELECT COUNT(DISTINCT s.StudentUSI) AS quantity 
-				FROM edfi.Student s 
-				INNER JOIN edfi.StudentSchoolAssociation ssa ON ssa.StudentUSI = s.StudentUSI
-				INNER JOIN edfi.School sch ON ssa.SchoolId = sch.SchoolId
-				GROUP BY s.StudentUSI
-				HAVING COUNT(DISTINCT sch.LocalEducationAgencyId) > 1) enr_multiple_district
-		GROUP BY 
-			enr.quantity_all,
-			enr.quantity,
-			enr_multiple_school.quantity,
-			enr_multiple_district.quantity
-	;
+		INSERT INTO @MultipleEnrollmentsTable(
+			OrgType, 
+			EdOrgId, 
+			SchoolName, 
+			DistrictEdOrgId, 
+			DistrictName,
+			TotalEnrollmentCount, 
+			DistinctEnrollmentCount,
+			EnrolledInOtherSchoolsCount,
+			EnrolledInOtherDistrictsCount
+			)
+			SELECT 
+				300, -- STATE LEVEL
+				NULL AS DistrictEdOrgId,
+				'State of Minnesota' AS SchoolName,
+				NULL,
+				NULL,
+				TotalEnrollmentCount = enr.quantity_all,
+				DistinctEnrollmentCount = enr.quantity,
+				EnrolledInOtherSchoolsCount = enr_multiple_school.quantity,
+				EnrolledInOtherDistrictssCount = enr_multiple_district.quantity
+			FROM 
+				edfi.EducationOrganization eorgdist 
+				LEFT OUTER JOIN edfi.School sch ON sch.LocalEducationAgencyId  = eorgdist.EducationOrganizationId
+				-- To include duplicates (multiple records per student), use COUNT(1) instead
+				OUTER APPLY (SELECT COUNT(1) AS quantity_all, COUNT(DISTINCT s.StudentUSI) AS quantity
+					FROM edfi.Student s 
+					LEFT OUTER JOIN edfi.StudentSchoolAssociation ssa ON ssa.StudentUSI = s.StudentUSI) enr
+				OUTER APPLY (SELECT COUNT(DISTINCT s.StudentUSI) AS quantity 
+					FROM edfi.Student s 
+					INNER JOIN edfi.StudentSchoolAssociation ssa ON ssa.StudentUSI = s.StudentUSI
+					INNER JOIN edfi.School sch ON ssa.SchoolId = sch.SchoolId
+					GROUP BY s.StudentUSI, sch.LocalEducationAgencyId
+					HAVING COUNT(*) > 1) enr_multiple_school
+				OUTER APPLY (SELECT COUNT(DISTINCT s.StudentUSI) AS quantity 
+					FROM edfi.Student s 
+					INNER JOIN edfi.StudentSchoolAssociation ssa ON ssa.StudentUSI = s.StudentUSI
+					INNER JOIN edfi.School sch ON ssa.SchoolId = sch.SchoolId
+					GROUP BY s.StudentUSI
+					HAVING COUNT(DISTINCT sch.LocalEducationAgencyId) > 1) enr_multiple_district
+			GROUP BY 
+				enr.quantity_all,
+				enr.quantity,
+				enr_multiple_school.quantity,
+				enr_multiple_district.quantity
+		;
+	END
 
 	SELECT OrgType, 
 		EdOrgId, 
@@ -416,6 +434,12 @@ BEGIN
 	ORDER BY OrgType DESC, SchoolName;
 END
 GO
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- PROCEDURE:  Student Programs --------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 IF OBJECT_ID ( 'rules.StudentProgramsReport', 'P' ) IS NOT NULL   
     DROP PROCEDURE rules.StudentProgramsReport;  
@@ -786,166 +810,174 @@ END
 			mealselig.quantity
 	;
 
-	----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	-- STATE LEVEL ----------------------------------------------------------------------------------------------------------------------------------------------------
-	----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-	-- Load School information, rolling up to District - if District is NULL, then ALL Districts in the State.
-	-- REGARDLESS of whether they have any enrollments or demographics.
-	INSERT INTO @StudentProgramsTable(
-		OrgType, 
-		EdOrgId, 
-		SchoolName,      -- Actually, the District name needed here.
-		DistrictEdOrgId, -- NULL for District Level
-		DistrictName,    -- NULL for District Level
-		DistinctEnrollmentCount, 
-		DistinctDemographicsCount,
-		ADParentCount,
-		IndianNativeCount,
-		MigrantCount,
-		HomelessCount,
-		ImmigrantCount,
-		RecentEnglishCount,
-		SLIFECount,
-		EnglishLearnerIdentifiedCount,
-		EnglishLearnerServedCount,
-		IndependentStudyCount,
-		Section504Count,
-		Title1PartACount,
-		FreeReducedCount)
-		SELECT 
-			300, -- STATE LEVEL
-			NULL AS DistrictEdOrgId,
-			'State of Minnesota' AS SchoolName,
-			NULL,
-			NULL,
-			DistinctEnrollmentCount = enr_distinct.quantity,
-			DistinctDemographicsCount = dem_distinct.quantity,
-			ADParentCount = adparent.quantity,
-			IndianNativeCount = amindian.quantity,
-			MigrantCount = migrant.quantity,
-			HomelessCount = homeless.quantity,
-			ImmigrantCount = immigrant.quantity,
-			RecentEnglish = recenteng.quantity,
-			SLIFECount = slife.quantity,
-			EnglishLearnerIdentifiedCount = limitedeng.quantity,
-			EnglishLearnerServedCount = engserved.quantity,
-			IndependentStudyCount = independ.quantity,
-			Section504Count = sec504.quantity,
-			Title1PartACount = title1.quantity,
-			FreeReducedCount = mealselig.quantity
-		FROM 
-			edfi.EducationOrganization eorgdist 
-			LEFT OUTER JOIN edfi.School sch ON sch.LocalEducationAgencyId  = eorgdist.EducationOrganizationId
-			-- To include duplicates (multiple records per student), use COUNT(1) instead
-			OUTER APPLY (SELECT COUNT(DISTINCT ssa.StudentUSI) AS quantity 
-				FROM edfi.Student s 
-				LEFT OUTER JOIN edfi.StudentSchoolAssociation ssa ON ssa.StudentUSI = s.StudentUSI) enr_distinct
-			OUTER APPLY (SELECT COUNT(DISTINCT seoa.StudentUSI) AS quantity 
-				FROM edfi.Student s 
-				LEFT OUTER JOIN edfi.StudentEducationOrganizationAssociation seoa ON seoa.StudentUSI = s.StudentUSI) dem_distinct
-			OUTER APPLY (SELECT COUNT(DISTINCT seoar.StudentUSI) AS quantity 
-				FROM edfi.Student s 
-				LEFT OUTER JOIN edfi.StudentEducationOrganizationAssociation seoa ON seoa.StudentUSI = s.StudentUSI
-				LEFT OUTER JOIN extension.StudentEducationOrganizationAssociationRace seoar ON seoar.StudentUSI = s.StudentUSI) rac_distinct
-			OUTER APPLY (SELECT COUNT(DISTINCT seoasc.StudentUSI) AS quantity 
-				FROM edfi.Student s 
-				LEFT OUTER JOIN edfi.StudentEducationOrganizationAssociation seoa ON seoa.StudentUSI = s.StudentUSI
-				LEFT OUTER JOIN extension.StudentEducationOrganizationAssociationStudentCharacteristic seoasc ON seoasc.StudentUSI = s.StudentUSI
-				LEFT OUTER JOIN edfi.Descriptor d ON d.DescriptorId = seoasc.StudentCharacteristicDescriptorId
-				WHERE d.CodeValue = 'Active Duty Parent (ADP)') adparent
-			OUTER APPLY (SELECT COUNT(DISTINCT seoasc.StudentUSI) AS quantity 
-				FROM edfi.Student s 
-				LEFT OUTER JOIN edfi.StudentEducationOrganizationAssociation seoa ON seoa.StudentUSI = s.StudentUSI
-				LEFT OUTER JOIN extension.StudentEducationOrganizationAssociationStudentCharacteristic seoasc ON seoasc.StudentUSI = s.StudentUSI
-				LEFT OUTER JOIN edfi.Descriptor d ON d.DescriptorId = seoasc.StudentCharacteristicDescriptorId
-				WHERE d.CodeValue = 'American Indian - Alaskan Native (Minnesota)') amindian
-			OUTER APPLY (SELECT COUNT(DISTINCT seoasc.StudentUSI) AS quantity 
-				FROM edfi.Student s 
-				LEFT OUTER JOIN edfi.StudentEducationOrganizationAssociation seoa ON seoa.StudentUSI = s.StudentUSI
-				LEFT OUTER JOIN extension.StudentEducationOrganizationAssociationStudentCharacteristic seoasc ON seoasc.StudentUSI = s.StudentUSI
-				LEFT OUTER JOIN edfi.Descriptor d ON d.DescriptorId = seoasc.StudentCharacteristicDescriptorId
-				WHERE d.CodeValue = 'Migrant') migrant
-			OUTER APPLY (SELECT COUNT(DISTINCT seoasc.StudentUSI) AS quantity 
-				FROM edfi.Student s 
-				LEFT OUTER JOIN edfi.StudentEducationOrganizationAssociation seoa ON seoa.StudentUSI = s.StudentUSI
-				LEFT OUTER JOIN extension.StudentEducationOrganizationAssociationStudentCharacteristic seoasc ON seoasc.StudentUSI = s.StudentUSI
-				LEFT OUTER JOIN edfi.Descriptor d ON d.DescriptorId = seoasc.StudentCharacteristicDescriptorId
-				WHERE d.CodeValue = 'Homeless') homeless
-			OUTER APPLY (SELECT COUNT(DISTINCT seoasc.StudentUSI) AS quantity 
-				FROM edfi.Student s 
-				LEFT OUTER JOIN edfi.StudentEducationOrganizationAssociation seoa ON seoa.StudentUSI = s.StudentUSI
-				LEFT OUTER JOIN extension.StudentEducationOrganizationAssociationStudentCharacteristic seoasc ON seoasc.StudentUSI = s.StudentUSI
-				LEFT OUTER JOIN edfi.Descriptor d ON d.DescriptorId = seoasc.StudentCharacteristicDescriptorId
-				WHERE d.CodeValue = 'Immigrant') immigrant
-			OUTER APPLY (SELECT COUNT(DISTINCT seoasc.StudentUSI) AS quantity 
-				FROM edfi.Student s 
-				LEFT OUTER JOIN edfi.StudentEducationOrganizationAssociation seoa ON seoa.StudentUSI = s.StudentUSI
-				LEFT OUTER JOIN extension.StudentEducationOrganizationAssociationStudentCharacteristic seoasc ON seoasc.StudentUSI = s.StudentUSI
-				LEFT OUTER JOIN edfi.Descriptor d ON d.DescriptorId = seoasc.StudentCharacteristicDescriptorId
-				WHERE d.CodeValue = 'Recently Arrived English Learner (RAEL)') recenteng
-			OUTER APPLY (SELECT COUNT(DISTINCT seoasc.StudentUSI) AS quantity 
-				FROM edfi.Student s 
-				LEFT OUTER JOIN edfi.StudentEducationOrganizationAssociation seoa ON seoa.StudentUSI = s.StudentUSI
-				LEFT OUTER JOIN extension.StudentEducationOrganizationAssociationStudentCharacteristic seoasc ON seoasc.StudentUSI = s.StudentUSI
-				LEFT OUTER JOIN edfi.Descriptor d ON d.DescriptorId = seoasc.StudentCharacteristicDescriptorId
-				WHERE d.CodeValue = 'SLIFE') slife
-			OUTER APPLY (SELECT COUNT(DISTINCT ssaspp.StudentUSI) AS quantity 
-				FROM edfi.Student s 
-				LEFT OUTER JOIN edfi.StudentEducationOrganizationAssociation seoa ON seoa.StudentUSI = s.StudentUSI
-				LEFT OUTER JOIN extension.StudentSchoolAssociationStudentProgramParticipation ssaspp ON ssaspp.StudentUSI = s.StudentUSI
-				LEFT OUTER JOIN edfi.Descriptor d ON d.DescriptorId = ssaspp.ProgramCategoryDescriptorId
-				WHERE d.CodeValue LIKE 'Limited%') limitedeng
-			OUTER APPLY (SELECT COUNT(DISTINCT ssaspp.StudentUSI) AS quantity 
-				FROM edfi.Student s 
-				LEFT OUTER JOIN edfi.StudentEducationOrganizationAssociation seoa ON seoa.StudentUSI = s.StudentUSI
-				LEFT OUTER JOIN extension.StudentSchoolAssociationStudentProgramParticipation ssaspp ON ssaspp.StudentUSI = s.StudentUSI
-				LEFT OUTER JOIN edfi.Descriptor d ON d.DescriptorId = ssaspp.ProgramCategoryDescriptorId
-				WHERE d.CodeValue = 'English Learner Served') engserved
-			OUTER APPLY (SELECT COUNT(DISTINCT ssaspp.StudentUSI) AS quantity 
-				FROM edfi.Student s 
-				LEFT OUTER JOIN edfi.StudentEducationOrganizationAssociation seoa ON seoa.StudentUSI = s.StudentUSI
-				LEFT OUTER JOIN extension.StudentSchoolAssociationStudentProgramParticipation ssaspp ON ssaspp.StudentUSI = s.StudentUSI
-				LEFT OUTER JOIN edfi.Descriptor d ON d.DescriptorId = ssaspp.ProgramCategoryDescriptorId
-				WHERE d.CodeValue = 'Independent Study') independ
-			OUTER APPLY (SELECT COUNT(DISTINCT ssaspp.StudentUSI) AS quantity 
-				FROM edfi.Student s 
-				LEFT OUTER JOIN edfi.StudentEducationOrganizationAssociation seoa ON seoa.StudentUSI = s.StudentUSI
-				LEFT OUTER JOIN extension.StudentSchoolAssociationStudentProgramParticipation ssaspp ON ssaspp.StudentUSI = s.StudentUSI
-				LEFT OUTER JOIN edfi.Descriptor d ON d.DescriptorId = ssaspp.ProgramCategoryDescriptorId
-				WHERE d.CodeValue = 'Section 504 Placement') sec504
-			OUTER APPLY (SELECT COUNT(DISTINCT ssaspp.StudentUSI) AS quantity 
-				FROM edfi.Student s 
-				LEFT OUTER JOIN edfi.StudentEducationOrganizationAssociation seoa ON seoa.StudentUSI = s.StudentUSI
-				LEFT OUTER JOIN extension.StudentSchoolAssociationStudentProgramParticipation ssaspp ON ssaspp.StudentUSI = s.StudentUSI
-				LEFT OUTER JOIN edfi.Descriptor d ON d.DescriptorId = ssaspp.ProgramCategoryDescriptorId
-				WHERE d.CodeValue = 'Title I Part A') title1
-			OUTER APPLY (SELECT COUNT(DISTINCT s.StudentUSI) AS quantity 
-				FROM edfi.Student s 
-				LEFT OUTER JOIN edfi.StudentEducationOrganizationAssociation seoa ON seoa.StudentUSI = s.StudentUSI
-				LEFT OUTER JOIN edfi.Descriptor d ON d.DescriptorId = s.SchoolFoodServicesEligibilityDescriptorId
-				WHERE (d.ShortDescription LIKE 'reduced' OR d.ShortDescription LIKE 'free')) mealselig
-		GROUP BY 
-			enr_distinct.quantity, 
-			dem_distinct.quantity,
-			adparent.quantity,
-			amindian.quantity,
-			migrant.quantity,
-			homeless.quantity,
-			immigrant.quantity,
-			recenteng.quantity,
-			slife.quantity,
-			limitedeng.quantity,
-			engserved.quantity,
-			independ.quantity,
-			sec504.quantity,
-			title1.quantity,
-			mealselig.quantity
-	;
+	IF @distid IS NULL
+	BEGIN
+		----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+		-- STATE LEVEL ----------------------------------------------------------------------------------------------------------------------------------------------------
+		----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+		-- Load School information, rolling up to District - if District is NULL, then ALL Districts in the State.
+		-- REGARDLESS of whether they have any enrollments or demographics.
+		INSERT INTO @StudentProgramsTable(
+			OrgType, 
+			EdOrgId, 
+			SchoolName,      -- Actually, the District name needed here.
+			DistrictEdOrgId, -- NULL for District Level
+			DistrictName,    -- NULL for District Level
+			DistinctEnrollmentCount, 
+			DistinctDemographicsCount,
+			ADParentCount,
+			IndianNativeCount,
+			MigrantCount,
+			HomelessCount,
+			ImmigrantCount,
+			RecentEnglishCount,
+			SLIFECount,
+			EnglishLearnerIdentifiedCount,
+			EnglishLearnerServedCount,
+			IndependentStudyCount,
+			Section504Count,
+			Title1PartACount,
+			FreeReducedCount)
+			SELECT 
+				300, -- STATE LEVEL
+				NULL AS DistrictEdOrgId,
+				'State of Minnesota' AS SchoolName,
+				NULL,
+				NULL,
+				DistinctEnrollmentCount = enr_distinct.quantity,
+				DistinctDemographicsCount = dem_distinct.quantity,
+				ADParentCount = adparent.quantity,
+				IndianNativeCount = amindian.quantity,
+				MigrantCount = migrant.quantity,
+				HomelessCount = homeless.quantity,
+				ImmigrantCount = immigrant.quantity,
+				RecentEnglish = recenteng.quantity,
+				SLIFECount = slife.quantity,
+				EnglishLearnerIdentifiedCount = limitedeng.quantity,
+				EnglishLearnerServedCount = engserved.quantity,
+				IndependentStudyCount = independ.quantity,
+				Section504Count = sec504.quantity,
+				Title1PartACount = title1.quantity,
+				FreeReducedCount = mealselig.quantity
+			FROM 
+				edfi.EducationOrganization eorgdist 
+				LEFT OUTER JOIN edfi.School sch ON sch.LocalEducationAgencyId  = eorgdist.EducationOrganizationId
+				-- To include duplicates (multiple records per student), use COUNT(1) instead
+				OUTER APPLY (SELECT COUNT(DISTINCT ssa.StudentUSI) AS quantity 
+					FROM edfi.Student s 
+					LEFT OUTER JOIN edfi.StudentSchoolAssociation ssa ON ssa.StudentUSI = s.StudentUSI) enr_distinct
+				OUTER APPLY (SELECT COUNT(DISTINCT seoa.StudentUSI) AS quantity 
+					FROM edfi.Student s 
+					LEFT OUTER JOIN edfi.StudentEducationOrganizationAssociation seoa ON seoa.StudentUSI = s.StudentUSI) dem_distinct
+				OUTER APPLY (SELECT COUNT(DISTINCT seoar.StudentUSI) AS quantity 
+					FROM edfi.Student s 
+					LEFT OUTER JOIN edfi.StudentEducationOrganizationAssociation seoa ON seoa.StudentUSI = s.StudentUSI
+					LEFT OUTER JOIN extension.StudentEducationOrganizationAssociationRace seoar ON seoar.StudentUSI = s.StudentUSI) rac_distinct
+				OUTER APPLY (SELECT COUNT(DISTINCT seoasc.StudentUSI) AS quantity 
+					FROM edfi.Student s 
+					LEFT OUTER JOIN edfi.StudentEducationOrganizationAssociation seoa ON seoa.StudentUSI = s.StudentUSI
+					LEFT OUTER JOIN extension.StudentEducationOrganizationAssociationStudentCharacteristic seoasc ON seoasc.StudentUSI = s.StudentUSI
+					LEFT OUTER JOIN edfi.Descriptor d ON d.DescriptorId = seoasc.StudentCharacteristicDescriptorId
+					WHERE d.CodeValue = 'Active Duty Parent (ADP)') adparent
+				OUTER APPLY (SELECT COUNT(DISTINCT seoasc.StudentUSI) AS quantity 
+					FROM edfi.Student s 
+					LEFT OUTER JOIN edfi.StudentEducationOrganizationAssociation seoa ON seoa.StudentUSI = s.StudentUSI
+					LEFT OUTER JOIN extension.StudentEducationOrganizationAssociationStudentCharacteristic seoasc ON seoasc.StudentUSI = s.StudentUSI
+					LEFT OUTER JOIN edfi.Descriptor d ON d.DescriptorId = seoasc.StudentCharacteristicDescriptorId
+					WHERE d.CodeValue = 'American Indian - Alaskan Native (Minnesota)') amindian
+				OUTER APPLY (SELECT COUNT(DISTINCT seoasc.StudentUSI) AS quantity 
+					FROM edfi.Student s 
+					LEFT OUTER JOIN edfi.StudentEducationOrganizationAssociation seoa ON seoa.StudentUSI = s.StudentUSI
+					LEFT OUTER JOIN extension.StudentEducationOrganizationAssociationStudentCharacteristic seoasc ON seoasc.StudentUSI = s.StudentUSI
+					LEFT OUTER JOIN edfi.Descriptor d ON d.DescriptorId = seoasc.StudentCharacteristicDescriptorId
+					WHERE d.CodeValue = 'Migrant') migrant
+				OUTER APPLY (SELECT COUNT(DISTINCT seoasc.StudentUSI) AS quantity 
+					FROM edfi.Student s 
+					LEFT OUTER JOIN edfi.StudentEducationOrganizationAssociation seoa ON seoa.StudentUSI = s.StudentUSI
+					LEFT OUTER JOIN extension.StudentEducationOrganizationAssociationStudentCharacteristic seoasc ON seoasc.StudentUSI = s.StudentUSI
+					LEFT OUTER JOIN edfi.Descriptor d ON d.DescriptorId = seoasc.StudentCharacteristicDescriptorId
+					WHERE d.CodeValue = 'Homeless') homeless
+				OUTER APPLY (SELECT COUNT(DISTINCT seoasc.StudentUSI) AS quantity 
+					FROM edfi.Student s 
+					LEFT OUTER JOIN edfi.StudentEducationOrganizationAssociation seoa ON seoa.StudentUSI = s.StudentUSI
+					LEFT OUTER JOIN extension.StudentEducationOrganizationAssociationStudentCharacteristic seoasc ON seoasc.StudentUSI = s.StudentUSI
+					LEFT OUTER JOIN edfi.Descriptor d ON d.DescriptorId = seoasc.StudentCharacteristicDescriptorId
+					WHERE d.CodeValue = 'Immigrant') immigrant
+				OUTER APPLY (SELECT COUNT(DISTINCT seoasc.StudentUSI) AS quantity 
+					FROM edfi.Student s 
+					LEFT OUTER JOIN edfi.StudentEducationOrganizationAssociation seoa ON seoa.StudentUSI = s.StudentUSI
+					LEFT OUTER JOIN extension.StudentEducationOrganizationAssociationStudentCharacteristic seoasc ON seoasc.StudentUSI = s.StudentUSI
+					LEFT OUTER JOIN edfi.Descriptor d ON d.DescriptorId = seoasc.StudentCharacteristicDescriptorId
+					WHERE d.CodeValue = 'Recently Arrived English Learner (RAEL)') recenteng
+				OUTER APPLY (SELECT COUNT(DISTINCT seoasc.StudentUSI) AS quantity 
+					FROM edfi.Student s 
+					LEFT OUTER JOIN edfi.StudentEducationOrganizationAssociation seoa ON seoa.StudentUSI = s.StudentUSI
+					LEFT OUTER JOIN extension.StudentEducationOrganizationAssociationStudentCharacteristic seoasc ON seoasc.StudentUSI = s.StudentUSI
+					LEFT OUTER JOIN edfi.Descriptor d ON d.DescriptorId = seoasc.StudentCharacteristicDescriptorId
+					WHERE d.CodeValue = 'SLIFE') slife
+				OUTER APPLY (SELECT COUNT(DISTINCT ssaspp.StudentUSI) AS quantity 
+					FROM edfi.Student s 
+					LEFT OUTER JOIN edfi.StudentEducationOrganizationAssociation seoa ON seoa.StudentUSI = s.StudentUSI
+					LEFT OUTER JOIN extension.StudentSchoolAssociationStudentProgramParticipation ssaspp ON ssaspp.StudentUSI = s.StudentUSI
+					LEFT OUTER JOIN edfi.Descriptor d ON d.DescriptorId = ssaspp.ProgramCategoryDescriptorId
+					WHERE d.CodeValue LIKE 'Limited%') limitedeng
+				OUTER APPLY (SELECT COUNT(DISTINCT ssaspp.StudentUSI) AS quantity 
+					FROM edfi.Student s 
+					LEFT OUTER JOIN edfi.StudentEducationOrganizationAssociation seoa ON seoa.StudentUSI = s.StudentUSI
+					LEFT OUTER JOIN extension.StudentSchoolAssociationStudentProgramParticipation ssaspp ON ssaspp.StudentUSI = s.StudentUSI
+					LEFT OUTER JOIN edfi.Descriptor d ON d.DescriptorId = ssaspp.ProgramCategoryDescriptorId
+					WHERE d.CodeValue = 'English Learner Served') engserved
+				OUTER APPLY (SELECT COUNT(DISTINCT ssaspp.StudentUSI) AS quantity 
+					FROM edfi.Student s 
+					LEFT OUTER JOIN edfi.StudentEducationOrganizationAssociation seoa ON seoa.StudentUSI = s.StudentUSI
+					LEFT OUTER JOIN extension.StudentSchoolAssociationStudentProgramParticipation ssaspp ON ssaspp.StudentUSI = s.StudentUSI
+					LEFT OUTER JOIN edfi.Descriptor d ON d.DescriptorId = ssaspp.ProgramCategoryDescriptorId
+					WHERE d.CodeValue = 'Independent Study') independ
+				OUTER APPLY (SELECT COUNT(DISTINCT ssaspp.StudentUSI) AS quantity 
+					FROM edfi.Student s 
+					LEFT OUTER JOIN edfi.StudentEducationOrganizationAssociation seoa ON seoa.StudentUSI = s.StudentUSI
+					LEFT OUTER JOIN extension.StudentSchoolAssociationStudentProgramParticipation ssaspp ON ssaspp.StudentUSI = s.StudentUSI
+					LEFT OUTER JOIN edfi.Descriptor d ON d.DescriptorId = ssaspp.ProgramCategoryDescriptorId
+					WHERE d.CodeValue = 'Section 504 Placement') sec504
+				OUTER APPLY (SELECT COUNT(DISTINCT ssaspp.StudentUSI) AS quantity 
+					FROM edfi.Student s 
+					LEFT OUTER JOIN edfi.StudentEducationOrganizationAssociation seoa ON seoa.StudentUSI = s.StudentUSI
+					LEFT OUTER JOIN extension.StudentSchoolAssociationStudentProgramParticipation ssaspp ON ssaspp.StudentUSI = s.StudentUSI
+					LEFT OUTER JOIN edfi.Descriptor d ON d.DescriptorId = ssaspp.ProgramCategoryDescriptorId
+					WHERE d.CodeValue = 'Title I Part A') title1
+				OUTER APPLY (SELECT COUNT(DISTINCT s.StudentUSI) AS quantity 
+					FROM edfi.Student s 
+					LEFT OUTER JOIN edfi.StudentEducationOrganizationAssociation seoa ON seoa.StudentUSI = s.StudentUSI
+					LEFT OUTER JOIN edfi.Descriptor d ON d.DescriptorId = s.SchoolFoodServicesEligibilityDescriptorId
+					WHERE (d.ShortDescription LIKE 'reduced' OR d.ShortDescription LIKE 'free')) mealselig
+			GROUP BY 
+				enr_distinct.quantity, 
+				dem_distinct.quantity,
+				adparent.quantity,
+				amindian.quantity,
+				migrant.quantity,
+				homeless.quantity,
+				immigrant.quantity,
+				recenteng.quantity,
+				slife.quantity,
+				limitedeng.quantity,
+				engserved.quantity,
+				independ.quantity,
+				sec504.quantity,
+				title1.quantity,
+				mealselig.quantity
+		;
+	END
 
 	SELECT * FROM @StudentProgramsTable ORDER BY OrgType DESC, SchoolName;
 END
 GO
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- PROCEDURE:  Change of Enrollment  ------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 IF OBJECT_ID ( 'rules.ChangeOfEnrollment', 'P' ) IS NOT NULL   
     DROP PROCEDURE rules.ChangeOfEnrollment;  
@@ -975,7 +1007,8 @@ BEGIN
 		StudentID varchar(255),
 		StudentLastName varchar(255),
 		StudentFirstName varchar(255),
-		StudentMiddleName varchar(255)
+		StudentMiddleName varchar(255),
+		StudentBirthDate datetime
 	);
 	DECLARE @ThirtyDaysAgo datetime = DATEADD(DAY, -30, GETDATE());
 
@@ -1029,8 +1062,7 @@ BEGIN
 				st.BirthDate
 			FROM 
 				edfi.EducationOrganization currdisteorg 
-				INNER JOIN edfi.LocalEducationAgency currlea ON currlea.ParentLocalEducationAgencyId = currdisteorg.EducationOrganizationId 
-				INNER JOIN edfi.School currsch ON currsch.LocalEducationAgencyId = currlea.LocalEducationAgencyId 
+				INNER JOIN edfi.School currsch ON currsch.LocalEducationAgencyId = currdisteorg.EducationOrganizationId 
 				LEFT OUTER JOIN edfi.EducationOrganization currschedorg ON currschedorg.EducationOrganizationId = currsch.SchoolId
 				INNER JOIN edfi.StudentSchoolAssociation currssa ON currssa.SchoolId = currsch.SchoolId
 				LEFT OUTER JOIN edfi.Descriptor currgld ON currssa.EntryGradeLevelDescriptorId = currgld.DescriptorId
@@ -1039,8 +1071,7 @@ BEGIN
 				LEFT OUTER JOIN edfi.Descriptor pastgld ON pastssa.EntryGradeLevelDescriptorId = pastgld.DescriptorId
 				INNER JOIN edfi.School pastsch ON pastssa.SchoolId = pastsch.SchoolId
 				LEFT OUTER JOIN edfi.EducationOrganization pastschedorg ON pastschedorg.EducationOrganizationId = pastsch.SchoolId
-				INNER JOIN edfi.LocalEducationAgency pastlea ON pastlea.LocalEducationAgencyId = pastsch.LocalEducationAgencyId
-				INNER JOIN edfi.EducationOrganization pastdisteorg ON pastdisteorg.EducationOrganizationId = pastlea.ParentLocalEducationAgencyId
+				INNER JOIN edfi.EducationOrganization pastdisteorg ON pastdisteorg.EducationOrganizationId = pastsch.LocalEducationAgencyId
 			WHERE @distid = currdisteorg.EducationOrganizationId
 				AND currssa.EntryDate IS NOT NULL 
 				AND currssa.EntryDate > @ThirtyDaysAgo
@@ -1096,8 +1127,7 @@ BEGIN
 				st.BirthDate
 			FROM 
 				edfi.EducationOrganization currdisteorg 
-				INNER JOIN edfi.LocalEducationAgency currlea ON currlea.ParentLocalEducationAgencyId = currdisteorg.EducationOrganizationId 
-				INNER JOIN edfi.School currsch ON currsch.LocalEducationAgencyId = currlea.LocalEducationAgencyId 
+				INNER JOIN edfi.School currsch ON currsch.LocalEducationAgencyId = currdisteorg.EducationOrganizationId 
 				LEFT OUTER JOIN edfi.EducationOrganization currschedorg ON currschedorg.EducationOrganizationId = currsch.SchoolId
 				INNER JOIN edfi.StudentSchoolAssociation currssa ON currssa.SchoolId = currsch.SchoolId
 				LEFT OUTER JOIN edfi.Descriptor currgld ON currssa.EntryGradeLevelDescriptorId = currgld.DescriptorId
@@ -1106,8 +1136,7 @@ BEGIN
 				LEFT OUTER JOIN edfi.Descriptor pastgld ON pastssa.EntryGradeLevelDescriptorId = pastgld.DescriptorId
 				INNER JOIN edfi.School pastsch ON pastssa.SchoolId = pastsch.SchoolId
 				LEFT OUTER JOIN edfi.EducationOrganization pastschedorg ON pastschedorg.EducationOrganizationId = pastsch.SchoolId
-				INNER JOIN edfi.LocalEducationAgency pastlea ON pastlea.LocalEducationAgencyId = pastsch.LocalEducationAgencyId
-				INNER JOIN edfi.EducationOrganization pastdisteorg ON pastdisteorg.EducationOrganizationId = pastlea.ParentLocalEducationAgencyId
+				INNER JOIN edfi.EducationOrganization pastdisteorg ON pastdisteorg.EducationOrganizationId = pastsch.SchoolId
 			WHERE @distid = pastdisteorg.EducationOrganizationId
 				AND currssa.EntryDate IS NOT NULL 
 				AND currssa.EntryDate > @ThirtyDaysAgo
@@ -1118,7 +1147,13 @@ BEGIN
 	SELECT * FROM @ChangeOfEnrollmentTable ORDER BY StudentLastName, StudentFirstName, StudentMiddleName;
 
 END
-GO
+GO 
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- PROCEDURE:  Residents Enrolled Elsewhere  ------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 IF OBJECT_ID ( 'rules.ResidentsEnrolledElsewhereReport', 'P' ) IS NOT NULL   
     DROP PROCEDURE rules.ResidentsEnrolledElsewhereReport;  
@@ -1214,5 +1249,319 @@ BEGIN
 	;
 
 	SELECT * FROM @ResidentsEnrolledElsewhereTable ORDER BY DistrictOfEnrollmentName;
+END
+GO
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- TYPES:  INT and NVARCHAR array types -----------------------------------------------------------
+-- FUNCTION:  GET STUDENT DETAILS for Drilling down to Student-Level from Student Counts in other reports -----------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+IF OBJECT_ID ('rules.GetStudentEnrollmentDetails') IS NOT NULL   
+    DROP FUNCTION rules.GetStudentEnrollmentDetails;  
+GO  
+IF EXISTS(SELECT 1 FROM sys.types WHERE name = 'IdStringTable' AND is_table_type = 1 AND SCHEMA_ID('rules') = schema_id)
+    DROP TYPE rules.IdStringTable;  
+GO  
+IF EXISTS(SELECT 1 FROM sys.types WHERE name = 'IdIntTable' AND is_table_type = 1 AND SCHEMA_ID('rules') = schema_id)
+    DROP TYPE rules.IdIntTable;  
+GO  
+
+CREATE TYPE rules.IdIntTable AS TABLE   
+    (IdNumber INT);  
+GO 
+
+CREATE TYPE rules.IdStringTable AS TABLE   
+    (IdNumber NVARCHAR(48));  
+GO 
+
+-- Using the StudentUniqueID (NOT the StudentUSI)
+CREATE FUNCTION rules.GetStudentEnrollmentDetails(@StudentIdList rules.IdStringTable READONLY)
+	RETURNS TABLE
+AS
+RETURN
+	SELECT 
+		StudentId = st.StudentUniqueId,
+        StudentFirstName = st.FirstName,
+        StudentMiddleName = st.MiddleName,
+        StudentLastName = st.LastSurname,
+        DistrictName = distedorg.NameOfInstitution,
+        DistrictId = distedorg.EducationOrganizationId,
+        SchoolName = schedorg.NameOfInstitution,
+        SchoolId = schedorg.EducationOrganizationId,
+        EnrolledDate = ssa.EntryDate,
+        WithdrawDate = ssa.ExitWithdrawDate,
+		Grade = gradedesc.CodeValue,
+		SpecialEdStatus = speddesc.ShortDescription
+	FROM 
+		edfi.student st
+	INNER JOIN  @StudentIdList sil ON sil.IdNumber = st.StudentUniqueId
+	INNER JOIN  edfi.StudentSchoolAssociation ssa ON ssa.StudentUSI = st.StudentUSI
+	INNER JOIN  edfi.School sch ON sch.SchoolId = ssa.SchoolId
+	LEFT OUTER JOIN edfi.EducationOrganization schedorg ON schedorg.EducationOrganizationId = sch.SchoolId
+	LEFT OUTER JOIN edfi.EducationOrganization distedorg ON distedorg.EducationOrganizationId = sch.LocalEducationAgencyId
+	LEFT OUTER JOIN edfi.Descriptor gradedesc ON gradedesc.DescriptorId = ssa.EntryGradeLevelDescriptorId
+	LEFT OUTER JOIN extension.StudentSchoolAssociationExtension ssae ON ssae.StudentUSI = st.StudentUSI
+	LEFT OUTER JOIN edfi.Descriptor speddesc ON speddesc.DescriptorId = ssae.SpecialEducationEvaluationStatusDescriptorId
+GO
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- PROCEDURE:  Race and Ancestral Ethnic Origin StudentDetails ------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+IF OBJECT_ID ( 'rules.RaceAEOStudentDetailsReport', 'P' ) IS NOT NULL   
+    DROP PROCEDURE rules.RaceAEOStudentDetailsReport;  
+GO  
+
+CREATE PROCEDURE [rules].[RaceAEOStudentDetailsReport]
+	@schoolid int,
+	@distid int,
+	@columnIndex int
+AS
+
+BEGIN
+	DECLARE @StudentDetailsTable rules.IdStringTable;
+
+	IF @schoolid IS NOT NULL
+	BEGIN
+		----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+		-- SCHOOL LEVEL ------------------------------------------------------------------------------------------------------------------------------------------------------
+		----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+		IF @columnIndex = 0
+		BEGIN
+			INSERT INTO @StudentDetailsTable(IdNumber)
+			SELECT DISTINCT s.StudentUniqueId
+			FROM 
+				edfi.EducationOrganization eorgdist 
+				LEFT OUTER JOIN edfi.School sch ON sch.LocalEducationAgencyId  = eorgdist.EducationOrganizationId
+				INNER JOIN edfi.StudentSchoolAssociation ssa ON ssa.SchoolId = sch.SchoolId
+				LEFT OUTER JOIN edfi.Student s ON s.StudentUSI = ssa.StudentUSI
+			WHERE sch.SchoolId = @schoolid
+			;
+		END
+		IF @columnIndex = 1
+		BEGIN
+			INSERT INTO @StudentDetailsTable(IdNumber)
+			SELECT DISTINCT s.StudentUniqueId
+			FROM 
+				edfi.EducationOrganization eorgdist 
+				LEFT OUTER JOIN edfi.School sch ON sch.LocalEducationAgencyId  = eorgdist.EducationOrganizationId
+				INNER JOIN edfi.StudentEducationOrganizationAssociation seoa ON seoa.EducationOrganizationId = sch.SchoolId
+				LEFT OUTER JOIN edfi.Student s ON seoa.StudentUSI = s.StudentUSI
+			WHERE sch.SchoolId = @schoolid
+			;
+		END
+		IF @columnIndex = 2
+		BEGIN
+			INSERT INTO @StudentDetailsTable(IdNumber)
+			SELECT DISTINCT s.StudentUniqueId
+			FROM 
+				edfi.EducationOrganization eorgdist 
+				LEFT OUTER JOIN edfi.School sch ON sch.LocalEducationAgencyId  = eorgdist.EducationOrganizationId
+				LEFT OUTER JOIN edfi.StudentEducationOrganizationAssociation seoa ON seoa.EducationOrganizationId = sch.SchoolId
+				LEFT OUTER JOIN edfi.Student s ON seoa.StudentUSI = s.StudentUSI
+				INNER JOIN extension.StudentEducationOrganizationAssociationRace seoar ON seoar.StudentUSI = s.StudentUSI
+			WHERE sch.SchoolId = @schoolid
+			;
+		END
+		IF @columnIndex = 3
+		BEGIN
+			INSERT INTO @StudentDetailsTable(IdNumber)
+			SELECT DISTINCT s.StudentUniqueId
+			FROM 
+				edfi.EducationOrganization eorgdist 
+				LEFT OUTER JOIN edfi.School sch ON sch.LocalEducationAgencyId  = eorgdist.EducationOrganizationId
+				LEFT OUTER JOIN edfi.StudentEducationOrganizationAssociation seoa ON seoa.EducationOrganizationId = sch.SchoolId
+				LEFT OUTER JOIN edfi.Student s ON seoa.StudentUSI = s.StudentUSI
+				INNER JOIN extension.StudentEducationOrganizationAssociationAncestryEthnicOrigin seoaeo ON seoaeo.StudentUSI = s.StudentUSI
+			WHERE sch.SchoolId = @schoolid
+		END
+	END
+	
+	IF @distid IS NOT NULL AND @schoolid IS NULL
+	BEGIN
+		----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+		-- DISTRICT LEVEL ----------------------------------------------------------------------------------------------------------------------------------------------------
+		----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+		IF @columnIndex = 0
+		BEGIN
+			INSERT INTO @StudentDetailsTable(IdNumber)
+				SELECT DISTINCT s.StudentUniqueId
+				FROM 
+					edfi.EducationOrganization eorgdist 
+					LEFT OUTER JOIN edfi.School sch ON sch.LocalEducationAgencyId  = eorgdist.EducationOrganizationId
+					INNER JOIN edfi.StudentSchoolAssociation ssa ON ssa.SchoolId = sch.SchoolId
+					LEFT OUTER JOIN edfi.Student s ON s.StudentUSI = ssa.StudentUSI
+				WHERE @distid = eorgdist.EducationOrganizationId
+			;
+		END
+		IF @columnIndex = 1
+		BEGIN
+			INSERT INTO @StudentDetailsTable(IdNumber)
+				SELECT s.StudentUniqueId
+				FROM 
+					edfi.EducationOrganization eorgdist 
+					LEFT OUTER JOIN edfi.School sch ON sch.LocalEducationAgencyId  = eorgdist.EducationOrganizationId
+					INNER JOIN edfi.StudentEducationOrganizationAssociation seoa ON seoa.EducationOrganizationId = sch.SchoolId
+					LEFT OUTER JOIN edfi.Student s ON seoa.StudentUSI = s.StudentUSI
+				WHERE @distid = eorgdist.EducationOrganizationId
+			;
+		END
+		IF @columnIndex = 2
+		BEGIN
+			INSERT INTO @StudentDetailsTable(IdNumber)
+				SELECT s.StudentUniqueId
+				FROM 
+					edfi.EducationOrganization eorgdist 
+					LEFT OUTER JOIN edfi.School sch ON sch.LocalEducationAgencyId  = eorgdist.EducationOrganizationId
+					LEFT OUTER JOIN edfi.StudentEducationOrganizationAssociation seoa ON seoa.EducationOrganizationId = sch.SchoolId
+					LEFT OUTER JOIN edfi.Student s ON seoa.StudentUSI = s.StudentUSI
+					INNER JOIN extension.StudentEducationOrganizationAssociationRace seoar ON seoar.StudentUSI = s.StudentUSI
+				WHERE @distid = eorgdist.EducationOrganizationId
+			;
+		END
+		IF @columnIndex = 3
+		BEGIN
+			INSERT INTO @StudentDetailsTable(IdNumber)
+				SELECT s.StudentUniqueId
+				FROM 
+					edfi.EducationOrganization eorgdist 
+					LEFT OUTER JOIN edfi.School sch ON sch.LocalEducationAgencyId  = eorgdist.EducationOrganizationId
+					LEFT OUTER JOIN edfi.StudentEducationOrganizationAssociation seoa ON seoa.EducationOrganizationId = sch.SchoolId
+					LEFT OUTER JOIN edfi.Student s ON seoa.StudentUSI = s.StudentUSI
+					INNER JOIN extension.StudentEducationOrganizationAssociationAncestryEthnicOrigin seoaeo ON seoaeo.StudentUSI = s.StudentUSI
+				WHERE @distid = eorgdist.EducationOrganizationId
+			;
+		END
+	END
+
+	IF @distid IS NULL AND @schoolid IS NULL
+	BEGIN
+		----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+		-- STATE LEVEL ----------------------------------------------------------------------------------------------------------------------------------------------------
+		----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+		IF @columnIndex = 0
+		BEGIN
+			INSERT INTO @StudentDetailsTable(IdNumber)
+				SELECT DISTINCT s.StudentUniqueId
+				FROM 
+					edfi.EducationOrganization eorgdist 
+					LEFT OUTER JOIN edfi.School sch ON sch.LocalEducationAgencyId  = eorgdist.EducationOrganizationId
+					INNER JOIN edfi.StudentSchoolAssociation ssa ON ssa.SchoolId = sch.SchoolId
+					LEFT OUTER JOIN edfi.Student s ON s.StudentUSI = ssa.StudentUSI
+			;
+		END
+		IF @columnIndex = 1
+		BEGIN
+			INSERT INTO @StudentDetailsTable(IdNumber)
+				SELECT s.StudentUniqueId
+				FROM 
+					edfi.EducationOrganization eorgdist 
+					LEFT OUTER JOIN edfi.School sch ON sch.LocalEducationAgencyId  = eorgdist.EducationOrganizationId
+					INNER JOIN edfi.StudentEducationOrganizationAssociation seoa ON seoa.EducationOrganizationId = sch.SchoolId
+					LEFT OUTER JOIN edfi.Student s ON seoa.StudentUSI = s.StudentUSI
+			;
+		END
+		IF @columnIndex = 2
+		BEGIN
+			INSERT INTO @StudentDetailsTable(IdNumber)
+				SELECT s.StudentUniqueId
+				FROM 
+					edfi.EducationOrganization eorgdist 
+					LEFT OUTER JOIN edfi.School sch ON sch.LocalEducationAgencyId  = eorgdist.EducationOrganizationId
+					LEFT OUTER JOIN edfi.StudentEducationOrganizationAssociation seoa ON seoa.EducationOrganizationId = sch.SchoolId
+					LEFT OUTER JOIN edfi.Student s ON seoa.StudentUSI = s.StudentUSI
+					INNER JOIN extension.StudentEducationOrganizationAssociationRace seoar ON seoar.StudentUSI = s.StudentUSI
+			;
+		END
+		IF @columnIndex = 3
+		BEGIN
+			INSERT INTO @StudentDetailsTable(IdNumber)
+				SELECT s.StudentUniqueId
+				FROM 
+					edfi.EducationOrganization eorgdist 
+					LEFT OUTER JOIN edfi.School sch ON sch.LocalEducationAgencyId  = eorgdist.EducationOrganizationId
+					LEFT OUTER JOIN edfi.StudentEducationOrganizationAssociation seoa ON seoa.EducationOrganizationId = sch.SchoolId
+					LEFT OUTER JOIN edfi.Student s ON seoa.StudentUSI = s.StudentUSI
+					INNER JOIN extension.StudentEducationOrganizationAssociationAncestryEthnicOrigin seoaeo ON seoaeo.StudentUSI = s.StudentUSI
+			;
+		END
+		;
+	END
+
+	SELECT DISTINCT * FROM rules.GetStudentEnrollmentDetails(@StudentDetailsTable) enr ORDER BY enr.StudentId;
+END
+GO
+
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- PROCEDURE:  RESIDENTS ENROLLED DRILL DOWN -------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+IF OBJECT_ID ( 'rules.ResidentsEnrolledElsewhereStudentDetailsReport', 'P' ) IS NOT NULL   
+    DROP PROCEDURE rules.ResidentsEnrolledElsewhereStudentDetailsReport;  
+GO  
+
+CREATE PROCEDURE [rules].ResidentsEnrolledElsewhereStudentDetailsReport
+	@distid int
+AS
+
+BEGIN
+	DECLARE @ResidentsEnrolledElsewhereStudentDetailsTable rules.IdStringTable;
+
+
+	----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	-- DISTRICT LEVEL ----------------------------------------------------------------------------------------------------------------------------------------------------
+	----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+	-- Load School information, rolling up to District - if District is NULL, then ALL Districts in the State.
+	-- REGARDLESS of whether they have any enrollments or demographics.
+	INSERT INTO @ResidentsEnrolledElsewhereStudentDetailsTable(IdNumber)
+		SELECT 
+			DISTINCT st.StudentUniqueId
+		FROM 
+			edfi.EducationOrganization eorghomedist 
+			INNER JOIN edfi.School homesch ON homesch.LocalEducationAgencyId = eorghomedist.EducationOrganizationId
+			INNER JOIN extension.StudentSchoolAssociationExtension homessae ON homessae.SchoolId = homesch.SchoolId AND homessae.ResidentLocalEducationAgencyId = @distid
+			INNER JOIN edfi.Student st ON st.StudentUSI = homessae.StudentUSI
+			-- We have all the students in the home district, find districts where the student is enrolled outside this district
+			INNER JOIN edfi.StudentSchoolAssociation otherssa ON otherssa.StudentUSI = st.StudentUSI
+			INNER JOIN edfi.School othersch ON othersch.SchoolId = otherssa.SchoolId
+			INNER JOIN edfi.EducationOrganization otherdisteorg ON otherdisteorg.EducationOrganizationId = othersch.LocalEducationAgencyId
+		WHERE @distid = eorghomedist.EducationOrganizationId AND eorghomedist.EducationOrganizationId != othersch.LocalEducationAgencyId
+	;
+
+	IF @distid IS NULL
+	BEGIN
+		----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+		-- STATE LEVEL ----------------------------------------------------------------------------------------------------------------------------------------------------
+		----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+		-- Load School information, rolling up to District - if District is NULL, then ALL Districts in the State.
+		-- REGARDLESS of whether they have any enrollments or demographics.
+		INSERT INTO @ResidentsEnrolledElsewhereStudentDetailsTable(IdNumber)
+			SELECT 
+				DISTINCT st.StudentUniqueId
+			FROM 
+				edfi.EducationOrganization eorghomedist 
+				INNER JOIN edfi.School homesch ON homesch.LocalEducationAgencyId = eorghomedist.EducationOrganizationId
+				INNER JOIN extension.StudentSchoolAssociationExtension homessae ON homessae.SchoolId = homesch.SchoolId
+				INNER JOIN edfi.Student st ON st.StudentUSI = homessae.StudentUSI
+				-- We have all the students in the home district, find districts where the student is enrolled outside this district
+				INNER JOIN edfi.StudentSchoolAssociation otherssa ON otherssa.StudentUSI = st.StudentUSI
+				INNER JOIN edfi.School othersch ON othersch.SchoolId = otherssa.SchoolId
+				INNER JOIN edfi.EducationOrganization otherdisteorg ON otherdisteorg.EducationOrganizationId = othersch.LocalEducationAgencyId
+			WHERE eorghomedist.EducationOrganizationId != othersch.LocalEducationAgencyId
+			;
+	END
+
+	SELECT DISTINCT * FROM rules.GetStudentEnrollmentDetails(@ResidentsEnrolledElsewhereStudentDetailsTable) enr ORDER BY enr.StudentId;
 END
 GO

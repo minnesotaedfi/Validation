@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
@@ -327,9 +328,142 @@ namespace ValidationWeb.Services
             }
         }
 
-        public List<StudentDrillDownViewModel> GetResidentsEnrolledElsewhereStudentDrillDown(int? districtEdOrgId, string fourDigitOdsDbYear, string uniqueStudentId)
+        public List<StudentDrillDownQuery> GetDistrictAncestryRaceStudentDrillDown(int? schoolEdOrgId, int? districtEdOrgId, int? columnIndex, string fourDigitOdsDbYear)
         {
-            return new List<StudentDrillDownViewModel>();
+            var returnedList = new List<StudentDrillDownQuery>();
+            using (var rawOdsContext = new RawOdsDbContext(fourDigitOdsDbYear))
+            {
+                var conn = rawOdsContext.Database.Connection;
+                try
+                {
+                    conn.Open();
+                    var residentsElseWhereQueryCmd = conn.CreateCommand();
+                    residentsElseWhereQueryCmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    residentsElseWhereQueryCmd.CommandText = ResidentsEnrolledElsewhereReportQuery.ResidentsEnrolledElsewhereStudentDetailsQuery;
+                    residentsElseWhereQueryCmd.Parameters.Add(new SqlParameter("@schoolid", System.Data.SqlDbType.Int));
+                    residentsElseWhereQueryCmd.Parameters["@schoolid"].Value = schoolEdOrgId.HasValue ? (object)schoolEdOrgId.Value : (object)DBNull.Value;
+                    residentsElseWhereQueryCmd.Parameters.Add(new SqlParameter("@distid", System.Data.SqlDbType.Int));
+                    residentsElseWhereQueryCmd.Parameters["@distid"].Value = districtEdOrgId.HasValue ? (object)districtEdOrgId.Value : (object)DBNull.Value;
+                    residentsElseWhereQueryCmd.Parameters.Add(new SqlParameter("@columnIndex", System.Data.SqlDbType.Int));
+                    residentsElseWhereQueryCmd.Parameters["@columnIndex"].Value = columnIndex.HasValue ? (object)columnIndex.Value : (object)DBNull.Value;
+                    using (var reader = residentsElseWhereQueryCmd.ExecuteReader())
+                    {
+                        returnedList = ReadStudentDrillDownDataReader(reader);
+                    }
+                    return returnedList;
+                }
+                catch (Exception ex)
+                {
+                    _loggingService.LogErrorMessage($"While providing student details on race and ethnic origin: {ex.ChainInnerExceptionMessages()}");
+                    throw;
+                }
+                finally
+                {
+                    if (conn != null && conn.State != System.Data.ConnectionState.Closed)
+                    {
+                        try
+                        {
+                            conn.Close();
+                        }
+                        catch (Exception) { }
+                    }
+                }
+            }
+
+            return returnedList;
+        }
+
+        public List<StudentDrillDownQuery> GetResidentsEnrolledElsewhereStudentDrillDown(int? districtEdOrgId, string fourDigitOdsDbYear)
+        {
+            var returnedList = new List<StudentDrillDownQuery>();
+            using (var rawOdsContext = new RawOdsDbContext(fourDigitOdsDbYear))
+            {
+                var conn = rawOdsContext.Database.Connection;
+                try
+                {
+                    conn.Open();
+                    var residentsElseWhereQueryCmd = conn.CreateCommand();
+                    residentsElseWhereQueryCmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    residentsElseWhereQueryCmd.CommandText = ResidentsEnrolledElsewhereReportQuery.ResidentsEnrolledElsewhereStudentDetailsQuery;
+                    residentsElseWhereQueryCmd.Parameters.Add(new SqlParameter("@distid", System.Data.SqlDbType.Int));
+                    residentsElseWhereQueryCmd.Parameters["@distid"].Value = districtEdOrgId.HasValue ? (object)districtEdOrgId.Value : (object)DBNull.Value;
+                    using (var reader = residentsElseWhereQueryCmd.ExecuteReader())
+                    {
+                        returnedList = ReadStudentDrillDownDataReader(reader);
+                    }
+                    return returnedList;
+                }
+                catch (Exception ex)
+                {
+                    _loggingService.LogErrorMessage($"While providing student details on residents enrolled elsewhere: {ex.ChainInnerExceptionMessages()}");
+                    throw;
+                }
+                finally
+                {
+                    if (conn != null && conn.State != System.Data.ConnectionState.Closed)
+                    {
+                        try
+                        {
+                            conn.Close();
+                        }
+                        catch (Exception) { }
+                    }
+                }
+            }
+
+            return returnedList;
+        }
+
+        protected List<StudentDrillDownQuery> ReadStudentDrillDownDataReader(DbDataReader reader)
+        {
+            var recordsReturned = new List<StudentDrillDownQuery>();
+            while (reader.Read())
+            {
+                int? schoolId = null;
+                var schoolIdObj = reader[StudentDrillDownQuery.SchoolIdColumnName];
+                if (!(schoolIdObj is DBNull))
+                {
+                    schoolId = System.Convert.ToInt32(reader[StudentDrillDownQuery.SchoolIdColumnName]);
+                }
+
+                int? districtId = null;
+                var districtIdObj = reader[StudentDrillDownQuery.DistrictIdColumnName];
+                if (!(districtIdObj is DBNull))
+                {
+                    districtId = System.Convert.ToInt32(reader[StudentDrillDownQuery.SchoolIdColumnName]);
+                }
+
+                DateTime? enrolledDate = null;
+                var enrolledDateObj = reader[StudentDrillDownQuery.EnrolledDateColumnName];
+                if (!(enrolledDateObj is DBNull))
+                {
+                    enrolledDate = System.Convert.ToDateTime(reader[StudentDrillDownQuery.EnrolledDateColumnName]);
+                }
+
+                DateTime? withdrawDate = null;
+                var withdrawDateObj = reader[StudentDrillDownQuery.WithdrawDateColumnName];
+                if (!(withdrawDateObj is DBNull))
+                {
+                    withdrawDate = System.Convert.ToDateTime(reader[StudentDrillDownQuery.WithdrawDateColumnName]);
+                }
+
+                recordsReturned.Add(new StudentDrillDownQuery
+                {
+                    StudentId = reader[StudentDrillDownQuery.StudentIdColumnName].ToString(),
+                    StudentFirstName = reader[StudentDrillDownQuery.StudentFirstNameColumnName].ToString(),
+                    StudentMiddleName = reader[StudentDrillDownQuery.StudentMiddleNameColumnName].ToString(),
+                    StudentLastName = reader[StudentDrillDownQuery.StudentLastNameColumnName].ToString(),
+                    DistrictId = districtId,
+                    DistrictName = reader[StudentDrillDownQuery.DistrictNameColumnName].ToString(),
+                    SchoolId = schoolId,
+                    SchoolName = reader[StudentDrillDownQuery.SchoolNameColumnName].ToString(),
+                    EnrolledDate = enrolledDate,
+                    WithdrawDate = withdrawDate,
+                    Grade = reader[StudentDrillDownQuery.SchoolNameColumnName].ToString(),
+                    SpecialEdStatus = reader[StudentDrillDownQuery.SpecialEdStatusColumnName].ToString()
+                });
+            }
+            return recordsReturned;
         }
     }
 }
