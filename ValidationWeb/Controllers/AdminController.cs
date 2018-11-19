@@ -100,16 +100,60 @@ namespace ValidationWeb
             return PartialView("Partials/SubmissionCycleList", submissionCycles);
         }
 
-        public ActionResult AddAnnouncement(FormCollection formCollection)
+        /***
+        public ActionResult SaveAnnouncement(FormCollection formCollection)
         {
-            int priority = 0;
-            if (!string.IsNullOrEmpty(formCollection["priority"]))
-                priority = Convert.ToInt32(formCollection["priority"]);
-            _announcementService.AddAnnouncement(priority, formCollection["message"], formCollection["contactInfo"],
-                formCollection["linkUrl"], formCollection["expiration"]);
+            if (ModelState.IsValid)
+            {
+                int priority = 0;
+                int announcementId = 0;
+                if (!string.IsNullOrEmpty(formCollection["priority"]))
+                    priority = Convert.ToInt32(formCollection["priority"]);
+                if (!string.IsNullOrEmpty(formCollection["announcementId"]))
+                    announcementId = Convert.ToInt32(formCollection["announcementId"]);
+                _announcementService.SaveAnnouncement(announcementId, priority, formCollection["message"], formCollection["contactInfo"],
+                    formCollection["linkUrl"], formCollection["expiration"]);
+
+            }
             var announcements = _announcementService.GetAnnoucements(true);
-            return RedirectToAction("Index", new { tab = "Announcements"});
-            //return PartialView("Partials/Announcements", announcements);
+            return RedirectToAction("Index", new { tab = "announcements" });
+        }
+        ***/
+
+        [HttpPost]
+        public ActionResult SaveAnnouncement(Announcement announcement)
+        {
+            if (ModelState.IsValid)
+            {
+                /***
+                int priority = 0;
+                int announcementId = 0;
+                if (!string.IsNullOrEmpty(announcement.Priority))
+                    priority = Convert.ToInt32(formCollection["priority"]);
+                //if (!string.IsNullOrEmpty(formCollection["announcementId"]))
+                   // announcementId = Convert.ToInt32(formCollection["announcementId"]);
+                   ***/
+                _announcementService.SaveAnnouncement(announcement.Id, announcement.Priority, announcement.Message,
+                    announcement.ContactInfo,
+                    announcement.LinkUrl, announcement.Expiration);
+                var announcements = _announcementService.GetAnnoucements(true);
+                return RedirectToAction("Index", new { tab = "announcements" });
+            }
+
+            return PartialView("Partials/AnnouncementEditModal", announcement);
+        }
+
+        public ActionResult AnnouncementAdd()
+        {
+            var announcement = new Announcement { Expiration = DateTime.Now };
+            return PartialView("Partials/AnnouncementEditModal", announcement);
+        }
+
+        public ActionResult AnnouncementEdit(int Id)
+        {
+            var announcement = _announcementService.GetAnnoucement(Id);
+            //return View("AnnouncementEditModal", announcement);
+            return PartialView("Partials/AnnouncementEditModal", announcement);
         }
 
     }

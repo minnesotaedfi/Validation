@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
+//using System.Web;
 
 namespace ValidationWeb.Services
 {
@@ -41,6 +41,28 @@ namespace ValidationWeb.Services
             }
             return announcements;
         }
+
+        public Announcement GetAnnoucement(int id)
+        {
+            //var announcements = new List<Announcement>();
+            Announcement announcement = null;
+            try
+            {
+                var edOrgIds = _appUserService.GetSession().UserIdentity.AuthorizedEdOrgs.Select(aeo => aeo.Id).ToArray();
+                //var allAnnouncements = _validationPortalDataContext.Announcements.ToList();
+                announcement = _validationPortalDataContext.Announcements.Where(ann =>
+                    (ann.LimitToEdOrgs.Count == 0) ||
+                    (ann.LimitToEdOrgs.Select(lte => lte.Id).Intersect(edOrgIds).Count() > 0))
+                    //.FirstOrDefault(a => a.Id == id);
+                    .First(x => x.Id == id);
+            }
+            catch (Exception ex)
+            {
+                _loggingService.LogErrorMessage($"An error occurred while retrieving announcement by id {id}: {ex.ChainInnerExceptionMessages()}");
+            }
+            return announcement;
+        }
+
 
         //public bool AddAnnouncement(int priority, string message, string contactInfo, string linkUrl, string expirationDateStr)
         public bool AddAnnouncementFromBody(Announcement announcement)
@@ -82,27 +104,57 @@ namespace ValidationWeb.Services
         }
 
 
-        public bool AddAnnouncement(int priority, string message, string contactInfo, string linkUrl, string expirationDateStr)
+        //public bool SaveAnnouncement(int announcementId, int priority, string message, string contactInfo, string linkUrl, string expirationDateStr)
+        public bool SaveAnnouncement(int announcementId, int priority, string message, string contactInfo, string linkUrl, DateTime expirationDate)
         {
             List<string> invalidFieldNames = new List<string>();
             if (string.IsNullOrEmpty(message))
                 invalidFieldNames.Add("Message");
-            if (string.IsNullOrEmpty(expirationDateStr))
-                invalidFieldNames.Add("Expiration Date");
+            //if (string.IsNullOrEmpty(expirationDateStr))
+                //invalidFieldNames.Add("Expiration Date");
             if (invalidFieldNames.Count() > 0)
             {
-                _loggingService.LogErrorMessage($"Could not create an announcement because the following announcement fields were null: {String.Join(",", invalidFieldNames)}");
-                return false;
+                string errorMessage = $"Could not save an announcement because the following announcement fields were null: {String.Join(",", invalidFieldNames)}";
+                _loggingService.LogErrorMessage(errorMessage);
+                throw new Exception(errorMessage);
             }
 
+            /**
             DateTime expirationDate;
             var dateValid = DateTime.TryParse(expirationDateStr, out expirationDate);
             if (!dateValid)
             {
-                _loggingService.LogErrorMessage($"Could not create an announcement because Expiration Date {expirationDateStr} is not a valid date.");
-                return false;
+                string errorMessage = $"Could not save an announcement because Expiration Date {expirationDateStr} is not a valid date.";
+                _loggingService.LogErrorMessage(errorMessage);
+                throw new Exception(errorMessage);
             }
+    ***/
 
+            if (announcementId > 0)
+                SaveExistingAnnouncement(announcementId, priority, message, contactInfo, linkUrl, expirationDate);
+            else
+                SaveNewAnnouncement(priority, message, contactInfo, linkUrl, expirationDate);
+            return true;
+        }
+
+        private void SaveExistingAnnouncement(int announcementId, int priority, string message, string contactInfo, string linkUrl, DateTime expirationDate)
+        {
+            var announcement = _validationPortalDataContext.Announcements.FirstOrDefault(a => a.Id == announcementId);
+            if (announcement == null)
+            {
+                throw new Exception($"Could not save an announcement because announcement with ID {announcementId} was not found");
+            }
+            announcement.Priority = priority;
+            announcement.Message = message;
+            announcement.ContactInfo = contactInfo;
+            announcement.LinkUrl = linkUrl;
+            announcement.Expiration = expirationDate;
+
+            _validationPortalDataContext.SaveChanges();
+        }
+
+        private void SaveNewAnnouncement(int priority, string message, string contactInfo, string linkUrl, DateTime expirationDate)
+        {
             Announcement announcement = new Announcement
             {
                 Priority = priority,
@@ -114,9 +166,6 @@ namespace ValidationWeb.Services
             };
             _validationPortalDataContext.Announcements.Add(announcement);
             _validationPortalDataContext.SaveChanges();
-
-            return true;
         }
-
     }
 }

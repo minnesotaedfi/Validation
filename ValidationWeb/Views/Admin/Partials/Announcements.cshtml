@@ -10,7 +10,7 @@
         </div>
     </div>
     <div class="col-2">
-        <button class="btn btn-sm minnesota-green" data-toggle="modal" data-target="#add-announcement-modal">Add Announcement</button>
+        <button id="announcement-add" class="btn btn-sm minnesota-green">Add Announcement</button>
     </div>
 </div>
 <div class="row tbmargin10">
@@ -24,7 +24,7 @@
             <th>Expiration</th>
         </tr>
         @foreach (var announcement in Model)
-        {
+        {   
             <tr>
                 <td class="id-hide-column">@announcement.Id</td>
                 <td>@announcement.Priority</td>
@@ -33,9 +33,25 @@
                 <td>@announcement.LinkUrl</td>
                 <td>@announcement.Expiration.ToString()</td>
                 <td>
-                    <a href="#" onclick="editAnnouncement(@announcement.Id);" class="btn btn-sm btn-primary"><i class="fa fa-edit"></i></a>&nbsp;<a href="#" onclick="removeAnnouncement(@announcement.Id);" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></a>
+                    <span>
+                        <a href="javascript:void(0);" 
+                           class="announcement-edit btn btn-sm btn-primary" data-id="@announcement.Id"><i class="fa fa-edit"></i></a>
+                    </span>
+                    &nbsp;
+                    <span><a href="#" onclick="removeAnnouncement(@announcement.Id);" class="btn btn-sm btn-danger">
+                        <i class="fa fa-trash"></i></a>
+                    </span>
                 </td>
             </tr>
         }
     </table>
 </div>
+
+<div id='announcementModal' class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id='announcement-modal-content'></div>
+        </div>
+    </div>
+
+</div>  

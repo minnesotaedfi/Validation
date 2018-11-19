@@ -27,8 +27,7 @@
 
 @*Modal Section*@
 @Html.Partial("Partials/AddSchoolYearModal")
-@Html.Partial("Partials/AddSubmissionCycleModal")
-@Html.Partial("Partials/AnnouncementEditModal")
+@Html.Partial("Partials/AddSubmissionCycleModal")   
 
 @Html.Hidden("tabParam", @Request.QueryString["tab"])
 
@@ -55,8 +54,51 @@
             else {
                 $('#list-error-threshold').addClass("show active");
                 $('#list-error-threshold-list').addClass("active");
-            }           
-      
+            }
+
+            var AddAnnouncementPostBackURL = "@Url.Content("~/Admin/AnnouncementAdd")";
+            $("#announcement-add").click(function () {
+                var options = { "backdrop": "static", keyboard: true };
+                $.ajax({
+                    type: "GET",
+                    url: AddAnnouncementPostBackURL,
+                    contentType: "application/json; charset=utf-8",
+                    data: {},
+                    datatype: "json",
+                    success: function (data) {
+                        $('#announcement-modal-content').html(data);
+                        $('#announcementModal').modal(options);
+                        $('#announcementModal').modal('show');
+
+                    },
+                    error: function () {
+                        alert("Could not open a dialog to create an announcement.");
+                    }
+                });
+            });
+
+            var EditAnnouncementPostBackURL = "@Url.Content("~/Admin/AnnouncementEdit")";
+            $(".announcement-edit").click(function () {
+                var $buttonClicked = $(this);
+                var id = $buttonClicked.attr('data-id');
+                var options = { "backdrop": "static", keyboard: true };
+                $.ajax({
+                    type: "GET",
+                    url: EditAnnouncementPostBackURL,
+                    contentType: "application/json; charset=utf-8",
+                    data: { "Id": id },
+                    datatype: "json",
+                    success: function (data) {
+                        $('#announcement-modal-content').html(data);
+                        $('#announcementModal').modal(options);
+                        $('#announcementModal').modal('show');
+                    },
+                    error: function () {
+                        alert("Could not retrieve the announcement for editing.");
+                    }
+                });
+            });
+
             $(".save-row").hide();
             $(".cancel-row").hide();
             $(".remove-row").hide();
@@ -152,9 +194,66 @@
             $('#start-date-picker').datetimepicker({ format: 'L' });
             $('#end-date-picker').datetimepicker({ format: 'L' });
 
-            $('#edit-expiration-date-picker').datetimepicker({ format: 'L' });
+            $('#announcementModal').on('shown.bs.modal', function () {
+                $('#edit-expiration-date-picker').datetimepicker({ format: 'L' });
+                var SaveAnnouncementPostBackURL = "@Url.Content("~/Admin/SaveAnnouncement")";
+                $("#save-announcement").click(function (event) {
+                    event.preventDefault();
+                    var $buttonClicked = $(this);
+                    //var id = $buttonClicked.attr('data-id');
+                    var id = $('#modal-announcement-id').val();
+                    var priority = $('#edit-priority').val();
+                    var message = $('#edit-message').val();
+                    var contactInfo = $('#edit-contactInfo').val();
+                    var linkUrl = $('#edit-linkUrl').val();
+                    var expirationDate = $('#edit-expiration-date-picker').val();
+                    var options = { "backdrop": "static", keyboard: true };
+                    var dataObj = { id: id, priority: priority, message: message, contactInfo: contactInfo, linkUrl: linkUrl, expiration: expirationDate };
+                    var jsonData = JSON.stringify(dataObj);
+                    $.ajax({
+                        type: "POST",
+                        url: SaveAnnouncementPostBackURL,
+                        contentType: "application/json; charset=utf-8",
+                        //data: { "Id": id, "Priority": priority, "Message": message, "ContactInfo": contactInfo, "LinkUrl": linkUrl, "Expiration": expirationDate },
+                        //data: { id: id, priority: priority, message: message, contactInfo: contactInfo, linkUrl: linkUrl, expiration: expirationDate },
+                        data: jsonData,
+                        datatype: "json",
+                        success: function (data) {
+                            //$('#announcementModal').modal('hide');
+                            $('#announcement-modal-content').html(data);
+                            $('#announcementModal').modal(options);
+                            $('#announcementModal').modal('show');
+                        },
+                        error: function () {
+                            $('#announcement-modal-content').html(data);
+                            $('#announcementModal').modal(options);
+                            $('#announcementModal').modal('show');
+                        }
+                    });
+                });
+            });
 
         });
+
+        function editAnnouncement(announcementId) {
+            //let announcementForm = $("#add-announcement-modal").find("#announcement-form")[0];
+            let announcementForm = $("#announcement-form");
+            let announcementIdHidden = $(`<input type="hidden" id="announcementId" name="announcementId" value="${announcementId}">`);
+            //announcementForm.append(`<input type="hidden" id="announcementId" name="announcementId" value="${announcementId}">`);
+            //announcementForm.append('<input type="hidden" id="announcementId" name="announcementId" value="' + announcementId + '">');
+            //announcementForm.append(announcementIdHidden);
+            /***
+            let firstElement = announcementForm.children()[0];
+            firstElement.after('<input type="hidden" id="announcementId" name="announcementId" value="' + announcementId + '">');
+            ***/
+
+            //$('<input type="hidden" id="announcementId" name="announcementId" value="3">').appendTo(announcementForm);
+            announcementIdHidden.appendTo(announcementForm);
+            let announcementHeader = $("#announcement-header");
+            announcementHeader.text("Edit Announcement");
+
+            $("#add-announcement-modal").modal('show');
+        }
 
         function updateThreshold(id, errorThreshold) {
             var value;

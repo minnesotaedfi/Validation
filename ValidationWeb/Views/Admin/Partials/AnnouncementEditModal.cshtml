@@ -1,57 +1,64 @@
-﻿<div id="add-announcement-modal" class="modal fade" role="dialog">
-    <div class="modal-dialog">
+﻿@model Announcement
+
+<div>
         <div class="modal-content">
             <div class="modal-header bg-primary">
-                <h4 class="modal-title">Add Announcement</h4>
+                <h4 id="announcement-header" class="modal-title">Add Announcement</h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
-                <form id="add-announcement-form" method="post" action="@Url.Action("AddAnnouncement", "Admin")">
+@using (Html.BeginForm())
+{
+                    <div class="row">
+                        @Html.ValidationSummary(false, "Errors:", new { @class = "alert alert-danger", @style = "width: 100%" })
+                    </div>
+                    @Html.HiddenFor(m => m.Id, new { @id = "modal-announcement-id" })
                     <div class="row form-group">
                         <div class="col-sm-3">
                             <label for="edit-priority">Priority:</label>
                         </div>
                         <div class="col-sm-9">
-                            <input id="edit-priority" name="priority" type="number" class="form-control" placeholder="0" title="Priority"/>
-                        </div>
-                    </div>                        
-                    <div class="row form-group">
-                        <div class="col-sm-3">
-                            <label for="edit-message">Message:</label>
-                        </div>
-                        <div class="col-sm-9">
-                            <textarea id="edit-message" name="message" class="form-control" rows="5" title="message" required></textarea>
-                        </div>
-                    </div> 
-                    <div class="row form-group">
-                        <div class="col-sm-3">
-                            <label for="edit-contactInfo">Contact Info:</label>
-                        </div>
-                        <div class="col-sm-9">
-                            <input id="edit-contactInfo" name="contactInfo" type="text" class="form-control" title="contactInfo"/>
+                            @Html.TextBoxFor(m => m.Priority, new { id = "edit-priority", pattern = "\\d*", title = "Priority must be a number", @class = "form-control" })
                         </div>
                     </div>
-                    <div class="row form-group">
-                        <div class="col-sm-3">
-                            <label for="edit-linkUrl">Link Url</label>
+                        <div class="row form-group">
+                            <div class="col-sm-3">
+                                <label for="edit-message">Message: <span style="color: red">*</span></label>
+                            </div>
+                            <div class="col-sm-9">
+                                @Html.TextAreaFor(m => m.Message, new { id = "edit-message", @class = "form-control", @required="required" })
+                                @Html.ValidationMessageFor(m => m.Message)
+                            </div>
                         </div>
-                        <div class="col-sm-9">
-                            <input id="edit-linkUrl" name="linkUrl" type="text" class="form-control" title="linkUrl"/>
+                        <div class="row form-group">
+                            <div class="col-sm-3">
+                                <label for="edit-contactInfo">Contact Info:</label>
+                            </div>
+                            <div class="col-sm-9">
+                                @Html.TextBoxFor(m => m.ContactInfo, new { id = "edit-contactInfo", @class = "form-control" })
+                            </div>
                         </div>
-                    </div>
-                    <div class="row form-group">
-                        <div class="col-sm-3">
-                            <label for="edit-expiration-date-picker">Expiration</label>
+                        <div class="row form-group">
+                            <div class="col-sm-3">
+                                <label for="edit-linkUrl">Link Url: </label>
+                            </div>
+                            <div class="col-sm-9">
+                                @Html.TextBoxFor(m => m.LinkUrl, new { id = "edit-linkUrl", @class = "form-control" })
+                            </div>
                         </div>
-                        <div class="col-sm-9">
-                            <input id="edit-expiration-date-picker" name="expiration" type="text" class="form-control" title="expiration" required />
+                        <div class="row form-group">
+                            <div class="col-sm-3">
+                                <label for="edit-expiration-date-picker">Expiration: <span style="color: red">*</span></label>
+                            </div>
+                            <div class="col-sm-9">
+                                @Html.TextBoxFor(m => m.Expiration, new { id = "edit-expiration-date-picker", @class = "form-control", @required = "required" })
+                                @Html.ValidationMessageFor(m => m.Expiration)
+                            </div>
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" id="add-announcement" class="btn minnesota-green">Add Announcement</button>
-                    </div>
-                </form>
+                        <div class="modal-footer">
+                            <button type="submit" id="save-announcement" class="btn minnesota-green">Save Announcement</button>
+                        </div>
+}
             </div>
         </div>
-    </div>    
-</div>
+    </div>
