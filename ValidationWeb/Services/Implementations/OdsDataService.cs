@@ -141,7 +141,7 @@ namespace ValidationWeb.Services
                     studentProgsCmd.CommandType = System.Data.CommandType.StoredProcedure;
                     studentProgsCmd.CommandText = StudentProgramsCountReportQuery.StudentProgramsCountQuery;
                     studentProgsCmd.Parameters.Add(new SqlParameter("@distid", System.Data.SqlDbType.Int));
-                    studentProgsCmd.Parameters["@distid"].Value = districtEdOrgId;
+                    studentProgsCmd.Parameters["@distid"].Value = districtEdOrgId.HasValue ? (object)districtEdOrgId.Value : (object)DBNull.Value;
                     var reportData = new List<StudentProgramsCountReportQuery>();
                     using (var reader = studentProgsCmd.ExecuteReader())
                     {
@@ -469,7 +469,7 @@ namespace ValidationWeb.Services
                 var districtIdObj = reader[StudentDrillDownQuery.DistrictIdColumnName];
                 if (!(districtIdObj is DBNull))
                 {
-                    districtId = System.Convert.ToInt32(reader[StudentDrillDownQuery.SchoolIdColumnName]);
+                    districtId = System.Convert.ToInt32(reader[StudentDrillDownQuery.DistrictIdColumnName]);
                 }
 
                 DateTime? enrolledDate = null;
@@ -498,7 +498,7 @@ namespace ValidationWeb.Services
                     SchoolName = reader[StudentDrillDownQuery.SchoolNameColumnName].ToString(),
                     EnrolledDate = enrolledDate,
                     WithdrawDate = withdrawDate,
-                    Grade = reader[StudentDrillDownQuery.SchoolNameColumnName].ToString(),
+                    Grade = reader[StudentDrillDownQuery.GradeColumnName].ToString(),
                     SpecialEdStatus = reader[StudentDrillDownQuery.SpecialEdStatusColumnName].ToString()
                 });
             }

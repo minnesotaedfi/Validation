@@ -12,33 +12,37 @@
 </div>
 <div id="requestedReportContent" class="row">
     <table class="table table-sm table-responsive-md table-bordered" id="reportsTable">
-        <tr class="table-primary">
-            <th>ID</th>
-            <th>Student Name</th>
-            <th>District Id</th>
-            <th>District Name</th>
-            <th>School Id</th>
-            <th>School Name</th>
-            <th>Enrolled Date</th>
-            <th>Withdraw Date</th>
-            <th>Grade</th>
-            <th>Special Ed Status</th>
-        </tr>
-        @foreach (var result in Model.Results)
-        {
-            <tr>
-                <td>@(result.StudentId)</td>
-                <td>@(result.StudentLastName ?? string.Empty), @(result.StudentMiddleName ?? string.Empty) @(result.StudentFirstName ?? string.Empty)</td>
-                <td>@(result.DistrictId.ToString() ?? "Unknown")</td>
-                <td>@(result.DistrictName ?? "Unknown")</td>
-                <td>@(result.SchoolId.ToString() ?? "Unknown")</td>
-                <td>@(result.SchoolName ?? "Unknown")</td>
-                <td>@(result.EnrolledDate?.ToString("MM/dd/yyyy") ?? "Unknown")</td>
-                <td>@(result.WithdrawDate?.ToString("MM/dd/yyyy") ?? "Unknown")</td>
-                <td>@(result.Grade ?? "Unknown")</td>
-                <td>@(result.SpecialEdStatus ?? "Unknown")</td>
+        <thead>
+            <tr class="table-primary">
+                <th>ID</th>
+                <th>Student Name</th>
+                <th class="d-none">District Id</th>
+                <th class="d-none">District Name</th>
+                <th>School Id</th>
+                <th>School Name</th>
+                <th>Enrolled Date</th>
+                <th>Withdraw Date</th>
+                <th>Grade</th>
+                <th class="d-none">Special Ed Status</th>
             </tr>
-        }
+        </thead>
+        <tbody>
+            @foreach (var result in Model.Results)
+            {
+                <tr>
+                    <td>@(result.StudentId)</td>
+                    <td>@(result.StudentLastName ?? string.Empty), @(result.StudentMiddleName ?? string.Empty) @(result.StudentFirstName ?? string.Empty)</td>
+                    <td class="d-none">@(result.DistrictId.ToString() ?? "Unknown")</td>
+                    <td class="d-none">@(result.DistrictName ?? "Unknown")</td>
+                    <td>@(result.SchoolId.ToString() ?? "Unknown")</td>
+                    <td>@(result.SchoolName ?? "Unknown")</td>
+                    <td>@(result.EnrolledDate?.ToString("MM/dd/yyyy") ?? "Unknown")</td>
+                    <td>@(result.WithdrawDate?.ToString("MM/dd/yyyy") ?? "Unknown")</td>
+                    <td>@(result.Grade ?? "Unknown")</td>
+                    <td class="d-none">@(result.SpecialEdStatus ?? "Unknown")</td>
+                </tr>
+            }
+        </tbody>
     </table>
     @if (Model.Results.Count == 0)
     {
