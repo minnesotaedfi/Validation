@@ -44,8 +44,8 @@ namespace ValidationWeb.Services
                                 OrgType = (OrgType)(System.Convert.ToInt32(reader[DemographicsCountReportQuery.OrgTypeColumnName])),
                                 EdOrgId = theEdOrgValue,
                                 LEASchool = reader[DemographicsCountReportQuery.LEASchoolColumnName].ToString(),
-                                DemographicsCount = System.Convert.ToInt32(reader[DemographicsCountReportQuery.DistinctEnrollmentCountColumnName]),
-                                EnrollmentCount = System.Convert.ToInt32(reader[DemographicsCountReportQuery.DistinctDemographicsCountColumnName]),
+                                EnrollmentCount = System.Convert.ToInt32(reader[DemographicsCountReportQuery.DistinctEnrollmentCountColumnName]),
+                                DemographicsCount = System.Convert.ToInt32(reader[DemographicsCountReportQuery.DistinctDemographicsCountColumnName]),
                                 AncestryGivenCount = System.Convert.ToInt32(reader[DemographicsCountReportQuery.AncestryGivenCountColumnName]),
                                 RaceGivenCount = System.Convert.ToInt32(reader[DemographicsCountReportQuery.RaceGivenCountColumnName])
                             });
