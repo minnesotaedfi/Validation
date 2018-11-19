@@ -8,7 +8,7 @@ namespace ValidationWeb
     public class MultipleEnrollmentsCountReportQuery
     {
         public static string MultipleEnrollmentsCountQuery = "rules.MultipleEnrollmentReport";
-
+        public static string MultipleEnrollmentsStudentDetailsQuery = "rules.MultipleEnrollmentStudentDetailsReport";
         public const string OrgTypeColumnName = "OrgType";
         public const string EdOrgIdColumnName = "EdOrgId";
         public const string SchoolNameColumnName = "SchoolName";

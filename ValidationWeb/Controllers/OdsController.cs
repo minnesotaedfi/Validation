@@ -52,7 +52,7 @@ namespace ValidationWeb
         }
 
         // GET: Ods/DemographicsReport
-        public ActionResult DemographicsReport(bool isStateMode = false, int? districtToDisplay = null, bool isStudentDrillDown = false, int? schoolId = null, int? drillDownColumnIndex = null)
+        public ActionResult DemographicsReport(bool isStateMode = false, int? districtToDisplay = null, bool isStudentDrillDown = false, int? schoolId = null, int? drillDownColumnIndex = null, OrgType orgType = OrgType.District)
         {
             var session = _appUserService.GetSession();
             var edOrg = _edOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
@@ -69,7 +69,7 @@ namespace ValidationWeb
             var theUser = _appUserService.GetUser();
             if (isStudentDrillDown)
             {
-                var studentDrillDownResults = _odsDataService.GetDistrictAncestryRaceStudentDrillDown(schoolId, drillDownColumnIndex, isStateMode ? (int?)null : edOrgId, fourDigitSchoolYear);
+                var studentDrillDownResults = _odsDataService.GetDistrictAncestryRaceStudentDrillDown(orgType, schoolId, schoolId ?? edOrgId, drillDownColumnIndex, fourDigitSchoolYear);
                 var studentDrillDownModel = new StudentDrillDownViewModel
                 {
                     ReportName = "Race and Ancestry Ethnic Origin",
@@ -94,7 +94,7 @@ namespace ValidationWeb
         }
 
         // GET: Ods/MultipleEnrollmentsReport
-        public ActionResult MultipleEnrollmentsReport(bool isStateMode = false, int? districtToDisplay = null)
+        public ActionResult MultipleEnrollmentsReport(bool isStateMode = false, int? districtToDisplay = null, bool isStudentDrillDown = false, int? schoolId = null, int? drillDownColumnIndex = null, OrgType orgType = OrgType.District)
         {
             var session = _appUserService.GetSession();
             var edOrg = _edOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
@@ -109,6 +109,20 @@ namespace ValidationWeb
             }
             var fourDigitSchoolYear = _schoolyearService.GetSchoolYearById(session.FocusedSchoolYearId).StartYear;
             var theUser = _appUserService.GetUser();
+            if (isStudentDrillDown)
+            {
+                var studentDrillDownResults = _odsDataService.GetMultipleEnrollmentStudentDrillDown(orgType, schoolId, schoolId ?? edOrgId, drillDownColumnIndex, fourDigitSchoolYear);
+                var studentDrillDownModel = new StudentDrillDownViewModel
+                {
+                    ReportName = "Multiple Enrollment",
+                    EdOrgId = edOrgId,
+                    EdOrgName = edOrgName,
+                    User = theUser,
+                    Results = studentDrillDownResults,
+                    IsStateMode = isStateMode
+                };
+                return View("StudentDrillDown", studentDrillDownModel);
+            }
             var results = _odsDataService.GetMultipleEnrollmentCounts(isStateMode ? (int?)null : edOrgId, fourDigitSchoolYear);
             var model = new OdsMultipleEnrollmentsReportViewModel
             {
