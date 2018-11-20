@@ -56,8 +56,11 @@
                 $('#list-error-threshold-list').addClass("active");
             }
 
+            //$('#announcementModal').modal('hide');
+
             var AddAnnouncementPostBackURL = "@Url.Content("~/Admin/AnnouncementAdd")";
             $("#announcement-add").click(function () {
+                console.log("We are in #announcement-add click handler");
                 var options = { "backdrop": "static", keyboard: true };
                 $.ajax({
                     type: "GET",
@@ -79,6 +82,7 @@
 
             var EditAnnouncementPostBackURL = "@Url.Content("~/Admin/AnnouncementEdit")";
             $(".announcement-edit").click(function () {
+                console.log("We are in #announcement-edit click handler");
                 var $buttonClicked = $(this);
                 var id = $buttonClicked.attr('data-id');
                 var options = { "backdrop": "static", keyboard: true };
@@ -195,11 +199,15 @@
             $('#end-date-picker').datetimepicker({ format: 'L' });
 
             $('#announcementModal').on('shown.bs.modal', function () {
+                $('#announcementModal').on('hidden.bs.modal', function (e) {
+                    console.log("Something hid announcementModal");
+                });
+
                 $('#edit-expiration-date-picker').datetimepicker({ format: 'L' });
                 var SaveAnnouncementPostBackURL = "@Url.Content("~/Admin/SaveAnnouncement")";
                 $("#save-announcement").click(function (event) {
                     event.preventDefault();
-                    var $buttonClicked = $(this);
+                    //var $buttonClicked = $(this);
                     //var id = $buttonClicked.attr('data-id');
                     var id = $('#modal-announcement-id').val();
                     var priority = $('#edit-priority').val();
@@ -210,6 +218,7 @@
                     var options = { "backdrop": "static", keyboard: true };
                     var dataObj = { id: id, priority: priority, message: message, contactInfo: contactInfo, linkUrl: linkUrl, expiration: expirationDate };
                     var jsonData = JSON.stringify(dataObj);
+                    //$('#announcementModal').modal('hide');
                     $.ajax({
                         type: "POST",
                         url: SaveAnnouncementPostBackURL,
@@ -219,15 +228,44 @@
                         data: jsonData,
                         datatype: "json",
                         success: function (data) {
+                            var tempData = $(data);
+                            let announcementValidationSummaryContents = "";
+                            /***
+                            $('#announcement-modal-content').html(data);
+                            let announcementValidationSummary = $('#announcement-validation-summary-row');
+                            let announcementValidationSummaryContents = "";
+                            ***/
+                            let announcementValidationSummary = tempData.find('#announcement-validation-summary-row');
+                            if (announcementValidationSummary) {
+                                console.log("announcementValidationSummary exists");
+                                announcementValidationSummaryContents = announcementValidationSummary.text();
+                                console.log(`announcementValidationSummaryContents = ${announcementValidationSummaryContents}`);
+                            }
+                            if (announcementValidationSummaryContents) {
+                                console.log("announcementValidationSummary is not empty");
+                                $('#announcement-modal-content').html(data);
+                                $('#announcementModal').modal(options);
+                                $('#announcementModal').modal('show');
+                            }
+                            else {
+                                console.log("announcementValidationSummary is empty");
+                                let locationUrl = location.href;
+                                let announcementsExist = locationUrl.includes('announcements');
+                                if (!announcementsExist) {
+                                    location.href = `${location.href}?tab=announcements`;
+                                }
+                                location.reload(true);
+                            }
                             //$('#announcementModal').modal('hide');
-                            $('#announcement-modal-content').html(data);
-                            $('#announcementModal').modal(options);
-                            $('#announcementModal').modal('show');
+                            //$('#announcement-modal-content').html(data);
+                            //$('#announcementModal').modal(options);
+                            //$('#announcementModal').modal('show');
                         },
-                        error: function () {
+                        error: function (data) {
                             $('#announcement-modal-content').html(data);
-                            $('#announcementModal').modal(options);
-                            $('#announcementModal').modal('show');
+                            //$('#announcementModal').modal(options);
+                            //$('#announcementModal').modal('show');
+                            //alert("An error occurred");
                         }
                     });
                 });

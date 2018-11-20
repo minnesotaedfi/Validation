@@ -9,7 +9,7 @@
             <div class="modal-body">
 @using (Html.BeginForm())
 {
-                    <div class="row">
+                    <div class="row" id="announcement-validation-summary-row">
                         @Html.ValidationSummary(false, "Errors:", new { @class = "alert alert-danger", @style = "width: 100%" })
                     </div>
                     @Html.HiddenFor(m => m.Id, new { @id = "modal-announcement-id" })
@@ -18,7 +18,7 @@
                             <label for="edit-priority">Priority:</label>
                         </div>
                         <div class="col-sm-9">
-                            @Html.TextBoxFor(m => m.Priority, new { id = "edit-priority", pattern = "\\d*", title = "Priority must be a number", @class = "form-control" })
+                            @Html.TextBoxFor(m => m.Priority, new { id = "edit-priority", @pattern = "\\d*", @title = "Priority must be a number", @class = "form-control" })
                         </div>
                     </div>
                         <div class="row form-group">

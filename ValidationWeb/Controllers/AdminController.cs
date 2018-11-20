@@ -138,8 +138,11 @@ namespace ValidationWeb
                     announcement.LinkUrl, announcement.Expiration);
                 var announcements = _announcementService.GetAnnoucements(true);
                 return RedirectToAction("Index", new { tab = "announcements" });
+                //return PartialView("Partials/AnnouncementEditModal", announcement);
+                //return View("Index", new { tab = "announcements" });
             }
 
+            //Response.StatusCode = 500;
             return PartialView("Partials/AnnouncementEditModal", announcement);
         }
 
