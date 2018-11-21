@@ -22,8 +22,6 @@ namespace ValidationWeb
         /// <summary>
         /// A higher number should be displayed before announcements with lower numbers.
         /// </summary>
-        //[Required(ErrorMessage = "Please enter priority")]
-        [Range (0, 10)]
         public int Priority { get; set; }
         /// <summary>
         /// Text of the Annoucement. Each line ending should be treated as a separate paragraph when rendered.

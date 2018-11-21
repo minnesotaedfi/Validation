@@ -10,8 +10,6 @@ namespace ValidationWeb.Services
     {
         List<Announcement> GetAnnoucements(bool includePreviouslyDismissedAnnouncements = false);
         Announcement GetAnnoucement(int id);
-        //bool SaveAnnouncement(int announcementId, int priority, string message, string contactInfo, string linkUrl, string expirationDateStr);
-        bool SaveAnnouncement(int announcementId, int priority, string message, string contactInfo, string linkUrl, DateTime expirationDate);
-        bool AddAnnouncementFromBody(Announcement announcement);
+        void SaveAnnouncement(int announcementId, int priority, string message, string contactInfo, string linkUrl, DateTime expirationDate);
     }
 }

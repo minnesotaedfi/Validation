@@ -22,6 +22,8 @@
             <th>Contact Info</th>
             <th>Link Url</th>
             <th>Expiration</th>
+            <th></th>
+            <th></th>
         </tr>
         @foreach (var announcement in Model)
         {   
@@ -33,14 +35,13 @@
                 <td>@announcement.LinkUrl</td>
                 <td>@announcement.Expiration.ToString()</td>
                 <td>
-                    <span>
-                        <a href="javascript:void(0);" 
+                        <a href="javascript:void(0);"
                            class="announcement-edit btn btn-sm btn-primary" data-id="@announcement.Id"><i class="fa fa-edit"></i></a>
-                    </span>
-                    &nbsp;
-                    <span><a href="#" onclick="removeAnnouncement(@announcement.Id);" class="btn btn-sm btn-danger">
-                        <i class="fa fa-trash"></i></a>
-                    </span>
+                </td>
+                <td>
+                        <a href="#" onclick="removeAnnouncement(@announcement.Id);" class="btn btn-sm btn-danger">
+                            <i class="fa fa-trash"></i>
+                        </a>
                 </td>
             </tr>
         }

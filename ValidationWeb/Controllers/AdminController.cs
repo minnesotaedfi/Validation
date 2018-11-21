@@ -100,50 +100,29 @@ namespace ValidationWeb
             return PartialView("Partials/SubmissionCycleList", submissionCycles);
         }
 
-        /***
-        public ActionResult SaveAnnouncement(FormCollection formCollection)
-        {
-            if (ModelState.IsValid)
-            {
-                int priority = 0;
-                int announcementId = 0;
-                if (!string.IsNullOrEmpty(formCollection["priority"]))
-                    priority = Convert.ToInt32(formCollection["priority"]);
-                if (!string.IsNullOrEmpty(formCollection["announcementId"]))
-                    announcementId = Convert.ToInt32(formCollection["announcementId"]);
-                _announcementService.SaveAnnouncement(announcementId, priority, formCollection["message"], formCollection["contactInfo"],
-                    formCollection["linkUrl"], formCollection["expiration"]);
-
-            }
-            var announcements = _announcementService.GetAnnoucements(true);
-            return RedirectToAction("Index", new { tab = "announcements" });
-        }
-        ***/
-
         [HttpPost]
         public ActionResult SaveAnnouncement(Announcement announcement)
         {
             if (ModelState.IsValid)
             {
-                /***
-                int priority = 0;
-                int announcementId = 0;
-                if (!string.IsNullOrEmpty(announcement.Priority))
-                    priority = Convert.ToInt32(formCollection["priority"]);
-                //if (!string.IsNullOrEmpty(formCollection["announcementId"]))
-                   // announcementId = Convert.ToInt32(formCollection["announcementId"]);
-                   ***/
-                _announcementService.SaveAnnouncement(announcement.Id, announcement.Priority, announcement.Message,
-                    announcement.ContactInfo,
-                    announcement.LinkUrl, announcement.Expiration);
-                var announcements = _announcementService.GetAnnoucements(true);
-                return RedirectToAction("Index", new { tab = "announcements" });
-                //return PartialView("Partials/AnnouncementEditModal", announcement);
-                //return View("Index", new { tab = "announcements" });
+                try
+                {
+                    _announcementService.SaveAnnouncement(announcement.Id, announcement.Priority, announcement.Message,
+                        announcement.ContactInfo,
+                        announcement.LinkUrl, announcement.Expiration);
+                    var announcements = _announcementService.GetAnnoucements(true);
+                    return RedirectToAction("Index", new { tab = "announcements" });
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("General Error", ex.Message);
+                    return PartialView("Partials/AnnouncementEditModal", announcement);
+                }
             }
-
-            //Response.StatusCode = 500;
-            return PartialView("Partials/AnnouncementEditModal", announcement);
+            else
+            {
+                return PartialView("Partials/AnnouncementEditModal", announcement);
+            }
         }
 
         public ActionResult AnnouncementAdd()
@@ -155,9 +134,7 @@ namespace ValidationWeb
         public ActionResult AnnouncementEdit(int Id)
         {
             var announcement = _announcementService.GetAnnoucement(Id);
-            //return View("AnnouncementEditModal", announcement);
             return PartialView("Partials/AnnouncementEditModal", announcement);
         }
-
     }
 }

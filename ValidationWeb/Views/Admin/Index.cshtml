@@ -6,7 +6,8 @@
             <a class="list-group-item list-group-item-action" id="list-error-threshold-list" data-toggle="list" href="#list-error-threshold" role="tab">School Years</a>
             <a class="list-group-item list-group-item-action" id="list-submission-cycles-list" data-toggle="list" href="#list-submission-cycles" role="tab">Submission Cycles</a>
             <a class="list-group-item list-group-item-action" id="list-messages-list" data-toggle="list" href="#list-messages" role="tab" aria-controls="messages">Rule Management</a>
-            <a class="list-group-item list-group-item-action" id="list-announcements-list" data-toggle="list" href="#list-announcements" role="tab" aria-controls="settings">Announcements</a>
+            <a class="list-group-item list-group-item-action" id="list-announcements-list" data-toggle="list" href="#list-announcements" role="tab" aria-controls="settings"
+               onclick="window.location.href += '?tab=announcements'">Announcements</a>
         </div>
     </div>
     <div class="col-10">
@@ -41,9 +42,6 @@
 
         var originalThreshold = "";
         $(document).ready(function () {
-
-            //var url = window.location.href;
-            //let currentTab = $('#tabParam');
             let currentTab = $("[name='tabParam']");
             if (currentTab.val()) {
                 let tabContentId = `#list-${currentTab.val()}`;
@@ -56,11 +54,8 @@
                 $('#list-error-threshold-list').addClass("active");
             }
 
-            //$('#announcementModal').modal('hide');
-
             var AddAnnouncementPostBackURL = "@Url.Content("~/Admin/AnnouncementAdd")";
             $("#announcement-add").click(function () {
-                console.log("We are in #announcement-add click handler");
                 var options = { "backdrop": "static", keyboard: true };
                 $.ajax({
                     type: "GET",
@@ -82,7 +77,6 @@
 
             var EditAnnouncementPostBackURL = "@Url.Content("~/Admin/AnnouncementEdit")";
             $(".announcement-edit").click(function () {
-                console.log("We are in #announcement-edit click handler");
                 var $buttonClicked = $(this);
                 var id = $buttonClicked.attr('data-id');
                 var options = { "backdrop": "static", keyboard: true };
@@ -199,99 +193,81 @@
             $('#end-date-picker').datetimepicker({ format: 'L' });
 
             $('#announcementModal').on('shown.bs.modal', function () {
-                $('#announcementModal').on('hidden.bs.modal', function (e) {
-                    console.log("Something hid announcementModal");
-                });
-
-                $('#edit-expiration-date-picker').datetimepicker({ format: 'L' });
-                var SaveAnnouncementPostBackURL = "@Url.Content("~/Admin/SaveAnnouncement")";
-                $("#save-announcement").click(function (event) {
-                    event.preventDefault();
-                    //var $buttonClicked = $(this);
-                    //var id = $buttonClicked.attr('data-id');
-                    var id = $('#modal-announcement-id').val();
-                    var priority = $('#edit-priority').val();
-                    var message = $('#edit-message').val();
-                    var contactInfo = $('#edit-contactInfo').val();
-                    var linkUrl = $('#edit-linkUrl').val();
-                    var expirationDate = $('#edit-expiration-date-picker').val();
-                    var options = { "backdrop": "static", keyboard: true };
-                    var dataObj = { id: id, priority: priority, message: message, contactInfo: contactInfo, linkUrl: linkUrl, expiration: expirationDate };
-                    var jsonData = JSON.stringify(dataObj);
-                    //$('#announcementModal').modal('hide');
-                    $.ajax({
-                        type: "POST",
-                        url: SaveAnnouncementPostBackURL,
-                        contentType: "application/json; charset=utf-8",
-                        //data: { "Id": id, "Priority": priority, "Message": message, "ContactInfo": contactInfo, "LinkUrl": linkUrl, "Expiration": expirationDate },
-                        //data: { id: id, priority: priority, message: message, contactInfo: contactInfo, linkUrl: linkUrl, expiration: expirationDate },
-                        data: jsonData,
-                        datatype: "json",
-                        success: function (data) {
-                            var tempData = $(data);
-                            let announcementValidationSummaryContents = "";
-                            /***
-                            $('#announcement-modal-content').html(data);
-                            let announcementValidationSummary = $('#announcement-validation-summary-row');
-                            let announcementValidationSummaryContents = "";
-                            ***/
-                            let announcementValidationSummary = tempData.find('#announcement-validation-summary-row');
-                            if (announcementValidationSummary) {
-                                console.log("announcementValidationSummary exists");
-                                announcementValidationSummaryContents = announcementValidationSummary.text();
-                                console.log(`announcementValidationSummaryContents = ${announcementValidationSummaryContents}`);
-                            }
-                            if (announcementValidationSummaryContents) {
-                                console.log("announcementValidationSummary is not empty");
-                                $('#announcement-modal-content').html(data);
-                                $('#announcementModal').modal(options);
-                                $('#announcementModal').modal('show');
-                            }
-                            else {
-                                console.log("announcementValidationSummary is empty");
-                                let locationUrl = location.href;
-                                let announcementsExist = locationUrl.includes('announcements');
-                                if (!announcementsExist) {
-                                    location.href = `${location.href}?tab=announcements`;
-                                }
-                                location.reload(true);
-                            }
-                            //$('#announcementModal').modal('hide');
-                            //$('#announcement-modal-content').html(data);
-                            //$('#announcementModal').modal(options);
-                            //$('#announcementModal').modal('show');
-                        },
-                        error: function (data) {
-                            $('#announcement-modal-content').html(data);
-                            //$('#announcementModal').modal(options);
-                            //$('#announcementModal').modal('show');
-                            //alert("An error occurred");
-                        }
-                    });
-                });
+                setAnnouncementHeaderText();
+                $('#edit-expiration-date-picker').datetimepicker({ format: 'L' });                
+                $("#save-announcement").click(saveAnnouncement);
             });
-
         });
 
-        function editAnnouncement(announcementId) {
-            //let announcementForm = $("#add-announcement-modal").find("#announcement-form")[0];
-            let announcementForm = $("#announcement-form");
-            let announcementIdHidden = $(`<input type="hidden" id="announcementId" name="announcementId" value="${announcementId}">`);
-            //announcementForm.append(`<input type="hidden" id="announcementId" name="announcementId" value="${announcementId}">`);
-            //announcementForm.append('<input type="hidden" id="announcementId" name="announcementId" value="' + announcementId + '">');
-            //announcementForm.append(announcementIdHidden);
-            /***
-            let firstElement = announcementForm.children()[0];
-            firstElement.after('<input type="hidden" id="announcementId" name="announcementId" value="' + announcementId + '">');
-            ***/
-
-            //$('<input type="hidden" id="announcementId" name="announcementId" value="3">').appendTo(announcementForm);
-            announcementIdHidden.appendTo(announcementForm);
-            let announcementHeader = $("#announcement-header");
-            announcementHeader.text("Edit Announcement");
-
-            $("#add-announcement-modal").modal('show');
+        function saveAnnouncement(event) {
+            var SaveAnnouncementPostBackURL = "@Url.Content("~/Admin/SaveAnnouncement")";
+            event.preventDefault();
+            var id = $('#modal-announcement-id').val();
+            var priority = $('#edit-priority').val();
+            if ($.trim(priority).length === 0) {
+                priority = 0;
+            }
+            var message = $('#edit-message').val();
+            var contactInfo = $('#edit-contactInfo').val();
+            var linkUrl = $('#edit-linkUrl').val();
+            var expirationDate = $('#edit-expiration-date-picker').val();
+            var options = { "backdrop": "static", keyboard: true };
+            var dataObj = { id: id, priority: priority, message: message, contactInfo: contactInfo, linkUrl: linkUrl, expiration: expirationDate };
+            var jsonData = JSON.stringify(dataObj);
+            $.ajax({
+                type: "POST",
+                url: SaveAnnouncementPostBackURL,
+                contentType: "application/json; charset=utf-8",
+                data: jsonData,
+                datatype: "json",
+                success: function (data) {
+                    var tempData = $(data);
+                    let announcementValidationSummaryContents = "";
+                    let announcementValidationSummary = tempData.find('#announcement-validation-summary-row');
+                    if (announcementValidationSummary) {
+                        announcementValidationSummaryContents = announcementValidationSummary.text();
+                    }
+                    // If announcementValidationSummaryContents contains more than just whitespace,
+                    // then validation summary contains errors, and we should re-show the modal
+                    if ($.trim(announcementValidationSummaryContents).length > 0) {
+                        $('#announcement-modal-content').html(data);
+                        $('#announcementModal').modal(options);
+                        $('#announcementModal').modal('show');
+                        // Need to reattach event handlers to some of the modal's fields, because
+                        // when the modal's HTML got repopulated above, the event handlers disappeared
+                        setAnnouncementHeaderText();
+                        $('#edit-expiration-date-picker').datetimepicker({ format: 'L' });
+                        $("#save-announcement").click(saveAnnouncement);
+                    }
+                    else {
+                        let locationUrl = location.href;
+                        let urlContainsAnnouncements = locationUrl.includes('announcements');
+                        if (!urlContainsAnnouncements) {
+                            location.href = `${location.href}?tab=announcements`;
+                        }
+                        location.reload(true);
+                    }
+                },
+                error: function (data) {
+                    $('#announcement-modal-content').html(data);
+                    $('#announcementModal').modal(options);
+                    $('#announcementModal').modal('show');
+                    // Need to reattach event handlers to some of the modal's fields, because
+                    // when the modal's HTML got repopulated above, the event handlers disappeared
+                    $('#edit-expiration-date-picker').datetimepicker({ format: 'L' });
+                    $("#save-announcement").click(saveAnnouncement);
+                }
+            });
         }
+
+        function setAnnouncementHeaderText() {
+            let announcementHeader = $('#announcement-header');
+            var id = $('#modal-announcement-id').val();
+            if (id > 0) {
+                announcementHeader.text("Edit Announcement");
+            }
+        }
+
 
         function updateThreshold(id, errorThreshold) {
             var value;
