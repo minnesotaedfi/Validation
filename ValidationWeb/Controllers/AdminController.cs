@@ -14,19 +14,22 @@ namespace ValidationWeb
         private readonly ISchoolYearService _schoolYearService;
         private readonly IRulesEngineService _rulesEngineService;
         private readonly ISubmissionCycleService _submissionCycleService;
+        private readonly IAnnouncementService _announcementService;
 
         public AdminController(
             IAppUserService appUserService,
             IEdOrgService edOrgService,
             ISchoolYearService schoolYearService,
             IRulesEngineService rulesEngineService,
-            ISubmissionCycleService submissionCycleService)
+            ISubmissionCycleService submissionCycleService,
+            IAnnouncementService announcementService)
         {
             _appUserService = appUserService;
             _edOrgService = edOrgService;
             _schoolYearService = schoolYearService;
             _rulesEngineService = rulesEngineService;
             _submissionCycleService = submissionCycleService;
+            _announcementService = announcementService;
         }
 
         // GET: Admin
@@ -39,7 +42,8 @@ namespace ValidationWeb
                 FocusedEdOrg = _edOrgService.GetEdOrgById(_appUserService.GetSession().FocusedEdOrgId, _schoolYearService.GetSchoolYearById(_appUserService.GetSession().FocusedSchoolYearId).Id),
                 YearsOpenForDataSubmission = _schoolYearService.GetSubmittableSchoolYears().OrderByDescending(x => x.EndYear),
                 RuleCollections = _rulesEngineService.GetCollections(),
-                SubmissionCycles = _submissionCycleService.GetSubmissionCycles()
+                SubmissionCycles = _submissionCycleService.GetSubmissionCycles(),
+                Announcements = _announcementService.GetAnnoucements(true)
             };
 
             // Check user authorization, if user is admin then then return admin page if not return the error page.
@@ -94,6 +98,51 @@ namespace ValidationWeb
             var submissionCycles = _submissionCycleService.GetSubmissionCyclesByCollectionId(collectionId);
 
             return PartialView("Partials/SubmissionCycleList", submissionCycles);
+        }
+
+        [HttpPost]
+        public ActionResult SaveAnnouncement(Announcement announcement)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _announcementService.SaveAnnouncement(announcement.Id, announcement.Priority, announcement.Message,
+                        announcement.ContactInfo,
+                        announcement.LinkUrl, announcement.Expiration);
+                    var announcements = _announcementService.GetAnnoucements(true);
+                    return RedirectToAction("Index", new { tab = "announcements" });
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("General Error", ex.Message);
+                    return PartialView("Partials/AnnouncementEditModal", announcement);
+                }
+            }
+            else
+            {
+                return PartialView("Partials/AnnouncementEditModal", announcement);
+            }
+        }
+
+        public ActionResult AnnouncementAdd()
+        {
+            var announcement = new Announcement { Expiration = DateTime.Now };
+            return PartialView("Partials/AnnouncementEditModal", announcement);
+        }
+
+        public ActionResult AnnouncementEdit(int Id)
+        {
+            var announcement = _announcementService.GetAnnoucement(Id);
+            return PartialView("Partials/AnnouncementEditModal", announcement);
+        }
+
+
+        [HttpDelete]
+        public ActionResult DeleteAnnouncement(int id)
+        {
+            _announcementService.DeleteAnnoucement(id);
+            return RedirectToAction("Index", new { tab = "announcements" });
         }
     }
 }

@@ -21,5 +21,6 @@ namespace ValidationWeb
 
         public IEnumerable<Collection> RuleCollections { get; set; }
         public IEnumerable<SubmissionCycle> SubmissionCycles { get; set; }
+        public IEnumerable<Announcement> Announcements { get; set; }
     }
 }

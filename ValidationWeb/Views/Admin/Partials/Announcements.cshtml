@@ -1,0 +1,57 @@
+﻿@model IEnumerable<Announcement>
+
+<div class="row">
+    <div class="col-10">
+        <div id="error-threshold-warning" class="alert alert-danger alert-dismissible" style="display:none" role="alert">
+            <strong>Cannot update Error Threshold.</strong> Must be a valid number.
+            <button id="error-threshold-warning-button" type="button" class="close" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </div>
+    <div class="col-2">
+        <button id="announcement-add" class="btn btn-sm minnesota-green">Add Announcement</button>
+    </div>
+</div>
+<div class="row tbmargin10">
+    <table class="table table-sm table-responsive-md table-bordered" id="reportsTable">
+        <tr class="table-primary">
+            <th class="id-hide-column">Id</th>
+            <th>Priority</th>
+            <th>Message</th>
+            <th>Contact Info</th>
+            <th>Link Url</th>
+            <th>Expiration</th>
+            <th></th>
+            <th></th>
+        </tr>
+        @foreach (var announcement in Model)
+        {   
+            <tr>
+                <td class="id-hide-column">@announcement.Id</td>
+                <td>@announcement.Priority</td>
+                <td>@announcement.Message</td>
+                <td>@announcement.ContactInfo</td>
+                <td>@announcement.LinkUrl</td>
+                <td>@announcement.Expiration.ToString()</td>
+                <td>
+                        <a href="javascript:void(0);"
+                           class="announcement-edit btn btn-sm btn-primary" data-id="@announcement.Id"><i class="fa fa-edit"></i></a>
+                </td>
+                <td>
+                        <a href="javascript:void(0);" data-id="@announcement.Id" class="announcement-delete btn btn-sm btn-danger">
+                            <i class="fa fa-trash"></i>
+                        </a>
+                </td>
+            </tr>
+        }
+    </table>
+</div>
+
+<div id='announcementModal' class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id='announcement-modal-content'></div>
+        </div>
+    </div>
+</div>  
