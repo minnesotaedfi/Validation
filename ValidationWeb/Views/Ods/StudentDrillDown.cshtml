@@ -1,0 +1,56 @@
+﻿@model StudentDrillDownViewModel
+
+<div class="row tbmargin10">
+    @if (Model.IsStateMode)
+    {
+        <div class="vp-body-header justify-content-start align-self-center">@(Model.ReportName) Student Details for All Minnesota Districts</div>
+    }
+    else
+    {
+        <div class="vp-body-header justify-content-start align-self-center">@(Model.ReportName) Student Details for @Model.EdOrgName (@Model.EdOrgId.ToString())</div>
+    }
+</div>
+<div id="requestedReportContent" class="row">
+    <table class="table table-sm table-responsive-md table-bordered" id="reportsTable">
+        <thead>
+            <tr class="table-primary">
+                <th>ID</th>
+                <th>Student Name</th>
+                <th class="d-none">District Id</th>
+                <th class="d-none">District Name</th>
+                <th>School Id</th>
+                <th>School Name</th>
+                <th>Enrolled Date</th>
+                <th>Withdraw Date</th>
+                <th>Grade</th>
+                <th class="d-none">Special Ed Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var result in Model.Results)
+            {
+                <tr>
+                    <td>@(result.StudentId)</td>
+                    <td>@(result.StudentLastName ?? string.Empty), @(result.StudentMiddleName ?? string.Empty) @(result.StudentFirstName ?? string.Empty)</td>
+                    <td class="d-none">@(result.DistrictId.ToString() ?? "Unknown")</td>
+                    <td class="d-none">@(result.DistrictName ?? "Unknown")</td>
+                    <td>@(result.SchoolId.ToString() ?? "Unknown")</td>
+                    <td>@(result.SchoolName ?? "Unknown")</td>
+                    <td>@(result.EnrolledDate?.ToString("MM/dd/yyyy") ?? "Unknown")</td>
+                    <td>@(result.WithdrawDate?.ToString("MM/dd/yyyy") ?? "Unknown")</td>
+                    <td>@(result.Grade ?? "Unknown")</td>
+                    <td class="d-none">@(result.SpecialEdStatus ?? "Unknown")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    @if (Model.Results.Count == 0)
+    {
+        <div class="vp-body-header col-8 justify-content-start align-self-center">No records were found.</div>
+    }
+</div>
+
+@section scripts {
+    <script>
+    </script>
+}

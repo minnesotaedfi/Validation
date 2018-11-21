@@ -46,7 +46,10 @@
             <Source Path="obj\Debug\AutoScripts\ValidationPortalDbContext-Deployment_DataOnly.sql" Transacted="True" />
           </Object>
           <Object Type="DbFullSql" xmlns="">
-            <Source Path="Deployment\SQLScripts\CreateEmptyRulesSchema.sql" Transacted="False" />
+            <Source Path="Deployment\SQLScripts\ValPortal\AddASchoolYear.sql" Transacted="False" />
+          </Object>
+          <Object Type="DbFullSql" xmlns="">
+            <Source Path="Deployment\SQLScripts\ValPortal\CreateEmptyRulesSchema.sql" Transacted="False" />
           </Object>
         </ObjectGroup>
         <ObjectGroup Name="SingleSignOnDatabase-Deployment" Order="2">
@@ -226,9 +229,32 @@
     <Content Include="Content\Styles\jquery-ui.theme.min.css" />
     <Content Include="Content\Styles\semantic-ui\tabulator_semantic-ui.css" />
     <Content Include="Content\Styles\semantic-ui\tabulator_semantic-ui.min.css" />
-    <Content Include="Deployment\SQLScripts\AddASchoolYear.sql" />
-    <Content Include="Deployment\SQLScripts\CreateEmptyRulesSchema.sql" />
-    <Content Include="Deployment\SQLScripts\ValidationPortalOdsReportSprocs.sql" />
+    <Content Include="Deployment\SQLScripts\ODS\ODSReport100DROPStudentDetailsFunction.sql" />
+    <Content Include="Deployment\SQLScripts\ODS\ODSReport101DROPStringArrayType.sql" />
+    <Content Include="Deployment\SQLScripts\ODS\ODSReport102DROPIntArrayTypeStudentDrillDown.sql" />
+    <Content Include="Deployment\SQLScripts\ODS\ODSReport103CREATEIntArrayType.sql" />
+    <Content Include="Deployment\SQLScripts\ODS\ODSReport104CREATEStringArrayType.sql" />
+    <Content Include="Deployment\SQLScripts\ODS\ODSReport105CREATEStudentDetailsFunction.sql" />
+    <Content Include="Deployment\SQLScripts\ODS\ODSReport111CREATERaceAEO.sql" />
+    <Content Include="Deployment\SQLScripts\ODS\ODSReport112DROPRaceAEODrillDown.sql" />
+    <Content Include="Deployment\SQLScripts\ODS\ODSReport113CREATERaceAEODrillDown.sql" />
+    <Content Include="Deployment\SQLScripts\ODS\ODSReport121CREATEMultipleEnrollment.sql" />
+    <Content Include="Deployment\SQLScripts\ODS\ODSReport122DROPMultipleEnrollmentDrillDown.sql" />
+    <Content Include="Deployment\SQLScripts\ODS\ODSReport123CREATEMultipleEnrollmentDrillDown.sql" />
+    <Content Include="Deployment\SQLScripts\ODS\ODSReport131CREATEStudentPrograms.sql" />
+    <Content Include="Deployment\SQLScripts\ODS\ODSReport132DROPStudentProgramsDrillDown.sql" />
+    <Content Include="Deployment\SQLScripts\ODS\ODSReport133CREATEStudentProgramsDrillDown.sql" />
+    <Content Include="Deployment\SQLScripts\ODS\ODSReport140DROPEnrollmentChange.sql" />
+    <Content Include="Deployment\SQLScripts\ODS\ODSReport120DROPMultipleEnrollment.sql" />
+    <Content Include="Deployment\SQLScripts\ValPortal\AddASchoolYear.sql" />
+    <Content Include="Deployment\SQLScripts\ValPortal\CreateEmptyRulesSchema.sql" />
+    <Content Include="Deployment\SQLScripts\ODS\ODSReport110DROPRaceAEO.sql" />
+    <Content Include="Deployment\SQLScripts\ODS\ODSReport141CREATEEnrollmentChange.sql" />
+    <Content Include="Deployment\SQLScripts\ODS\ODSReport150DROPResidentsElsewhere.sql" />
+    <Content Include="Deployment\SQLScripts\ODS\ODSReport130DROPStudentPrograms.sql" />
+    <Content Include="Deployment\SQLScripts\ODS\ODSReport151CREATEResidentsElsewhere.sql" />
+    <Content Include="Deployment\SQLScripts\ODS\ODSReport152DROPResidentsElsewhereDrillDown.sql" />
+    <Content Include="Deployment\SQLScripts\ODS\ODSReport153CREATEResidentsElsewhereDrillDown.sql" />
     <Content Include="packages.config" />
     <Content Include="parameters.xml">
       <SubType>Designer</SubType>
@@ -261,7 +287,7 @@
     <Content Include="Views\Ods\Level1IssuesReport.cshtml" />
     <Content Include="Deployment\DeployToMnDev.proj" />
     <Content Include="Deployment\DeployToQA.proj" />
-    <Content Include="Views\Ods\ResidentsElsewhereStudentDrillDown.cshtml" />
+    <Content Include="Views\Ods\StudentDrillDown.cshtml" />
     <Content Include="Views\Admin\Partials\Announcements.cshtml" />
     <Content Include="Views\Admin\Partials\AnnouncementEditModal.cshtml" />
     <None Include="Web.Debug.config">
@@ -339,6 +365,7 @@
     <Compile Include="Database\Queries\MultipleEnrollmentsCountReportQuery.cs" />
     <Compile Include="Database\Queries\ResidentsEnrolledElsewhereReportQuery.cs" />
     <Compile Include="Database\Queries\StudentDataFromId.cs" />
+    <Compile Include="Database\Queries\StudentDrillDownQuery.cs" />
     <Compile Include="Database\Queries\StudentProgramsCountReportQuery.cs" />
     <Compile Include="Database\RawOdsDbContext.cs" />
     <Compile Include="Database\ValidatedOdsDbContext.cs" />

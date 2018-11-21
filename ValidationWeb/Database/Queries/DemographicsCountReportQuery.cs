@@ -8,6 +8,7 @@ namespace ValidationWeb
     public class DemographicsCountReportQuery
     {
         public static string DistrictAncestryRaceCountsQuery = "rules.RaceAEOReport";
+        public static string DistrictAncestryRaceCountsStudentDetailsQuery = "rules.RaceAEOStudentDetailsReport";
         public const string OrgTypeColumnName = "OrgType";
         public const string EdOrgIdColumnName = "EdOrgId";
         public const string LEASchoolColumnName = "SchoolName";

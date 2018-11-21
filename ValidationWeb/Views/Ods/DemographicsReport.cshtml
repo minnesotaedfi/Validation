@@ -53,10 +53,10 @@ else
                     }
                 </td>
                 <td>@(result.LEASchool)</td>
-                <td>@(result.EnrollmentCount)</td>
-                <td>@(result.DemographicsCount)</td>
-                <td>@(result.RaceGivenCount)</td>
-                <td>@(result.AncestryGivenCount)</td>
+                <td><a href="@Url.Action("DemographicsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 0, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType})" target="_blank">@(result.EnrollmentCount.ToString())</a></td>
+                <td><a href="@Url.Action("DemographicsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 1, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType})" target="_blank">@(result.DemographicsCount.ToString())</a></td>
+                <td><a href="@Url.Action("DemographicsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 2, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType})" target="_blank">@(result.RaceGivenCount.ToString())</a></td>
+                <td><a href="@Url.Action("DemographicsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 3, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType})" target="_blank">@(result.AncestryGivenCount.ToString())</a></td>
             </tr>
         }
     </table>
