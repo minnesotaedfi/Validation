@@ -136,5 +136,13 @@ namespace ValidationWeb
             var announcement = _announcementService.GetAnnoucement(Id);
             return PartialView("Partials/AnnouncementEditModal", announcement);
         }
+
+
+        [HttpDelete]
+        public ActionResult DeleteAnnouncement(int id)
+        {
+            _announcementService.DeleteAnnoucement(id);
+            return RedirectToAction("Index", new { tab = "announcements" });
+        }
     }
 }
