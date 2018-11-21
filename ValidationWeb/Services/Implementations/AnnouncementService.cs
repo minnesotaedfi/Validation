@@ -106,5 +106,16 @@ namespace ValidationWeb.Services
             _validationPortalDataContext.Announcements.Add(announcement);
             _validationPortalDataContext.SaveChanges();
         }
+
+        public void DeleteAnnoucement(int announcementId)
+        {
+            var announcement = _validationPortalDataContext.Announcements.FirstOrDefault(a => a.Id == announcementId);
+            if (announcement == null)
+            {
+                throw new Exception($"Could not delete an announcement because announcement with ID {announcementId} was not found");
+            }
+            _validationPortalDataContext.Announcements.Remove(announcement);
+            _validationPortalDataContext.SaveChanges();
+        }
     }
 }
