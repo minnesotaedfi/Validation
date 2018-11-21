@@ -8,6 +8,7 @@ namespace ValidationWeb
     public class StudentProgramsCountReportQuery
     {
         public static string StudentProgramsCountQuery = "rules.StudentProgramsReport";
+        public static string StudentProgramsStudentDetailsReport = "rules.StudentProgramsStudentDetailsReport";
 
         public const string OrgTypeColumnName = "OrgType";
         public const string EdOrgIdColumnName = "EdOrgId";

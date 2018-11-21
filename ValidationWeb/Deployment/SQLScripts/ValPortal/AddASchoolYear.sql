@@ -1,0 +1,1 @@
+﻿INSERT INTO [validation].[SchoolYear]([Enabled],[StartYear],[EndYear]) VALUES (1, 2019, 2020);
