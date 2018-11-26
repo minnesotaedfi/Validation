@@ -16,19 +16,20 @@ namespace ValidationWeb
     /// </summary>
     public class PortalAuthenticationFilter : ActionFilterAttribute, IAuthenticationFilter
     {
-        private static readonly AppSettingsFileConfigurationValues _config;
+        private static object StaticValuesLock = new object();
+        private static IConfigurationValues _config = null;
         /// <summary>
         /// Used to call the stored procedure that obtains detailed information about the user represented by the single sign-on token/header-value.
         /// </summary>
-        private static readonly string _authorizationStoredProcedureName;
+        private static string _authorizationStoredProcedureName = null;
         /// <summary>
         /// Used to call the stored procedure that obtains detailed information about the user represented by the single sign-on token/header-value.
         /// </summary>
-        private static readonly string _singleSignOnDatabaseConnectionString;
+        private static string _singleSignOnDatabaseConnectionString = null;
         /// <summary>
         /// The ID of this web application as assigned/recognized by the authentication server.
         /// </summary>
-        private static readonly string _appId;
+        private static string _appId = null;
         /// <summary>
         /// Name of the ASP.NET/OWIN-provided Session object within the HttpContext
         /// </summary>
@@ -45,16 +46,22 @@ namespace ValidationWeb
         private readonly ILoggingService _loggingService;
 
 
-        static PortalAuthenticationFilter()
-        {
-            _config = new AppSettingsFileConfigurationValues();
-            _authorizationStoredProcedureName = _config.AuthorizationStoredProcedureName;
-            _singleSignOnDatabaseConnectionString = _config.SingleSignOnDatabaseConnectionString;
-            _appId = _config.AppId;
-        }
-
         public PortalAuthenticationFilter(Container container)
         {
+            if (_config == null)
+            {
+                lock (StaticValuesLock)
+                {
+                    // In case someone waited on the lock, avoid initializing twice by doing a second check.
+                    if (_config == null)
+                    {
+                        _config = container.GetInstance<IConfigurationValues>();
+                        _authorizationStoredProcedureName = _config.AuthorizationStoredProcedureName;
+                        _singleSignOnDatabaseConnectionString = _config.SingleSignOnDatabaseConnectionString;
+                        _appId = _config.AppId;
+                    }
+                }
+            }
             _edOrgService = container.GetInstance<IEdOrgService>();
             _loggingService = container.GetInstance<ILoggingService>();
         }
@@ -222,6 +229,10 @@ namespace ValidationWeb
             // UserId
             var theUserId = ssoUserAuthorizations.FirstOrDefault(ss => ss.UserId != null).UserId;
             _loggingService.LogDebugMessage($"User: {authHeaderValue}, UserId: {theUserId}.");
+            if (ssoUserAuthorizations.Select(ss1 => ss1.RoleId).Distinct().Where(rid => !string.IsNullOrWhiteSpace(rid)).Count() > 1)
+            {
+                _loggingService.LogWarningMessage($"The user {theUserId} has been assigned more than one role for the Validation Portal application {_appId}. The role {theRole} was used because it was the first encountered.");
+            }
             // Names and Addresses
             var firstName = ssoUserAuthorizations.FirstOrDefault(ss => ss.FirstName != null).FirstName;
             _loggingService.LogDebugMessage($"User: {authHeaderValue}, First Name: {firstName}.");
@@ -264,6 +275,13 @@ namespace ValidationWeb
                 {
                     _loggingService.LogErrorMessage($"A user was authorized an Ed Org with the StateOrganizationId: {ssoUserOrg.StateOrganizationId}, but this Ed Org doesn't exist in the ODS database for school year {schoolYearId}. Error: {ex.ChainInnerExceptionMessages()}");
                 }
+            }
+
+            if (authorizedEdOrgs.Count() == 0)
+            {
+                var unauthMessage = $"The user {theUserId} logged in succesfully, and accessed the Validation Portal application, but wasn't authorized any access to Eduational Organizations according to EDIMS (single sign on authorizations), thus couldn't use the application ... or it is possible none of the authorized organizations have been loaded from the Ed Fi Operational Datastore to the Validation database.";
+                _loggingService.LogErrorMessage(unauthMessage);
+                throw new UnauthorizedAccessException(unauthMessage);
             }
 
             if ((appRole == AppRole.Unauthorized) || (appRole == null))

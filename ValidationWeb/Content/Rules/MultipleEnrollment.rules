@@ -1,0 +1,118 @@
+ruleset MultipleEnrollment
+
+
+rule 10.10.6175
+	when {MultipleEnrollment}.[EnrollmentOverlap] = 1
+	and {MultipleEnrollment}.[SchoolIdLeft] = {MultipleEnrollment}.[SchoolIdRight] then
+	require that {MultipleEnrollment}.[ValidSameSchoolOverlap] = 1
+	else '21. Status Start Date on a student\'s enrollment record must be later than the Status End Date of the student\'s immediately prior enrollment record within the same school year unless the dual enrolled criteria are met; refer to Procedure Number 8 in the MARSS Manual. Status Start and End Dates are inclusive; they count as Attendance and Membership days. Also check the Status End Date on the student\'s just prior enrollment record.'
+
+rule 10.10.6176 
+	when {MultipleEnrollment}.[EnrollmentOverlap] = 1
+	and {MultipleEnrollment}.[SchoolIdLeft] <> {MultipleEnrollment}.[SchoolIdRight] 
+	and {MultipleEnrollment}.[StudentGradeLevelRight] = 'PS'  then
+	require {MultipleEnrollment}.[StudentGradeLevelLeft] is in ['EC','HK','KA','KB','KC','KD','KE','KF','KG','KH','KI','KK','KL','KM','KN','KO','KP','KQ','KR','KS','KT','KU','KV','KW','KX','KY','KZ','PA','PB','PC','PD','PE','PF','PG','PH','PI','PJ','RA','RB','RC','RD','RE','RF','RG','RH','RI','RJ']
+	else '21. Status Start Date on a student\'s enrollment record must be later than the Status End Date of the student\'s immediately prior enrollment record within the same school year unless the dual enrolled criteria are met; refer to Procedure Number 8 in the MARSS Manual. Status Start and End Dates are inclusive; they count as Attendance and Membership days. Also check the Status End Date on the student\'s just prior enrollment record.'
+	
+rule 10.10.6254 
+	when {MultipleEnrollment}.[EnrollmentOverlap] = 1
+	and {MultipleEnrollment}.[SchoolIdLeft] <> {MultipleEnrollment}.[SchoolIdRight] 
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] = 'PS'  then
+	require {MultipleEnrollment}.[StudentGradeLevelRight] is in ['EC','HK','KA','KB','KC','KD','KE','KF','KG','KH','KI','KK','KL','KM','KN','KO','KP','KQ','KR','KS','KT','KU','KV','KW','KX','KY','KZ','PA','PB','PC','PD','PE','PF','PG','PH','PI','PJ','RA','RB','RC','RD','RE','RF','RG','RH','RI','RJ']
+	else '21. Status Start Date on a student\'s enrollment record must be later than the Status End Date of the student\'s immediately prior enrollment record within the same school year unless the dual enrolled criteria are met; refer to Procedure Number 8 in the MARSS Manual. Status Start and End Dates are inclusive; they count as Attendance and Membership days. Also check the Status End Date on the student\'s just prior enrollment record.'
+	
+rule 10.10.6300 
+	when {MultipleEnrollment}.[SpecialEducationEvaluationStatusRight] = '8'
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] <> 'PS'
+	and {MultipleEnrollment}.[StudentGradeLevelRight] <> 'PS' then
+	require {MultipleEnrollment}.[SpecialEducationEvaluationStatusLeft] is not in ['4','6','9']
+	else '283. When SEES equals 8 students cannot have a prior enrollment record with SEES of 4 or 6 within the same school year.'
+	
+rule 10.10.6330 
+	when {MultipleEnrollment}.[StudentGradeLevelLeft] <> 'PS'
+	and {MultipleEnrollment}.[StudentGradeLevelRight] <> 'PS'
+	and {MultipleEnrollment}.[SchoolClassificationLeft] <> '45'
+	and {MultipleEnrollment}.[SchoolClassificationRight] <> '45'
+	and count({MultipleEnrollment} when {MultipleEnrollment}.[SpecialEducationEvaluationStatusLeft] is in ['4','6','9'] and {MultipleEnrollment}.[SpecialEducationEvaluationStatusRight] = '1') > 0
+	and {MultipleEnrollment}.[SpecialEducationEvaluationStatusRight] = '1'
+	and {MultipleEnrollment}.[IsNextEnrollment] = 1 then
+	expect {MultipleEnrollment}.[SpecialEducationEvaluationStatusLeft] exists and {MultipleEnrollment}.[SpecialEducationEvaluationStatusLeft] = '7'
+	else '372. Enrollment record with a SEES of 4, 6, or 9 (student has an IEP) followed by a record with a SEES of 1 (indicating no IEP). If the IEP was terminiated then there should be a record with a SEES 7 prior to the record of a SEES 1.'
+	
+rule 10.10.6374 
+	when {MultipleEnrollment}.[DualEnrolledIndicator] = 1
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] is not in ['HK','KA','KB','KC','KD','KE','KF','KG','KH','KI','KK','KL','KM','KN','KO','KP','KQ','KR','KS','KT','KU','KV','KW','KX','KY','KZ','PS']
+	and {MultipleEnrollment}.[StudentGradeLevelRight] is not in ['HK','KA','KB','KC','KD','KE','KF','KG','KH','KI','KK','KL','KM','KN','KO','KP','KQ','KR','KS','KT','KU','KV','KW','KX','KY','KZ','PS'] then
+	expect {MultipleEnrollment}.[StudentGradeLevelLeft] = {MultipleEnrollment}.[StudentGradeLevelRight]
+	else '235. This warning indicates the student has been reported as \'dual enrolled\' or \'concurrently enrolled\' and the grade level does not match between two of the records. Check the student\'s grade level or the student\'s State Reporting Number to confirm the two records are for the same student.'
+	
+rule 10.10.63751
+	when {MultipleEnrollment}.[DualEnrolledIndicator] = 1
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] is in ['HK','KA','KB','KC','KD','KE','KF','KG','KH','KI','KK','KL','KM','KN','KO','KP','KQ','KR','KS','KT','KU','KV','KW','KX','KY','KZ'] then
+	expect {MultipleEnrollment}.[StudentGradeLevelRight] is in ['HK','KA','KB','KC','KD','KE','KF','KG','KH','KI','KK','KL','KM','KN','KO','KP','KQ','KR','KS','KT','KU','KV','KW','KX','KY','KZ','PS']
+	else '235. This warning indicates the student has been reported as \'dual enrolled\' or \'concurrently enrolled\' and the grade level does not match between two of the records. Check the student\'s grade level or the student\'s State Reporting Number to confirm the two records are for the same student.'
+	
+rule 10.10.63752
+	when {MultipleEnrollment}.[DualEnrolledIndicator] = 1
+	and {MultipleEnrollment}.[StudentGradeLevelRight] is in ['HK','KA','KB','KC','KD','KE','KF','KG','KH','KI','KK','KL','KM','KN','KO','KP','KQ','KR','KS','KT','KU','KV','KW','KX','KY','KZ'] then
+	expect {MultipleEnrollment}.[StudentGradeLevelLeft] is in ['HK','KA','KB','KC','KD','KE','KF','KG','KH','KI','KK','KL','KM','KN','KO','KP','KQ','KR','KS','KT','KU','KV','KW','KX','KY','KZ','PS']
+	else '235. This warning indicates the student has been reported as \'dual enrolled\' or \'concurrently enrolled\' and the grade level does not match between two of the records. Check the student\'s grade level or the student\'s State Reporting Number to confirm the two records are for the same student.'
+
+rule 10.10.64461
+	when {MultipleEnrollment}.[EnrollmentOverlap] = 1
+	and {MultipleEnrollment}.[SchoolIdRight] <> {MultipleEnrollment}.[SchoolIdLeft]
+	and {MultipleEnrollment}.[StudentGradeLevelRight] is in ['PA','PB','PC','PD','PE','PF','PG','PH','PI','PJ','RA','RB','RC','RD','RE','RF','RG','RH','RI','RJ'] then
+	require {MultipleEnrollment}.[StudentGradeLevelLeft] is in ['EC','PS']
+	else '405. Grades PA-PJ and RA-RJ cannot have an overlapping enrollment record (except for overlapping records with grade PS or grade EC with special education evaluation status 2). Check the student\'s status begin and end dates.'
+	
+rule 10.10.64462
+	when {MultipleEnrollment}.[EnrollmentOverlap] = 1
+	and {MultipleEnrollment}.[SchoolIdRight] <> {MultipleEnrollment}.[SchoolIdLeft]
+	and {MultipleEnrollment}.[StudentGradeLevelRight] is in ['PA','PB','PC','PD','PE','PF','PG','PH','PI','PJ','RA','RB','RC','RD','RE','RF','RG','RH','RI','RJ'] 
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] = 'EC' then
+	require {MultipleEnrollment}.[SpecialEducationEvaluationStatusLeft] exists and {MultipleEnrollment}.[SpecialEducationEvaluationStatusLeft] = '2'
+	else '405. Grades PA-PJ and RA-RJ cannot have an overlapping enrollment record (except for overlapping records with grade PS or grade EC with special education evaluation status 2). Check the student\'s status begin and end dates.'
+
+rule 10.10.64471
+	when {MultipleEnrollment}.[EnrollmentOverlap] = 1
+	and {MultipleEnrollment}.[SchoolIdRight] <> {MultipleEnrollment}.[SchoolIdLeft]
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] is in ['PA','PB','PC','PD','PE','PF','PG','PH','PI','PJ','RA','RB','RC','RD','RE','RF','RG','RH','RI','RJ'] then
+	require {MultipleEnrollment}.[StudentGradeLevelRight] is in ['EC','PS']
+	else '405.0Grades PA-PJ and RA-RJ cannot have an overlapping enrollment record (except for overlapping records with grade PS or grade EC with special education evaluation status 2). Check the student\'s status begin and end dates.'
+	
+rule 10.10.64472
+	when {MultipleEnrollment}.[EnrollmentOverlap] = 1
+	and {MultipleEnrollment}.[SchoolIdRight] <> {MultipleEnrollment}.[SchoolIdLeft]
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] is in ['PA','PB','PC','PD','PE','PF','PG','PH','PI','PJ','RA','RB','RC','RD','RE','RF','RG','RH','RI','RJ'] 
+	and {MultipleEnrollment}.[StudentGradeLevelRight] = 'EC' then
+	require {MultipleEnrollment}.[SpecialEducationEvaluationStatusRight] exists and {MultipleEnrollment}.[SpecialEducationEvaluationStatusRight] = '2'
+	else '405.0Grades PA-PJ and RA-RJ cannot have an overlapping enrollment record (except for overlapping records with grade PS or grade EC with special education evaluation status 2). Check the student\'s status begin and end dates.'
+
+rule 10.10.6504 
+	when {MultipleEnrollment}.[DualEnrolledIndicator] = 1
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] <> 'PS'
+	and {MultipleEnrollment}.[StudentGradeLevelRight] <> 'PS' then
+	require {MultipleEnrollment}.[ResidentDistrictLeft] exists and {MultipleEnrollment}.[ResidentDistrictRight] exists and {MultipleEnrollment}.[ResidentDistrictLeft] = {MultipleEnrollment}.[ResidentDistrictRight]
+	else '236. This error indicates the student has been reported as \'dual enrolled\' or \'concurrently enrolled\' and that the resident district does not match between two of the records. Check the student\'s resident district on both records or the student\'s State Reporting Number to confirm the two records are for the same student.'
+
+rule 10.10.6512
+	when years since {StudentDemographic}.[BirthDate] as of {MultipleEnrollment}.[StatusBeginDateRight] >= 21
+	and {MultipleEnrollment}.[SpecialEducationEvaluationStatusRight] is not in ['4','6','9'] 
+	and {MultipleEnrollment}.[IsNextEnrollment] = 1 then
+	require days since {MultipleEnrollment}.[StatusEndDateLeft] as of {MultipleEnrollment}.[StatusBeginDateRight] <= 31
+	else '135. Students who are age 20 at the time they enroll during a school year but who turn age 21 and then subsequently withdraw from school must re-enroll in school within three weeks to continue eligibility to generate general education revenue.'
+	
+rule 10.10.6583 
+	when {MultipleEnrollment}.[LastLocationOfAttendanceRight] = '23'
+	and {MultipleEnrollment}.[IsNextEnrollment] = 1 then
+	expect {MultipleEnrollment}.[ResidentDistrictLeft] <> {MultipleEnrollment}.[ResidentDistrictRight]
+	else '68. Last Location of Attendance 23 (student\'s district of residence changed during the school year but not school of enrollment) expects the student\'s resident district be changed from that in the student\'s immediately prior enrollment record. Also check the student\'s Resident District Number/Type in both enrollment records.'
+	
+
+rule 10.10.6592 
+	when {MultipleEnrollment}.[IsNextEnrollment] = 1
+	and {MultipleEnrollment}.[SpecialEducationEvaluationStatusRight] = '7'
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] <> 'PS'
+	and {MultipleEnrollment}.[StudentGradeLevelRight] <> 'PS' then
+	require {MultipleEnrollment}.[SpecialEducationEvaluationStatusLeft] exists and {MultipleEnrollment}.[SpecialEducationEvaluationStatusLeft] is in ['4','6','9']
+	else '129. Students whose IEP is terminated mid-year must have a prior enrollment record showing the IEP, i.e., the earlier enrollment record must have a Special Education Evaluation Status of 4 or 6. There is no need to report a second enrollment record for an early childhood student whose IEP/IFSP is terminated.'

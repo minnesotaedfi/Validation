@@ -74,7 +74,7 @@ namespace ValidationWeb
             // Web Portal
             container.Register<IAnnouncementService, AnnouncementService>(Lifestyle.Scoped);
             container.Register<IAppUserService, AppUserService>(Lifestyle.Scoped);
-            container.Register<IConfigurationValues, AppSettingsFileConfigurationValues>(Lifestyle.Scoped);
+            container.RegisterInstance<IConfigurationValues>(new AppSettingsFileConfigurationValues());
             container.Register<IEdOrgService, EdOrgService>(Lifestyle.Scoped);
             container.Register<IHttpContextProvider, HttpContextProvider>(Lifestyle.Scoped);
             container.Register<ISchoolYearService, SchoolYearService>(Lifestyle.Scoped);
@@ -90,7 +90,12 @@ namespace ValidationWeb
             container.Register<ISchemaProvider, EngineSchemaProvider>(Lifestyle.Scoped);
             container.Register<IRulesEngineService, RulesEngineService>(Lifestyle.Scoped);
             container.Register<IRulesEngineConfigurationValues, RulesEngineConfigurationValues>(Lifestyle.Scoped);
-            Func<Model> modelCreatorDelegate = () => new ModelBuilder(new DirectoryRulesStreams((new RulesEngineConfigurationValues().RulesFileFolder)).Streams).Build(null, new EngineSchemaProvider());
+            var asConfiguredRulesDirectory = new RulesEngineConfigurationValues().RulesFileFolder;
+            if (asConfiguredRulesDirectory.StartsWith("~"))
+            {
+                asConfiguredRulesDirectory = Server.MapPath(asConfiguredRulesDirectory);
+            }
+            Func<Model> modelCreatorDelegate = () => new ModelBuilder(new DirectoryRulesStreams(asConfiguredRulesDirectory).Streams).Build(null, new EngineSchemaProvider());
             container.Register<Model>(modelCreatorDelegate, Lifestyle.Scoped);
             container.Register<IOdsDataService, OdsDataService>(Lifestyle.Scoped);
 
@@ -156,7 +161,7 @@ namespace ValidationWeb
         {
             httpConfiguration.Filters.Add(new ProfilingFilter(container.GetInstance<ILoggingService>()));
             httpConfiguration.Filters.Add(new ValidationWebExceptionFilterAttribute(container.GetInstance<IRequestMessageAccessor>(), container.GetInstance<ILoggingService>()));
-            httpConfiguration.Filters.Add(new ValidationAuthenticationFilter(httpConfiguration, container.GetInstance<ILoggingService>()));
+            httpConfiguration.Filters.Add(new ValidationAuthenticationFilter(httpConfiguration, container.GetInstance<ILoggingService>(), container.GetInstance<IConfigurationValues>()));
             // Unless marked with AllowAnonymous, all actions require Authenication.
             httpConfiguration.Filters.Add(new System.Web.Http.AuthorizeAttribute());
             httpConfiguration.MessageHandlers.Add(new LoggingHandler(container.GetInstance<ILoggingService>()));

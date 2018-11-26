@@ -28,14 +28,12 @@ namespace ValidationWeb
         public const string SessionIdentityKey = "LoggedInUserIdentity";
 
         private readonly ILoggingService _logger;
-        private readonly HttpConfiguration _globalConfig;
+        private readonly IConfigurationValues _config;
 
-        public ValidationAuthenticationFilter(HttpConfiguration globalConfig, ILoggingService logger)
+        public ValidationAuthenticationFilter(HttpConfiguration globalConfig, ILoggingService logger, IConfigurationValues config)
         {
             _logger = logger;
-            // We are going to need some AsyncScoped dependencies, but we are outside of a scope, so resort to Service Locator pattern
-            // by using the DependencyResolver in the global configuration. http://simpleinjector.readthedocs.io/en/latest/webapiintegration.html
-            _globalConfig = globalConfig;
+            _config = config;
         }
 
         public bool AllowMultiple
@@ -79,7 +77,7 @@ namespace ValidationWeb
                                 if (currentSession.ExpiresUtc > DateTime.UtcNow)
                                 {
                                     // Extend the current session.
-                                    currentSession.ExpiresUtc = currentSession.ExpiresUtc.AddMinutes(30);
+                                    currentSession.ExpiresUtc = currentSession.ExpiresUtc.AddMinutes(_config.SessionTimeoutInMinutes);
                                     dbContext.SaveChanges();
                                     // Fill in the user's Identity info on the session instance, which is not persisted in the database.
                                     currentSession.UserIdentity = userIdentity;

@@ -58,8 +58,8 @@
   </parameter>
   <parameter
       name="RulesFileFolder"
-      description="Full path to the directory containing the *.rules files (required for the Rules Engine)."
-      defaultValue="C:\inetput\wwwroot\ValidationPortal\Content\Rules">
+      description="Relative(to the 'bin' folder at deployment time) or Absolute, or UNC file path to the directory hosting the *.rules text files. Code correctly handles with/without trailing slash. (required for the Rules Engine)."
+      defaultValue="~/Content/Rules">
     <parameterEntry
           kind="XmlFile"
           scope="Web.config"

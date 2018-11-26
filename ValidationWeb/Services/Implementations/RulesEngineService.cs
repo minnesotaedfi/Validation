@@ -109,6 +109,9 @@ namespace ValidationWeb.Services
                 {
                     try
                     {
+                        // By default, rules are run against ALL districts in the Ed Fi ODS. This line filters for multi-district/multi-tenant ODS's.
+                        rule.AddDistrictWhereFilter(newReportSummary.EdOrgId);
+
                         _loggingService.LogDebugMessage($"Executing Rule {rule.RuleId}.");
                         _loggingService.LogDebugMessage($"Executing Rule SQL {rule.Sql}.");
                         var detailParams = new List<SqlParameter> { new SqlParameter("@RuleValidationId", newRuleValidationExecution.RuleValidationId) };

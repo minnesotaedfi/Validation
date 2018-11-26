@@ -36,7 +36,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <IncludeIisSettings>true</IncludeIisSettings>
+    <IncludeIisSettings>false</IncludeIisSettings>
     <PublishDatabaseSettings>
       <Objects>
         <ObjectGroup Name="ValidationPortalDbContext-Deployment" Order="1">
@@ -88,7 +88,7 @@
         </ObjectGroup>
       </Objects>
     </PublishDatabaseSettings>
-    <FilesToIncludeForPublish>AllFilesInTheProject</FilesToIncludeForPublish>
+    <FilesToIncludeForPublish>OnlyFilesToRunTheApp</FilesToIncludeForPublish>
     <IncludeIisSettings>false</IncludeIisSettings>
   </PropertyGroup>
   <ItemGroup>
@@ -246,6 +246,15 @@
     <Content Include="Deployment\SQLScripts\ODS\ODSReport133CREATEStudentProgramsDrillDown.sql" />
     <Content Include="Deployment\SQLScripts\ODS\ODSReport140DROPEnrollmentChange.sql" />
     <Content Include="Deployment\SQLScripts\ODS\ODSReport120DROPMultipleEnrollment.sql" />
+    <Content Include="Deployment\SQLScripts\ODS\Rules090_udf_ContainsDoubleSpace.sql" />
+    <Content Include="Deployment\SQLScripts\ODS\Rules090_udf_ContainsInvalidChar.sql" />
+    <Content Include="Deployment\SQLScripts\ODS\Rules090_udf_ShortString.sql" />
+    <Content Include="Deployment\SQLScripts\ODS\Rules090_udf_StartsWithInvalidChar.sql" />
+    <Content Include="Deployment\SQLScripts\ODS\Rules090_udf_ValidMARSSNumberFormat.sql" />
+    <Content Include="Deployment\SQLScripts\ODS\Rules100_v_MultipleEnrollment.sql" />
+    <Content Include="Deployment\SQLScripts\ODS\Rules100_v_SSDC.sql" />
+    <Content Include="Deployment\SQLScripts\ODS\Rules100_v_StudentDemographic.sql" />
+    <Content Include="Deployment\SQLScripts\ODS\Rules100_v_StudentEnrollment.sql" />
     <Content Include="Deployment\SQLScripts\ValPortal\AddASchoolYear.sql" />
     <Content Include="Deployment\SQLScripts\ValPortal\CreateEmptyRulesSchema.sql" />
     <Content Include="Deployment\SQLScripts\ODS\ODSReport110DROPRaceAEO.sql" />
@@ -373,7 +382,7 @@
     <Compile Include="Database\ValidationPortalDbMigrationConfiguration.cs" />
     <Compile Include="Filters\AddChallengeOnUnauthorizedResult.cs" />
     <Compile Include="Filters\LoggingHandler.cs" />
-    <Compile Include="Filters\PortalAuthenticationFilter .cs" />
+    <Compile Include="Filters\PortalAuthenticationFilter.cs" />
     <Compile Include="Filters\ProfilingFilter.cs" />
     <Compile Include="Filters\ValidationAuthenticationFilter.cs" />
     <Compile Include="Filters\ValidationExceptionLogger.cs" />
@@ -463,6 +472,12 @@
       <Project>{7dd0bd93-1ee3-4c63-9d54-e8a9c9b1ad6b}</Project>
       <Name>Engine</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Content\Rules\Collections.rules" />
+    <EmbeddedResource Include="Content\Rules\MultipleEnrollment.rules" />
+    <EmbeddedResource Include="Content\Rules\StudentDemographic.rules" />
+    <EmbeddedResource Include="Content\Rules\StudentEnrollment.rules" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

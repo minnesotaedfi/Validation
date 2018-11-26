@@ -1,0 +1,10 @@
+collection Fall includes
+	StudentDemographic,
+	StudentEnrollment,
+	MultipleEnrollment
+	
+collection EOY includes
+	StudentDemographic,
+	StudentEnrollment,
+	MultipleEnrollment
+	

@@ -12,6 +12,7 @@ namespace ValidationWeb.Services
         private static string _authenticationServerRedirectUrl;
         private static string _authorizationStoredProcedureName;
         private static string _singleSignOnDatabaseConnectionString;
+        private static int _sessionTimeoutInMinutes;
         private static bool _useFakeViewModelData;
         private static bool _isSsoSimulated;
         private static string _ssoSimulatedUserName;
@@ -25,6 +26,10 @@ namespace ValidationWeb.Services
             _useFakeViewModelData = ConfigurationManager.AppSettings["UseFakeViewModelData"] == "true";
             _isSsoSimulated = ConfigurationManager.AppSettings["UseSimulatedSSO"] == "true";
             _ssoSimulatedUserName = ConfigurationManager.AppSettings["SimulatedUserName"]?.ToString();
+            if (!int.TryParse(ConfigurationManager.AppSettings["SessionTimeoutInMinutes"], out _sessionTimeoutInMinutes))
+            {
+                _sessionTimeoutInMinutes = 30; // Default to 30 minutes.
+            }
         }
 
         public string AppId
@@ -59,6 +64,14 @@ namespace ValidationWeb.Services
             }
         }
 
+        public int SessionTimeoutInMinutes
+        {
+            get
+            {
+                return _sessionTimeoutInMinutes;
+            }
+        }
+
         /// <summary>
         /// The FakeViewModelData value should be either "false" of omitted in production. 
         /// Only if the value is present and is exactly "true" will fake, hardcoded ViewModel data be used for the UI.
@@ -85,6 +98,5 @@ namespace ValidationWeb.Services
                 return _ssoSimulatedUserName;
             }
         }
-
     }
 }

@@ -7,7 +7,7 @@
     <AuthenticationServerRedirectUrl Condition=" '$(AuthenticationServerRedirectUrl)'==''">http://www.wearedoubleline.com/</AuthenticationServerRedirectUrl>
     <AuthorizationStoredProcedureName Condition=" '$(AuthorizationStoredProcedureName)'==''">apps.GetAuthorizations</AuthorizationStoredProcedureName>
     <SsoAppId Condition=" '$(SsoAppId)'==''">VAL"</SsoAppId>
-    <RulesFileFolder Condition=" '$(RulesFileFolder)'==''">D:\ValidationPortal\Content\Rules</RulesFileFolder>
+    <RulesFileFolder Condition=" '$(RulesFileFolder)'==''">~/Content/Rules</RulesFileFolder>
     <RuleEngineResultsSchema Condition=" '$(RuleEngineResultsSchema)'==''">rules</RuleEngineResultsSchema>
     <UseFakeViewModelData Condition=" '$(UseFakeViewModelData)'==''">false</UseFakeViewModelData>
     <ValidationPortalDbContext Condition=" '$(ValidationPortalDbContext)'==''">Data Source=MN-DEV.doubleline.us;Initial Catalog=ValidationPortal;Integrated Security=True;Application Name=EntityFramework</ValidationPortalDbContext>
@@ -27,7 +27,7 @@
       <SsoAppIdParamName>SsoAppId</SsoAppIdParamName>
       <SsoAppIdParamValue>VAL</SsoAppIdParamValue>
       <RulesFileFolderParamName>RulesFileFolder</RulesFileFolderParamName>
-      <RulesFileFolderParamValue>D:\ValidationPortal\Content\Rules</RulesFileFolderParamValue>
+      <RulesFileFolderParamValue>~/Content/Rules</RulesFileFolderParamValue>
       <RuleEngineResultsSchemaParamName>RuleEngineResultsSchema</RuleEngineResultsSchemaParamName>
       <RuleEngineResultsSchemaParamValue>rules</RuleEngineResultsSchemaParamValue>
       <UseFakeViewModelDataParamName>UseFakeViewModelData</UseFakeViewModelDataParamName>
