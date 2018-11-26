@@ -1,5 +1,5 @@
-﻿SELECT DISTINCT [Ids].[Id], '{{{ruleid}}}' [RuleId], CAST({{{#if iserror}}}1{{{else}}}0{{{/if}}} AS BIT) [IsError], {{{message}}} [Message]
-FROM ({{{#each tables}}}{{{#unless @first}}} UNION {{{/unless}}}SELECT [Id] FROM [{{{../schema}}}].[{{{this}}}]{{{/each}}}) [Ids]
+﻿SELECT DISTINCT [Ids].[Id], [Ids].[DistrictId], [Ids].[DistrictIdLeft], [Ids].[DistrictIdRight], '{{{ruleid}}}' [RuleId], CAST({{{#if iserror}}}1{{{else}}}0{{{/if}}} AS BIT) [IsError], {{{message}}} [Message]
+FROM ({{{#each tables}}}{{{#unless @first}}} UNION {{{/unless}}}SELECT [Id], [DistrictId], [DistrictIdLeft], [DistrictIdRight] FROM [{{{../schema}}}].[{{{this}}}]{{{/each}}}) [Ids]
 {{{#each tables}}}LEFT OUTER JOIN [{{{../schema}}}].[{{{this}}}] ON [Ids].[Id] = [{{{this}}}].[Id] {{{/each}}}
 {{{#if sqlFilters}}}WHERE ({{{sqlFilters}}}){{{#if sqlConditions}}} AND NOT ({{{sqlConditions}}}){{{/if}}}
 {{{else}}}{{{#if sqlConditions}}}WHERE NOT ({{{sqlConditions}}}){{{/if}}}{{{/if}}}
