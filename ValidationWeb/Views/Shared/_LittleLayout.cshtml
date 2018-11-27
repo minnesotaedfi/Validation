@@ -69,33 +69,58 @@
             $(".show-page-loading").bind('click', function () { overlayDelayedOn(); });
             $(".show-data-loading").bind('click', function () { overlayOn(); });
 
-            // Supports NavDropDowns, Education Organization/District selection menu dropdown
-            $(".select-org-link").on('click', function (e) {
-                var chosenLink = $(this);
-                var orgId = (chosenLink.attr("data-org-id"));
+            function changeEdOrg(orgId, orgName) {
                 $.ajax({
                     url: "@Url.Content("~/api/user-session/ed-org/select")",
                     type: "Post",
                     data: orgId,
                     contentType: 'application/json; charset=utf-8',
                     success: function (data) {
-                        $("#actionDropdownOrg").html("<span class=\"fas fa-landmark white-heavy-text\"></span> " + chosenLink.text());
+                        $("#selectedOrg").html("<span class=\"white-heavy-text\">" + orgName + "</span>");
+                        $("#edOrgNames").val("");
                         // If looking at detailed errors, go back to main reports listing for the new district.
                         if (location.pathname.toLowerCase().indexOf("validation/report/") !== -1) {
                             location.replace("@Url.Action("Reports","Validation")");
-                            return;
-                        }
-                        // If looking at any other reports, get the listing for the new district.
-                        if (location.pathname.toLowerCase().indexOf("report") !== -1) {
-                            location.reload();
-                            return;
-                        }
-                    },
-                    error: function () {
-                        console.log(`An error occurred when attempting to change Ed Org to ${orgId}.`);
+                        return;
                     }
-                });
+                    // If looking at any other reports, get the listing for the new district.
+                    if (location.pathname.toLowerCase().indexOf("report") !== -1) {
+                        location.reload();
+                        return;
+                    }
+                },
+                error: function () {
+                    console.log(`An error occurred when attempting to change Ed Org to ${orgId}.`);
+                }
             });
+        }
+
+        $.get("@Url.Content("~/api/validation/edorgs/autocomplete")")
+            .done((data) => {
+                availableEdOrgs = data.map(x => { 
+                    return { value: x.Id, label: x.OrganizationName }
+                });
+                $("#edOrgNames").autocomplete({
+                    source: availableEdOrgs,
+                    focus: function (event, ui) {
+                        $("#edOrgNames").val(ui.item.label);
+                        return false;
+                    },
+                    select: function (event, ui) {
+                        let edOrgName = ui.item.label;
+                        let edOrgId = ui.item.value.toString();
+                        $("#edOrgNames").val(edOrgName);
+                        changeEdOrg(edOrgId, edOrgName);
+                        return false;
+                    }
+                })
+                    .autocomplete("instance")._renderItem = function (ul, item) {
+                        return $( "<li>" )
+                          .append(item.label)
+                          .appendTo( ul );
+                    }
+            }).fail(() => console.log(`An error occurred when attempting to get EdOrgs`));
+
             // Supports NavDropDowns, School Year selection menu dropdown
             $(".select-school-year-link").on('click', function (e) {
                 var chosenLink = $(this);
