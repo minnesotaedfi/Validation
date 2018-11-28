@@ -1,10 +1,9 @@
-collection Fall includes
-	StudentDemographic,
-	StudentEnrollment,
-	MultipleEnrollment
-	
-collection EOY includes
-	StudentDemographic,
-	StudentEnrollment,
-	MultipleEnrollment
-	
+collection Fall_Enrollment_And_Demographic includes 
+  StudentDemographic, 
+  StudentEnrollment, 
+  MultipleEnrollment 
+
+collection EOY_Enrollment_And_Demographic includes 
+  StudentDemographic, 
+  StudentEnrollment, 
+  MultipleEnrollment

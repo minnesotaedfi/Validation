@@ -14,7 +14,7 @@
                 <div id="NewValidationModal" class="modal fade" role="dialog">
                     <div class="modal-dialog">
                         <div class="modal-content">
-                            <div class="modal-header bg-primary">
+                            <div class="modal-header prime-blue white-heavy-text">
                                 <h4 class="modal-title">Select Collection and School Year</h4>
                                 <button type="button" class="close" onclick="lastModalExitButton='cancel'" data-dismiss="modal">&times;</button>
                             </div>
@@ -23,7 +23,7 @@
                                 <select id="collectionIdSelect" name="collectionIdSelect">
                                     @foreach (var coll in Model.RulesCollections)
                                     {
-                                        <option value="@(coll.CollectionId)">@(coll.CollectionId)</option>
+                                        <option value="@(coll.CollectionId)">@(coll.ToFriendlyName())</option>
                                     }
                                 </select>
                                 <label for="schoolYearSelect">Select which school year's data to validate: </label>
@@ -35,8 +35,8 @@
                                 </select>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn minnesota-green" data-dismiss="modal" data-toggle="modal" data-target="#ConfirmNewValidationModal">Next &gt;&gt;</button>
-                                <button type="button" class="btn danger-red" data-dismiss="modal" onclick="lastModalExitButton='cancel'">Cancel</button>
+                                <button type="button" class="btn prime-blue white-heavy-text" data-dismiss="modal" data-toggle="modal" data-target="#ConfirmNewValidationModal">Next &gt;&gt;</button>
+                                <button type="button" class="btn prime-blue white-heavy-text" data-dismiss="modal" onclick="lastModalExitButton='cancel'">Cancel</button>
                             </div>
                         </div>
                     </div>
@@ -47,7 +47,7 @@
                 <div id="ConfirmNewValidationModal" class="modal fade" role="dialog">
                     <div class="modal-dialog">
                         <div class="modal-content">
-                            <div class="modal-header bg-primary">
+                            <div class="modal-header prime-blue white-heavy-text">
                                 <h4 class="modal-title">Confirm: Run Validation</h4>
                                 <button type="button" class="close" data-dismiss="modal" onclick="lastModalExitButton='cancel'">&times;</button>
                             </div>
@@ -55,8 +55,8 @@
                                 Please confirm you would like to run a validation for District @(Model.DistrictName), Collection <span class="collectionIdSelection"></span>, School Year <span class="schoolYearSelection"></span>?
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn minnesota-green" data-dismiss="modal" onclick="lastModalExitButton='launch'">Launch Validation</button>
-                                <button type="button" class="btn danger-red" data-dismiss="modal" onclick="lastModalExitButton='cancel'">Cancel</button>
+                                <button type="button" class="btn prime-blue white-heavy-text" data-dismiss="modal" onclick="lastModalExitButton='launch'">Launch Validation</button>
+                                <button type="button" class="btn prime-blue white-heavy-text" data-dismiss="modal" onclick="lastModalExitButton='cancel'">Cancel</button>
                             </div>
                         </div>
                     </div>
@@ -118,7 +118,7 @@ else
         $('#NewValidationModal').on('hidden.bs.modal', function (e) {
             collectionIdSelection = $('#collectionIdSelect').val();
             schoolYearSelection = $('#schoolYearSelect').val();
-            $('.collectionIdSelection').text(collectionIdSelection);
+            $('.collectionIdSelection').text(collectionIdSelection.replace(/_/g, ' '));
             $('.schoolYearSelection').text(schoolYearSelection);
         });
 

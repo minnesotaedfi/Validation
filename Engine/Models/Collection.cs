@@ -7,6 +7,8 @@ namespace Engine.Models
     {
         public string CollectionId { get; }
 
+        public string ToFriendlyName() => CollectionId.Replace('_', ' ');
+
         internal Model Model { get; set; }
         
         private readonly List<string> _rulesetIds = new List<string>();
