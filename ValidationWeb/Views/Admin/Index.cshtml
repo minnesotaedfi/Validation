@@ -3,11 +3,12 @@
 <div class="row">
     <div class="col-2">
         <div class="list-group" id="admin-list-tab" role="tablist">
-            <a class="list-group-item list-group-item-action" id="list-error-threshold-list" data-toggle="list" href="#list-error-threshold" role="tab">School Years</a>
-            <a class="list-group-item list-group-item-action" id="list-submission-cycles-list" data-toggle="list" href="#list-submission-cycles" role="tab">Rule Collections</a>
+            <a class="list-group-item list-group-item-action" id="list-error-threshold-list" data-toggle="list" href="#list-error-threshold" role="tab"
+               onclick="loadDefaultTab()">School Years</a>
+            <a class="list-group-item list-group-item-action" id="list-submission-cycles-list" data-toggle="list" href="#list-submission-cycles" role="tab">Submission Cycles</a>
             <a class="list-group-item list-group-item-action" id="list-messages-list" data-toggle="list" href="#list-messages" role="tab" aria-controls="messages">Rule Management</a>
             <a class="list-group-item list-group-item-action" id="list-announcements-list" data-toggle="list" href="#list-announcements" role="tab" aria-controls="settings"
-               onclick="window.location.href += '?tab=announcements'">Announcements</a>
+               onclick="loadAnnouncementsTab()">Announcements</a>            
         </div>
     </div>
     <div class="col-10">
@@ -39,6 +40,20 @@
         $("#error-threshold-warning-button").on("click", function() {
             $("#error-threshold-warning").hide();
         });
+
+        function loadAnnouncementsTab() {
+            let urlIsOnTabAnnouncements = window.location.href.includes('tab=announcements');
+            if (!urlIsOnTabAnnouncements) {
+                window.location.href += '?tab=announcements';
+            }
+        }
+
+        function loadDefaultTab() {
+            let queryStringIndex = window.location.href.indexOf('?');
+            if (queryStringIndex > -1) {
+                window.location.href = window.location.href.slice(0, queryStringIndex);
+            }
+        }
 
         var originalThreshold = "";
         $(document).ready(function () {

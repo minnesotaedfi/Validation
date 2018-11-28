@@ -13,13 +13,11 @@
             </div>
         </li>
         <li class="nav-item dropdown pull-right">
-            <a class="nav-link dropdown-toggle validation-dropdown-toggle" href="#" id="actionDropdownOrg" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="fas fa-landmark white-heavy-text"></span> @Model.FocusedEdOrg.OrganizationName</a>
-            <div class="dropdown-menu validation-drowdown-menu" style="left: initial;" aria-labelledby="actionDropdown">
-                @foreach (var edOrg in Model.EdOrgs)
-                {
-                    <a class="nav-item nav-link select-org-link" href="#" data-org-id="@(edOrg.Id)">@(edOrg.OrganizationName)</a>
-                }
-            </div>
+            <span class="fas fa-landmark white-heavy-text"></span>&nbsp;<span id="selectedOrg" class="white-heavy-text">@Model.FocusedEdOrg.OrganizationName</span>
+            @if (Model.EdOrgs.Count() > 1)
+            {
+            <input id="edOrgNames" placeholder="District name">
+            }
         </li>
         <li class="nav-item dropdown pull-right">
             <a class="nav-link dropdown-toggle validation-dropdown-toggle" href="#" id="actionDropdownYear" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="fas fa-calendar-alt white-heavy-text"></span> @Model.FocusedSchoolYear</a>
