@@ -81,13 +81,25 @@ namespace ValidationWeb
             return PartialView("Partials/SubmissionCycleList", submissionCycles);
         }
 
-        public ActionResult AddSubmissionCycle(string collectionId, DateTime startDate, DateTime endDate)
+        public ActionResult AddSubmissionCycle()
         {
-            if (endDate < startDate)
+            var yearsOpenForDataSubmission = _schoolYearService.GetSubmittableSchoolYears().OrderByDescending(x => x.EndYear);
+            var ruleCollections = _rulesEngineService.GetCollections().Select(c => c.CollectionId);
+            ViewData["YearsOpenForDataSubmission"] = yearsOpenForDataSubmission;
+            ViewData["RuleCollections"] = ruleCollections;
+            var submissionCycle = new SubmissionCycle { StartDate = DateTime.Now, EndDate = DateTime.Now };
+            return PartialView("Partials/AddSubmissionCycleModal", submissionCycle);
+        }
+
+        //public ActionResult SaveSubmissionCycle(string collectionId, DateTime startDate, DateTime endDate)
+        public ActionResult SaveSubmissionCycle(SubmissionCycle submissionCycle)
+        {
+            if (submissionCycle.EndDate < submissionCycle.StartDate)
                 return null;
 
-            _submissionCycleService.AddSubmissionCycle(collectionId, startDate, endDate);
-            var submissionCycles = _submissionCycleService.GetSubmissionCyclesByCollectionId(collectionId);
+            //_submissionCycleService.AddSubmissionCycle(submissionCycle.SchoolYear, submissionCycle.CollectionId, submissionCycle.StartDate, submissionCycle.EndDate);
+            _submissionCycleService.AddSubmissionCycle(submissionCycle);
+            var submissionCycles = _submissionCycleService.GetSubmissionCyclesByCollectionId(submissionCycle.CollectionId);
 
             return PartialView("Partials/SubmissionCycleList", submissionCycles);
         }

@@ -17,7 +17,7 @@
                 @Html.Partial("Partials/ErrorThresholds", Model.YearsOpenForDataSubmission)
             </div>
             <div class="tab-pane fade" id="list-submission-cycles" role="tabpanel" aria-labelledby="list-submission-cycles-list">
-                @Html.Partial("Partials/SubmissionCycles", @Model.RuleCollections)
+                @Html.Partial("Partials/SubmissionCycleList", @Model.SubmissionCycles)
             </div>
             <div class="tab-pane fade" id="list-messages" role="tabpanel" aria-labelledby="list-messages-list">...</div>
             <div class="tab-pane fade" id="list-announcements" role="tabpanel" aria-labelledby="list-announcements-list">
@@ -29,7 +29,6 @@
 
 @*Modal Section*@
 @Html.Partial("Partials/AddSchoolYearModal")
-@Html.Partial("Partials/AddSubmissionCycleModal")   
 
 @Html.Hidden("tabParam", @Request.QueryString["tab"])
 
@@ -54,6 +53,13 @@
                 window.location.href = window.location.href.slice(0, queryStringIndex);
             }
         }
+
+        //const announcementModelFieldNames = ["id", "priority", "message", "contactInfo", "linkUrl", "expiration"];
+        //const submissioncycleModelFieldNames = ["id", "schoolYear", "collectionId", "startDate", "endDate"];
+
+        const ModelFieldMap = {"announcement": ["id", "priority", "message", "contactInfo", "linkUrl", "expiration"],
+            submissioncycle: ["id", "schoolYear", "collectionId", "startDate", "endDate"]
+        };
 
         var originalThreshold = "";
         $(document).ready(function () {
@@ -128,6 +134,27 @@
                         }
                     });
                 }
+            });
+
+            var AddSubmissionCyclePostBackURL = "@Url.Content("~/Admin/AddSubmissionCycle")";
+            $("#submissionCycle-add").click(function () {
+                var options = { "backdrop": "static", keyboard: true };
+                $.ajax({
+                    type: "GET",
+                    url: AddSubmissionCyclePostBackURL,
+                    contentType: "application/json; charset=utf-8",
+                    data: {},
+                    datatype: "json",
+                    success: function (data) {
+                        $('#submissionCycle-modal-content').html(data);
+                        $('#submissionCycleModal').modal(options);
+                        $('#submissionCycleModal').modal('show');
+
+                    },
+                    error: function () {
+                        alert("Could not open a dialog to create a submission cycle.");
+                    }
+                });
             });
 
 
@@ -223,13 +250,20 @@
                 $("#add-end-year").val(Number($("#add-start-year").val()) + 1);
             });
 
-            // Initialise the date pickers for Admin/Partials/AddSubmissionCycleModal.cshtml.
-            $('#start-date-picker').datetimepicker({ format: 'L' });
-            $('#end-date-picker').datetimepicker({ format: 'L' });
+            $('#submissionCycleModal').on('shown.bs.modal', function () {
+                //setSubmissionCycleHeaderText();
+                setModalHeaderText("submissionCycle", "Submission Cycle");
+                // Initialise the date pickers for Admin/Partials/AddSubmissionCycleModal.cshtml.
+                $('#edit-submissionCycle-start-date-picker').datetimepicker({ format: 'L' });
+                $('#edit-submissionCycle-end-date-picker').datetimepicker({ format: 'L' });
+
+                $("#save-submissionCycle").click({ modalName: "SubmissionCycle"}, saveModel);
+            });
 
             $('#announcementModal').on('shown.bs.modal', function () {
-                setAnnouncementHeaderText();
-                $('#edit-expiration-date-picker').datetimepicker({ format: 'L' });
+                //setAnnouncementHeaderText();
+                setModalHeaderText("announcement", "Announcement");
+                $('#edit-announcement-expiration').datetimepicker({ format: 'L' });
                 $("#save-announcement").click(saveAnnouncement);
             });
         });
@@ -237,15 +271,15 @@
         function saveAnnouncement(event) {
             var SaveAnnouncementPostBackURL = "@Url.Content("~/Admin/SaveAnnouncement")";
             event.preventDefault();
-            var id = $('#modal-announcement-id').val();
-            var priority = $('#edit-priority').val();
+            var id = $('#edit-announcement-id').val();
+            var priority = $('#edit-announcement-priority').val();
             if ($.trim(priority).length === 0) {
                 priority = 0;
             }
-            var message = $('#edit-message').val();
-            var contactInfo = $('#edit-contactInfo').val();
-            var linkUrl = $('#edit-linkUrl').val();
-            var expirationDate = $('#edit-expiration-date-picker').val();
+            var message = $('#edit-announcement-message').val();
+            var contactInfo = $('#edit-announcement-contactInfo').val();
+            var linkUrl = $('#edit-announcement-linkUrl').val();
+            var expirationDate = $('#edit-announcement-expiration').val();
             var options = { "backdrop": "static", keyboard: true };
             var dataObj = { id: id, priority: priority, message: message, contactInfo: contactInfo, linkUrl: linkUrl, expiration: expirationDate };
             var jsonData = JSON.stringify(dataObj);
@@ -271,8 +305,62 @@
                         // Need to reattach event handlers to some of the modal's fields, because
                         // when the modal's HTML got repopulated above, the event handlers disappeared
                         setAnnouncementHeaderText();
-                        $('#edit-expiration-date-picker').datetimepicker({ format: 'L' });
+                        $('#edit-announcement-expiration').datetimepicker({ format: 'L' });
                         $("#save-announcement").click(saveAnnouncement);
+                    }
+                    else {
+                        let locationUrl = location.href;
+                        let urlContainsAnnouncements = locationUrl.includes('announcements');
+                        if (!urlContainsAnnouncements) {
+                            location.href = `${location.href}?tab=announcements`;
+                        }
+                        location.reload(true);
+                    }
+                },
+                error: function (data) {
+                    $('#announcement-modal-content').html(data);
+                    $('#announcementModal').modal(options);
+                    $('#announcementModal').modal('show');
+                    // Need to reattach event handlers to some of the modal's fields, because
+                    // when the modal's HTML got repopulated above, the event handlers disappeared
+                    $('#edit-announcement-expiration').datetimepicker({ format: 'L' });
+                    $("#save-announcement").click(saveAnnouncement);
+                }
+            });
+        }
+
+        function saveModel(event) {
+            event.preventDefault();
+            let modalNameRaw = event.data.modalName;
+            let modelName = modalNameRaw.toLowerCase();
+            var saveRoute = `@Url.Content("~/Admin/Save${modalNameRaw}")`;
+            var modelFieldNames = ModelFieldMap[modelName];
+            var dataObj = getMappedModel(modelFieldNames);
+            var jsonData = JSON.stringify(dataObj);
+            $.ajax({
+                type: "POST",
+                url: saveRoute,
+                contentType: "application/json; charset=utf-8",
+                data: jsonData,
+                datatype: "json",
+                success: function (data) {
+                    var tempData = $(data);
+                    let validationSummaryContents = "";
+                    let validationSummary = tempData.find(`#${modelName}-validation-summary-row`);
+                    if (validationSummary) {
+                        validationSummaryContents = validationSummary.text();
+                    }
+                    // If validationSummaryContents contains more than just whitespace,
+                    // then validation summary contains errors, and we should re-show the modal
+                    if ($.trim(validationSummaryContents).length > 0) {
+                        $(`#${modelName}-modal-content`).html(data);
+                        $(`#${modelName}Modal`).modal(options);
+                        $(`#${modelName}Modal`).modal('show');
+                        // Need to reattach event handlers to some of the modal's fields, because
+                        // when the modal's HTML got repopulated above, the event handlers disappeared
+                        setHeaderText(modelName);
+                        $('#edit-expiration-date-picker').datetimepicker({ format: 'L' });
+                        $(`#save-${modelName}`).click({ modalName: modalNameRaw }, saveModel);
                     }
                     else {
                         let locationUrl = location.href;
@@ -295,13 +383,41 @@
             });
         }
 
+        function getMappedModel(modelFieldNames) {
+            let dataObj = {};
+            for (fieldName of modelFieldNames) {
+                let fieldSelector = `#edit-${modelName}-${fieldName}`;
+                let fieldVal = $(fieldSelector).val();
+                dataObj[fieldName] = fieldVal;
+            }
+            return dataObj;
+        }
+
         function setAnnouncementHeaderText() {
+            let announcementHeader = $('#announcement-header');
+            var id = $('#edit-announcement-id').val();
+            if (id > 0) {
+                announcementHeader.text("Edit Announcement");
+            }
+        }
+
+        function setModalHeaderText(modalName, modalTitle) {
+            let announcementHeader = $(`#${modalName}-header`);
+            var id = $(`#modal-${modalName}-id`).val();
+            if (id > 0) {
+                announcementHeader.text(`Edit ${modalTitle}`);
+            }
+        }
+
+            /***
+        function setSubmissionCycleHeaderText() {
             let announcementHeader = $('#announcement-header');
             var id = $('#modal-announcement-id').val();
             if (id > 0) {
                 announcementHeader.text("Edit Announcement");
             }
         }
+        ***/
 
         function updateThreshold(id, errorThreshold) {
             var value;

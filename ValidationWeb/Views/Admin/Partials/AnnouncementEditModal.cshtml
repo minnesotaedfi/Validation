@@ -12,13 +12,13 @@
                     <div class="row" id="announcement-validation-summary-row">
                         @Html.ValidationSummary(false, "Errors:", new { @class = "alert alert-danger", @style = "width: 100%" })
                     </div>
-                    @Html.HiddenFor(m => m.Id, new { @id = "modal-announcement-id" })
+                    @Html.HiddenFor(m => m.Id, new { @id = "edit-announcement-id" })
                     <div class="row form-group">
                         <div class="col-sm-3">
                             <label for="edit-priority">Priority:</label>
                         </div>
                         <div class="col-sm-9">
-                            @Html.TextBoxFor(m => m.Priority, new { id = "edit-priority", @pattern = "\\d*", @title = "Priority must be a number", @class = "form-control" })
+                            @Html.TextBoxFor(m => m.Priority, new { id = "edit-announcement-priority", @pattern = "\\d*", @title = "Priority must be a number", @class = "form-control" })
                         </div>
                     </div>
                         <div class="row form-group">
@@ -26,7 +26,7 @@
                                 <label for="edit-message">Message: <span style="color: red">*</span></label>
                             </div>
                             <div class="col-sm-9">
-                                @Html.TextAreaFor(m => m.Message, new { id = "edit-message", @class = "form-control", @required="required" })
+                                @Html.TextAreaFor(m => m.Message, new { id = "edit-announcement-message", @class = "form-control", @required="required" })
                                 @Html.ValidationMessageFor(m => m.Message)
                             </div>
                         </div>
@@ -35,7 +35,7 @@
                                 <label for="edit-contactInfo">Contact Info:</label>
                             </div>
                             <div class="col-sm-9">
-                                @Html.TextBoxFor(m => m.ContactInfo, new { id = "edit-contactInfo", @class = "form-control" })
+                                @Html.TextBoxFor(m => m.ContactInfo, new { id = "edit-announcement-contactInfo", @class = "form-control" })
                             </div>
                         </div>
                         <div class="row form-group">
@@ -43,7 +43,7 @@
                                 <label for="edit-linkUrl">Link Url: </label>
                             </div>
                             <div class="col-sm-9">
-                                @Html.TextBoxFor(m => m.LinkUrl, new { id = "edit-linkUrl", @class = "form-control" })
+                                @Html.TextBoxFor(m => m.LinkUrl, new { id = "edit-announcement-linkUrl", @class = "form-control" })
                             </div>
                         </div>
                         <div class="row form-group">
@@ -51,7 +51,7 @@
                                 <label for="edit-expiration-date-picker">Expiration: <span style="color: red">*</span></label>
                             </div>
                             <div class="col-sm-9">
-                                @Html.TextBoxFor(m => m.Expiration, new { id = "edit-expiration-date-picker", @class = "form-control", @required = "required" })
+                                @Html.TextBoxFor(m => m.Expiration, new { id = "edit-announcement-expiration", @class = "form-control", @required = "required" })
                                 @Html.ValidationMessageFor(m => m.Expiration)
                             </div>
                         </div>
