@@ -279,7 +279,7 @@ namespace ValidationWeb
 
             if (authorizedEdOrgs.Count() == 0)
             {
-                var unauthMessage = $"The user {theUserId} logged in succesfully, and accessed the Validation Portal application, but wasn't authorized any access to Eduational Organizations according to EDIMS (single sign on authorizations), thus couldn't use the application ... or it is possible none of the authorized organizations have been loaded from the Ed Fi Operational Datastore to the Validation database.";
+                var unauthMessage = $"The user {theUserId} logged in succesfully, and accessed the Validation Portal application, but wasn't authorized any access to Eduational Organizations according to EDIDMS (single sign on authorizations), thus couldn't use the application ... or it is possible none of the authorized organizations have been loaded from the Ed Fi Operational Datastore to the Validation database.";
                 _loggingService.LogErrorMessage(unauthMessage);
                 throw new UnauthorizedAccessException(unauthMessage);
             }
