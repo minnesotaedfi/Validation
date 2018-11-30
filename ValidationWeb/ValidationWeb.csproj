@@ -230,8 +230,8 @@
     <Content Include="Content\Styles\semantic-ui\tabulator_semantic-ui.css" />
     <Content Include="Content\Styles\semantic-ui\tabulator_semantic-ui.min.css" />
     <Content Include="Deployment\SQLScripts\ODS\0000-Readme.txt" />
-    <Content Include="Deployment\SQLScripts\ODS\0007-CreateRulesSchema.sql" />
     <Content Include="Deployment\SQLScripts\ODS\0100-ODSReportDROPStudentDetailsFunction.sql" />
+    <Content Include="Deployment\SQLScripts\ODS\0100-RulesSchemaObjects.txt" />
     <Content Include="Deployment\SQLScripts\ODS\0101-ODSReportDROPStringArrayType.sql" />
     <Content Include="Deployment\SQLScripts\ODS\0102ODSReportDROPIntArrayTypeStudentDrillDown.sql" />
     <Content Include="Deployment\SQLScripts\ODS\0103-ODSReportCREATEIntArrayType.sql" />
