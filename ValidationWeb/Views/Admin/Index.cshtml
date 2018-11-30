@@ -54,11 +54,13 @@
             }
         }
 
-        //const announcementModelFieldNames = ["id", "priority", "message", "contactInfo", "linkUrl", "expiration"];
-        //const submissioncycleModelFieldNames = ["id", "schoolYear", "collectionId", "startDate", "endDate"];
+        function assignsubmissionCycleDateHandlers() {
+            $('#edit-submissioncycle-startDate').datetimepicker({ format: 'L' });
+            $('#edit-submissioncycle-endDate').datetimepicker({ format: 'L' });
+        }
 
         const ModelFieldMap = {"announcement": ["id", "priority", "message", "contactInfo", "linkUrl", "expiration"],
-            submissioncycle: ["id", "schoolYear", "collectionId", "startDate", "endDate"]
+            "submissioncycle": ["id", "schoolYearId", "collectionId", "startDate", "endDate"]
         };
 
         var originalThreshold = "";
@@ -157,7 +159,34 @@
                 });
             });
 
+            function CreateEditModal(event) {
+                let modalNameRaw = event.data.modalName;
+                let modalEditRoute = event.data.modalEditRoute;
+                let modelName = modalNameRaw.toLowerCase();
+                let modelModalContent = `#${modelName}-modal-content`;
+                let modelModal = `#${modelName}Modal`;
+                var $buttonClicked = $(this);
+                var id = $buttonClicked.attr('data-id');
+                var options = { "backdrop": "static", keyboard: true };
+                $.ajax({
+                    type: "GET",
+                    url: modalEditRoute,
+                    contentType: "application/json; charset=utf-8",
+                    data: { "Id": id },
+                    datatype: "json",
+                    success: function (data) {
+                        $(modelModalContent).html(data);
+                        $(modelModal).modal(options);
+                        $(modelModal).modal('show');
+                    },
+                    error: function () {
+                        alert(`Could not retrieve the ${modalNameRaw} for editing.`);
+                    }
+                });
+            }
 
+            var EditSubmissionCycleRoute = "@Url.Content("~/Admin/EditSubmissionCycle")";
+            $(".submissioncycle-edit").click({ modalName: "SubmissionCycle", modalEditRoute: EditSubmissionCycleRoute }, CreateEditModal);
 
             $(".save-row").hide();
             $(".cancel-row").hide();
@@ -251,17 +280,12 @@
             });
 
             $('#submissionCycleModal').on('shown.bs.modal', function () {
-                //setSubmissionCycleHeaderText();
                 setModalHeaderText("submissionCycle", "Submission Cycle");
-                // Initialise the date pickers for Admin/Partials/AddSubmissionCycleModal.cshtml.
-                $('#edit-submissionCycle-start-date-picker').datetimepicker({ format: 'L' });
-                $('#edit-submissionCycle-end-date-picker').datetimepicker({ format: 'L' });
-
-                $("#save-submissionCycle").click({ modalName: "SubmissionCycle"}, saveModel);
+                assignsubmissionCycleDateHandlers();
+                $("#save-submissioncycle").click({ modalName: "SubmissionCycle", additionalFunction: assignsubmissionCycleDateHandlers }, saveModel);
             });
 
             $('#announcementModal').on('shown.bs.modal', function () {
-                //setAnnouncementHeaderText();
                 setModalHeaderText("announcement", "Announcement");
                 $('#edit-announcement-expiration').datetimepicker({ format: 'L' });
                 $("#save-announcement").click(saveAnnouncement);
@@ -332,10 +356,11 @@
         function saveModel(event) {
             event.preventDefault();
             let modalNameRaw = event.data.modalName;
+            let additionalFunction = event.data.additionalFunction;
             let modelName = modalNameRaw.toLowerCase();
             var saveRoute = `@Url.Content("~/Admin/Save${modalNameRaw}")`;
             var modelFieldNames = ModelFieldMap[modelName];
-            var dataObj = getMappedModel(modelFieldNames);
+            var dataObj = getMappedModel(modelName, modelFieldNames);
             var jsonData = JSON.stringify(dataObj);
             $.ajax({
                 type: "POST",
@@ -359,31 +384,35 @@
                         // Need to reattach event handlers to some of the modal's fields, because
                         // when the modal's HTML got repopulated above, the event handlers disappeared
                         setHeaderText(modelName);
-                        $('#edit-expiration-date-picker').datetimepicker({ format: 'L' });
-                        $(`#save-${modelName}`).click({ modalName: modalNameRaw }, saveModel);
+                        if (additionalFunction) {
+                            additionalFunction();
+                        }
+                        $(`#save-${modelName}`).click({ modalName: modalNameRaw, additionalFunction: additionalFunction }, saveModel);
                     }
                     else {
                         let locationUrl = location.href;
-                        let urlContainsAnnouncements = locationUrl.includes('announcements');
-                        if (!urlContainsAnnouncements) {
-                            location.href = `${location.href}?tab=announcements`;
+                        let urlContainsModelName = locationUrl.includes(modelName + 's');
+                        if (!urlContainsModelName) {
+                            location.href = `${location.href}?tab=${modelName}s`;
                         }
                         location.reload(true);
                     }
                 },
                 error: function (data) {
-                    $('#announcement-modal-content').html(data);
-                    $('#announcementModal').modal(options);
-                    $('#announcementModal').modal('show');
+                    $(`#${modelName}-modal-content`).html(data);
+                    $(`#${modelName}Modal`).modal(options);
+                    $(`#${modelName}Modal`).modal('show');
                     // Need to reattach event handlers to some of the modal's fields, because
                     // when the modal's HTML got repopulated above, the event handlers disappeared
-                    $('#edit-expiration-date-picker').datetimepicker({ format: 'L' });
-                    $("#save-announcement").click(saveAnnouncement);
+                    if (additionalFunction) {
+                        additionalFunction();
+                    }
+                    $(`#save-${modelName}`).click({ modalName: modalNameRaw, additionalFunction: additionalFunction }, saveModel);
                 }
             });
         }
 
-        function getMappedModel(modelFieldNames) {
+        function getMappedModel(modelName, modelFieldNames) {
             let dataObj = {};
             for (fieldName of modelFieldNames) {
                 let fieldSelector = `#edit-${modelName}-${fieldName}`;

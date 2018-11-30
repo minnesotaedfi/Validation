@@ -83,25 +83,67 @@ namespace ValidationWeb
 
         public ActionResult AddSubmissionCycle()
         {
-            var yearsOpenForDataSubmission = _schoolYearService.GetSubmittableSchoolYears().OrderByDescending(x => x.EndYear);
+            var schoolYearsEnumerable = _schoolYearService.GetSubmittableSchoolYearsDictionary().OrderByDescending(x => x.Value);
+            var schoolYears = new List<SelectListItem>();
+            foreach (var kvPair in schoolYearsEnumerable)
+            {
+                schoolYears.Add(new SelectListItem { Value = kvPair.Key.ToString(), Text = kvPair.Value });
+            }
+            schoolYears[0].Selected = true;
             var ruleCollections = _rulesEngineService.GetCollections().Select(c => c.CollectionId);
-            ViewData["YearsOpenForDataSubmission"] = yearsOpenForDataSubmission;
+            ViewData["schoolYears"] = schoolYears;
             ViewData["RuleCollections"] = ruleCollections;
             var submissionCycle = new SubmissionCycle { StartDate = DateTime.Now, EndDate = DateTime.Now };
-            return PartialView("Partials/AddSubmissionCycleModal", submissionCycle);
+            return PartialView("Partials/SubmissionCycleEditModal", submissionCycle);
         }
 
-        //public ActionResult SaveSubmissionCycle(string collectionId, DateTime startDate, DateTime endDate)
+        public ActionResult EditSubmissionCycle(int Id)
+        {
+            var submissionCycle = _submissionCycleService.GetSubmissionCycle(Id);
+
+            var schoolYearsEnumerable = _schoolYearService.GetSubmittableSchoolYearsDictionary().OrderByDescending(x => x.Value);
+            var schoolYears = new List<SelectListItem>();
+
+            foreach (var kvPair in schoolYearsEnumerable)
+            {
+                SelectListItem selectListItem = new SelectListItem { Value = kvPair.Key.ToString(), Text = kvPair.Value };
+                if (kvPair.Key == submissionCycle.SchoolYearId)
+                    selectListItem.Selected = true;
+                schoolYears.Add(selectListItem);
+            }
+            var ruleCollections = _rulesEngineService.GetCollections().Select(c => c.CollectionId);
+            ViewData["schoolYears"] = schoolYears;
+            ViewData["RuleCollections"] = ruleCollections;
+
+            return PartialView("Partials/SubmissionCycleEditModal", submissionCycle);
+        }
+
         public ActionResult SaveSubmissionCycle(SubmissionCycle submissionCycle)
         {
             if (submissionCycle.EndDate < submissionCycle.StartDate)
-                return null;
+            {
+                ModelState.AddModelError("EndDate", "End Date needs to be later than Start Date");
+            }
 
-            //_submissionCycleService.AddSubmissionCycle(submissionCycle.SchoolYear, submissionCycle.CollectionId, submissionCycle.StartDate, submissionCycle.EndDate);
-            _submissionCycleService.AddSubmissionCycle(submissionCycle);
-            var submissionCycles = _submissionCycleService.GetSubmissionCyclesByCollectionId(submissionCycle.CollectionId);
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _submissionCycleService.SaveSubmissionCycle(submissionCycle);
+                    var submissionCycles = _submissionCycleService.GetSubmissionCycles();
+                    return RedirectToAction("Index", new { tab = "submissionCycles" });
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("General Error", ex.Message);
+                    return PartialView("Partials/SubmissionCycleEditModal", submissionCycle);
+                }
+            }
+            else
+            {
+                return PartialView("Partials/SubmissionCycleEditModal", submissionCycle);
+            }
 
-            return PartialView("Partials/SubmissionCycleList", submissionCycles);
         }
 
         public ActionResult RemoveSubmissionCycle(int id, string collectionId)

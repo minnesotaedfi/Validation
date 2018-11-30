@@ -280,7 +280,7 @@
     <Content Include="Views\Admin\Partials\ErrorThresholds.cshtml" />
     <Content Include="Views\Admin\Partials\AddSchoolYearModal.cshtml" />
     <Content Include="Views\Admin\Partials\SubmissionCycleList.cshtml" />
-    <Content Include="Views\Admin\Partials\AddSubmissionCycleModal.cshtml" />
+    <Content Include="Views\Admin\Partials\SubmissionCycleEditModal.cshtml" />
     <Content Include="Views\Admin\Partials\SubmissionCycles.cshtml" />
     <Content Include="Content\Fonts\fa-solid-900.eot" />
     <Content Include="Content\Fonts\fa-solid-900.ttf" />

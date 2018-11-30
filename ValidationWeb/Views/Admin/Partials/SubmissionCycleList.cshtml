@@ -17,16 +17,16 @@
         {
             <tr>
                 <td class="id-hide-column">@submissionCycle.Id</td>
-                <td>@submissionCycle.SchoolYear</td>
+                <td>@submissionCycle.SchoolYearDisplay</td>
                 <td>@submissionCycle.CollectionId</td>
                 <td>@submissionCycle.StartDate</td>
                 <td>@submissionCycle.EndDate</td>
                 <td>
                     <a href="javascript:void(0);"
-                       class="announcement-edit btn btn-sm btn-primary" data-id="@submissionCycle.Id"><i class="fa fa-edit"></i></a>
+                       class="submissioncycle-edit btn btn-sm btn-primary" data-id="@submissionCycle.Id"><i class="fa fa-edit"></i></a>
                 </td>
                 <td>
-                    <a href="javascript:void(0);" data-id="@submissionCycle.Id" class="submissionCycle-delete btn btn-sm btn-danger">
+                    <a href="javascript:void(0);" data-id="@submissionCycle.Id" class="submissioncycle-delete btn btn-sm btn-danger">
                         <i class="fa fa-trash"></i>
                     </a>
                 </td>
@@ -35,10 +35,10 @@
     </table>
 </div>
 
-<div id='submissionCycleModal' class="modal fade" role="dialog">
+<div id='submissioncycleModal' class="modal fade" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div id='submissionCycle-modal-content'></div>
+            <div id='submissioncycle-modal-content'></div>
         </div>
     </div>
 </div>  

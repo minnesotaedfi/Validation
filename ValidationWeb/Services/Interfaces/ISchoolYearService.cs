@@ -9,6 +9,7 @@ namespace ValidationWeb.Services
     public interface ISchoolYearService
     {
         IList<SchoolYear> GetSubmittableSchoolYears();
+        Dictionary<int, string> GetSubmittableSchoolYearsDictionary();
         SchoolYear GetSchoolYearById(int id);
         void SetSubmittableSchoolYears(IEnumerable<SchoolYear> years);
         bool UpdateErrorThresholdValue(int id, decimal thresholdValue);
