@@ -2,18 +2,22 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
 
 namespace ValidationWeb.Services
 {
     public class SubmissionCycleService : ISubmissionCycleService
     {
         protected readonly ValidationPortalDbContext _validationPortalDataContext;
+        private readonly ISchoolYearService _schoolYearService;
         protected readonly ILoggingService _loggingService;
 
         public SubmissionCycleService(ValidationPortalDbContext validationPortalDataContext,
+            ISchoolYearService schoolYearService,
                     ILoggingService loggingService)
-        {
+        { 
             _validationPortalDataContext = validationPortalDataContext;
+            _schoolYearService = schoolYearService;
             _loggingService = loggingService;
         }
 
@@ -75,7 +79,11 @@ namespace ValidationWeb.Services
                     {
                         throw new Exception($"SubmissionCycle with id {submissionCycle.Id} does not exist.");
                     }
-                    existingSubmissionCycle = submissionCycle;
+                    //existingSubmissionCycle = submissionCycle;
+                    existingSubmissionCycle.CollectionId = submissionCycle.CollectionId;
+                    existingSubmissionCycle.StartDate = submissionCycle.StartDate;
+                    existingSubmissionCycle.EndDate = submissionCycle.EndDate;
+                    existingSubmissionCycle.SchoolYearId = submissionCycle.SchoolYearId;
                     _validationPortalDataContext.SaveChanges();
                 }
             }
@@ -91,56 +99,6 @@ namespace ValidationWeb.Services
                 throw new Exception("An error occurred while saving announcement.");
             }
         }
-
-        /***
-        public void SaveSubmissionCycle(int id, int schoolYear_Id, string collectionId, DateTime startDate, DateTime endDate)
-        {
-            try
-            {
-                if (id == 0)
-                {
-                    SaveNewSubmissionCycle(schoolYear_Id, collectionId, startDate, endDate);
-                }
-                else
-                {
-                    var existingSubmissionCycle = _validationPortalDataContext.SubmissionCycles.FirstOrDefault(s => s.Id == id);
-                    if (existingSubmissionCycle == null)
-                    {
-                        throw new Exception($"SubmissionCycle with id {id} does not exist.");
-                    }
-                    SaveExistingSubmissionCycle(id, schoolYear_Id, collectionId, startDate, endDate);
-                }
-            }
-            catch (Exception ex)
-            {
-                string strMessage = "";
-                    strMessage = $" with id = { id }, StartDate = { startDate }, EndDate = { endDate}, SchoolYear_Id = { schoolYear_Id }";
-                _loggingService.LogErrorMessage($"An error occurred while saving announcement {strMessage}: {ex.ChainInnerExceptionMessages()}");
-                throw new Exception("An error occurred while saving announcement.");
-            }
-        }
-
-        protected void SaveExistingSubmissionCycle(int id, int schoolYear_Id, string collectionId, DateTime startDate, DateTime endDate)
-        {
-            SchoolYear schoolYear = _validationPortalDataContext.SchoolYears.FirstOrDefault(x => x.Id == schoolYear_Id);
-            SubmissionCycle submissionCycle = _validationPortalDataContext.SubmissionCycles.FirstOrDefault(x => x.Id == id);
-            submissionCycle.CollectionId = collectionId;
-            submissionCycle.StartDate = startDate;
-            submissionCycle.EndDate = endDate;
-            //submissionCycle.SchoolYear = schoolYear;
-            _validationPortalDataContext.SaveChanges();
-        }
-
-
-        protected void SaveNewSubmissionCycle(int schoolYear_Id, string collectionId, DateTime startDate, DateTime endDate)
-        {
-            SchoolYear schoolYear = _validationPortalDataContext.SchoolYears.FirstOrDefault(x => x.Id == schoolYear_Id);
-            //SubmissionCycle submissionCycle = new SubmissionCycle { CollectionId = collectionId, StartDate = startDate, EndDate = endDate, SchoolYear = schoolYear };
-            //_validationPortalDataContext.SubmissionCycles.Add(submissionCycle);
-            _validationPortalDataContext.SaveChanges();
-        }
-        ***/
-
 
         public IList<SubmissionCycle> GetSubmissionCyclesByCollectionId(string collectionId)
         {
@@ -162,5 +120,46 @@ namespace ValidationWeb.Services
 
             return true;
         }
+
+        public List<SelectListItem> GetSchoolYearsSelectList(SubmissionCycle submissionCycle = null)
+        {
+            var schoolYearsEnumerable = _schoolYearService.GetSubmittableSchoolYearsDictionary().OrderByDescending(x => x.Value);
+
+            List<SelectListItem> schoolYears = schoolYearsEnumerable.Select(kvPair => new SelectListItem
+            {
+                Value = kvPair.Key.ToString(),
+                Text = kvPair.Value,
+                Selected = (submissionCycle != null) && (kvPair.Key == submissionCycle.SchoolYearId) ? true : false
+            }).ToList();
+
+            if (submissionCycle != null)
+            {
+                schoolYears[0].Selected = true;
+            }
+            return schoolYears;
+        }
+
+        public bool IsDuplicate(SubmissionCycle submissionCycle)
+        {
+            var duplicateCycles = _validationPortalDataContext.SubmissionCycles
+                .Where(x => x.SchoolYearId == submissionCycle.SchoolYearId && x.CollectionId == submissionCycle.CollectionId);
+            if (duplicateCycles.Count() > 0)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public void DeleteSubmissionCycle(int Id)
+        {
+            var submissionCycle = _validationPortalDataContext.SubmissionCycles.FirstOrDefault(a => a.Id == Id);
+            if (submissionCycle == null)
+            {
+                throw new Exception($"Could not delete a submission cycle because submission cycle with ID {Id} was not found");
+            }
+            _validationPortalDataContext.SubmissionCycles.Remove(submissionCycle);
+            _validationPortalDataContext.SaveChanges();
+        }
+
     }
 }

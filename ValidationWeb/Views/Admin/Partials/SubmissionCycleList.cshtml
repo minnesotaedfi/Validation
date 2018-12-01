@@ -1,10 +1,21 @@
 ﻿@model IList<SubmissionCycle>
 
-<button id="submissionCycle-add" class="btn minnesota-green" data-toggle="modal" data-target="#add-submission-cycle">Add Collection Cycle</button>
+<div class="row">
+    <div class="col-10">
+        <div id="announcement-warning" class="alert alert-danger alert-dismissible" style="display:none" role="alert">
+            <button id="announcement-warning-button" type="button" class="close" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </div>
+    <div class="col-2">
+        <button id="submissioncycle-add" class="btn btn-sm minnesota-green" data-toggle="modal">Add Collection Cycle</button>
+    </div>
+</div>
 
 <div class="row tbmargin10">
     <table class="table table-sm table-responsive-md table-bordered" id="reportsTable">
-        <tr class="table-primary">School Year, Collection, Start Date and End Date.
+        <tr class="table-primary">
             <th class="id-hide-column">Id</th>
             <th>School Year</th>
             <th>Collection</th>

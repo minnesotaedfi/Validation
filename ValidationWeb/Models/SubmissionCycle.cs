@@ -25,7 +25,9 @@ namespace ValidationWeb
         public int Id { get; set; }
 
         public string CollectionId { get; set; }
+        [Required]
         public DateTime StartDate { get; set; }
+        [Required]
         public DateTime EndDate { get; set; }
         public int? SchoolYearId { get; set; }
         [NotMapped]
