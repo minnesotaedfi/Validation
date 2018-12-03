@@ -18,6 +18,11 @@ namespace ValidationWeb.Services
         {
             return _validationPortalDataContext.SchoolYears.ToList();
         }
+        public Dictionary<int, string> GetSubmittableSchoolYearsDictionary()
+        {
+            return _validationPortalDataContext.SchoolYears.ToDictionary(x => x.Id, x => x.ToString());
+        }
+
         public void SetSubmittableSchoolYears(IEnumerable<SchoolYear> years)
         {
             _validationPortalDataContext.SchoolYears.RemoveRange(_validationPortalDataContext.SchoolYears.ToArray());

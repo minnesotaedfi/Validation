@@ -81,23 +81,61 @@ namespace ValidationWeb
             return PartialView("Partials/SubmissionCycleList", submissionCycles);
         }
 
-        public ActionResult AddSubmissionCycle(string collectionId, DateTime startDate, DateTime endDate)
+        public ActionResult AddSubmissionCycle()
         {
-            if (endDate < startDate)
-                return null;
-
-            _submissionCycleService.AddSubmissionCycle(collectionId, startDate, endDate);
-            var submissionCycles = _submissionCycleService.GetSubmissionCyclesByCollectionId(collectionId);
-
-            return PartialView("Partials/SubmissionCycleList", submissionCycles);
+            PopulateDropDownLists();
+            var submissionCycle = new SubmissionCycle { StartDate = DateTime.Now, EndDate = DateTime.Now };
+            return PartialView("Partials/SubmissionCycleEditModal", submissionCycle);
         }
 
-        public ActionResult RemoveSubmissionCycle(int id, string collectionId)
+        public ActionResult EditSubmissionCycle(int Id)
         {
-            _submissionCycleService.RemoveSubmissionCycle(id);
-            var submissionCycles = _submissionCycleService.GetSubmissionCyclesByCollectionId(collectionId);
+            var submissionCycle = _submissionCycleService.GetSubmissionCycle(Id);
+            PopulateDropDownLists(submissionCycle);
+            return PartialView("Partials/SubmissionCycleEditModal", submissionCycle);
+        }
 
-            return PartialView("Partials/SubmissionCycleList", submissionCycles);
+        public ActionResult SaveSubmissionCycle(SubmissionCycle submissionCycle)
+        {
+            if (submissionCycle.EndDate < submissionCycle.StartDate)
+            {
+                ModelState.AddModelError("EndDate", "End Date needs to be later than Start Date");
+            }
+
+            bool isDuplicate = _submissionCycleService.IsDuplicate(submissionCycle);
+            if (isDuplicate)
+            {
+                ModelState.AddModelError("CollectionId", "A submission cycle with this School Year and Collection already exists.");
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _submissionCycleService.SaveSubmissionCycle(submissionCycle);
+                    var submissionCycles = _submissionCycleService.GetSubmissionCycles();
+                    return RedirectToAction("Index", new { tab = "submissioncycles" });
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("General Error", ex.Message);
+                    PopulateDropDownLists(submissionCycle);
+                    return PartialView("Partials/SubmissionCycleEditModal", submissionCycle);
+                }
+            }
+            else
+            {
+                PopulateDropDownLists(submissionCycle);
+                return PartialView("Partials/SubmissionCycleEditModal", submissionCycle);
+            }
+
+        }
+
+        [HttpDelete]
+        public ActionResult DeleteSubmissionCycle(int id)
+        {
+            _submissionCycleService.DeleteSubmissionCycle(id);
+            return RedirectToAction("Index", new { tab = "submissioncycles" });
         }
 
         [HttpPost]
@@ -143,6 +181,14 @@ namespace ValidationWeb
         {
             _announcementService.DeleteAnnoucement(id);
             return RedirectToAction("Index", new { tab = "announcements" });
+        }
+
+        private void PopulateDropDownLists(SubmissionCycle submissionCycle = null)
+        {
+            List<SelectListItem> schoolYears = _submissionCycleService.GetSchoolYearsSelectList(submissionCycle);
+            var ruleCollections = _rulesEngineService.GetCollections().Select(c => c.CollectionId);
+            ViewData["schoolYears"] = schoolYears;
+            ViewData["RuleCollections"] = ruleCollections;
         }
     }
 }

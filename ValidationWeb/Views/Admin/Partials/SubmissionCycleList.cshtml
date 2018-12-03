@@ -1,16 +1,55 @@
 ﻿@model IList<SubmissionCycle>
 
-<ol>
-    @foreach (var submissionCycle in Model)
-    {
-        <li>@submissionCycle.ToString()
-            <button class="btn btn-link" 
-                    style="color: red;" 
-                    onclick="removeSubmissionCycle(@submissionCycle.Id, '@submissionCycle.CollectionId', '@submissionCycle.ToString()')">
-                Remove
+<div class="row">
+    <div class="col-10">
+        <div id="submissioncycle-warning" class="alert alert-danger alert-dismissible" style="display:none" role="alert">
+            <button id="submissioncycle-warning-button" type="button" class="close" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
             </button>
-        </li>
-    }
-    
-</ol>
-<button class="btn prime-blue white-heavy-text" data-toggle="modal" data-target="#add-submission-cycle">Add Collection Date</button>
+        </div>
+    </div>
+    <div class="col-2">
+        <button id="submissioncycle-add" class="btn prime-blue white-heavy-text" data-toggle="modal">Add Collection Cycle</button>
+    </div>
+</div>
+
+<div class="row tbmargin10">
+    <table class="table table-sm table-responsive-md table-bordered" id="reportsTable">
+        <tr class="table-primary">
+            <th class="id-hide-column">Id</th>
+            <th>School Year</th>
+            <th>Collection</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th></th>
+            <th></th>
+        </tr>
+        @foreach (var submissionCycle in Model)
+        {
+            <tr>
+                <td class="id-hide-column">@submissionCycle.Id</td>
+                <td>@submissionCycle.SchoolYearDisplay</td>
+                <td>@submissionCycle.CollectionId</td>
+                <td>@submissionCycle.StartDate</td>
+                <td>@submissionCycle.EndDate</td>
+                <td>
+                    <a href="javascript:void(0);"
+                       class="submissioncycle-edit btn btn-sm prime-blue white-heavy-text" data-id="@submissionCycle.Id"><i class="fa fa-edit"></i></a>
+                </td>
+                <td>
+                    <a href="javascript:void(0);" data-id="@submissionCycle.Id" class="submissioncycle-delete btn btn-sm prime-blue white-heavy-text">
+                        <i class="fa fa-trash"></i>
+                    </a>
+                </td>
+            </tr>
+        }
+    </table>
+</div>
+
+<div id='submissioncycleModal' class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id='submissioncycle-modal-content'></div>
+        </div>
+    </div>
+</div>  
