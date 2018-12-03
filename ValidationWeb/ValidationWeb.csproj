@@ -230,42 +230,9 @@
     <Content Include="Content\Styles\semantic-ui\tabulator_semantic-ui.css" />
     <Content Include="Content\Styles\semantic-ui\tabulator_semantic-ui.min.css" />
     <Content Include="Deployment\SQLScripts\ODS\0000-Readme.txt" />
-    <Content Include="Deployment\SQLScripts\ODS\0100-ODSReportDROPStudentDetailsFunction.sql" />
-    <Content Include="Deployment\SQLScripts\ODS\0100-RulesSchemaObjects.txt" />
-    <Content Include="Deployment\SQLScripts\ODS\0101-ODSReportDROPStringArrayType.sql" />
-    <Content Include="Deployment\SQLScripts\ODS\0102ODSReportDROPIntArrayTypeStudentDrillDown.sql" />
-    <Content Include="Deployment\SQLScripts\ODS\0103-ODSReportCREATEIntArrayType.sql" />
-    <Content Include="Deployment\SQLScripts\ODS\0104-ODSReportCREATEStringArrayType.sql" />
-    <Content Include="Deployment\SQLScripts\ODS\0105-ODSReportCREATEStudentDetailsFunction.sql" />
-    <Content Include="Deployment\SQLScripts\ODS\0111-ODSReportCREATERaceAEO.sql" />
-    <Content Include="Deployment\SQLScripts\ODS\0112ODSReportDROPRaceAEODrillDown.sql" />
-    <Content Include="Deployment\SQLScripts\ODS\0113-ODSReportCREATERaceAEODrillDown.sql" />
-    <Content Include="Deployment\SQLScripts\ODS\0121-ODSReportCREATEMultipleEnrollment.sql" />
-    <Content Include="Deployment\SQLScripts\ODS\0122-ODSReportDROPMultipleEnrollmentDrillDown.sql" />
-    <Content Include="Deployment\SQLScripts\ODS\0123-ODSReportCREATEMultipleEnrollmentDrillDown.sql" />
-    <Content Include="Deployment\SQLScripts\ODS\0131-ODSReportCREATEStudentPrograms.sql" />
-    <Content Include="Deployment\SQLScripts\ODS\0132-ODSReportDROPStudentProgramsDrillDown.sql" />
-    <Content Include="Deployment\SQLScripts\ODS\0133-ODSReportCREATEStudentProgramsDrillDown.sql" />
-    <Content Include="Deployment\SQLScripts\ODS\0140-ODSReportDROPEnrollmentChange.sql" />
-    <Content Include="Deployment\SQLScripts\ODS\0120-ODSReportDROPMultipleEnrollment.sql" />
-    <Content Include="Deployment\SQLScripts\ODS\Rules090_udf_ContainsDoubleSpace.sql" />
-    <Content Include="Deployment\SQLScripts\ODS\Rules090_udf_ContainsInvalidChar.sql" />
-    <Content Include="Deployment\SQLScripts\ODS\Rules090_udf_ShortString.sql" />
-    <Content Include="Deployment\SQLScripts\ODS\Rules090_udf_StartsWithInvalidChar.sql" />
-    <Content Include="Deployment\SQLScripts\ODS\Rules090_udf_ValidMARSSNumberFormat.sql" />
-    <Content Include="Deployment\SQLScripts\ODS\Rules100_v_MultipleEnrollment.sql" />
-    <Content Include="Deployment\SQLScripts\ODS\Rules100_v_SSDC.sql" />
-    <Content Include="Deployment\SQLScripts\ODS\Rules100_v_StudentDemographic.sql" />
-    <Content Include="Deployment\SQLScripts\ODS\Rules100_v_StudentEnrollment.sql" />
+    <Content Include="Deployment\SQLScripts\ODS\0006-RulesSchemaObjects.sql" />
     <Content Include="Deployment\SQLScripts\ValPortal\AddASchoolYear.sql" />
     <Content Include="Deployment\SQLScripts\ValPortal\CreateEmptyRulesSchema.sql" />
-    <Content Include="Deployment\SQLScripts\ODS\0110-ODSReportDROPRaceAEO.sql" />
-    <Content Include="Deployment\SQLScripts\ODS\0141-ODSReportCREATEEnrollmentChange.sql" />
-    <Content Include="Deployment\SQLScripts\ODS\0150-ODSReportDROPResidentsElsewhere.sql" />
-    <Content Include="Deployment\SQLScripts\ODS\0130-ODSReportDROPStudentPrograms.sql" />
-    <Content Include="Deployment\SQLScripts\ODS\0151-ODSReportCREATEResidentsElsewhere.sql" />
-    <Content Include="Deployment\SQLScripts\ODS\0152-ODSReportDROPResidentsElsewhereDrillDown.sql" />
-    <Content Include="Deployment\SQLScripts\ODS\0153-ODSReportCREATEResidentsElsewhereDrillDown.sql" />
     <Content Include="packages.config" />
     <Content Include="parameters.xml">
       <SubType>Designer</SubType>
@@ -296,7 +263,9 @@
     <Content Include="Views\Ods\ResidentsEnrolledElsewhereReport.cshtml" />
     <Content Include="Views\Ods\IdentityIssuesReport.cshtml" />
     <Content Include="Views\Ods\Level1IssuesReport.cshtml" />
-    <Content Include="Deployment\DeployToMnDev.proj" />
+    <Content Include="Deployment\DeployToMnDev.proj">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Deployment\DeployToQA.proj" />
     <Content Include="Views\Ods\StudentDrillDown.cshtml" />
     <Content Include="Views\Admin\Partials\Announcements.cshtml" />

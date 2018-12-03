@@ -562,6 +562,173 @@ JOIN edfi.Descriptor DGL2 ON DGL2.DescriptorId = GLD2.GradeLevelDescriptorId
 	AND DGL2.Namespace LIKE 'http://education.mn.gov%';
 GO
 
+
+IF EXISTS (SELECT * 
+		FROM INFORMATION_SCHEMA.ROUTINES
+		WHERE ROUTINE_NAME = 'ContainsDoubleSpace'
+			AND ROUTINE_SCHEMA = 'rules')
+	DROP FUNCTION [rules].[ContainsDoubleSpace]
+GO
+
+CREATE FUNCTION rules.ContainsDoubleSpace (@String VARCHAR(200))
+
+RETURNS BIT 
+
+BEGIN
+
+DECLARE @DoubleSpace AS BIT
+
+SELECT @DoubleSpace = 
+	   CASE
+		WHEN CHARINDEX('  ',@String) > 0 THEN 1
+		ELSE 0
+	   END
+RETURN @DoubleSpace;
+
+END;
+
+
+GO
+
+
+IF EXISTS (SELECT * 
+		FROM INFORMATION_SCHEMA.ROUTINES
+		WHERE ROUTINE_NAME = 'ContainsInvalidChar'
+			AND ROUTINE_SCHEMA = 'rules')
+	DROP FUNCTION [rules].ContainsInvalidChar
+GO
+
+CREATE FUNCTION rules.ContainsInvalidChar
+(
+	@String AS VARCHAR(200)
+)
+RETURNS VARCHAR(200)
+AS  
+BEGIN
+
+   IF LEN(LTRIM(RTRIM(@String)))>0
+   BEGIN
+	DECLARE @InvalidChar VARCHAR(200)	
+	DECLARE @Index INT
+	DECLARE @ASCIIChar INT
+
+	SET @Index = 1
+	SET @InvalidChar=0
+	BEGIN     	 
+      		WHILE @Index <= LEN(@String)
+		BEGIN
+    		SET @ASCIIChar=ASCII(SUBSTRING(@String, @Index, 1))
+    		IF NOT @ASCIIChar BETWEEN 65 AND 90
+		AND NOT @ASCIIChar BETWEEN 97 AND 122 
+		AND NOT @ASCIIChar IN (32, 39, 45)
+		SET @InvalidChar = 1
+	        SET @Index = @Index + 1
+    		END
+	END    
+   END
+   ELSE
+   BEGIN
+	SET @InvalidChar = 0
+   END
+
+   RETURN (@InvalidChar)
+END;
+
+
+GO
+
+
+IF EXISTS (SELECT * 
+		FROM INFORMATION_SCHEMA.ROUTINES
+		WHERE ROUTINE_NAME = 'ShortString'
+			AND ROUTINE_SCHEMA = 'rules')
+	DROP FUNCTION [rules].ShortString
+GO
+
+CREATE FUNCTION rules.ShortString (@String VARCHAR(200))
+
+RETURNS BIT 
+
+BEGIN
+
+DECLARE @ShortString AS BIT
+
+SELECT @ShortString = 
+	   CASE
+		WHEN LEN(@String) < 2 THEN 1
+		WHEN LEN(@String) = 2 AND (
+			ASCII(SUBSTRING(@String,2,1)) NOT BETWEEN 65 AND 90 
+		 OR ASCII(SUBSTRING(@String,2,1)) <> 39 
+		 OR ASCII(SUBSTRING(@String,2,1)) NOT BETWEEN 97 AND 122
+			) THEN 1
+		ELSE 0 
+	   END
+RETURN @ShortString;
+
+END;
+
+
+GO
+
+
+IF EXISTS (SELECT * 
+		FROM INFORMATION_SCHEMA.ROUTINES
+		WHERE ROUTINE_NAME = 'StartsWithInvalidChar'
+			AND ROUTINE_SCHEMA = 'rules')
+	DROP FUNCTION [rules].StartsWithInvalidChar
+GO
+
+CREATE FUNCTION rules.StartsWithInvalidChar (@String VARCHAR(200))
+
+RETURNS BIT 
+
+BEGIN
+
+DECLARE @InvalidChar AS BIT
+
+SELECT @InvalidChar = 
+	   CASE
+		WHEN @String IS NULL THEN 0
+		WHEN (ASCII(LEFT(@String,1)) BETWEEN 65 and 90) THEN 0
+		WHEN (ASCII(LEFT(@String,1)) BETWEEN 97 and 122) THEN 0
+		ELSE 1
+	   END
+RETURN @InvalidChar;
+
+END;
+
+
+GO
+
+
+IF EXISTS (SELECT * 
+		FROM INFORMATION_SCHEMA.ROUTINES
+		WHERE ROUTINE_NAME = 'ValidMARSSNumberFormat'
+			AND ROUTINE_SCHEMA = 'rules')
+	DROP FUNCTION [rules].ValidMARSSNumberFormat
+GO
+
+CREATE FUNCTION rules.ValidMARSSNumberFormat (@MARSSNumber VARCHAR(200))
+
+RETURNS BIT 
+
+BEGIN
+
+DECLARE @ValidMARSSNumber AS BIT
+
+SELECT @ValidMARSSNumber = 
+	   CASE
+		WHEN @MARSSNumber LIKE '%[^0-9]%' THEN 0
+		WHEN LEN(LTRIM(RTRIM(@MARSSNumber))) <> 13 THEN 0
+		WHEN LEFT(@MARSSNumber,4) IN ('0000','5555') THEN 0
+	   ELSE 1
+	   END
+RETURN @ValidMARSSNumber;
+
+END;
+
+GO
+
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- TYPES:  INT and NVARCHAR array types -----------------------------------------------------------
@@ -2985,3 +3152,167 @@ END
 
 GO
 
+
+IF EXISTS (SELECT * 
+		FROM INFORMATION_SCHEMA.ROUTINES
+		WHERE ROUTINE_NAME = 'ContainsDoubleSpace'
+			AND ROUTINE_SCHEMA = 'rules')
+	DROP FUNCTION [rules].[ContainsDoubleSpace]
+GO
+
+CREATE FUNCTION rules.ContainsDoubleSpace (@String VARCHAR(200))
+
+RETURNS BIT 
+
+BEGIN
+
+DECLARE @DoubleSpace AS BIT
+
+SELECT @DoubleSpace = 
+	   CASE
+		WHEN CHARINDEX('  ',@String) > 0 THEN 1
+		ELSE 0
+	   END
+RETURN @DoubleSpace;
+
+END;
+
+
+GO
+
+
+IF EXISTS (SELECT * 
+		FROM INFORMATION_SCHEMA.ROUTINES
+		WHERE ROUTINE_NAME = 'ContainsInvalidChar'
+			AND ROUTINE_SCHEMA = 'rules')
+	DROP FUNCTION [rules].ContainsInvalidChar
+GO
+
+CREATE FUNCTION rules.ContainsInvalidChar
+(
+	@String AS VARCHAR(200)
+)
+RETURNS VARCHAR(200)
+AS  
+BEGIN
+
+   IF LEN(LTRIM(RTRIM(@String)))>0
+   BEGIN
+	DECLARE @InvalidChar VARCHAR(200)	
+	DECLARE @Index INT
+	DECLARE @ASCIIChar INT
+
+	SET @Index = 1
+	SET @InvalidChar=0
+	BEGIN     	 
+      		WHILE @Index <= LEN(@String)
+		BEGIN
+    		SET @ASCIIChar=ASCII(SUBSTRING(@String, @Index, 1))
+    		IF NOT @ASCIIChar BETWEEN 65 AND 90
+		AND NOT @ASCIIChar BETWEEN 97 AND 122 
+		AND NOT @ASCIIChar IN (32, 39, 45)
+		SET @InvalidChar = 1
+	        SET @Index = @Index + 1
+    		END
+	END    
+   END
+   ELSE
+   BEGIN
+	SET @InvalidChar = 0
+   END
+
+   RETURN (@InvalidChar)
+END;
+
+
+GO
+
+
+IF EXISTS (SELECT * 
+		FROM INFORMATION_SCHEMA.ROUTINES
+		WHERE ROUTINE_NAME = 'ShortString'
+			AND ROUTINE_SCHEMA = 'rules')
+	DROP FUNCTION [rules].ShortString
+GO
+
+CREATE FUNCTION rules.ShortString (@String VARCHAR(200))
+
+RETURNS BIT 
+
+BEGIN
+
+DECLARE @ShortString AS BIT
+
+SELECT @ShortString = 
+	   CASE
+		WHEN LEN(@String) < 2 THEN 1
+		WHEN LEN(@String) = 2 AND (
+			ASCII(SUBSTRING(@String,2,1)) NOT BETWEEN 65 AND 90 
+		 OR ASCII(SUBSTRING(@String,2,1)) <> 39 
+		 OR ASCII(SUBSTRING(@String,2,1)) NOT BETWEEN 97 AND 122
+			) THEN 1
+		ELSE 0 
+	   END
+RETURN @ShortString;
+
+END;
+
+
+GO
+
+
+IF EXISTS (SELECT * 
+		FROM INFORMATION_SCHEMA.ROUTINES
+		WHERE ROUTINE_NAME = 'StartsWithInvalidChar'
+			AND ROUTINE_SCHEMA = 'rules')
+	DROP FUNCTION [rules].StartsWithInvalidChar
+GO
+
+CREATE FUNCTION rules.StartsWithInvalidChar (@String VARCHAR(200))
+
+RETURNS BIT 
+
+BEGIN
+
+DECLARE @InvalidChar AS BIT
+
+SELECT @InvalidChar = 
+	   CASE
+		WHEN @String IS NULL THEN 0
+		WHEN (ASCII(LEFT(@String,1)) BETWEEN 65 and 90) THEN 0
+		WHEN (ASCII(LEFT(@String,1)) BETWEEN 97 and 122) THEN 0
+		ELSE 1
+	   END
+RETURN @InvalidChar;
+
+END;
+
+
+GO
+
+
+IF EXISTS (SELECT * 
+		FROM INFORMATION_SCHEMA.ROUTINES
+		WHERE ROUTINE_NAME = 'ValidMARSSNumberFormat'
+			AND ROUTINE_SCHEMA = 'rules')
+	DROP FUNCTION [rules].ValidMARSSNumberFormat
+GO
+
+CREATE FUNCTION rules.ValidMARSSNumberFormat (@MARSSNumber VARCHAR(200))
+
+RETURNS BIT 
+
+BEGIN
+
+DECLARE @ValidMARSSNumber AS BIT
+
+SELECT @ValidMARSSNumber = 
+	   CASE
+		WHEN @MARSSNumber LIKE '%[^0-9]%' THEN 0
+		WHEN LEN(LTRIM(RTRIM(@MARSSNumber))) <> 13 THEN 0
+		WHEN LEFT(@MARSSNumber,4) IN ('0000','5555') THEN 0
+	   ELSE 1
+	   END
+RETURN @ValidMARSSNumber;
+
+END;
