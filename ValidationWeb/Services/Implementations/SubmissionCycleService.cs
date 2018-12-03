@@ -108,19 +108,6 @@ namespace ValidationWeb.Services
             return _validationPortalDataContext.SubmissionCycles.Where(submissionCycle => submissionCycle.CollectionId == collectionId).ToList();
         }
 
-        public bool RemoveSubmissionCycle(int id)
-        {
-            var submissionRecord = _validationPortalDataContext.SubmissionCycles.FirstOrDefault(submissionCycle => submissionCycle.Id == id);
-
-            if (submissionRecord == null)
-                return false;
-
-            _validationPortalDataContext.SubmissionCycles.Remove(submissionRecord);
-            _validationPortalDataContext.SaveChanges();
-
-            return true;
-        }
-
         public List<SelectListItem> GetSchoolYearsSelectList(SubmissionCycle submissionCycle = null)
         {
             var schoolYearsEnumerable = _schoolYearService.GetSubmittableSchoolYearsDictionary().OrderByDescending(x => x.Value);

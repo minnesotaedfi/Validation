@@ -138,15 +138,6 @@ namespace ValidationWeb
             return RedirectToAction("Index", new { tab = "submissioncycles" });
         }
 
-
-        public ActionResult RemoveSubmissionCycle(int id, string collectionId)
-        {
-            _submissionCycleService.RemoveSubmissionCycle(id);
-            var submissionCycles = _submissionCycleService.GetSubmissionCyclesByCollectionId(collectionId);
-
-            return PartialView("Partials/SubmissionCycleList", submissionCycles);
-        }
-
         [HttpPost]
         public ActionResult SaveAnnouncement(Announcement announcement)
         {

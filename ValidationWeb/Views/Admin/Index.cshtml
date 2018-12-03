@@ -45,45 +45,10 @@
             let location = window.location.href;
             let queryStringIndex = window.location.href.indexOf('?');
             if (queryStringIndex > -1) {
-                //window.location.href = window.location.href.slice(0, queryStringIndex);
                 location = location.slice(0, queryStringIndex);
             }
             window.location.href = `${location}?tab=${tabName}`;
         }
-
-
-        function loadAnnouncementsTab() {
-            /***
-            let urlIsOnTabAnnouncements = window.location.href.includes('tab=announcements');
-            if (!urlIsOnTabAnnouncements) {
-                window.location.href += '?tab=announcements';
-            }
-            ***/
-            let location = window.location.href;
-            let queryStringIndex = window.location.href.indexOf('?');
-            if (queryStringIndex > -1) {
-                //window.location.href = window.location.href.slice(0, queryStringIndex);
-                location = location.slice(0, queryStringIndex);
-            }
-            window.location.href = `${location}?tab=announcements`;
-        }
-
-        function loadSubmissionCyclesTab() {
-            /***
-            let urlIsOnTabSubmissionCycles = window.location.href.includes('tab=submissioncycles');
-            if (!urlIsOnTabSubmissionCycles) {
-                window.location.href += '?tab=submissioncycles';
-            }
-            ***/
-            let location = window.location.href;
-            let queryStringIndex = window.location.href.indexOf('?');
-            if (queryStringIndex > -1) {
-                //window.location.href = window.location.href.slice(0, queryStringIndex);
-                location = location.slice(0, queryStringIndex);
-            }
-            window.location.href = `${location}?tab=submissioncycles`;
-        }
-
 
         function loadDefaultTab() {
             let queryStringIndex = window.location.href.indexOf('?');
@@ -92,13 +57,17 @@
             }
         }
 
-        function assignsubmissionCycleDateHandlers() {
+        function assignSubmissionCycleDateHandlers() {
             $('#edit-submissioncycle-startDate').datetimepicker({ format: 'L' });
             $('#edit-submissioncycle-endDate').datetimepicker({ format: 'L' });
         }
 
         const ModelFieldMap = {"announcement": ["id", "priority", "message", "contactInfo", "linkUrl", "expiration"],
             "submissioncycle": ["id", "schoolYearId", "collectionId", "startDate", "endDate"]
+        };
+
+        const ModelNameToDisplay = {"announcement": "Announcement",
+            "submissioncycle": "Submission Cycle"
         };
 
         var originalThreshold = "";
@@ -177,13 +146,14 @@
             });
 
 
-            function DeleteModel() {
+            function DeleteModel(event) {
                 let modelName = event.data.modelName;
                 let deleteRoute = event.data.deleteRoute;
+                let modelDisplayName = ModelNameToDisplay[modelName];
 
                 var $buttonClicked = $(this);
                 var id = $buttonClicked.attr('data-id');
-                if (confirm(`Are you sure you want to delete this ${modelName}?`)) {
+                if (confirm(`Are you sure you want to delete this ${modelDisplayName}?`)) {
                     $.ajax({
                         type: "DELETE",
                         url: `${deleteRoute}/${id}`,
@@ -248,7 +218,7 @@
             $(".submissioncycle-edit").click({ modalName: "SubmissionCycle", modalEditRoute: EditSubmissionCycleRoute }, CreateEditModal);
 
             var DeleteSubmissionCycleRoute = "@Url.Content("~/Admin/DeleteSubmissionCycle")";
-            $(".submissioncycle-delete").click({ modelName: submissioncycle, deleteRoute: DeleteSubmissionCycleRoute }, DeleteModel);
+            $(".submissioncycle-delete").click({ modelName: "submissioncycle", deleteRoute: DeleteSubmissionCycleRoute }, DeleteModel);
 
 
             $(".save-row").hide();
@@ -343,13 +313,13 @@
             });
 
             $('#submissioncycleModal').on('shown.bs.modal', function () {
-                setModalHeaderText("submissionCycle", "Submission Cycle");
-                assignsubmissionCycleDateHandlers();
-                $("#save-submissioncycle").click({ modalName: "SubmissionCycle", additionalFunction: assignsubmissionCycleDateHandlers }, saveModel);
+                setModalHeaderText("submissioncycle", ModelNameToDisplay["submissioncycle"]);
+                assignSubmissionCycleDateHandlers();
+                $("#save-submissioncycle").click({ modalName: "SubmissionCycle", additionalFunction: assignSubmissionCycleDateHandlers }, saveModel);
             });
 
             $('#announcementModal').on('shown.bs.modal', function () {
-                setModalHeaderText("announcement", "Announcement");
+                setModalHeaderText("announcement", ModelNameToDisplay["announcement"]);
                 $('#edit-announcement-expiration').datetimepicker({ format: 'L' });
                 $("#save-announcement").click(saveAnnouncement);
             });
@@ -358,6 +328,7 @@
         function saveAnnouncement(event) {
             var SaveAnnouncementPostBackURL = "@Url.Content("~/Admin/SaveAnnouncement")";
             event.preventDefault();
+            $("#save-announcement").prop("disabled", true);
             var id = $('#edit-announcement-id').val();
             var priority = $('#edit-announcement-priority').val();
             if ($.trim(priority).length === 0) {
@@ -421,6 +392,7 @@
             let modalNameRaw = event.data.modalName;
             let additionalFunction = event.data.additionalFunction;
             let modelName = modalNameRaw.toLowerCase();
+            $(`#save-${modelName}`).prop("disabled", true);
             var saveRoute = `@Url.Content("~/Admin/Save${modalNameRaw}")`;
             var modelFieldNames = ModelFieldMap[modelName];
             var dataObj = getMappedModel(modelName, modelFieldNames);
@@ -447,7 +419,7 @@
                         $(`#${modelName}Modal`).modal('show');
                         // Need to reattach event handlers to some of the modal's fields, because
                         // when the modal's HTML got repopulated above, the event handlers disappeared
-                        setModalHeaderText(modelName);
+                        setModalHeaderText(modelName, ModelNameToDisplay[modelName]);
                         if (additionalFunction) {
                             additionalFunction();
                         }
@@ -495,22 +467,12 @@
         }
 
         function setModalHeaderText(modalName, modalTitle) {
-            let announcementHeader = $(`#${modalName}-header`);
-            var id = $(`#modal-${modalName}-id`).val();
+            let modalHeader = $(`#${modalName}-header`);
+            var id = $(`#edit-${modalName}-id`).val();
             if (id > 0) {
-                announcementHeader.text(`Edit ${modalTitle}`);
+                modalHeader.text(`Edit ${modalTitle}`);
             }
         }
-
-            /***
-        function setSubmissionCycleHeaderText() {
-            let announcementHeader = $('#announcement-header');
-            var id = $('#modal-announcement-id').val();
-            if (id > 0) {
-                announcementHeader.text("Edit Announcement");
-            }
-        }
-        ***/
 
         function updateThreshold(id, errorThreshold) {
             var value;
@@ -542,46 +504,5 @@
             }
         }
         /** End **/
-
-        /** All Submission Row JS Functionality **/
-        $("#collection-list").bind('change', function () {
-            $.ajax({
-                url: '@(Url.Action("GetSubmissionCyclesByCollectionId", "Admin"))',
-                async: true,
-                data: { collectionId: $("#collection-list").val() },
-                success: function (data) {
-                    $("#submission-rows").html(data);
-                }
-            });
-        });
-
-        // Inserting and removing rows for submission cycle.
-
-        function removeSubmissionCycle(id, collectionId, cycleDates) {
-            if (confirm("Are you sure you want to delete " + cycleDates + " for " + collectionId +"?")) {
-                $.ajax({
-                    url: '@(Url.Action("RemoveSubmissionCycle", "Admin"))',
-                    async: true,
-                    data: { id : id, collectionId : collectionId },
-                    success: function (data) {
-                        $("#submission-rows").html(data);
-                    }
-                });
-            }
-        }
-
-        function addSubmissionCycle() {
-            console.log($("#collection-list").val());
-            $.ajax({
-                url: '@(Url.Action("AddSubmissionCycle", "Admin"))',
-                async: true,
-                data: { collectionId: $("#collection-list").val(), startDate: $("#start-date-picker").val(), endDate: $("#end-date-picker").val() },
-                success: function (data) {
-                    $("#submission-rows").html(data);
-                }
-            });
-        }
-        /** End **/
-
     </script>
 }
