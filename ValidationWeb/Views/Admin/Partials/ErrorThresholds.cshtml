@@ -33,7 +33,7 @@
                 <td class="id-hide-column">@schoolYear.Id</td>
                 <td>@schoolYear.ToString()</td>
                 <td>
-                    <span class="remove-row-school-year"><a href="#" onclick="removeSchoolYear(@schoolYear.Id, '@schoolYear.ToString()');" class="btn btn-link" style="color: red;">Remove</a></span>
+                    <a href="javascript:void(0);" data-id="@schoolYear.Id" class="btn btn-sm prime-blue white-heavy-text" onclick="removeSchoolYear(@schoolYear.Id, '@schoolYear.ToString()')">Delete</a>
                 </td>
             </tr>
         }
