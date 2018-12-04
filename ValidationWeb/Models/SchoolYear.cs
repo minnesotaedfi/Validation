@@ -12,10 +12,11 @@ namespace ValidationWeb
     {
         public SchoolYear() { }
 
-        public SchoolYear(string startYear, string endYear)
+        public SchoolYear(string startYear, string endYear, bool enabled = true)
         {
             StartYear = startYear;
             EndYear = endYear;
+            Enabled = enabled;
         }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
