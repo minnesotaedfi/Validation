@@ -39,29 +39,10 @@
     <IncludeIisSettings>false</IncludeIisSettings>
     <PublishDatabaseSettings>
       <Objects>
-        <ObjectGroup Name="ValidationPortalDbContext-Deployment" Order="1">
-          <Destination Path="Data Source=MN-DEV.doubleline.us%3bInitial Catalog=ValidationPortal%3bIntegrated Security=True%3bApplication Name=EntityFramework" />
-          <Object Type="DbFullSql">
-            <PreSource Path="Data Source=localhost%3bInitial Catalog=ValidationPortal%3bIntegrated Security=True%3bApplication Name=EntityFramework" ScriptSchema="False" ScriptData="True" CopyAllFullTextCatalogs="False" DriDefaults="True" />
-            <Source Path="obj\Debug\AutoScripts\ValidationPortalDbContext-Deployment_DataOnly.sql" Transacted="True" />
-          </Object>
-          <Object Type="DbFullSql" xmlns="">
-            <Source Path="Deployment\SQLScripts\ValPortal\AddASchoolYear.sql" Transacted="False" />
-          </Object>
-          <Object Type="DbFullSql" xmlns="">
-            <Source Path="Deployment\SQLScripts\ValPortal\CreateEmptyRulesSchema.sql" Transacted="False" />
-          </Object>
-        </ObjectGroup>
-        <ObjectGroup Name="SingleSignOnDatabase-Deployment" Order="2">
-          <Destination Path="Data Source=MN-DEV.doubleline.us%3bInitial Catalog=ValidationPortalSsoMock%3bIntegrated Security=True" />
-          <Object Type="DbFullSql">
-            <PreSource Path="Data Source=localhost%3bInitial Catalog=ValidationPortalSsoMock%3bIntegrated Security=True" ScriptSchema="True" ScriptData="True" CopyAllFullTextCatalogs="False" DriDefaults="True" />
-            <Source Path="obj\Debug\AutoScripts\SingleSignOnDatabase-Deployment_SchemaAndData.sql" Transacted="True" />
-          </Object>
-        </ObjectGroup>
       </Objects>
     </PublishDatabaseSettings>
     <ExcludeGeneratedDebugSymbol>false</ExcludeGeneratedDebugSymbol>
+    <PublishDatabases>false</PublishDatabases>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
