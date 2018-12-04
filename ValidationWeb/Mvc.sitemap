@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<mvcSiteMap
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://mvcsitemap.codeplex.com/schemas/MvcSiteMap-File-4.0"
+    xsi:schemaLocation="http://mvcsitemap.codeplex.com/schemas/MvcSiteMap-File-4.0 MvcSiteMapSchema.xsd">
+
+	<mvcSiteMapNode title="Home" controller="Home" action="Index">
+		<mvcSiteMapNode title="ODS Reports" controller="Ods" action="Reports">
+			<mvcSiteMapNode title="Ancestry Ethnic Origin and Race Counts" controller="Ods" action="DemographicsReport" drillDownColumnIndex="" key="ancestry">
+				<mvcSiteMapNode title="Cumulative Enrollments" controller="Ods" action="DemographicsReport" drillDownColumnIndex="1" key="ancestry-0"/>
+				<mvcSiteMapNode title="Demographics Records" controller="Ods" action="DemographicsReport" drillDownColumnIndex="2" key="ancestry-1"/>
+				<mvcSiteMapNode title="Students with Race Submitted" controller="Ods" action="DemographicsReport" drillDownColumnIndex="3" key="ancestry-2"/>
+				<mvcSiteMapNode title="Students with AEO Submitted" controller="Ods" action="DemographicsReport" drillDownColumnIndex="4" key="ancestry-3"/>
+			</mvcSiteMapNode>
+			<mvcSiteMapNode title="Dual Enrollment Students" controller="Ods" action="MultipleEnrollmentsReport"  drillDownColumnIndex="" key="dual">
+				<mvcSiteMapNode title="Cumulative Enrollments" controller="Ods" action="MultipleEnrollmentsReport" drillDownColumnIndex="0" key="dual-0"/>
+				<mvcSiteMapNode title="Students enrolled at multiple schools within the district" controller="Ods" action="MultipleEnrollmentsReport" drillDownColumnIndex="1" key="dual-1"/>
+				<mvcSiteMapNode title="Students enrolled at other districts" controller="Ods" action="MultipleEnrollmentsReport" drillDownColumnIndex="2" key="dual-2" />
+			</mvcSiteMapNode>
+			<mvcSiteMapNode title="Student Characteristics and Programs" controller="Ods" action="StudentProgramsReport" drillDownColumnIndex="" key="programs">
+				<mvcSiteMapNode title="Cumulative Enrollments" controller="Ods" action="StudentProgramsReport" drillDownColumnIndex="0" key="programs-0"/>
+				<mvcSiteMapNode title="Demographic Records" controller="Ods" action="StudentProgramsReport" drillDownColumnIndex="1" key="programs-1"/>
+				<mvcSiteMapNode title="Active Duty Parents (ADP)" controller="Ods" action="StudentProgramsReport" drillDownColumnIndex="2" key="programs-2"/>
+				<mvcSiteMapNode title="American Indian - Alaska Native (Minnesota)" controller="Ods" action="StudentProgramsReport" drillDownColumnIndex="3" key="programs-3"/>
+				<mvcSiteMapNode title="Migrant" controller="Ods" action="StudentProgramsReport" drillDownColumnIndex="4" key="programs-4"/>
+				<mvcSiteMapNode title="Homeless" controller="Ods" action="StudentProgramsReport" drillDownColumnIndex="5" key="programs-5"/>
+				<mvcSiteMapNode title="Immigrant" controller="Ods" action="StudentProgramsReport" drillDownColumnIndex="6" key="programs-6"/>
+				<mvcSiteMapNode title="Recently Arrived English Learner" controller="Ods" action="StudentProgramsReport" drillDownColumnIndex="7" key="programs-7"/>
+				<mvcSiteMapNode title="SLIFE" controller="Ods" action="StudentProgramsReport" drillDownColumnIndex="8" key="programs-8"/>
+			</mvcSiteMapNode>
+			<mvcSiteMapNode title="Change Of Enrollment" controller="Ods" action="ChangeOfEnrollmentReport" drillDownColumnIndex="" key="change" />
+			<mvcSiteMapNode title="Residents Enrolled Elsewhere" controller="Ods" action="ResidentsEnrolledElsewhereReport"/>
+			<mvcSiteMapNode title="Student Identity Issues" controller="Ods" action="IdentityIssuesReport"/>
+			<mvcSiteMapNode title="Level 1 Validation Issues" controller="Ods" action="Level1IssuesReport"/>
+		</mvcSiteMapNode>
+		<mvcSiteMapNode title="Validation" controller="Validation" action="Reports">
+			<mvcSiteMapNode title="Report" controller="Validation" action="Report" />
+			<mvcSiteMapNode title="Submissions" controller="Validation" action="Submissions" />
+		</mvcSiteMapNode>
+	</mvcSiteMapNode>
+</mvcSiteMap>

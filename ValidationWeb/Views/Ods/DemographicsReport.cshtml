@@ -1,7 +1,6 @@
 ﻿@model OdsDemographicsReportViewModel
 
 <div id="pagetop" class="row tbmargin10">
-    <div><a href="@Url.Action("Reports")" class="back-link"><i class="fas fa-arrow-alt-circle-left"></i> Back to ODS Reports</a></div>
     <div><a href="#notes" class="vp-page-link"><i class="fas fa-arrow-alt-circle-down"></i> See notes</a></div>
     @if (Model.IsStateMode)
     {
@@ -72,7 +71,6 @@ else
 <div class="row">(2) A student is counted as enrolled if the student was enrolled at least once during the school year.</div>
 <div class="row">(3) Students are counted only once per table cell for the particular school/district/state.</div>
 <div class="row tbmargin10">
-    <a href="@Url.Action("Reports")" class="back-link"><i class="fas fa-arrow-alt-circle-left"></i> Back to ODS Reports</a>
     <a href="#pagetop" class="vp-page-link"><i class="fas fa-arrow-alt-circle-up"></i> Back to Top</a>
 </div>
 

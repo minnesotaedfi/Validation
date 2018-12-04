@@ -1,7 +1,6 @@
 ﻿@model OdsMultipleEnrollmentsReportViewModel
 
 <div id="pagetop" class="row tbmargin10">
-    <div><a href="@Url.Action("Reports")" class="back-link"><i class="fas fa-arrow-alt-circle-left"></i> Back to ODS Reports</a></div>
     <div><a href="#notes" class="vp-page-link"><i class="fas fa-arrow-alt-circle-down"></i> See notes</a></div>
     @if (Model.IsStateMode)
     {
@@ -71,7 +70,6 @@
 <div class="row">(2) All columns including Cumulative Enrollments count individual students only once, even if they have multiple enrollments.</div>
 <div class="row">(3) &quot;Cumulative&quot; means that enrollments are accounted as at least one enrollment any time during the school year - not only &quot;Currently Enrolled&quot;.</div>
 <div class="row tbmargin10">
-    <a href="@Url.Action("Reports")" class="back-link"><i class="fas fa-arrow-alt-circle-left"></i> Back to ODS Reports</a>
     <a href="#pagetop" class="vp-page-link"><i class="fas fa-arrow-alt-circle-up"></i> Back to Top</a>
 </div>
 
