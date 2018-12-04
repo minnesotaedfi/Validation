@@ -40,29 +40,10 @@
     <IncludeIisSettings>false</IncludeIisSettings>
     <PublishDatabaseSettings>
       <Objects>
-        <ObjectGroup Name="ValidationPortalDbContext-Deployment" Order="1">
-          <Destination Path="Data Source=MN-DEV.doubleline.us%3bInitial Catalog=ValidationPortal%3bIntegrated Security=True%3bApplication Name=EntityFramework" />
-          <Object Type="DbFullSql">
-            <PreSource Path="Data Source=localhost%3bInitial Catalog=ValidationPortal%3bIntegrated Security=True%3bApplication Name=EntityFramework" ScriptSchema="False" ScriptData="True" CopyAllFullTextCatalogs="False" DriDefaults="True" />
-            <Source Path="obj\Debug\AutoScripts\ValidationPortalDbContext-Deployment_DataOnly.sql" Transacted="True" />
-          </Object>
-          <Object Type="DbFullSql" xmlns="">
-            <Source Path="Deployment\SQLScripts\ValPortal\AddASchoolYear.sql" Transacted="False" />
-          </Object>
-          <Object Type="DbFullSql" xmlns="">
-            <Source Path="Deployment\SQLScripts\ValPortal\CreateEmptyRulesSchema.sql" Transacted="False" />
-          </Object>
-        </ObjectGroup>
-        <ObjectGroup Name="SingleSignOnDatabase-Deployment" Order="2">
-          <Destination Path="Data Source=MN-DEV.doubleline.us%3bInitial Catalog=ValidationPortalSsoMock%3bIntegrated Security=True" />
-          <Object Type="DbFullSql">
-            <PreSource Path="Data Source=localhost%3bInitial Catalog=ValidationPortalSsoMock%3bIntegrated Security=True" ScriptSchema="True" ScriptData="True" CopyAllFullTextCatalogs="False" DriDefaults="True" />
-            <Source Path="obj\Debug\AutoScripts\SingleSignOnDatabase-Deployment_SchemaAndData.sql" Transacted="True" />
-          </Object>
-        </ObjectGroup>
       </Objects>
     </PublishDatabaseSettings>
     <ExcludeGeneratedDebugSymbol>false</ExcludeGeneratedDebugSymbol>
+    <PublishDatabases>false</PublishDatabases>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -214,7 +195,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\Fonts\fa-solid-900.svg" />
+    <Content Include="Content\Fonts\fa-solid-900.svg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\Scripts\bootstrap-datetimepicker.min.js" />
     <Content Include="Content\Scripts\jquery-3.3.1.js" />
     <Content Include="Content\Scripts\jquery-3.3.1.min.js" />
@@ -261,10 +244,18 @@
     <Content Include="Views\Admin\Partials\SubmissionCycleList.cshtml" />
     <Content Include="Views\Admin\Partials\SubmissionCycleEditModal.cshtml" />
     <Content Include="Views\Admin\Partials\SubmissionCycles.cshtml" />
-    <Content Include="Content\Fonts\fa-solid-900.eot" />
-    <Content Include="Content\Fonts\fa-solid-900.ttf" />
-    <Content Include="Content\Fonts\fa-solid-900.woff" />
-    <Content Include="Content\Fonts\fa-solid-900.woff2" />
+    <Content Include="Content\Fonts\fa-solid-900.eot">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Fonts\fa-solid-900.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Fonts\fa-solid-900.woff">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Fonts\fa-solid-900.woff2">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Views\Ods\Reports.cshtml" />
     <Content Include="Views\Ods\DemographicsReport.cshtml" />
     <Content Include="Views\Ods\MultipleEnrollmentsReport.cshtml" />
@@ -300,7 +291,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\Images\mdelogo450.png" />
+    <Content Include="Content\Images\mdelogo450.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\Scripts\bootstrap.js" />
     <Content Include="Content\Scripts\bootstrap.min.js" />
     <None Include="Content\Scripts\jquery-3.2.1.intellisense.js" />
@@ -467,12 +460,19 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Content\Rules\Collections.rules">
+    <Content Include="Content\Rules\Collections.rules">
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Content\Rules\MultipleEnrollment.rules" />
-    <EmbeddedResource Include="Content\Rules\StudentDemographic.rules" />
-    <EmbeddedResource Include="Content\Rules\StudentEnrollment.rules" />
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Rules\MultipleEnrollment.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Rules\StudentDemographic.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Rules\StudentEnrollment.rules">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
