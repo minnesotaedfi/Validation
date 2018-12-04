@@ -102,8 +102,11 @@ namespace ValidationWeb
                 ModelState.AddModelError("EndDate", "End Date needs to be later than Start Date");
             }
 
-            bool isDuplicate = _submissionCycleService.IsDuplicate(submissionCycle);
-            if (isDuplicate)
+            // We should not let the user add a submission cycle with the same school year and collectionId combination 
+            // that already exists in the database, or set the school year and collectionId of an existing cycle
+            // to ones of another existing submission cycle.
+            SubmissionCycle duplicate = _submissionCycleService.SchoolYearCollectionAlreadyExists(submissionCycle);
+            if (duplicate != null && (submissionCycle.Id == 0 || submissionCycle.Id != duplicate.Id))
             {
                 ModelState.AddModelError("CollectionId", "A submission cycle with this School Year and Collection already exists.");
             }
@@ -163,13 +166,13 @@ namespace ValidationWeb
             }
         }
 
-        public ActionResult AnnouncementAdd()
+        public ActionResult AddAnnouncement()
         {
             var announcement = new Announcement { Expiration = DateTime.Now };
             return PartialView("Partials/AnnouncementEditModal", announcement);
         }
 
-        public ActionResult AnnouncementEdit(int Id)
+        public ActionResult EditAnnouncement(int Id)
         {
             var announcement = _announcementService.GetAnnoucement(Id);
             return PartialView("Partials/AnnouncementEditModal", announcement);
