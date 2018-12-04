@@ -32,15 +32,13 @@
                 <td>@announcement.Message</td>
                 <td>@announcement.ContactInfo</td>
                 <td>@announcement.LinkUrl</td>
-                <td>@announcement.Expiration.ToString()</td>
+                <td>@announcement.Expiration.ToShortDateString()</td>
                 <td>
                         <a href="javascript:void(0);"
-                           class="announcement-edit btn btn-sm prime-blue white-heavy-text" data-id="@announcement.Id"><i class="fa fa-edit"></i></a>
+                           class="announcement-edit btn btn-sm prime-blue white-heavy-text" data-id="@announcement.Id">Edit</a>
                 </td>
                 <td>
-                        <a href="javascript:void(0);" data-id="@announcement.Id" class="announcement-delete btn btn-sm prime-blue white-heavy-text">
-                            <i class="fa fa-trash"></i>
-                        </a>
+                        <a href="javascript:void(0);" data-id="@announcement.Id" class="announcement-delete btn btn-sm prime-blue white-heavy-text">Delete</a>
                 </td>
             </tr>
         }

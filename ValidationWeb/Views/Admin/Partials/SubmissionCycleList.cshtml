@@ -30,16 +30,14 @@
                 <td class="id-hide-column">@submissionCycle.Id</td>
                 <td>@submissionCycle.SchoolYearDisplay</td>
                 <td>@submissionCycle.CollectionId</td>
-                <td>@submissionCycle.StartDate</td>
-                <td>@submissionCycle.EndDate</td>
+                <td>@submissionCycle.StartDate.ToShortDateString()</td>
+                <td>@submissionCycle.EndDate.ToShortDateString()</td>
                 <td>
                     <a href="javascript:void(0);"
-                       class="submissioncycle-edit btn btn-sm prime-blue white-heavy-text" data-id="@submissionCycle.Id"><i class="fa fa-edit"></i></a>
+                       class="submissioncycle-edit btn btn-sm prime-blue white-heavy-text" data-id="@submissionCycle.Id">Edit</a>
                 </td>
                 <td>
-                    <a href="javascript:void(0);" data-id="@submissionCycle.Id" class="submissioncycle-delete btn btn-sm prime-blue white-heavy-text">
-                        <i class="fa fa-trash"></i>
-                    </a>
+                    <a href="javascript:void(0);" data-id="@submissionCycle.Id" class="submissioncycle-delete btn btn-sm prime-blue white-heavy-text">Delete</a>
                 </td>
             </tr>
         }

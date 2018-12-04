@@ -126,15 +126,11 @@ namespace ValidationWeb.Services
             return schoolYears;
         }
 
-        public bool IsDuplicate(SubmissionCycle submissionCycle)
+        public SubmissionCycle SchoolYearCollectionAlreadyExists(SubmissionCycle submissionCycle)
         {
-            var duplicateCycles = _validationPortalDataContext.SubmissionCycles
-                .Where(x => x.SchoolYearId == submissionCycle.SchoolYearId && x.CollectionId == submissionCycle.CollectionId);
-            if (duplicateCycles.Count() > 0)
-            {
-                return true;
-            }
-            return false;
+            var duplicateCycle = _validationPortalDataContext.SubmissionCycles
+                .FirstOrDefault(x => x.SchoolYearId == submissionCycle.SchoolYearId && x.CollectionId == submissionCycle.CollectionId);
+            return duplicateCycle;
         }
 
         public void DeleteSubmissionCycle(int Id)

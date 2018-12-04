@@ -57,6 +57,10 @@
             }
         }
 
+        function assignAnnouncementDateHandlers() {
+            $('#edit-announcement-expiration').datetimepicker({ format: 'L' });
+        }
+
         function assignSubmissionCycleDateHandlers() {
             $('#edit-submissioncycle-startDate').datetimepicker({ format: 'L' });
             $('#edit-submissioncycle-endDate').datetimepicker({ format: 'L' });
@@ -64,6 +68,16 @@
 
         const ModelFieldMap = {"announcement": ["id", "priority", "message", "contactInfo", "linkUrl", "expiration"],
             "submissioncycle": ["id", "schoolYearId", "collectionId", "startDate", "endDate"]
+        };
+
+        const ModelFieldTransforms = {
+            "#edit-announcement-priority": function (prioritySelector) {
+                var priority = $(prioritySelector).val();
+                if ($.trim(priority).length === 0) {
+                    return 0;
+                }
+                return priority;
+            }
         };
 
         const ModelNameToDisplay = {"announcement": "Announcement",
@@ -83,143 +97,6 @@
                 $('#list-error-threshold').addClass("show active");
                 $('#list-error-threshold-list').addClass("active");
             }
-
-            var AddAnnouncementPostBackURL = "@Url.Content("~/Admin/AnnouncementAdd")";
-            $("#announcement-add").click(function () {
-                var options = { "backdrop": "static", keyboard: true };
-                $.ajax({
-                    type: "GET",
-                    url: AddAnnouncementPostBackURL,
-                    contentType: "application/json; charset=utf-8",
-                    data: {},
-                    datatype: "json",
-                    success: function (data) {
-                        $('#announcement-modal-content').html(data);
-                        $('#announcementModal').modal(options);
-                        $('#announcementModal').modal('show');
-
-                    },
-                    error: function () {
-                        alert("Could not open a dialog to create an announcement.");
-                    }
-                });
-            });
-
-            var EditAnnouncementPostBackURL = "@Url.Content("~/Admin/AnnouncementEdit")";
-            $(".announcement-edit").click(function () {
-                var $buttonClicked = $(this);
-                var id = $buttonClicked.attr('data-id');
-                var options = { "backdrop": "static", keyboard: true };
-                $.ajax({
-                    type: "GET",
-                    url: EditAnnouncementPostBackURL,
-                    contentType: "application/json; charset=utf-8",
-                    data: { "Id": id },
-                    datatype: "json",
-                    success: function (data) {
-                        $('#announcement-modal-content').html(data);
-                        $('#announcementModal').modal(options);
-                        $('#announcementModal').modal('show');
-                    },
-                    error: function () {
-                        alert("Could not retrieve the announcement for editing.");
-                    }
-                });
-            });
-
-            var DeleteAnnouncementPostBackURL = "@Url.Content("~/Admin/DeleteAnnouncement")";
-            $(".announcement-delete").click(function () {
-                var $buttonClicked = $(this);
-                var id = $buttonClicked.attr('data-id');
-                if (confirm("Are you sure you want to delete this announcement?")) {
-                    $.ajax({
-                        type: "DELETE",
-                        url: `${DeleteAnnouncementPostBackURL}/${id}`,
-                        success: function (data) {
-                            location.reload(true);
-                        },
-                        error: function () {
-                            alert("Could not delete the announcement.");
-                        }
-                    });
-                }
-            });
-
-
-            function DeleteModel(event) {
-                let modelName = event.data.modelName;
-                let deleteRoute = event.data.deleteRoute;
-                let modelDisplayName = ModelNameToDisplay[modelName];
-
-                var $buttonClicked = $(this);
-                var id = $buttonClicked.attr('data-id');
-                if (confirm(`Are you sure you want to delete this ${modelDisplayName}?`)) {
-                    $.ajax({
-                        type: "DELETE",
-                        url: `${deleteRoute}/${id}`,
-                        success: function (data) {
-                            location.reload(true);
-                        },
-                        error: function () {
-                            alert(`Could not delete the  ${modelName}.`);
-                        }
-                    });
-                }
-            };
-
-            var AddSubmissionCyclePostBackURL = "@Url.Content("~/Admin/AddSubmissionCycle")";
-            $("#submissioncycle-add").click(function () {
-                var options = { "backdrop": "static", keyboard: true };
-                $.ajax({
-                    type: "GET",
-                    url: AddSubmissionCyclePostBackURL,
-                    contentType: "application/json; charset=utf-8",
-                    data: {},
-                    datatype: "json",
-                    success: function (data) {
-                        $('#submissioncycle-modal-content').html(data);
-                        $('#submissioncycleModal').modal(options);
-                        $('#submissioncycleModal').modal('show');
-
-                    },
-                    error: function () {
-                        alert("Could not open a dialog to create a submission cycle.");
-                    }
-                });
-            });
-
-            function CreateEditModal(event) {
-                let modalNameRaw = event.data.modalName;
-                let modalEditRoute = event.data.modalEditRoute;
-                let modelName = modalNameRaw.toLowerCase();
-                let modelModalContent = `#${modelName}-modal-content`;
-                let modelModal = `#${modelName}Modal`;
-                var $buttonClicked = $(this);
-                var id = $buttonClicked.attr('data-id');
-                var options = { "backdrop": "static", keyboard: true };
-                $.ajax({
-                    type: "GET",
-                    url: modalEditRoute,
-                    contentType: "application/json; charset=utf-8",
-                    data: { "Id": id },
-                    datatype: "json",
-                    success: function (data) {
-                        $(modelModalContent).html(data);
-                        $(modelModal).modal(options);
-                        $(modelModal).modal('show');
-                    },
-                    error: function () {
-                        alert(`Could not retrieve the ${modalNameRaw} for editing.`);
-                    }
-                });
-            }
-
-            var EditSubmissionCycleRoute = "@Url.Content("~/Admin/EditSubmissionCycle")";
-            $(".submissioncycle-edit").click({ modalName: "SubmissionCycle", modalEditRoute: EditSubmissionCycleRoute }, CreateEditModal);
-
-            var DeleteSubmissionCycleRoute = "@Url.Content("~/Admin/DeleteSubmissionCycle")";
-            $(".submissioncycle-delete").click({ modelName: "submissioncycle", deleteRoute: DeleteSubmissionCycleRoute }, DeleteModel);
-
 
             $(".save-row").hide();
             $(".cancel-row").hide();
@@ -312,6 +189,24 @@
                 $("#add-end-year").val(Number($("#add-start-year").val()) + 1);
             });
 
+            var AddAnnouncementRoute = "@Url.Content("~/Admin/AddAnnouncement")";
+            $("#announcement-add").click({ modalName: "Announcement", modalAddRoute: AddAnnouncementRoute }, CreateAddModal);
+
+            var EditAnnouncementRoute = "@Url.Content("~/Admin/EditAnnouncement")";
+            $(".announcement-edit").click({ modalName: "Announcement", modalEditRoute: EditAnnouncementRoute }, CreateEditModal);
+
+            var DeleteAnnouncementRoute = "@Url.Content("~/Admin/DeleteAnnouncement")";
+            $(".announcement-delete").click({ modelName: "announcement", deleteRoute: DeleteAnnouncementRoute }, DeleteModel);
+
+            var AddSubmissionCycleRoute = "@Url.Content("~/Admin/AddSubmissionCycle")";
+            $("#submissioncycle-add").click({ modalName: "SubmissionCycle", modalAddRoute: AddSubmissionCycleRoute }, CreateAddModal);
+
+            var EditSubmissionCycleRoute = "@Url.Content("~/Admin/EditSubmissionCycle")";
+            $(".submissioncycle-edit").click({ modalName: "SubmissionCycle", modalEditRoute: EditSubmissionCycleRoute }, CreateEditModal);
+
+            var DeleteSubmissionCycleRoute = "@Url.Content("~/Admin/DeleteSubmissionCycle")";
+            $(".submissioncycle-delete").click({ modelName: "submissioncycle", deleteRoute: DeleteSubmissionCycleRoute }, DeleteModel);
+
             $('#submissioncycleModal').on('shown.bs.modal', function () {
                 setModalHeaderText("submissioncycle", ModelNameToDisplay["submissioncycle"]);
                 assignSubmissionCycleDateHandlers();
@@ -320,72 +215,83 @@
 
             $('#announcementModal').on('shown.bs.modal', function () {
                 setModalHeaderText("announcement", ModelNameToDisplay["announcement"]);
-                $('#edit-announcement-expiration').datetimepicker({ format: 'L' });
-                $("#save-announcement").click(saveAnnouncement);
+                assignAnnouncementDateHandlers();
+                $("#save-announcement").click({ modalName: "Announcement", additionalFunction: assignAnnouncementDateHandlers }, saveModel);
             });
         });
 
-        function saveAnnouncement(event) {
-            var SaveAnnouncementPostBackURL = "@Url.Content("~/Admin/SaveAnnouncement")";
-            event.preventDefault();
-            $("#save-announcement").prop("disabled", true);
-            var id = $('#edit-announcement-id').val();
-            var priority = $('#edit-announcement-priority').val();
-            if ($.trim(priority).length === 0) {
-                priority = 0;
-            }
-            var message = $('#edit-announcement-message').val();
-            var contactInfo = $('#edit-announcement-contactInfo').val();
-            var linkUrl = $('#edit-announcement-linkUrl').val();
-            var expirationDate = $('#edit-announcement-expiration').val();
+        function CreateAddModal(event) {
+            let modalNameRaw = event.data.modalName;
+            let modalAddRoute = event.data.modalAddRoute;
+            let modelName = modalNameRaw.toLowerCase();
+            let modelModalContent = `#${modelName}-modal-content`;
+            let modelModal = `#${modelName}Modal`;
+            let modelDisplayName = ModelNameToDisplay[modelName];
+
             var options = { "backdrop": "static", keyboard: true };
-            var dataObj = { id: id, priority: priority, message: message, contactInfo: contactInfo, linkUrl: linkUrl, expiration: expirationDate };
-            var jsonData = JSON.stringify(dataObj);
             $.ajax({
-                type: "POST",
-                url: SaveAnnouncementPostBackURL,
+                type: "GET",
+                url: modalAddRoute,
                 contentType: "application/json; charset=utf-8",
-                data: jsonData,
+                data: {},
                 datatype: "json",
                 success: function (data) {
-                    var tempData = $(data);
-                    let announcementValidationSummaryContents = "";
-                    let announcementValidationSummary = tempData.find('#announcement-validation-summary-row');
-                    if (announcementValidationSummary) {
-                        announcementValidationSummaryContents = announcementValidationSummary.text();
-                    }
-                    // If announcementValidationSummaryContents contains more than just whitespace,
-                    // then validation summary contains errors, and we should re-show the modal
-                    if ($.trim(announcementValidationSummaryContents).length > 0) {
-                        $('#announcement-modal-content').html(data);
-                        $('#announcementModal').modal(options);
-                        $('#announcementModal').modal('show');
-                        // Need to reattach event handlers to some of the modal's fields, because
-                        // when the modal's HTML got repopulated above, the event handlers disappeared
-                        setAnnouncementHeaderText();
-                        $('#edit-announcement-expiration').datetimepicker({ format: 'L' });
-                        $("#save-announcement").click(saveAnnouncement);
-                    }
-                    else {
-                        let locationUrl = location.href;
-                        let urlContainsAnnouncements = locationUrl.includes('announcements');
-                        if (!urlContainsAnnouncements) {
-                            location.href = `${location.href}?tab=announcements`;
-                        }
-                        location.reload(true);
-                    }
+                    $(modelModalContent).html(data);
+                    $(modelModal).modal(options);
+                    $(modelModal).modal('show');
                 },
-                error: function (data) {
-                    $('#announcement-modal-content').html(data);
-                    $('#announcementModal').modal(options);
-                    $('#announcementModal').modal('show');
-                    // Need to reattach event handlers to some of the modal's fields, because
-                    // when the modal's HTML got repopulated above, the event handlers disappeared
-                    $('#edit-announcement-expiration').datetimepicker({ format: 'L' });
-                    $("#save-announcement").click(saveAnnouncement);
+                error: function () {
+                    alert(`Could not open a dialog to create ${modelDisplayName}.`);
                 }
             });
         }
+
+        function CreateEditModal(event) {
+            let modalNameRaw = event.data.modalName;
+            let modalEditRoute = event.data.modalEditRoute;
+            let modelName = modalNameRaw.toLowerCase();
+            let modelModalContent = `#${modelName}-modal-content`;
+            let modelModal = `#${modelName}Modal`;
+            var $buttonClicked = $(this);
+            var id = $buttonClicked.attr('data-id');
+            var options = { "backdrop": "static", keyboard: true };
+            $.ajax({
+                type: "GET",
+                url: modalEditRoute,
+                contentType: "application/json; charset=utf-8",
+                data: { "Id": id },
+                datatype: "json",
+                success: function (data) {
+                    $(modelModalContent).html(data);
+                    $(modelModal).modal(options);
+                    $(modelModal).modal('show');
+                },
+                error: function () {
+                    alert(`Could not retrieve the ${modalNameRaw} for editing.`);
+                }
+            });
+        }
+
+        function DeleteModel(event) {
+            let modelName = event.data.modelName;
+            let deleteRoute = event.data.deleteRoute;
+            let modelDisplayName = ModelNameToDisplay[modelName];
+
+            var $buttonClicked = $(this);
+            var id = $buttonClicked.attr('data-id');
+            if (confirm(`Are you sure you want to delete this ${modelDisplayName}?`)) {
+                $.ajax({
+                    type: "DELETE",
+                    url: `${deleteRoute}/${id}`,
+                    success: function (data) {
+                        location.reload(true);
+                    },
+                    error: function () {
+                        alert(`Could not delete the ${modelDisplayName}.`);
+                    }
+                });
+            }
+        };
 
         function saveModel(event) {
             event.preventDefault();
@@ -450,9 +356,16 @@
 
         function getMappedModel(modelName, modelFieldNames) {
             let dataObj = {};
+            let fieldVal = "";
             for (fieldName of modelFieldNames) {
                 let fieldSelector = `#edit-${modelName}-${fieldName}`;
-                let fieldVal = $(fieldSelector).val();
+                let fieldValFunc = ModelFieldTransforms[fieldSelector];
+                if (fieldValFunc) {
+                    fieldVal = fieldValFunc(fieldSelector);
+                }
+                else {
+                    fieldVal = $(fieldSelector).val();
+                }
                 dataObj[fieldName] = fieldVal;
             }
             return dataObj;
