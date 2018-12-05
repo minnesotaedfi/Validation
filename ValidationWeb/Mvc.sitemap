@@ -7,10 +7,10 @@
 	<mvcSiteMapNode title="Home" controller="Home" action="Index">
 		<mvcSiteMapNode title="ODS Reports" controller="Ods" action="Reports">
 			<mvcSiteMapNode title="Ancestry Ethnic Origin and Race Counts" controller="Ods" action="DemographicsReport" drillDownColumnIndex="" key="ancestry">
-				<mvcSiteMapNode title="Cumulative Enrollments" controller="Ods" action="DemographicsReport" drillDownColumnIndex="1" key="ancestry-0"/>
-				<mvcSiteMapNode title="Demographics Records" controller="Ods" action="DemographicsReport" drillDownColumnIndex="2" key="ancestry-1"/>
-				<mvcSiteMapNode title="Students with Race Submitted" controller="Ods" action="DemographicsReport" drillDownColumnIndex="3" key="ancestry-2"/>
-				<mvcSiteMapNode title="Students with AEO Submitted" controller="Ods" action="DemographicsReport" drillDownColumnIndex="4" key="ancestry-3"/>
+				<mvcSiteMapNode title="Cumulative Enrollments" controller="Ods" action="DemographicsReport" drillDownColumnIndex="0" key="ancestry-0"/>
+				<mvcSiteMapNode title="Demographics Records" controller="Ods" action="DemographicsReport" drillDownColumnIndex="1" key="ancestry-1"/>
+				<mvcSiteMapNode title="Students with Race Submitted" controller="Ods" action="DemographicsReport" drillDownColumnIndex="2" key="ancestry-2"/>
+				<mvcSiteMapNode title="Students with AEO Submitted" controller="Ods" action="DemographicsReport" drillDownColumnIndex="3" key="ancestry-3"/>
 			</mvcSiteMapNode>
 			<mvcSiteMapNode title="Dual Enrollment Students" controller="Ods" action="MultipleEnrollmentsReport"  drillDownColumnIndex="" key="dual">
 				<mvcSiteMapNode title="Cumulative Enrollments" controller="Ods" action="MultipleEnrollmentsReport" drillDownColumnIndex="0" key="dual-0"/>

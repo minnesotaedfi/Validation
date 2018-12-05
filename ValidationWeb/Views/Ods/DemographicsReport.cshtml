@@ -19,13 +19,20 @@
 else
 {
     <div class="vp-body-header justify-content-start align-self-center">Ancestry Ethnic Origin and Race Counts for District @Model.EdOrgName (@Model.EdOrgId.ToString())</div>
+
+    if (Model.SchoolId.HasValue && !string.IsNullOrWhiteSpace(Model.SchoolName))
+    {
+        <div class="vp-body-header justify-content-start align-self-center">
+            For @Model.SchoolName (@Model.SchoolId)
+        </div>
+    }
 }
 </div>
 <div id="requestedReportContent" class="row">
     <table class="table table-sm table-responsive-md table-bordered" id="reportsTable">
         <tr class="table-primary">
             <th>ID</th>
-            <th>District/School</th>
+            <th>District/School</th>ffff
             <th>Cumulative Enrollments</th>
             <th>Demographics Records</th>
             <th>Students with Race Submitted</th>
