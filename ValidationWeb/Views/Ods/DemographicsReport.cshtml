@@ -10,20 +10,51 @@
     else
     {
         <div><a href="@Url.Action("DemographicsReport", "Ods", new { isStateMode = true })" class="vp-page-link show-data-loading"><i class="fas fa-sitemap"></i> View All Districts</a></div>
-    } 
+    }
 </div>
 <div class="row tbmargin10">
-@if (Model.IsStateMode)
-{
-    <div class="vp-body-header justify-content-start align-self-center">Ancestry Ethnic Origin and Race Counts for All Minnesota Districts</div>
-}
-else
-{
-    <div class="vp-body-header justify-content-start align-self-center">Ancestry Ethnic Origin and Race Counts for District @Model.EdOrgName (@Model.EdOrgId.ToString())</div>
-}
+    @if (Model.IsStateMode)
+    {
+        <div class="vp-body-header justify-content-start align-self-center">Ancestry Ethnic Origin and Race Counts for All Minnesota Districts</div>
+    }
+    else
+    {
+        <div class="vp-body-header justify-content-start align-self-center">Ancestry Ethnic Origin and Race Counts for District @Model.EdOrgName (@Model.EdOrgId.ToString())</div>
+    }
 </div>
 <div id="requestedReportContent" class="row">
     <table class="table table-sm table-responsive-md table-bordered" id="reportsTable">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Position</th>
+            <th>Office</th>
+            <th>Age</th>
+            <th>Start date</th>
+            <th>Salary</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>Tiger Nixon</td>
+            <td>System Architect</td>
+            <td>Edinburgh</td>
+            <td>61</td>
+            <td>2011/04/25</td>
+            <td>$320,800</td>
+        </tr>
+        <tr>
+            <td>Garrett Winters</td>
+            <td>Accountant</td>
+            <td>Tokyo</td>
+            <td>63</td>
+            <td>2011/07/25</td>
+            <td>$170,750</td>
+        </tr>
+    </table>
+</div>
+<div id="__requestedReportContent" class="row">
+    <table class="table table-sm table-responsive-md table-bordered" id="__reportsTable">
         <tr class="table-primary">
             <th>ID</th>
             <th>District/School</th>
@@ -61,7 +92,7 @@ else
         }
     </table>
     @if (Model.Results.Count == 0)
-    {    
+    {
         <div class="vp-body-header col-8 justify-content-start align-self-center">No records were found.</div>
     }
 </div>
@@ -79,5 +110,8 @@ else
 
 @section scripts {
     <script>
+        $(document).ready(function() {
+            $('#reportsTable').DataTable();
+        });
     </script>
 }
