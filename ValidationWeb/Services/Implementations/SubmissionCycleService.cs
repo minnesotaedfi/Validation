@@ -34,6 +34,21 @@ namespace ValidationWeb.Services
             return _validationPortalDataContext.SubmissionCycles.ToList();
         }
 
+        public IList<SubmissionCycle> GetSubmissionCyclesOpenToday()
+        {
+            var submissionCyclesOpenToday = _validationPortalDataContext.SubmissionCycles
+                .Where(s => s.StartDate <= DateTime.Now && s.EndDate >= DateTime.Now);
+            foreach (var submissionCycle in submissionCyclesOpenToday)
+            {
+                var schoolYear = _validationPortalDataContext.SchoolYears.FirstOrDefault(x => x.Id == submissionCycle.SchoolYearId);
+                if (schoolYear != null)
+                {
+                    submissionCycle.SchoolYearDisplay = schoolYear.ToString();
+                }
+            }
+            return submissionCyclesOpenToday.ToList();
+        }
+
         public SubmissionCycle GetSubmissionCycle(int id)
         {
             return _validationPortalDataContext.SubmissionCycles.FirstOrDefault(submissionCycle => submissionCycle.Id == id);
