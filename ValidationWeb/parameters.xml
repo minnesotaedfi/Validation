@@ -89,7 +89,7 @@
   <parameter
       name="UseSimulatedSSO"
       description="If true, will override all requests, passing in the name of the simulated SSO User."
-      >
+      defaultValue="true">
     <parameterEntry
           kind="XmlFile"
           scope="Web.config"
