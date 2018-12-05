@@ -1,7 +1,7 @@
 ﻿@model ValidationReportsViewModel
 
 <script>
-    var collectionIdSelection, schoolYearSelection, lastModalExitButton = 'none';
+    var lastModalExitButton = 'none';
 </script>
 
 
@@ -20,22 +20,21 @@
                             </div>
                             <div class="modal-body">
                                 <label for="collectionIdSelect">Select a collection of rules to validate: </label>
-                                <select id="collectionIdSelect" name="collectionIdSelect">
-                                    @foreach (var coll in Model.RulesCollections)
+                                <select id="cycleIdSelect" name="cycleIdSelect" class="form-control">
+                                    @foreach (var cycle in Model.SubmissionCycles)
                                     {
-                                        <option value="@(coll.CollectionId)">@(coll.ToFriendlyName())</option>
-                                    }
-                                </select>
-                                <label for="schoolYearSelect">Select which school year's data to validate: </label>
-                                <select id="schoolYearSelect" name="schoolYearSelect">
-                                    @foreach (var syear in Model.SchoolYears)
-                                    {
-                                        <option id="syopt@(syear.StartYear)" class="school-year-option" value="@(syear.StartYear)" @if (syear.Id == Model.FocusedSchoolYearId) { <text> selected </text> }>@(syear.ToString())</option>
+                                        var schoolYearAndCollectionName = "";
+                                        var coll = Model.RulesCollections.FirstOrDefault(c => c.CollectionId == cycle.CollectionId);
+                                        if (coll != null)
+                                        {
+                                            schoolYearAndCollectionName = $"{cycle.SchoolYearDisplay} / {coll.ToFriendlyName()}";
+                                            <option value="@(cycle.Id)" @if (cycle.SchoolYearId == Model.FocusedSchoolYearId) { <text> selected </text> }>@(schoolYearAndCollectionName)</option>
+                                        }
                                     }
                                 </select>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn prime-blue white-heavy-text" data-dismiss="modal" data-toggle="modal" data-target="#ConfirmNewValidationModal">Next &gt;&gt;</button>
+                                <button id="confirm-validation" type="button" class="btn prime-blue white-heavy-text" data-dismiss="modal" data-toggle="modal" data-target="#ConfirmNewValidationModal">Next &gt;&gt;</button>
                                 <button type="button" class="btn prime-blue white-heavy-text" data-dismiss="modal" onclick="lastModalExitButton='cancel'">Cancel</button>
                             </div>
                         </div>
@@ -52,7 +51,7 @@
                                 <button type="button" class="close" data-dismiss="modal" onclick="lastModalExitButton='cancel'">&times;</button>
                             </div>
                             <div class="modal-body">
-                                Please confirm you would like to run a validation for District @(Model.DistrictName), Collection <span class="collectionIdSelection"></span>, School Year <span class="schoolYearSelection"></span>?
+                                Please confirm you would like to run a validation for District @(Model.DistrictName), School Year <span class="schoolYearDisplayName"></span>, Collection <span class="collectionDisplayName"></span>?
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn prime-blue white-heavy-text" data-dismiss="modal" onclick="lastModalExitButton='launch'">Launch Validation</button>
@@ -116,10 +115,15 @@ else
         // Once the user has clicked the Validate button and chosen a *year* and *collection*, 
         // This callback records those choices on the second popup (a confirmation dialog/modal).
         $('#NewValidationModal').on('hidden.bs.modal', function (e) {
-            collectionIdSelection = $('#collectionIdSelect').val();
-            schoolYearSelection = $('#schoolYearSelect').val();
-            $('.collectionIdSelection').text(collectionIdSelection.replace(/_/g, ' '));
-            $('.schoolYearSelection').text(schoolYearSelection);
+            let cycleId = $('#cycleIdSelect').val();
+            let cycleIdSelection = $('#cycleIdSelect').find("option:selected").text();
+            let schoolYearDisplayName, collectionId;
+            [schoolYearDisplayName, collectionId] = cycleIdSelection.split(" / ");
+            $('.schoolYearDisplayName').text(schoolYearDisplayName);
+            $('.collectionDisplayName').text(collectionId.replace(/_/g, ' '));
+            $('#confirm-validation').attr("data-id", cycleId);
+
+            $('.schoolYearCollectionSelection').text(cycleIdSelection.replace(/_/g, ' '));
         });
 
         // Once the user has already clicked the Validate button and chosen a *year* and *collection*, there is a second, Yes/No confirmation.
@@ -127,24 +131,27 @@ else
         $('#ConfirmNewValidationModal').on('hidden.bs.modal', function (e) {
             overlayOn();
             setTimeout(function () { overlayOff(); }, 2000);
-            if (lastModalExitButton=='launch') {
+            if (lastModalExitButton == 'launch') {
+                let cycleId = $('#confirm-validation').attr("data-id");
                 $.ajax({
                     url: '@(Url.Action("RunEngine", "Validation"))',
+                    type: "POST",
                     beforeSend: function (request) {
                         request.setRequestHeader('Authorization', '@(Model.TheUser.UserId)');
                     },
                     async: true,
-                    data: { collectionId: collectionIdSelection, schoolYear: schoolYearSelection },
+                    data: { submissionCycleId: cycleId },
                     success: function (result) {
                         location.reload(true);
                         overlayOff();
                     },
-                    error: function () {
+                    error: function (err) {
+                        // Perhaps in the future we might want to display to the user an error if the validation failed,
+                        // thus we might need the "err" variable.
                         overlayOff();
                     }
                 });
             }
-            window.location.reload(true);
         });
 
         // TODO: Puts the table into a downloadable CSV - unfortunately, it doesn't support dates
