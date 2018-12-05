@@ -1,7 +1,6 @@
 ﻿@model OdsDemographicsReportViewModel
 
 <div id="pagetop" class="row tbmargin10">
-    <div><a href="@Url.Action("Reports")" class="back-link"><i class="fas fa-arrow-alt-circle-left"></i> Back to ODS Reports</a></div>
     <div><a href="#notes" class="vp-page-link"><i class="fas fa-arrow-alt-circle-down"></i> See notes</a></div>
     @if (Model.IsStateMode)
     {
@@ -13,14 +12,21 @@
     }
 </div>
 <div class="row tbmargin10">
-    @if (Model.IsStateMode)
+@if (Model.IsStateMode)
+{
+    <div class="vp-body-header justify-content-start align-self-center">Ancestry Ethnic Origin and Race Counts for All Minnesota Districts</div>
+}
+else
+{
+    <div class="vp-body-header justify-content-start align-self-center">Ancestry Ethnic Origin and Race Counts for District @Model.EdOrgName (@Model.EdOrgId.ToString())</div>
+
+    if (Model.SchoolId.HasValue && !string.IsNullOrWhiteSpace(Model.SchoolName))
     {
-        <div class="vp-body-header justify-content-start align-self-center">Ancestry Ethnic Origin and Race Counts for All Minnesota Districts</div>
+        <div class="vp-body-header justify-content-start align-self-center">
+            For @Model.SchoolName (@Model.SchoolId)
+        </div>
     }
-    else
-    {
-        <div class="vp-body-header justify-content-start align-self-center">Ancestry Ethnic Origin and Race Counts for District @Model.EdOrgName (@Model.EdOrgId.ToString())</div>
-    }
+}
 </div>
 <div id="requestedReportContent" class="row">
     <table class="table table-sm table-responsive-md table-bordered" id="reportsTable">
@@ -57,7 +63,7 @@
     <table class="table table-sm table-responsive-md table-bordered" id="__reportsTable">
         <tr class="table-primary">
             <th>ID</th>
-            <th>District/School</th>
+            <th>District/School</th>ffff
             <th>Cumulative Enrollments</th>
             <th>Demographics Records</th>
             <th>Students with Race Submitted</th>
@@ -103,7 +109,6 @@
 <div class="row">(2) A student is counted as enrolled if the student was enrolled at least once during the school year.</div>
 <div class="row">(3) Students are counted only once per table cell for the particular school/district/state.</div>
 <div class="row tbmargin10">
-    <a href="@Url.Action("Reports")" class="back-link"><i class="fas fa-arrow-alt-circle-left"></i> Back to ODS Reports</a>
     <a href="#pagetop" class="vp-page-link"><i class="fas fa-arrow-alt-circle-up"></i> Back to Top</a>
 </div>
 

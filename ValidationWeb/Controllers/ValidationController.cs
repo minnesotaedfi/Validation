@@ -13,24 +13,30 @@ namespace ValidationWeb
     {
         protected readonly IAppUserService _appUserService;
         protected readonly IEdOrgService _edOrgService;
+        protected readonly ILoggingService _loggingService;
         protected readonly IRulesEngineService _rulesEngineService;
         protected readonly ISchoolYearService _schoolYearService;
+        private readonly ISubmissionCycleService _submissionCycleService;
         protected readonly IValidationResultsService _validationResultsService;
         protected readonly Model _engineObjectModel;
 
         public ValidationController(
             IAppUserService appUserService,
             IEdOrgService edOrgService,
+            ILoggingService loggingService,
             IValidationResultsService validationResultsService,
             IRulesEngineService rulesEngineService,
             ISchoolYearService schoolYearService,
+            ISubmissionCycleService submissionCycleService,
             Model engineObjectModel)
         {
             _appUserService = appUserService;
             _edOrgService = edOrgService;
             _engineObjectModel = engineObjectModel;
+            _loggingService = loggingService;
             _rulesEngineService = rulesEngineService;
             _schoolYearService = schoolYearService;
+            _submissionCycleService = submissionCycleService;
             _validationResultsService = validationResultsService;
         }
 
@@ -50,7 +56,8 @@ namespace ValidationWeb
                 ReportSummaries = reportSummaries,
                 RulesCollections = rulesCollections,
                 SchoolYears = _schoolYearService.GetSubmittableSchoolYears().ToList(),
-                FocusedEdOrgId = _appUserService.GetSession().FocusedEdOrgId,
+                SubmissionCycles = _submissionCycleService.GetSubmissionCyclesOpenToday(),
+            FocusedEdOrgId = _appUserService.GetSession().FocusedEdOrgId,
                 FocusedSchoolYearId = _appUserService.GetSession().FocusedSchoolYearId
             };
             return View(model);
@@ -67,13 +74,22 @@ namespace ValidationWeb
             return View(model);
         }
 
-        public ActionResult RunEngine(string collectionId, string schoolYear)
+        [HttpPost]
+        public ActionResult RunEngine(int submissionCycleId)
         {
+            SubmissionCycle submissionCycle = _submissionCycleService.GetSubmissionCycle(submissionCycleId);
+            if (submissionCycle == null)
+            {
+                string strMessage = $"Submission cycle with id {submissionCycleId} not found.";
+                _loggingService.LogErrorMessage(strMessage);
+                throw new Exception(strMessage);
+            }
             // TODO: Validate the user's access to district, action, school year
             // Kick off Validation
-            ValidationReportSummary summary = _rulesEngineService.RunEngine(schoolYear, collectionId);
+            ValidationReportSummary summary = _rulesEngineService.RunEngine(submissionCycle.StartDate.Year.ToString(), submissionCycle.CollectionId);
             return Json(summary);
         }
+
 
         /*
          * 
