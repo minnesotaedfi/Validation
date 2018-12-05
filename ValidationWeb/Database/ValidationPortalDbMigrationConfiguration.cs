@@ -36,7 +36,12 @@ namespace ValidationWeb
         {
             context.EdOrgTypeLookup.AddOrUpdate(EdOrgTypeLookups);
             context.ErrorSeverityLookup.AddOrUpdate(ErrorSeverityLookups);
-            context.SchoolYears.AddOrUpdate(new SchoolYear("2018", "2019"));
+            if (context.SchoolYears != null && context.SchoolYears.Count() <= 0)
+            {
+                context.SchoolYears.AddOrUpdate(new SchoolYear("2018", "2019"));
+                context.SchoolYears.AddOrUpdate(new SchoolYear("2019", "2020"));
+                context.SchoolYears.AddOrUpdate(new SchoolYear("2020", "2021"));
+            }
         }
     }
 }
