@@ -29,41 +29,43 @@ else
 }
 </div>
 <div id="requestedReportContent" class="row">
-    <table class="table table-sm table-responsive-md table-bordered" id="reportsTable">
-        <thead>
-        <tr>
-            <th>Name</th>
-            <th>Position</th>
-            <th>Office</th>
-            <th>Age</th>
-            <th>Start date</th>
-            <th>Salary</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td>Tiger Nixon</td>
-            <td>System Architect</td>
-            <td>Edinburgh</td>
-            <td>61</td>
-            <td>2011/04/25</td>
-            <td>$320,800</td>
-        </tr>
-        <tr>
-            <td>Garrett Winters</td>
-            <td>Accountant</td>
-            <td>Tokyo</td>
-            <td>63</td>
-            <td>2011/07/25</td>
-            <td>$170,750</td>
-        </tr>
-    </table>
+    <div class="col-md-12">
+        <table class="table table-sm table-responsive-md table-bordered display responsive no-wrap" id="reportsTable" style="width: 100%">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>District/School</th>
+                <th>Cumulative Enrollments</th>
+                <th>Demographics Records</th>
+                <th>Students with Race Submitted</th>
+                <th>Students with AEO Submitted</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>Tiger Nixon</td>
+                <td>System Architect</td>
+                <td>Edinburgh</td>
+                <td>61</td>
+                <td>2011/04/25</td>
+                <td>$320,800</td>
+            </tr>
+            <tr>
+                <td>Garrett Winters</td>
+                <td>Accountant</td>
+                <td>Tokyo</td>
+                <td>63</td>
+                <td>2011/07/25</td>
+                <td>$170,750</td>
+            </tr>
+        </table>
+    </div>
 </div>
 <div id="__requestedReportContent" class="row">
-    <table class="table table-sm table-responsive-md table-bordered" id="__reportsTable">
+    <table class="table table-sm table-responsive-md table-bordered " id="__reportsTable">
         <tr class="table-primary">
             <th>ID</th>
-            <th>District/School</th>ffff
+            <th>District/School</th>
             <th>Cumulative Enrollments</th>
             <th>Demographics Records</th>
             <th>Students with Race Submitted</th>
@@ -116,7 +118,9 @@ else
 @section scripts {
     <script>
         $(document).ready(function() {
-            $('#reportsTable').DataTable();
+            $('#reportsTable').DataTable({
+                responsive: true,
+            });
         });
     </script>
 }
