@@ -58,6 +58,7 @@ namespace ValidationWeb
             var edOrg = _edOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
             var edOrgName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
             var edOrgId = edOrg.Id;
+
             // A state user can look at any district via a link, without changing the default district.
             if (districtToDisplay.HasValue && session.UserIdentity.AuthorizedEdOrgs.Select(eorg => eorg.Id).Contains(districtToDisplay.Value))
             {
@@ -65,6 +66,11 @@ namespace ValidationWeb
                 edOrg = _edOrgService.GetEdOrgById(edOrgId, session.FocusedSchoolYearId);
                 edOrgName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
             }
+
+            var schoolName = schoolId.HasValue
+                                 ? "placeholder" // _edOrgService.GetEdOrgById(schoolId.Value, session.FocusedSchoolYearId)?.OrganizationName
+                                 : string.Empty;
+
             var fourDigitSchoolYear = _schoolyearService.GetSchoolYearById(session.FocusedSchoolYearId).StartYear;
             var theUser = _appUserService.GetUser();
             if (isStudentDrillDown)
@@ -81,6 +87,7 @@ namespace ValidationWeb
                 };
                 return View("StudentDrillDown", studentDrillDownModel);
             }
+
             var results = _odsDataService.GetDistrictAncestryRaceCounts(isStateMode ? (int?)null : edOrgId, fourDigitSchoolYear);
             var model = new OdsDemographicsReportViewModel
             {
@@ -88,8 +95,11 @@ namespace ValidationWeb
                 EdOrgName = edOrgName,
                 User = theUser,
                 Results = results,
-                IsStateMode = isStateMode
+                IsStateMode = isStateMode,
+                SchoolId = schoolId,
+                SchoolName = schoolName
             };
+
             return View(model);
         }
 
