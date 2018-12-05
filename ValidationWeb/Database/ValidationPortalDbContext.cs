@@ -7,7 +7,7 @@ using System.Web;
 
 namespace ValidationWeb
 {
-    public partial class ValidationPortalDbContext : DbContext
+    public partial class ValidationPortalDbContext : DbContext, IValidationPortalDbContext
     {
         // Use of "name=" ensures that a new database won't be created by default.
         public ValidationPortalDbContext()
@@ -33,6 +33,11 @@ namespace ValidationWeb
         public virtual DbSet<ValidationErrorSummary> ValidationErrorSummaries { get; set; }
         public virtual DbSet<ValidationReportDetails> ValidationReportDetails { get; set; }
         public virtual DbSet<ValidationReportSummary> ValidationReportSummaries { get; set; }
+
+        public override int SaveChanges()
+        {
+            return ((DbContext)this).SaveChanges();
+        }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
