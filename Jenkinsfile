@@ -1,2 +1,2 @@
-stage 'Checkout'
+
     checkout scm
