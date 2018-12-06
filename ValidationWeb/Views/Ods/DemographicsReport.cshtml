@@ -12,57 +12,29 @@
     }
 </div>
 <div class="row tbmargin10">
-@if (Model.IsStateMode)
-{
-    <div class="vp-body-header justify-content-start align-self-center">Ancestry Ethnic Origin and Race Counts for All Minnesota Districts</div>
-}
-else
-{
-    <div class="vp-body-header justify-content-start align-self-center">Ancestry Ethnic Origin and Race Counts for District @Model.EdOrgName (@Model.EdOrgId.ToString())</div>
-
-    if (Model.SchoolId.HasValue && !string.IsNullOrWhiteSpace(Model.SchoolName))
+    @if (Model.IsStateMode)
     {
-        <div class="vp-body-header justify-content-start align-self-center">
-            For @Model.SchoolName (@Model.SchoolId)
-        </div>
+        <div class="vp-body-header justify-content-start align-self-center">Ancestry Ethnic Origin and Race Counts for All Minnesota Districts</div>
     }
-}
+    else
+    {
+        <div class="vp-body-header justify-content-start align-self-center">Ancestry Ethnic Origin and Race Counts for District @Model.EdOrgName (@Model.EdOrgId.ToString())</div>
+
+        if (Model.SchoolId.HasValue && !string.IsNullOrWhiteSpace(Model.SchoolName))
+        {
+            <div class="vp-body-header justify-content-start align-self-center">
+                For @Model.SchoolName (@Model.SchoolId)
+            </div>
+        }
+    }
 </div>
 <div id="requestedReportContent" class="row">
-    <div class="col-md-12">
-        <table class="table table-sm table-responsive-md table-bordered display responsive no-wrap" id="reportsTable" style="width: 100%">
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>District/School</th>
-                <th>Cumulative Enrollments</th>
-                <th>Demographics Records</th>
-                <th>Students with Race Submitted</th>
-                <th>Students with AEO Submitted</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td>Tiger Nixon</td>
-                <td>System Architect</td>
-                <td>Edinburgh</td>
-                <td>61</td>
-                <td>2011/04/25</td>
-                <td>$320,800</td>
-            </tr>
-            <tr>
-                <td>Garrett Winters</td>
-                <td>Accountant</td>
-                <td>Tokyo</td>
-                <td>63</td>
-                <td>2011/07/25</td>
-                <td>$170,750</td>
-            </tr>
-        </table>
+    <div class="col-md-12 nopadding">
+        <table class="table table-sm table-responsive-md table-bordered table-hover" id="reportsTable" style="width: 100%"></table>
     </div>
 </div>
-<div id="__requestedReportContent" class="row">
-    <table class="table table-sm table-responsive-md table-bordered " id="__reportsTable">
+@*<div id="__requestedReportContent" class="row">
+    <table class="table table-sm table-responsive-md table-bordered table-hover  " id="__reportsTable">
         <tr class="table-primary">
             <th>ID</th>
             <th>District/School</th>
@@ -71,7 +43,7 @@ else
             <th>Students with Race Submitted</th>
             <th>Students with AEO Submitted</th>
         </tr>
-        @foreach (var result in Model.Results)
+        @ foreach (var result in Model.Results.Take(10))
         {
             <tr>
                 <td>
@@ -99,11 +71,13 @@ else
             </tr>
         }
     </table>
-    @if (Model.Results.Count == 0)
-    {
-        <div class="vp-body-header col-8 justify-content-start align-self-center">No records were found.</div>
-    }
 </div>
+*@
+
+@if (Model.Results.Count == 0)
+{
+    <div class="vp-body-header col-8 justify-content-start align-self-center">No records were found.</div>
+}
 <div id="notes" class="row">
     <div class="vp-body-header">Notes:</div>
 </div>
@@ -117,10 +91,100 @@ else
 
 @section scripts {
     <script>
-        $(document).ready(function() {
-            $('#reportsTable').DataTable({
-                responsive: true,
+
+        $(document).ready(function () {
+            var data = @Html.Raw(Json.Encode(Model.Results));
+            var drillDownLinkTemplate = '<a href="@Html.Raw(
+                                                      Url.Action(
+                                                          "DemographicsReport",
+                                                          "Ods",
+                                                          new
+                                                          {
+                                                              schoolId = "_EdOrgId_",
+                                                              drillDownColumnIndex = "_DrillDownIndex_",
+                                                              isStateMode = Model.IsStateMode,
+                                                              districtToDisplay = "_EdOrgId_",
+                                                              isStudentDrillDown = true,
+                                                              orgType = "_OrgType_"
+                                                          }))" target="_blank">_LinkText_</a>';
+
+            function createLink(edOrgId, drillDownIndex, orgType, linkText) {
+                return drillDownLinkTemplate
+                    .replace(/_EdOrgId_/g, edOrgId)
+                    .replace(/_DrillDownIndex_/g, drillDownIndex)
+                    .replace(/_OrgType_/g, orgType)
+                    .replace(/_LinkText_/g, linkText);
+            }
+
+            var dataTable = $('#reportsTable').DataTable({
+                'data': data,
+                responsive: false,
+                fixedHeader: true,
+                paging: false,
+                'info': false,
+                scrollY: '450px',
+                scrollCollapse: true,
+                searching: false,
+                deferRender: true,
+                //scroller: true,
+                columns: [
+                    {
+                        'title': 'ID',
+                        'data': 'EdOrgId'
+                        // todo: test render in state mode, it should be a link if IsStateMode && OrgType.District
+                    },
+                    {
+                        'title': 'District/School',
+                        'data': 'LEASchool'
+                    },
+                    {
+                        'title': 'Cumulative Enrollments',
+                        'data': 'EnrollmentCount',
+                        'render': function(data, type, row, meta) {
+                            if (type === 'display') {
+                                return createLink(row.EdOrgId, 0, row.OrgType, data);
+                            } else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        'title': 'Demographics Records',
+                        'data': 'DemographicsCount',
+                        'render': function (data, type, row, meta) {
+                            if (type === 'display') {
+                                return createLink(row.EdOrgId, 1, row.OrgType, data);
+                            } else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        'title': 'Students with Race Submitted',
+                        'data': 'RaceGivenCount',
+                        'render': function (data, type, row, meta) {
+                            if (type === 'display') {
+                                return createLink(row.EdOrgId, 2, row.OrgType, data);
+                            } else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        'title': 'Students with AEO Submitted',
+                        'data': 'AncestryGivenCount',
+                        'render': function (data, type, row, meta) {
+                            if (type === 'display') {
+                                return createLink(row.EdOrgId, 3, row.OrgType, data);
+                            } else {
+                                return data;
+                            }
+                        }
+                    }
+                ]
             });
+
+            $(dataTable.table().header()).addClass( 'table-primary' );
         });
     </script>
 }
