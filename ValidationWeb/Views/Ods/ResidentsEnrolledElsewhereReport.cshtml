@@ -53,7 +53,17 @@
                 <td>@(result.EdOrgName)</td>
                 <td>@(result.DistrictOfEnrollmentId.ToString())</td>
                 <td>@(result.DistrictOfEnrollmentName)</td>
-                <td><a href="@Url.Action("ResidentsEnrolledElsewhereReport", "Ods", new { isStateMode = false, districtToDisplay = result.EdOrgId.Value, isStudentDrillDown = true})" target="_blank">@(result.ResidentsEnrolled.ToString())</a></td>
+                <td>
+                @if (Model.User.AppRole.Name != AppRole.DataOwner.Name)
+                {
+                <a href="@Url.Action("ResidentsEnrolledElsewhereReport", "Ods", new { isStateMode = false, districtToDisplay = result.EdOrgId.Value, isStudentDrillDown = true })" target="_blank">@(result.ResidentsEnrolled.ToString())</a>
+                }
+                else
+                {
+                    @(result.ResidentsEnrolled.ToString())
+                }
+                </td>
+
             </tr>
         }
     </table>

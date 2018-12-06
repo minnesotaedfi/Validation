@@ -55,11 +55,14 @@
             <td>10/25/2018</td>
             <td class="d-none">Previous<br />Grade</td>
             <td style="padding-left: 1.5rem;">
-                <input type="checkbox" class="form-check-input" name="requestAssessments" value="10625|123456789"> Assessment Results<br />
-                <input type="checkbox" class="form-check-input" name="requestImmunizations" value="10625|123456789"> Immunizations<br />
-                <input type="checkbox" class="form-check-input" name="requestCumulativeFiles" value="10625|123456789"> Cumulative Files
+                <input type="checkbox" class="form-check-input" name="requestAssessments" 
+                       value="10625|123456789" @if (Model.ReadOnly) { <text> disabled </text> }> Assessment Results<br />
+                <input type="checkbox" class="form-check-input" name="requestImmunizations" 
+                       value="10625|123456789" @if (Model.ReadOnly) { <text> disabled </text> }> Immunizations<br />
+                <input type="checkbox" class="form-check-input" name="requestCumulativeFiles" 
+                       value="10625|123456789" @if (Model.ReadOnly) { <text> disabled </text> }> Cumulative Files
             </td>
-            <td style="vertical-align: middle;"><button class="btn btn-sm btn-primary">Send</button></td>
+            <td style="vertical-align: middle;"><button class="btn btn-sm btn-primary" @if (Model.ReadOnly) { <text> disabled </text> }>Send</button></td>
         </tr>
         @foreach (var result in Model.Results.Where(r=>r.IsCurrentDistrict).ToList())
         {
@@ -84,11 +87,21 @@
                 <td>@(result.PastEdOrgExitDate.HasValue ? result.PastEdOrgExitDate.Value.ToString("MM/dd/yyyy") : "Unknown")</td>
                 <td class="d-none">@(result.PastGrade ?? string.Empty)</td>
                 <td style="padding-left: 1.25rem;">
-                    <input type="checkbox" class="form-check-input" name="requestAssessments" value="@(result.PastDistEdOrgId.ToString())|@(result.StudentID)"> Assessment Results<br />
-                    <input type="checkbox" class="form-check-input" name="requestImmunizations" value="@(result.PastDistEdOrgId.ToString())|@(result.StudentID)"> Immunizations<br />
-                    <input type="checkbox" class="form-check-input" name="requestCumulativeFiles" value="@(result.PastDistEdOrgId.ToString())|@(result.StudentID)"> Cumulative Files
+                    <input type="checkbox" class="form-check-input" name="requestAssessments" 
+                           value="@(result.PastDistEdOrgId.ToString())|@(result.StudentID)"
+                           @if (Model.ReadOnly) { <text> disabled </text> }> Assessment Results<br />
+                    <input type="checkbox" class="form-check-input" name="requestImmunizations" 
+                           value="@(result.PastDistEdOrgId.ToString())|@(result.StudentID)"
+                           @if (Model.ReadOnly) { <text> disabled </text> }> Immunizations<br />
+                    <input type="checkbox" class="form-check-input" name="requestCumulativeFiles" 
+                           value="@(result.PastDistEdOrgId.ToString())|@(result.StudentID)"
+                           @if (Model.ReadOnly) { <text> disabled </text> }>Cumulative Files
                 </td>
-                <td style="vertical-align: middle;"><button class="btn btn-sm btn-primary">Send</button></td>
+                <td style="vertical-align: middle;">
+                <button class="btn btn-sm btn-primary" 
+                    @if (Model.ReadOnly) { <text> disabled </text> }>Send
+                </button>
+                </td>
             </tr>
         }
     </table>

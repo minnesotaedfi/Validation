@@ -64,15 +64,30 @@
                     }
                 </td>
                 <td>@(result.LEASchool)</td>
-                <td><a href="@Url.Action("StudentProgramsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 0, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType})" target="_blank">@(result.DistinctEnrollmentCount.ToString())</a></td>
-                <td><a href="@Url.Action("StudentProgramsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 1, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType})" target="_blank">@(result.DistinctDemographicsCount.ToString())</a></td>
-                <td><a href="@Url.Action("StudentProgramsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 2, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType})" target="_blank">@(result.ADParentCount.ToString())</a></td>
-                <td><a href="@Url.Action("StudentProgramsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 3, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType})" target="_blank">@(result.IndianNativeCount.ToString())</a></td>
-                <td><a href="@Url.Action("StudentProgramsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 4, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType})" target="_blank">@(result.MigrantCount.ToString())</a></td>
-                <td><a href="@Url.Action("StudentProgramsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 5, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType})" target="_blank">@(result.HomelessCount.ToString())</a></td>
-                <td><a href="@Url.Action("StudentProgramsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 6, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType})" target="_blank">@(result.ImmigrantCount.ToString())</a></td>
-                <td><a href="@Url.Action("StudentProgramsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 7, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType})" target="_blank">@(result.RecentEnglishCount.ToString())</a></td>
-                <td><a href="@Url.Action("StudentProgramsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 8, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType})" target="_blank">@(result.SLIFECount.ToString())</a></td>
+                @if (Model.User.AppRole.Name != AppRole.DataOwner.Name)
+                {
+                <td><a href="@Url.Action("StudentProgramsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 0, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType })" target="_blank">@(result.DistinctEnrollmentCount.ToString())</a></td>
+                <td><a href="@Url.Action("StudentProgramsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 1, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType })" target="_blank">@(result.DistinctDemographicsCount.ToString())</a></td>
+                <td><a href="@Url.Action("StudentProgramsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 2, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType })" target="_blank">@(result.ADParentCount.ToString())</a></td>
+                <td><a href="@Url.Action("StudentProgramsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 3, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType })" target="_blank">@(result.IndianNativeCount.ToString())</a></td>
+                <td><a href="@Url.Action("StudentProgramsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 4, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType })" target="_blank">@(result.MigrantCount.ToString())</a></td>
+                <td><a href="@Url.Action("StudentProgramsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 5, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType })" target="_blank">@(result.HomelessCount.ToString())</a></td>
+                <td><a href="@Url.Action("StudentProgramsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 6, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType })" target="_blank">@(result.ImmigrantCount.ToString())</a></td>
+                <td><a href="@Url.Action("StudentProgramsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 7, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType })" target="_blank">@(result.RecentEnglishCount.ToString())</a></td>
+                <td><a href="@Url.Action("StudentProgramsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 8, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType })" target="_blank">@(result.SLIFECount.ToString())</a></td>
+                }
+                else
+                {
+                    <td>@(result.DistinctEnrollmentCount.ToString())</td>
+                    <td>@(result.DistinctDemographicsCount.ToString())</td>
+                    <td>@(result.ADParentCount.ToString())</td>
+                    <td>@(result.IndianNativeCount.ToString())</td>
+                    <td>@(result.MigrantCount.ToString())</td>
+                    <td>@(result.HomelessCount.ToString())</td>
+                    <td>@(result.ImmigrantCount.ToString())</td>
+                    <td>@(result.RecentEnglishCount.ToString())</td>
+                    <td>@(result.SLIFECount.ToString())</td>
+                }
             </tr>
         }
     </table>

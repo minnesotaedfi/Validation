@@ -52,9 +52,18 @@
                 }
             </td>
             <td>@(result.LEASchool)</td>
-            <td><a href="@Url.Action("MultipleEnrollmentsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 0, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType})" target="_blank">@(result.DistinctEnrollmentCount.ToString())</a></td>
-            <td><a href="@Url.Action("MultipleEnrollmentsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 1, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType})" target="_blank">@(result.EnrolledInOtherSchoolsCount.ToString())</a></td>
-            <td><a href="@Url.Action("MultipleEnrollmentsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 2, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType})" target="_blank">@(result.EnrolledInOtherDistrictsCount.ToString())</a></td>
+            @if (Model.User.AppRole.Name != AppRole.DataOwner.Name)
+            {
+            <td><a href="@Url.Action("MultipleEnrollmentsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 0, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType })" target="_blank">@(result.DistinctEnrollmentCount.ToString())</a></td>
+            <td><a href="@Url.Action("MultipleEnrollmentsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 1, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType })" target="_blank">@(result.EnrolledInOtherSchoolsCount.ToString())</a></td>
+            <td><a href="@Url.Action("MultipleEnrollmentsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 2, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType })" target="_blank">@(result.EnrolledInOtherDistrictsCount.ToString())</a></td>
+            }
+            else
+            {
+                <td>@(result.DistinctEnrollmentCount.ToString())</td>
+                <td>@(result.EnrolledInOtherSchoolsCount.ToString())</td>
+                <td>@(result.EnrolledInOtherDistrictsCount.ToString())</td>
+            }
         </tr>
         }
     </table>

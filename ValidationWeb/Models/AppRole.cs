@@ -16,6 +16,9 @@ namespace ValidationWeb
         public static AppRole Viewer = CreateAppRole("Viewer");
         public static AppRole Launcher = CreateAppRole("Launcher");
         public static AppRole Administrator = CreateAppRole("Administrator");
+        public static AppRole DataOwner = CreateAppRole("DataOwner");
+        public static AppRole DistrictUser = CreateAppRole("DistrictUser");
+        public static AppRole HelpDesk = CreateAppRole("HelpDesk");
         const bool CaseInsensitive = true;
 
         public static AppRole CreateAppRole(string name)
@@ -36,6 +39,19 @@ namespace ValidationWeb
             {
                 return new AppRole { Name = "Administrator" };
             }
+            if (string.Compare(name, "DataOwner", CaseInsensitive) == 0)
+            {
+                return new AppRole { Name = "DataOwner" };
+            }
+            if (string.Compare(name, "DistrictUser", CaseInsensitive) == 0)
+            {
+                return new AppRole { Name = "DistrictUser" };
+            }
+            if (string.Compare(name, "HelpDesk", CaseInsensitive) == 0)
+            {
+                return new AppRole { Name = "HelpDesk" };
+            }
+
             return new AppRole { Name = "Unauthorized" };
         }
 

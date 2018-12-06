@@ -46,6 +46,7 @@ namespace ValidationWeb
             var edOrg = _edOrgService.GetEdOrgById(_appUserService.GetSession().FocusedEdOrgId, _appUserService.GetSession().FocusedSchoolYearId);
             var rulesCollections = _engineObjectModel.Collections.OrderBy(x => x.CollectionId).ToList();
             var theUser = _appUserService.GetUser();
+            bool readOnly = (theUser.AppRole.Name == AppRole.HelpDesk.Name || theUser.AppRole.Name == AppRole.DataOwner.Name);
             var districtName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
             // Display the latest summary first (by default)
             var reportSummaries = (edOrg == null) ? Enumerable.Empty<ValidationReportSummary>().ToList() : _validationResultsService.GetValidationReportSummaries(edOrg.Id).OrderByDescending(rs => rs.CompletedWhen).ToList();
@@ -58,7 +59,8 @@ namespace ValidationWeb
                 SchoolYears = _schoolYearService.GetSubmittableSchoolYears().ToList(),
                 SubmissionCycles = _submissionCycleService.GetSubmissionCyclesOpenToday(),
             FocusedEdOrgId = _appUserService.GetSession().FocusedEdOrgId,
-                FocusedSchoolYearId = _appUserService.GetSession().FocusedSchoolYearId
+                FocusedSchoolYearId = _appUserService.GetSession().FocusedSchoolYearId,
+                ReadOnly = readOnly
             };
             return View(model);
         }

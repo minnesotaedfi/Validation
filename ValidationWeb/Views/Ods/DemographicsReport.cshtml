@@ -59,10 +59,21 @@ else
                     }
                 </td>
                 <td>@(result.LEASchool)</td>
-                <td><a href="@Url.Action("DemographicsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 0, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType})" target="_blank">@(result.EnrollmentCount.ToString())</a></td>
-                <td><a href="@Url.Action("DemographicsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 1, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType})" target="_blank">@(result.DemographicsCount.ToString())</a></td>
-                <td><a href="@Url.Action("DemographicsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 2, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType})" target="_blank">@(result.RaceGivenCount.ToString())</a></td>
-                <td><a href="@Url.Action("DemographicsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 3, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType})" target="_blank">@(result.AncestryGivenCount.ToString())</a></td>
+                @if (Model.User.AppRole.Name != AppRole.DataOwner.Name)
+                {
+                    <td><a href="@Url.Action("DemographicsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 0, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType })" target="_blank">@(result.EnrollmentCount.ToString())</a></td>
+                    <td><a href="@Url.Action("DemographicsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 1, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType })" target="_blank">@(result.DemographicsCount.ToString())</a></td>
+                    <td><a href="@Url.Action("DemographicsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 1, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType })" target="_blank">@(result.DemographicsCount.ToString())</a></td>
+                    <td><a href="@Url.Action("DemographicsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 2, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType })" target="_blank">@(result.RaceGivenCount.ToString())</a></td>
+                    <td><a href="@Url.Action("DemographicsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 3, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType })" target="_blank">@(result.AncestryGivenCount.ToString())</a></td>
+                }
+                else
+                {
+                    <td>@(result.EnrollmentCount.ToString())</td>
+                    <td>@(result.DemographicsCount.ToString())</td>
+                    <td>@(result.RaceGivenCount.ToString())</td>
+                    <td>@(result.AncestryGivenCount.ToString())</td>
+                }
             </tr>
         }
     </table>

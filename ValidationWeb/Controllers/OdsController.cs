@@ -197,11 +197,13 @@ namespace ValidationWeb
             var fourDigitSchoolYear = _schoolyearService.GetSchoolYearById(session.FocusedSchoolYearId).StartYear;
             var theUser = _appUserService.GetUser();
             var results = _odsDataService.GetChangeOfEnrollmentReport(edOrgId, fourDigitSchoolYear);
+            bool readOnly = theUser.AppRole.Name == AppRole.HelpDesk.Name;
             var model = new OdsChangeOfEnrollmentReportViewModel
             {
                 EdOrgId = edOrgId,
                 EdOrgName = edOrgName,
                 User = theUser,
+                ReadOnly = readOnly,
                 Results = results
             };
             return View(model);
