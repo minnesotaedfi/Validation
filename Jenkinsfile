@@ -5,7 +5,7 @@ node{
 
       stage ('Build'){
     bat 'nuget restore validation.sln'
-    bat "\"${tool 'MSBuild'}\" validation.sln /p:Configuration=Release"
+    bat 'msbuild validation.sln /p:Configuration=Release'
     }
 
       stage ('Archive'){
