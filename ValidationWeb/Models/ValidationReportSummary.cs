@@ -11,8 +11,11 @@ namespace ValidationWeb
     public class ValidationReportSummary
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        [Key]
+        [Key, Column(Order = 0)]
         public long Id { get; set; }
+        [Key, Column(Order = 1)]
+        [ForeignKey("SchoolYear")]
+        public int SchoolYearId { get; set; }
         [Required]
         [Index]
         public int EdOrgId { get; set; }

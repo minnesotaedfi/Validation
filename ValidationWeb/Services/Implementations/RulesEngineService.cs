@@ -62,7 +62,7 @@ namespace ValidationWeb.Services
                     TotalCount = 0,
                     Id = newRuleValidationExecution.RuleValidationId,
                     EdOrgId = _appUserService.GetSession().FocusedEdOrgId,
-                    SchoolYear = _schoolYearService.GetSubmittableSchoolYears().FirstOrDefault(sy => sy.StartYear == fourDigitOdsDbYear),
+                    SchoolYear = _schoolYearService.GetSubmittableSchoolYears().FirstOrDefault(sy => sy.EndYear == fourDigitOdsDbYear),
                     InitiatedBy = _appUserService.GetUser().FullName,
                     RequestedWhen = DateTime.UtcNow,
                     Status = "In Progress"

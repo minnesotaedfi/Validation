@@ -40,7 +40,7 @@ namespace ValidationWeb.Services
                 return result;
             }
             var schoolYear = _schoolYearService.GetSchoolYearById(schoolYearId);
-            using (var _odsRawDbContext = new RawOdsDbContext(schoolYear.StartYear))
+            using (var _odsRawDbContext = new RawOdsDbContext(schoolYear.EndYear))
             {
                 var conn = _odsRawDbContext.Database.Connection;
                 try
@@ -55,7 +55,7 @@ namespace ValidationWeb.Services
                 }
                 catch (Exception ex)
                 {
-                    _loggingService.LogErrorMessage($"While reading Ed Org description (ID# {edOrgId}, school year {schoolYear.StartYear}): {ex.ChainInnerExceptionMessages()}");
+                    _loggingService.LogErrorMessage($"While reading Ed Org description (ID# {edOrgId}, school year {schoolYear.ToString()}): {ex.ChainInnerExceptionMessages()}");
                 }
                 finally
                 {
@@ -75,7 +75,7 @@ namespace ValidationWeb.Services
                 _validationPortalDataContext.SaveChanges();
                 return result;
             }
-            throw new ApplicationException($"The Ed Org with ID# {edOrgId}, school year {schoolYear.StartYear}, was not found.");
+            throw new ApplicationException($"The Ed Org with ID# {edOrgId}, school year {schoolYear.ToString()}, was not found.");
         }
 
         public void RefreshEdOrgCache(int fourDigitOdsDbYear)
