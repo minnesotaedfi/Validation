@@ -1,0 +1,2 @@
+stage 'Checkout'
+    checkout scm
