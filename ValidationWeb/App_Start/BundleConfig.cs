@@ -8,7 +8,7 @@ namespace ValidationWeb
         public static void RegisterBundles(BundleCollection bundles)
         {
             // STYLE
-            bundles.Add(new StyleBundle("~/Content/css").Include(
+            bundles.Add(new StyleBundle("~/Content/Styles/css").Include(
                       "~/Content/Styles/fa-solid.css",
                       "~/Content/Styles/fontawesome.css",
                       "~/Content/Styles/bootstrap.css",
