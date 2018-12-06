@@ -19,5 +19,6 @@ namespace ValidationWeb.Services
         bool UseFakeViewModelData { get; }
         bool UseSimulatedSSO { get; }
         string SimulatedUserName { get; }
+        List<SchoolYear> SeedSchoolYears { get; }
     }
 }
