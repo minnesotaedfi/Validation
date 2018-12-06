@@ -3,7 +3,7 @@ node{
     checkout scm
     }
 
-      stage ('Build'){}
+      stage ('Build'){
     bat 'nuget restore validation.sln'
     bat "\"${tool 'MSBuild'}\" validation.sln /p:Configuration=Release
     }
