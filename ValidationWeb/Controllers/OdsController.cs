@@ -5,10 +5,12 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
+using ValidationWeb.Filters;
 using ValidationWeb.Services;
 
 namespace ValidationWeb
 {
+    [PortalAuthorize(Roles = "DataOwner,DistrictUser,HelpDesk")]
     public class OdsController : Controller
     {
         protected readonly IAppUserService _appUserService;

@@ -22,7 +22,8 @@ namespace ValidationWeb
                 return false;
             }
             var roleSought = AppRole.CreateAppRole(role);
-            return portalIdentity.AppRole >= roleSought;      
+            //return portalIdentity.AppRole >= roleSought;
+            return portalIdentity.AppRole.Name == roleSought.Name;
         }
     }
 

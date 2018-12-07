@@ -369,6 +369,7 @@
     <Compile Include="Filters\AddChallengeOnUnauthorizedResult.cs" />
     <Compile Include="Filters\LoggingHandler.cs" />
     <Compile Include="Filters\PortalAuthenticationFilter.cs" />
+    <Compile Include="Filters\PortalAuthorize.cs" />
     <Compile Include="Filters\ProfilingFilter.cs" />
     <Compile Include="Filters\ValidationAuthenticationFilter.cs" />
     <Compile Include="Filters\ValidationExceptionLogger.cs" />

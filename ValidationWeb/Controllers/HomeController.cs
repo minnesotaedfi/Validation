@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using ValidationWeb.Filters;
 using ValidationWeb.Services;
 
 namespace ValidationWeb
 {
+    [PortalAuthorize(Roles = "DataOwner,DistrictUser,HelpDesk")]
     public class HomeController : Controller
     {
         private readonly IAnnouncementService _announcementService;

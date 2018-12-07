@@ -5,10 +5,12 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
+using ValidationWeb.Filters;
 using ValidationWeb.Services;
 
 namespace ValidationWeb
 {
+    [PortalAuthorize(Roles = "DistrictUser,HelpDesk")]
     public class ValidationController : Controller
     {
         protected readonly IAppUserService _appUserService;
@@ -76,6 +78,7 @@ namespace ValidationWeb
             return View(model);
         }
 
+        [PortalAuthorize(Roles = "DistrictUser")]
         [HttpPost]
         public ActionResult RunEngine(int submissionCycleId)
         {
