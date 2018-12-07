@@ -30,7 +30,7 @@
 </div>
 <div id="requestedReportContent" class="row">
     <div class="col-md-12 nopadding">
-        <table class="table table-sm table-responsive-md table-bordered table-hover" id="reportsTable" style="width: 100%"></table>
+        <table class="table table-sm table-bordered table-hover" id="reportsTable" style="width: 100%"></table>
     </div>
 </div>
 @*<div id="__requestedReportContent" class="row">
@@ -43,7 +43,7 @@
             <th>Students with Race Submitted</th>
             <th>Students with AEO Submitted</th>
         </tr>
-        @ foreach (var result in Model.Results.Take(10))
+        @foreach (var result in Model.Results.Take(10))
         {
             <tr>
                 <td>
@@ -71,8 +71,8 @@
             </tr>
         }
     </table>
-</div>
-*@
+</div>*@
+
 
 @if (Model.Results.Count == 0)
 {
@@ -92,28 +92,25 @@
 @section scripts {
     <script>
 
-        $(document).ready(function () {
-            var data = @Html.Raw(Json.Encode(Model.Results));
-            var drillDownLinkTemplate = '<a href="@Html.Raw(
-                                                      Url.Action(
-                                                          "DemographicsReport",
-                                                          "Ods",
-                                                          new
-                                                          {
-                                                              schoolId = "_EdOrgId_",
-                                                              drillDownColumnIndex = "_DrillDownIndex_",
-                                                              isStateMode = Model.IsStateMode,
-                                                              districtToDisplay = "_EdOrgId_",
-                                                              isStudentDrillDown = true,
-                                                              orgType = "_OrgType_"
-                                                          }))" target="_blank">_LinkText_</a>';
+        $(document).ready(function() {
+            var data = @Html.Raw(Json.Encode(Model.Results.Take(100)));
+            debugger;
+            var drillDownLinkTemplate =
+                '<a href="@Html.Raw(Url.Action("DemographicsReport", "Ods", new { schoolId = "_EdOrgId_", drillDownColumnIndex = "_DrillDownIndex_", isStateMode = Model.IsStateMode, districtToDisplay = "_EdOrgId_", isStudentDrillDown = true, orgType = "_OrgType_" }))" target="_blank">_LinkText_</a>';
 
-            function createLink(edOrgId, drillDownIndex, orgType, linkText) {
+            function createDrillDownLink(edOrgId, drillDownIndex, orgType, linkText) {
                 return drillDownLinkTemplate
                     .replace(/_EdOrgId_/g, edOrgId)
                     .replace(/_DrillDownIndex_/g, drillDownIndex)
                     .replace(/_OrgType_/g, orgType)
                     .replace(/_LinkText_/g, linkText);
+            }
+
+            var stateLinkTemplate =
+                '<a href="@Html.Raw(Url.Action("DemographicsReport", "Ods", new { isStateMode = false, districtToDisplay = "_EdOrgId_" }))" class="show-data-loading">_EdOrgId_</a>';
+
+            function createStateLink(edOrgId) {
+                return stateLinkTemplate.replace(/_EdOrgId_/g, edOrgId);
             }
 
             var dataTable = $('#reportsTable').DataTable({
@@ -126,12 +123,23 @@
                 scrollCollapse: true,
                 searching: false,
                 deferRender: true,
-                //scroller: true,
+
                 columns: [
                     {
                         'title': 'ID',
-                        'data': 'EdOrgId'
+                        'data': 'EdOrgId',
                         // todo: test render in state mode, it should be a link if IsStateMode && OrgType.District
+                        @if (Model.IsStateMode) {
+                            <text>
+                        'render': function (data, type, row, meta) {
+                                if (data != null && type === 'display' && row.OrgType === 200) {
+                                    return createStateLink(data);
+                                } else {
+                                    return data;
+                                }
+                            }
+                            </text>
+                        }
                     },
                     {
                         'title': 'District/School',
@@ -142,7 +150,7 @@
                         'data': 'EnrollmentCount',
                         'render': function(data, type, row, meta) {
                             if (type === 'display') {
-                                return createLink(row.EdOrgId, 0, row.OrgType, data);
+                                return createDrillDownLink(row.EdOrgId, 0, row.OrgType, data);
                             } else {
                                 return data;
                             }
@@ -151,9 +159,9 @@
                     {
                         'title': 'Demographics Records',
                         'data': 'DemographicsCount',
-                        'render': function (data, type, row, meta) {
+                        'render': function(data, type, row, meta) {
                             if (type === 'display') {
-                                return createLink(row.EdOrgId, 1, row.OrgType, data);
+                                return createDrillDownLink(row.EdOrgId, 1, row.OrgType, data);
                             } else {
                                 return data;
                             }
@@ -162,9 +170,9 @@
                     {
                         'title': 'Students with Race Submitted',
                         'data': 'RaceGivenCount',
-                        'render': function (data, type, row, meta) {
+                        'render': function(data, type, row, meta) {
                             if (type === 'display') {
-                                return createLink(row.EdOrgId, 2, row.OrgType, data);
+                                return createDrillDownLink(row.EdOrgId, 2, row.OrgType, data);
                             } else {
                                 return data;
                             }
@@ -173,9 +181,9 @@
                     {
                         'title': 'Students with AEO Submitted',
                         'data': 'AncestryGivenCount',
-                        'render': function (data, type, row, meta) {
+                        'render': function(data, type, row, meta) {
                             if (type === 'display') {
-                                return createLink(row.EdOrgId, 3, row.OrgType, data);
+                                return createDrillDownLink(row.EdOrgId, 3, row.OrgType, data);
                             } else {
                                 return data;
                             }
@@ -184,7 +192,8 @@
                 ]
             });
 
-            $(dataTable.table().header()).addClass( 'table-primary' );
+            $(dataTable.table().header()).addClass('table-primary');
         });
     </script>
 }
+,
