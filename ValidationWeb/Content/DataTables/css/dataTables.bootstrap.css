@@ -169,9 +169,9 @@ table.table-bordered.dataTable tbody td {
   border-bottom-width: 0;
 }
 
-div.dataTables_scrollHead table.table-bordered {
+/*div.dataTables_scrollHead table.table-bordered {
   border-bottom-width: 0;
-}
+}*/
 
 div.table-responsive > div.dataTables_wrapper > div.row {
   margin: 0;

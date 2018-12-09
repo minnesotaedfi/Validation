@@ -100,7 +100,7 @@ table.dataTable.stripe tbody tr.odd.selected, table.dataTable.display tbody tr.o
   background-color: #acbad4;
 }
 table.dataTable.hover tbody tr:hover, table.dataTable.display tbody tr:hover {
-  background-color: #f6f6f6;
+    background-color: #f6f6f6;
 }
 table.dataTable.hover tbody tr:hover.selected, table.dataTable.display tbody tr:hover.selected {
   background-color: #aab7d1;
@@ -400,9 +400,10 @@ table.dataTable td {
 .dataTables_wrapper .dataTables_paginate {
   color: #333;
 }
-.dataTables_wrapper .dataTables_scroll {
-  clear: both;
-}
+    .dataTables_wrapper .dataTables_scroll {
+        clear: both;
+        border: 1px solid #dee2e6;
+    }
 .dataTables_wrapper .dataTables_scroll div.dataTables_scrollBody {
   *margin-top: -1px;
   -webkit-overflow-scrolling: touch;
