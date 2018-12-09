@@ -76,7 +76,7 @@
 @section scripts  {
     <script type="text/javascript">
         $(function() {
-            debugger;
+            // debugger;
             var drillDownLinkTemplate =
                 '<a href="@Html.Raw(Url.Action("DemographicsReport", "Ods", new { schoolId = "_EdOrgId_", drillDownColumnIndex = "_DrillDownIndex_", isStateMode = Model.IsStateMode, districtToDisplay = "_EdOrgId_", isStudentDrillDown = true, orgType = "_OrgType_" }))" target="_blank">_LinkText_</a>';
 
@@ -98,11 +98,12 @@
             var dataTable = $('#reportsTable').DataTable({
                 responsive: false,
                 fixedHeader: true,
-                paging: false,
-                'info': false,
+                paging: true,
+                info: false,
                 scrollY: '450px',
                 scrollCollapse: true,
                 searching: false,
+                serverSide: true,
                 deferRender: true,
                 ajax: {
                     url: "@Html.Raw(Url.Action(
@@ -117,7 +118,7 @@
                 columns: [
                     {
                         'title': 'ID',
-                        'data': 'EdOrgId',
+                        'data': 'edOrgId',
                         @if (Model.IsStateMode)
                         {
                             <text>
@@ -133,11 +134,11 @@
                     },
                     {
                         'title': 'District/School',
-                        'data': 'LEASchool'
+                        'data': 'leaSchool'
                     },
                     {
                         'title': 'Cumulative Enrollments',
-                        'data': 'EnrollmentCount',
+                        'data': 'enrollmentCount',
                         'render': function(data, type, row, meta) {
                             if (type === 'display') {
                                 return createDrillDownLink(row.EdOrgId, 0, row.OrgType, data);
@@ -148,7 +149,7 @@
                     },
                     {
                         'title': 'Demographics Records',
-                        'data': 'DemographicsCount',
+                        'data': 'demographicsCount',
                         'render': function(data, type, row, meta) {
                             if (type === 'display') {
                                 return createDrillDownLink(row.EdOrgId, 1, row.OrgType, data);
@@ -159,7 +160,7 @@
                     },
                     {
                         'title': 'Students with Race Submitted',
-                        'data': 'RaceGivenCount',
+                        'data': 'raceGivenCount',
                         'render': function(data, type, row, meta) {
                             if (type === 'display') {
                                 return createDrillDownLink(row.EdOrgId, 2, row.OrgType, data);
@@ -170,7 +171,7 @@
                     },
                     {
                         'title': 'Students with AEO Submitted',
-                        'data': 'AncestryGivenCount',
+                        'data': 'ancestryGivenCount',
                         'render': function(data, type, row, meta) {
                             if (type === 'display') {
                                 return createDrillDownLink(row.EdOrgId, 3, row.OrgType, data);
