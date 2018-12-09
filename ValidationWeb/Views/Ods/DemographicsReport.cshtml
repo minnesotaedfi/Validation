@@ -29,71 +29,53 @@
     }
 </div>
 <div id="requestedReportContent" class="row">
-    <div class="col-md-12 nopadding">
-        <table class="table table-sm table-bordered table-hover" id="reportsTable" style="width: 100%"></table>
-    </div>
+    @*render partial *@
+    @Html.Partial("DemographicsReportTable", Model)
 </div>
+
 @*<div id="__requestedReportContent" class="row">
-    <table class="table table-sm table-responsive-md table-bordered table-hover  " id="__reportsTable">
-        <tr class="table-primary">
-            <th>ID</th>
-            <th>District/School</th>
-            <th>Cumulative Enrollments</th>
-            <th>Demographics Records</th>
-            <th>Students with Race Submitted</th>
-            <th>Students with AEO Submitted</th>
-        </tr>
-        @foreach (var result in Model.Results.Take(10))
-        {
-            <tr>
-                <td>
-                    @if (Model.IsStateMode)
-                    {
-                        if (result.EdOrgId.HasValue && result.OrgType == OrgType.District)
+        <table class="table table-sm table-responsive-md table-bordered table-hover  " id="__reportsTable">
+            <tr class="table-primary">
+                <th>ID</th>
+                <th>District/School</th>
+                <th>Cumulative Enrollments</th>
+                <th>Demographics Records</th>
+                <th>Students with Race Submitted</th>
+                <th>Students with AEO Submitted</th>
+            </tr>
+            @foreach (var result in Model.Results.Take(10))
+            {
+                <tr>
+                    <td>
+                        @if (Model.IsStateMode)
                         {
-                            <a href="@Url.Action("DemographicsReport", "Ods", new { isStateMode = false, districtToDisplay = result.EdOrgId.Value})" class="show-data-loading">@(result.EdOrgId.Value.ToString())</a>
+                            if (result.EdOrgId.HasValue && result.OrgType == OrgType.District)
+                            {
+                                <a href="@Url.Action("DemographicsReport", "Ods", new { isStateMode = false, districtToDisplay = result.EdOrgId.Value})" class="show-data-loading">@(result.EdOrgId.Value.ToString())</a>
+                            }
+                            else
+                            {
+                                @(result.EdOrgId.HasValue ? result.EdOrgId.Value.ToString() : string.Empty)
+                            }
                         }
                         else
                         {
                             @(result.EdOrgId.HasValue ? result.EdOrgId.Value.ToString() : string.Empty)
                         }
-                    }
-                    else
-                    {
-                        @(result.EdOrgId.HasValue ? result.EdOrgId.Value.ToString() : string.Empty)
-                    }
-                </td>
-                <td>@(result.LEASchool)</td>
-                <td><a href="@Url.Action("DemographicsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 0, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType})" target="_blank">@(result.EnrollmentCount.ToString())</a></td>
-                <td><a href="@Url.Action("DemographicsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 1, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType})" target="_blank">@(result.DemographicsCount.ToString())</a></td>
-                <td><a href="@Url.Action("DemographicsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 2, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType})" target="_blank">@(result.RaceGivenCount.ToString())</a></td>
-                <td><a href="@Url.Action("DemographicsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 3, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType})" target="_blank">@(result.AncestryGivenCount.ToString())</a></td>
-            </tr>
-        }
-    </table>
-</div>*@
+                    </td>
+                    <td>@(result.LEASchool)</td>
+                    <td><a href="@Url.Action("DemographicsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 0, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType})" target="_blank">@(result.EnrollmentCount.ToString())</a></td>
+                    <td><a href="@Url.Action("DemographicsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 1, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType})" target="_blank">@(result.DemographicsCount.ToString())</a></td>
+                    <td><a href="@Url.Action("DemographicsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 2, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType})" target="_blank">@(result.RaceGivenCount.ToString())</a></td>
+                    <td><a href="@Url.Action("DemographicsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 3, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType})" target="_blank">@(result.AncestryGivenCount.ToString())</a></td>
+                </tr>
+            }
+        </table>
+    </div>*@
 
-
-@if (Model.Results.Count == 0)
-{
-    <div class="vp-body-header col-8 justify-content-start align-self-center">No records were found.</div>
-}
-<div id="notes" class="row">
-    <div class="vp-body-header">Notes:</div>
-</div>
-<div class="row">(1) A student enrolled in multiple schools within the district is only counted once.</div>
-<div class="row">(2) A student is counted as enrolled if the student was enrolled at least once during the school year.</div>
-<div class="row">(3) Students are counted only once per table cell for the particular school/district/state.</div>
-<div class="row tbmargin10">
-    <a href="#pagetop" class="vp-page-link"><i class="fas fa-arrow-alt-circle-up"></i> Back to Top</a>
-</div>
-
-
-@section scripts {
-    <script>
-
-        $(document).ready(function() {
-            var data = @Html.Raw(Json.Encode(Model.Results.Take(100)));
+@section scripts  {
+    <script type="text/javascript">
+        $(function() {
             debugger;
             var drillDownLinkTemplate =
                 '<a href="@Html.Raw(Url.Action("DemographicsReport", "Ods", new { schoolId = "_EdOrgId_", drillDownColumnIndex = "_DrillDownIndex_", isStateMode = Model.IsStateMode, districtToDisplay = "_EdOrgId_", isStudentDrillDown = true, orgType = "_OrgType_" }))" target="_blank">_LinkText_</a>';
@@ -114,7 +96,6 @@
             }
 
             var dataTable = $('#reportsTable').DataTable({
-                'data': data,
                 responsive: false,
                 fixedHeader: true,
                 paging: false,
@@ -123,21 +104,30 @@
                 scrollCollapse: true,
                 searching: false,
                 deferRender: true,
-
+                ajax: {
+                    url: "@Html.Raw(Url.Action(
+                              "GetDemographicsReportData",
+                              new
+                              {
+                                  edOrgId = Model.EdOrgId,
+                                  fourDigitSchoolYear = Model.FourDigitSchoolYear,
+                                  isStateMode = Model.IsStateMode,
+                              }))"
+                },  
                 columns: [
                     {
                         'title': 'ID',
                         'data': 'EdOrgId',
-                        // todo: test render in state mode, it should be a link if IsStateMode && OrgType.District
-                        @if (Model.IsStateMode) {
+                        @if (Model.IsStateMode)
+                        {
                             <text>
-                        'render': function (data, type, row, meta) {
-                                if (data != null && type === 'display' && row.OrgType === 200) {
-                                    return createStateLink(data);
-                                } else {
-                                    return data;
-                                }
+                        'render': function(data, type, row, meta) {
+                            if (data != null && type === 'display' && row.OrgType === 200) {
+                                return createStateLink(data);
+                            } else {
+                                return data;
                             }
+                        }
                             </text>
                         }
                     },
@@ -196,4 +186,15 @@
         });
     </script>
 }
-,
+
+<div id="notes" class="row">
+    <div class="vp-body-header">Notes:</div>
+</div>
+<div class="row">(1) A student enrolled in multiple schools within the district is only counted once.</div>
+<div class="row">(2) A student is counted as enrolled if the student was enrolled at least once during the school year.</div>
+<div class="row">(3) Students are counted only once per table cell for the particular school/district/state.</div>
+<div class="row tbmargin10">
+    <a href="#pagetop" class="vp-page-link"><i class="fas fa-arrow-alt-circle-up"></i> Back to Top</a>
+</div>
+
+

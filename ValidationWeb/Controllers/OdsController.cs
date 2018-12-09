@@ -9,6 +9,8 @@ using ValidationWeb.Services;
 
 namespace ValidationWeb
 {
+    using DataTables.AspNet.Mvc5;
+
     public class OdsController : Controller
     {
         protected readonly IAppUserService _appUserService;
@@ -52,7 +54,13 @@ namespace ValidationWeb
         }
 
         // GET: Ods/DemographicsReport
-        public ActionResult DemographicsReport(bool isStateMode = false, int? districtToDisplay = null, bool isStudentDrillDown = false, int? schoolId = null, int? drillDownColumnIndex = null, OrgType orgType = OrgType.District)
+        public ActionResult DemographicsReport(
+            bool isStateMode = false,
+            int? districtToDisplay = null,
+            bool isStudentDrillDown = false,
+            int? schoolId = null,
+            int? drillDownColumnIndex = null,
+            OrgType orgType = OrgType.District)
         {
             var session = _appUserService.GetSession();
             var edOrg = _edOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
@@ -88,19 +96,44 @@ namespace ValidationWeb
                 return View("StudentDrillDown", studentDrillDownModel);
             }
 
-            var results = _odsDataService.GetDistrictAncestryRaceCounts(isStateMode ? (int?)null : edOrgId, fourDigitSchoolYear);
             var model = new OdsDemographicsReportViewModel
             {
                 EdOrgId = edOrgId,
+                FourDigitSchoolYear = fourDigitSchoolYear,
                 EdOrgName = edOrgName,
                 User = theUser,
-                Results = results,
+                DistrictToDisplay = districtToDisplay,
+                IsStudentDrillDown = isStudentDrillDown,
                 IsStateMode = isStateMode,
                 SchoolId = schoolId,
                 SchoolName = schoolName
             };
 
             return View(model);
+        }
+
+        public JsonResult GetDemographicsReportData(
+            int edOrgId,
+            string fourDigitSchoolYear,
+            bool isStateMode)
+        {
+           List<DemographicsCountReportQuery> results = null; 
+
+            if (!isStateMode)
+            {
+                results = _odsDataService.GetDistrictAncestryRaceCounts(
+                    isStateMode ? (int?)null : edOrgId,
+                    fourDigitSchoolYear);
+            }
+
+            // add DT paging params next 
+            //var response = DataTablesResponse.Create(request, data.Count(), data.Count(), pagedResult);
+            //var result = new DataTablesJsonResult(response, JsonRequestBehavior.AllowGet);
+
+            // return all results unpaged for now
+            return Json(
+                new { data = results,},
+                JsonRequestBehavior.AllowGet);
         }
 
         // GET: Ods/MultipleEnrollmentsReport
