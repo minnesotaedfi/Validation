@@ -375,6 +375,7 @@
     <Content Include="Content\Styles\bootstrap\tabulator_bootstrap.min.css" />
     <Content Include="Content\Styles\bootstrap\tabulator_bootstrap4.css" />
     <Content Include="Content\Styles\bootstrap\tabulator_bootstrap4.min.css" />
+    <Content Include="Content\Styles\fa-solid-900.svg" />
     <Content Include="Content\Styles\fa-solid.css" />
     <Content Include="Content\Styles\fontawesome.css" />
     <Content Include="Content\Styles\jquery-ui.css" />
@@ -692,7 +693,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Content\Fonts\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Engine\Engine.csproj">

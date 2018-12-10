@@ -36,7 +36,6 @@
 @section scripts  {
     <script type="text/javascript">
         $(function() {
-            // debugger;
             var drillDownLinkTemplate =
                 '<a href="@Html.Raw(Url.Action("DemographicsReport", "Ods", new { schoolId = "_EdOrgId_", drillDownColumnIndex = "_DrillDownIndex_", isStateMode = Model.IsStateMode, districtToDisplay = "_EdOrgId_", isStudentDrillDown = true, orgType = "_OrgType_" }))" target="_blank">_LinkText_</a>';
 
@@ -54,20 +53,26 @@
             function createStateLink(edOrgId) {
                 return stateLinkTemplate.replace(/_EdOrgId_/g, edOrgId);
             }
-
+            
+            $('div.dataTables_scrollBody').css('min-height', '350px');
+            
             var dataTable = $('#reportsTable').DataTable({
                 // responsive: false,
                 // fixedHeader: true,
                 paging: true,
                 info: false,
-                scrollY: '400px',
-                // scrollCollapse: true,
+                scrollX: true,
+                scrollY: '350px',
+                scrollCollapse: true,
                 deferRender: true, 
                 searching: false,
                 serverSide: true,
-                // stateSave: true
+                processing: true,
                 scroller: {
-                    loadingIndicator: false
+                    loadingIndicator: true
+                },
+                fnInitComplete: function(){
+                    $('div.dataTables_scrollBody').css('min-height', 0);         
                 },
                 ajax: {
                     url: "@Html.Raw(Url.Action(
