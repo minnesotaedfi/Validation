@@ -1,14 +1,14 @@
 ﻿@model OdsDemographicsReportViewModel
 
 <div id="pagetop" class="row tbmargin10">
-    <div><a href="#notes" class="vp-page-link"><i class="fas fa-arrow-alt-circle-down"></i> See notes</a></div>
+    <div class="col-md-1"><a href="#notes">See notes</a></div>
     @if (Model.IsStateMode)
     {
-        <div><a href="@Url.Action("DemographicsReport", "Ods", new { isStateMode = false })" class="vp-page-link show-data-loading"><i class="fas fa-chalkboard-teacher"></i> View Single District</a></div>
+        <div class="col-md-2"><a href="@Url.Action("DemographicsReport", "Ods", new { isStateMode = false })" class="show-data-loading">View Single District</a></div>
     }
     else
     {
-        <div><a href="@Url.Action("DemographicsReport", "Ods", new { isStateMode = true })" class="vp-page-link show-data-loading"><i class="fas fa-sitemap"></i> View All Districts</a></div>
+        <div class="col-md-2"><a href="@Url.Action("DemographicsReport", "Ods", new { isStateMode = true })" class="show-data-loading">View All Districts</a></div>
     } 
 </div>
 <div class="row tbmargin10">
@@ -32,7 +32,7 @@ else
     <table class="table table-sm table-responsive-md table-bordered" id="reportsTable">
         <tr class="table-primary">
             <th>ID</th>
-            <th>District/School</th>ffff
+            <th>District/School</th>
             <th>Cumulative Enrollments</th>
             <th>Demographics Records</th>
             <th>Students with Race Submitted</th>
@@ -78,7 +78,9 @@ else
 <div class="row">(2) A student is counted as enrolled if the student was enrolled at least once during the school year.</div>
 <div class="row">(3) Students are counted only once per table cell for the particular school/district/state.</div>
 <div class="row tbmargin10">
-    <a href="#pagetop" class="vp-page-link"><i class="fas fa-arrow-alt-circle-up"></i> Back to Top</a>
+    <div class="col-md-2">
+        <a href="#pagetop">Back to Top</a>
+    </div>
 </div>
 
 

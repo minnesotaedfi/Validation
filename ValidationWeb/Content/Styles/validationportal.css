@@ -65,6 +65,10 @@
     background-color: rgb(184, 218, 255);
 }
 
+.accent-minnesota-light-gray {
+    background-color: #97999B;
+}
+
 .minnesota-green {
     background-color: rgb(120, 190, 33);
 }
@@ -176,6 +180,10 @@ input, select, textarea {
     padding: 10px;
 }
 
+.mainSection {
+    min-height: 450px;
+}
+
 /* 
     (width & margin) Ensure container rows (especially colored bars) touch the left and right sides of screen.
     (padding) Keep colored Navigation bar flush against edge of screen.
@@ -219,14 +227,13 @@ input, select, textarea {
 /* Minnesota requires padding to give logo impact. */
 .mdelogo {
     float: left;
-    padding: 30px;
+    padding: 40px;
 }
 
 .app-title {
     font-size: 24pt;
     font-weight: bold;
     color: rgb(0, 56, 101);
-    padding: 30px;
 }
 
 ul.navbar-nav {
