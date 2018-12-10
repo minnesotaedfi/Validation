@@ -192,6 +192,26 @@ input, select, textarea {
     padding-left: 0;
     padding-right: 0;
 }
+
+.nopadding {
+    padding: 0 !important;
+}
+
+div.dataTables_scroll {
+    border-bottom: 1px solid #dee2e6;
+}
+
+/* TODO: get this to work reliably - pocky*/
+/*table.dataTable > tbody > tr > td {
+    max-width: 80px;
+    white-space: nowrap;
+    / *display: block;* /
+    text-overflow: ellipsis;
+    word-break: break-all;
+    overflow: hidden;
+}*/
+
+
 /***************************************************************************************/
 
 /***************************************************************************************/
