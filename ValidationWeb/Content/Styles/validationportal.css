@@ -27,7 +27,7 @@
     display: none; /* Hidden by default */
     width: 100%; /* Full width (cover the whole page) */
     height: 100%; /* Full height (cover the whole page) */
-    top: 0; 
+    top: 0;
     left: 0;
     right: 0;
     bottom: 0;
@@ -37,7 +37,7 @@
     cursor: pointer; /* Add a pointer on hover */
 }
 
-#overlay-text{
+#overlay-text {
     /* From W3CSchools */
     position: absolute;
     top: 50%;
@@ -51,18 +51,23 @@
 /* Background Colors */
 .prime-blue {
     background-color: rgb(0, 56, 101);
-}   
+}
 
 .prime-blue-text {
     color: rgb(0, 56, 101);
 }
+
 .accent-blue {
     background-color: rgb(164, 188, 194);
-}   
+}
 
 .accent-soft-blue {
     background-color: rgb(184, 218, 255);
-}   
+}
+
+.accent-minnesota-light-gray {
+    background-color: #97999B;
+}
 
 .minnesota-green {
     background-color: rgb(120, 190, 33);
@@ -82,10 +87,10 @@
 .white-heavy-text {
     color: rgb(255, 255, 255);
     font-weight: bold;
-}   
+}
 
 .scrollable-row {
-    overflow-y:auto;
+    overflow-y: auto;
 }
 
 .noDisc {
@@ -154,10 +159,11 @@ input, select, textarea {
     color: white;
     margin-right: 4px;
 }
-.back-link:hover, .vp-page-link:hover {
-    background-color: rgb(164, 188, 194);
-    border-color: rgb(120, 190, 33);
-}
+
+    .back-link:hover, .vp-page-link:hover {
+        background-color: rgb(164, 188, 194);
+        border-color: rgb(120, 190, 33);
+    }
 /***************************************************************************************/
 
 /***************************************************************************************/
@@ -172,6 +178,10 @@ input, select, textarea {
     width: 100%;
     margin: 0;
     padding: 10px;
+}
+
+.mainSection {
+    min-height: 450px;
 }
 
 /* 
@@ -236,29 +246,27 @@ div.dataTables_scroll {
 
 /* Minnesota requires padding to give logo impact. */
 .mdelogo {
-    float: left; 
-    padding: 30px;
+    float: left;
+    padding: 40px;
 }
 
 .app-title {
-    font-size: 24pt; 
+    font-size: 24pt;
     font-weight: bold;
-    color: rgb(0, 56, 101); 
-    padding: 30px;
+    color: rgb(0, 56, 101);
 }
 
 ul.navbar-nav {
     width: 100%;
 }
 
-.navbar-nav a  {
+.navbar-nav a {
     color: rgb(255, 255, 255);
     background-color: rgb(0, 56, 101);
     padding: 0;
 }
 
-div.validation-drowdown-menu 
-{
+div.validation-drowdown-menu {
     padding-top: 0;
     padding-bottom: 0;
     margin-top: 0;
@@ -267,8 +275,7 @@ div.validation-drowdown-menu
     left: initial;
 }
 
-.validation-drowdown-menu > a:hover, .validation-dropdown-toggle:hover, .validation-nav-link:hover
-{
+.validation-drowdown-menu > a:hover, .validation-dropdown-toggle:hover, .validation-nav-link:hover {
     padding-top: 0;
     padding-bottom: 0;
     margin-top: 0;
@@ -276,16 +283,14 @@ div.validation-drowdown-menu
     border-color: rgb(120, 190, 33);
     background-color: rgb(164, 188, 194);
     color: rgb(0, 0, 0);
-} 
+}
 
-li.dropdown.nav-item.pull-right, li.dropdown-toggle.nav-item.pull-right
-{
+li.dropdown.nav-item.pull-right, li.dropdown-toggle.nav-item.pull-right {
     float: right !important;
 }
 
 /* Removes standard black arrow that has been replaced with a themed one */
-li.dropdown-toggle.nav-item::after
-{
+li.dropdown-toggle.nav-item::after {
     display: none;
 }
 /***************************************************************************************/
@@ -299,10 +304,10 @@ div.layout-footer {
     padding: 0;
 }
 
-div.layout-footer li a {
-    color: rgb(164, 188, 194);
-    text-decoration: underline solid rgb(164, 188, 194);
-}
+    div.layout-footer li a {
+        color: rgb(164, 188, 194);
+        text-decoration: underline solid rgb(164, 188, 194);
+    }
 
 div.hfooter {
     font-size: 133%;
@@ -317,25 +322,26 @@ div.collectionFilter {
     background-color: rgb(0, 56, 101);
 }
 
-div.collectionFilter:hover {
-    margin-top: 0;
-    margin-bottom: 0;
-    border-color: rgb(120, 190, 33);
-    background-color: rgb(164, 188, 194);
-    color: rgb(0, 0, 0);
-}
+    div.collectionFilter:hover {
+        margin-top: 0;
+        margin-bottom: 0;
+        border-color: rgb(120, 190, 33);
+        background-color: rgb(164, 188, 194);
+        color: rgb(0, 0, 0);
+    }
 
-div.collectionFilter > a:hover {
-    text-decoration: none;
-    color: rgb(0, 56, 101);
-}
+    div.collectionFilter > a:hover {
+        text-decoration: none;
+        color: rgb(0, 56, 101);
+    }
 
 .grid-controls {
     align-items: center;
 }
-.grid-controls button, .grid-controls input, .grid-controls span {
-    margin: 4px;
-}
+
+    .grid-controls button, .grid-controls input, .grid-controls span {
+        margin: 4px;
+    }
 
 .paging-offset-buttons {
     margin: 0px;
@@ -351,6 +357,7 @@ div.collectionFilter > a:hover {
     border: 1px solid black;
     display: inline;
 }
+
 #pageSizeInput, #pageNumberInput {
     max-width: 50px;
     display: inline;
@@ -361,9 +368,9 @@ th {
     position: relative;
 }
 
-th > i {
-    float:right;
-}
+    th > i {
+        float: right;
+    }
 
 .autocomplete-suggestions {
     position: absolute;
@@ -371,7 +378,7 @@ th > i {
     background-color: white;
     z-index: 1000;
     border: 1px solid rgb(120, 190, 33);
-    overflow-y:visible;
+    overflow-y: visible;
     white-space: nowrap;
 }
 
@@ -381,23 +388,24 @@ th > i {
     padding-right: 4px;
     white-space: nowrap;
 }
-.auto-suggestion:hover {
-    background-color: rgb(120, 190, 33);
-    font-weight: bold;
-}
+
+    .auto-suggestion:hover {
+        background-color: rgb(120, 190, 33);
+        font-weight: bold;
+    }
 
 .ui-autocomplete {
     max-height: 100px;
     overflow-y: auto;
     /* prevent horizontal scrollbar */
     overflow-x: hidden;
-  }
-  /* IE 6 doesn't support max-height
+}
+/* IE 6 doesn't support max-height
    * we use height instead, but this forces the menu to always be this tall
    */
-  * html .ui-autocomplete {
+* html .ui-autocomplete {
     height: 100px;
-  }
+}
 
 /***************************************************************************************/
 
@@ -415,10 +423,175 @@ th > i {
     display: none;
 }
 
-#admin-list-tab .active{
+/*#admin-list-tab .active{
     background-color: rgb(120, 190, 33);
     border-color: rgb(120, 190, 33);
+}*/
+
+/*
+.list-group {
+    border-radius: 0;
 }
+
+.list-group-item {
+    color: #000;
+    font-size: 75%;
+    background: #D9D9D6;
+}
+
+.list-group-item {
+    text-decoration: none;
+}
+
+    .list-group-item {
+        border-bottom: #78BE21 1px dotted !important;
+    }
+
+    .list-group-item:first-child {
+        border-top-right-radius: 0px !important;
+        border-top-left-radius: 0px !important;
+    }
+
+    .list-group-item:last-child {
+        border-bottom-right-radius: 0px !important;
+        border-bottom-left-radius: 0px !important;
+    }
+    
+    .list-group-item:hover {
+        text-decoration: underline;
+        color: #196486;
+        background: #D9D9D6;
+    }
+
+    .list-group-item.active {
+        color: #003865;
+        border-radius: 5px !important;
+        background-color: #A4BCC2
+    }
+    */
+
+
+.list-group {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    padding-left: 0;
+    margin-bottom: 0;
+}
+
+.list-group-item-action {
+    width: 100%;
+    color: #495057;
+    text-align: inherit;
+}
+
+    .list-group-item-action:hover, .list-group-item-action:focus {
+        color: #196486;
+        text-decoration: underline;
+        background-color: #D9D9D6;
+    }
+
+    .list-group-item-action:focus {
+        color: #003865;
+        border-radius: 5px;
+        background-color: #A4BCC2;
+    }
+
+    .list-group-item-action:active {
+        color: #212529;
+        background-color: #D9D9D6;
+    }
+
+.list-group-item {
+    position: relative;
+    display: block;
+    padding: 0.75rem 1.25rem;
+    margin-bottom: -1px;
+    background-color: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    font-size: 75%;
+    color: #000;
+    background: #D9D9D6;
+    /*padding-left: 20px;*/
+}
+
+    .list-group-item:first-child {
+        border-top-left-radius: 0.25rem;
+        border-top-right-radius: 0.25rem;
+    }
+
+    .list-group-item:last-child {
+        margin-bottom: 0;
+        border-bottom-right-radius: 0.25rem;
+        border-bottom-left-radius: 0.25rem;
+    }
+
+    .list-group-item:hover, .list-group-item:focus {
+        z-index: 1;
+        text-decoration: underline;
+    }
+
+    .list-group-item.disabled, .list-group-item:disabled {
+        color: #6c757d;
+        background-color: #fff;
+    }
+
+    .list-group-item.active {
+        z-index: 2;
+        color: #003865;
+        background-color: #A4BCC2;
+        border-color: unset;
+    }
+
+
+.list-group-flush .list-group-item {
+    border-top: #78BE21 1px dotted;
+    border-bottom: #78BE21 1px dotted;
+    border-right: 0;
+    border-left: 0;
+    border-radius: 0;
+}
+
+.list-group-flush:first-child .list-group-item:first-child {
+    border-top: 0;
+}
+
+.list-group-flush:last-child .list-group-item:last-child {
+    border-bottom: 0;
+}
+
+.list-group-item.active:before {
+    content: "\2b9a";
+    width: 20px;
+    margin-left: -15px;
+    display: inline-block;
+}
+
+.list-group-item:before {
+    content: "";
+    width: 20px;
+    margin-left: -15px;
+    display: inline-block;
+}
+
+.list-group-item-primary {
+    color: #004085;
+    background-color: #b8daff;
+}
+
+    .list-group-item-primary.list-group-item-action:hover, .list-group-item-primary.list-group-item-action:focus {
+        color: #004085;
+        background-color: #9fcdff;
+    }
+
+    .list-group-item-primary.list-group-item-action.active {
+        color: #fff;
+        background-color: #004085;
+        border-color: #004085;
+    }
+
+
 
 #submission-form-rows .form-row {
     padding-top: 5px;
