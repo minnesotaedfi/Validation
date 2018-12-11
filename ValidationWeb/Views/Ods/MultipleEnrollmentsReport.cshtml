@@ -1,20 +1,7 @@
 ﻿@model OdsMultipleEnrollmentsReportViewModel
 
 <div id="pagetop" class="row tbmargin10">
-    <div class="col-md-1">
-        <a href="#notes">See notes</a>
-    </div>
-    @if (Model.IsStateMode)
-    {
-        <div class="col-md-2"><a href="@Url.Action("MultipleEnrollmentsReport", "Ods", new { isStateMode = false })" class="show-data-loading">View Single District</a></div>
-    }
-    else
-    {
-        <div class="col-md-2"><a href="@Url.Action("MultipleEnrollmentsReport", "Ods", new { isStateMode = true })" class="show-data-loading">View All Districts</a></div>
-    }
 
-</div>
-<div class="row tbmargin10">
     @if (Model.IsStateMode)
     {
         <div class="vp-body-header justify-content-start align-self-center">Students with Multiple Open Enrollment for All Minnesota Districts</div>
@@ -23,6 +10,18 @@
     {
         <div class="vp-body-header justify-content-start align-self-center">Students with Multiple Open Enrollments for District @Model.EdOrgName (@Model.EdOrgId.ToString())</div>
     }
+
+    @if (Model.IsStateMode)
+    {
+        <div class="col-md-2"><a href="@Url.Action("MultipleEnrollmentsReport", "Ods", new { isStateMode = false })" class="show-data-loading">View Single District</a></div>
+    }
+    else
+    {
+        <div class="col-md-2"><a href="@Url.Action("MultipleEnrollmentsReport", "Ods", new { isStateMode = true })" class="show-data-loading">View All Districts</a></div>
+    }
+</div>
+<div class="row">
+    <div class="col-md-3 offset-9 text-right"><a href="#notes">View Report notes</a></div>
 </div>
 <div id="requestedReportContent" class="row">
     <table class="table table-sm table-responsive-md table-bordered" id="reportsTable">

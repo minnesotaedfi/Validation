@@ -1,7 +1,6 @@
 ﻿@model OdsStudentProgramsReportViewModel
 
 <div id="pagetop" class="row tbmargin10">
-    <div class="col-md-1"><a href="#notes">See notes</a></div>
     @if (Model.IsStateMode)
     {
         <div class="col-md-2"><a href="@Url.Action("StudentProgramsReport", "Ods", new { isStateMode = false })" class="show-data-loading">View Single District</a></div>
@@ -22,11 +21,12 @@
     }
 </div>
 <div class="row tbmargin10">
-    <div class="col-md-2"><a href="#reportsTable1">See Characteristics</a></div>
-    <div class="col-md-2"><a href="#reportsTable2">See Program Participation</a></div>
+    
 </div>
 <div class="row tbmargin10">
-    <div class="vp-body-header justify-content-start align-self-center">Characteristics:</div>
+    <div class="col-md-2 vp-body-header justify-content-start align-self-center">Characteristics:</div>
+    <div class="col-md-4"><a href="#reportsTable2">Jump to Program Participation</a></div>
+    <div class="col-md-3 offset-3 text-right"><a href="#notes">View Report notes</a></div>
 </div>
 <div id="requestedReportContent1" class="row">
     <table class="table table-sm table-responsive-md table-bordered" id="reportsTable1">
@@ -78,11 +78,9 @@
     </table>
 </div>
 <div class="row tbmargin10">
-    <div class="col-md-2"><a href="#reportsTable1">See Characteristics</a></div>
-    <div class="col-md-2"><a href="#reportsTable2">See Program Participation</a></div>
-</div>
-<div class="row tbmargin10">
-    <div class="vp-body-header justify-content-start align-self-center">Program Participation:</div>
+    <div class="col-md-2 vp-body-header justify-content-start align-self-center">Program Participation:</div>
+    <div class="col-md-4"><a href="#reportsTable1">Jump to Characteristics</a></div>
+    <div class="col-md-3 offset-3 text-right"><a href="#notes">View Report notes</a></div>
 </div>
 <div id="requestedReportContent2" class="row">
     <table class="table table-sm table-responsive-md table-bordered" id="reportsTable2">
@@ -127,10 +125,10 @@
         }
     </table>
 </div>
-<div class="row tbmargin10">
+@*<div class="row tbmargin10">
     <div class="col-md-2"><a href="#reportsTable1">See Characteristics</a></div>
     <div class="col-md-2"><a href="#reportsTable2">See Program Participation</a></div>
-</div>
+</div>*@
 <div id="notes" class="row">
     <div class="vp-body-header">Notes:</div>
 </div>
