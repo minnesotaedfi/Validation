@@ -204,8 +204,18 @@ input, select, textarea {
 div.dataTables_scroll {
     border-bottom: 1px solid #dee2e6;
 }
+
 div.dataTables_scrollBody {
     min-height: 350px
+}
+
+div.DTS
+tbody > tr.odd {
+    background-color: #fff !important;
+}
+
+div.DTS div.dataTables_scrollBody table {
+    background-color: white
 }
 
 table.dataTable tbody th, table.dataTable tbody td {
