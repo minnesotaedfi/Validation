@@ -1,15 +1,6 @@
 ﻿@model OdsDemographicsReportViewModel
 
-<div id="pagetop" class="row tbmargin10">
-    <div class="col-md-1"><a href="#notes">See notes</a></div>
-    @if (Model.IsStateMode)
-    {
-        <div class="col-md-2"><a href="@Url.Action("DemographicsReport", "Ods", new { isStateMode = false })" class="show-data-loading">View Single District</a></div>
-    }
-    else
-    {
-        <div class="col-md-2"><a href="@Url.Action("DemographicsReport", "Ods", new { isStateMode = true })" class="show-data-loading">View All Districts</a></div>
-    } 
+<div id="pagetop" class="row ">
 </div>
 <div class="row tbmargin10">
     @if (Model.IsStateMode)
@@ -27,9 +18,20 @@
             </div>
         }
     }
+
+    @if (Model.IsStateMode)
+    {
+        <div class="col-md-2"><a href="@Url.Action("DemographicsReport", "Ods", new { isStateMode = false })" class="show-data-loading">View Single District</a></div>
+    }
+    else
+    {
+        <div class="col-md-2"><a href="@Url.Action("DemographicsReport", "Ods", new { isStateMode = true })" class="show-data-loading">View All Districts</a></div>
+    }
+</div>
+<div class="row">
+    <div class="col-md-3 offset-9 text-right"><a href="#notes">View Report notes</a></div>
 </div>
 <div id="requestedReportContent" class="row">
-    @*render partial *@
     @Html.Partial("DemographicsReportTable", Model)
 </div>
 
@@ -57,8 +59,6 @@
             $('div.dataTables_scrollBody').css('min-height', '350px');
             
             var dataTable = $('#reportsTable').DataTable({
-                // responsive: false,
-                // fixedHeader: true,
                 paging: true,
                 info: false,
                 scrollX: true,

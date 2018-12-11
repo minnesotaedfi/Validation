@@ -7,6 +7,7 @@ using ValidationWeb.Services;
 namespace ValidationWeb
 {
     using System;
+    using System.Collections;
 
     using DataTables.AspNet.Core;
     using DataTables.AspNet.Mvc5;
@@ -81,24 +82,22 @@ namespace ValidationWeb
 
             var fourDigitSchoolYear = _schoolyearService.GetSchoolYearById(session.FocusedSchoolYearId).EndYear;
             var theUser = _appUserService.GetUser();
+
             if (isStudentDrillDown)
             {
-                var studentDrillDownResults = _odsDataService.GetDistrictAncestryRaceStudentDrillDown(
-                    orgType,
-                    schoolId,
-                    schoolId ?? edOrgId,
-                    drillDownColumnIndex,
-                    fourDigitSchoolYear);
-
                 var studentDrillDownModel = new StudentDrillDownViewModel
                 {
                     ReportName = "Race and Ancestry Ethnic Origin",
                     EdOrgId = edOrgId,
                     EdOrgName = edOrgName,
                     User = theUser,
-                    Results = studentDrillDownResults,
-                    IsStateMode = isStateMode
+                    FourDigitSchoolYear = fourDigitSchoolYear,
+                    DrillDownColumnIndex = drillDownColumnIndex,
+                    IsStateMode = isStateMode,
+                    SchoolId = schoolId,
+                    OrgType = orgType
                 };
+
                 return View("StudentDrillDown", studentDrillDownModel);
             }
 
@@ -118,15 +117,110 @@ namespace ValidationWeb
             return View(model);
         }
 
+        public JsonResult GetStudentDrilldownData(
+            OrgType orgType,
+            int? schoolId,
+            int edOrgId,
+            int drillDownColumnIndex,
+            string fourDigitSchoolYear,
+            IDataTablesRequest request)
+        {
+            IEnumerable<StudentDrillDownQuery> results = _odsDataService.GetDistrictAncestryRaceStudentDrillDown(
+                orgType,
+                schoolId,
+                schoolId ?? edOrgId,
+                drillDownColumnIndex,
+                fourDigitSchoolYear);
+
+            IEnumerable<StudentDrillDownQuery> sortedResults = results;
+
+            var sortColumn = request.Columns.FirstOrDefault(x => x.Sort != null);
+            if (sortColumn != null)
+            {
+                Func<StudentDrillDownQuery, string> orderingFunctionString = null;
+                Func<StudentDrillDownQuery, int?> orderingFunctionNullableInt = null;
+                Func<StudentDrillDownQuery, DateTime?> orderingFunctionNullableDateTime = null;
+                
+                switch (sortColumn.Name)
+                {
+                    case "studentId":
+                        {
+                            orderingFunctionString = x => x.StudentId;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? results.OrderBy(orderingFunctionString)
+                                                : results.OrderByDescending(orderingFunctionString);
+                            break;
+                        }
+                    case "studentName":
+                        {
+                            // watch this implementation detail! name is being stitched together in javascript now --pocky
+                            orderingFunctionString = x => $"{x.StudentLastName}, {x.StudentFirstName} {x.StudentMiddleName}";
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? results.OrderBy(orderingFunctionString)
+                                                : results.OrderByDescending(orderingFunctionString);
+                            break;
+                        }
+                    case "schoolId":
+                        {
+                            orderingFunctionNullableInt = x => x.SchoolId;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? results.OrderBy(orderingFunctionNullableInt)
+                                                : results.OrderByDescending(orderingFunctionNullableInt);
+                            break;
+                        }
+                    case "schoolName":
+                        {
+                            orderingFunctionString = x => x.SchoolName;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? results.OrderBy(orderingFunctionString)
+                                                : results.OrderByDescending(orderingFunctionString);
+                            break;
+                        }
+                    case "enrolledDate":
+                        {
+                            orderingFunctionNullableDateTime = x => x.EnrolledDate;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? results.OrderBy(orderingFunctionNullableDateTime)
+                                                : results.OrderByDescending(orderingFunctionNullableDateTime);
+                            break;
+                        }
+                    case "withdrawDate":
+                        {
+                            orderingFunctionNullableDateTime = x => x.WithdrawDate;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? results.OrderBy(orderingFunctionNullableDateTime)
+                                                : results.OrderByDescending(orderingFunctionNullableDateTime);
+                            break;
+                        }
+                    case "grade":
+                        {
+                            orderingFunctionString = x => x.Grade;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? results.OrderBy(orderingFunctionString)
+                                                : results.OrderByDescending(orderingFunctionString);
+                            break;
+                        }
+                    default:
+                        {
+                            sortedResults = results;
+                            break;
+                        }
+                }
+            }
+
+            var pagedResults = sortedResults.Skip(request.Start).Take(request.Length);
+            var response = DataTablesResponse.Create(request, results.Count(), results.Count(), pagedResults);
+            var jsonResult = new DataTablesJsonResult(response, JsonRequestBehavior.AllowGet);
+            return jsonResult;
+        }
+
         public JsonResult GetDemographicsReportData(
             int edOrgId,
             string fourDigitSchoolYear,
             bool isStateMode,
             IDataTablesRequest request)
         {
-            List<DemographicsCountReportQuery> results;
-
-            results = _odsDataService.GetDistrictAncestryRaceCounts(
+            IEnumerable<DemographicsCountReportQuery> results = _odsDataService.GetDistrictAncestryRaceCounts(
                 isStateMode ? (int?)null : edOrgId,
                 fourDigitSchoolYear);
 
@@ -198,7 +292,7 @@ namespace ValidationWeb
             }
 
             var pagedResults = sortedResults.Skip(request.Start).Take(request.Length);
-            var response = DataTablesResponse.Create(request, results.Count, results.Count, pagedResults);
+            var response = DataTablesResponse.Create(request, results.Count(), results.Count(), pagedResults);
             var jsonResult = new DataTablesJsonResult(response, JsonRequestBehavior.AllowGet);
             return jsonResult;
         }
