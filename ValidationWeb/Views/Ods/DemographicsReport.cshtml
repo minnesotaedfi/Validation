@@ -1,15 +1,6 @@
 ﻿@model OdsDemographicsReportViewModel
 
-<div id="pagetop" class="row tbmargin10">
-    <div class="col-md-1"><a href="#notes">See notes</a></div>
-    @if (Model.IsStateMode)
-    {
-        <div class="col-md-2"><a href="@Url.Action("DemographicsReport", "Ods", new { isStateMode = false })" class="show-data-loading">View Single District</a></div>
-    }
-    else
-    {
-        <div class="col-md-2"><a href="@Url.Action("DemographicsReport", "Ods", new { isStateMode = true })" class="show-data-loading">View All Districts</a></div>
-    } 
+<div id="pagetop" class="row ">
 </div>
 <div class="row tbmargin10">
     @if (Model.IsStateMode)
@@ -27,16 +18,26 @@
             </div>
         }
     }
+
+    @if (Model.IsStateMode)
+    {
+        <div class="col-md-2"><a href="@Url.Action("DemographicsReport", "Ods", new { isStateMode = false })" class="show-data-loading">View Single District</a></div>
+    }
+    else
+    {
+        <div class="col-md-2"><a href="@Url.Action("DemographicsReport", "Ods", new { isStateMode = true })" class="show-data-loading">View All Districts</a></div>
+    }
+</div>
+<div class="row">
+    <div class="col-md-3 offset-9 text-right"><a href="#notes">View Report notes</a></div>
 </div>
 <div id="requestedReportContent" class="row">
-    @*render partial *@
     @Html.Partial("DemographicsReportTable", Model)
 </div>
 
 @section scripts  {
     <script type="text/javascript">
         $(function() {
-            // debugger;
             var drillDownLinkTemplate =
                 '<a href="@Html.Raw(Url.Action("DemographicsReport", "Ods", new { schoolId = "_EdOrgId_", drillDownColumnIndex = "_DrillDownIndex_", isStateMode = Model.IsStateMode, districtToDisplay = "_EdOrgId_", isStudentDrillDown = true, orgType = "_OrgType_" }))" target="_blank">_LinkText_</a>';
 
@@ -54,20 +55,24 @@
             function createStateLink(edOrgId) {
                 return stateLinkTemplate.replace(/_EdOrgId_/g, edOrgId);
             }
-
+            
+            $('div.dataTables_scrollBody').css('min-height', '350px');
+            
             var dataTable = $('#reportsTable').DataTable({
-                // responsive: false,
-                // fixedHeader: true,
                 paging: true,
                 info: false,
-                scrollY: '400px',
-                // scrollCollapse: true,
+                scrollX: true,
+                scrollY: '350px',
+                scrollCollapse: true,
                 deferRender: true, 
                 searching: false,
                 serverSide: true,
-                // stateSave: true
+                processing: true,
                 scroller: {
-                    loadingIndicator: false
+                    loadingIndicator: true
+                },
+                fnInitComplete: function(){
+                    $('div.dataTables_scrollBody').css('min-height', 0);         
                 },
                 ajax: {
                     url: "@Html.Raw(Url.Action(

@@ -20,10 +20,10 @@ div.DTS div.dataTables_length {
   display: none;
 }
 
-div.DTS tbody tr.even {
+/*div.DTS tbody tr.even {
   background-color: white;
 }
 
     div.DTS tbody tr.even:hover {
         background-color: rgba(0, 0, 0, 0.075);
-    }
+    }*/

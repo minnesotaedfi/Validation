@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 
 namespace ValidationWeb
 {
@@ -13,5 +10,9 @@ namespace ValidationWeb
         public string EdOrgName { get; set; }
         public List<StudentDrillDownQuery> Results { get; set; }
         public bool IsStateMode { get; set; }
+        public OrgType OrgType { get; set; }
+        public string FourDigitSchoolYear { get; set; }
+        public int? SchoolId { get; set; }
+        public int? DrillDownColumnIndex { get; set; }
     }
 }

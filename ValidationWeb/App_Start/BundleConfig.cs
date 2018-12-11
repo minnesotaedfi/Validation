@@ -33,7 +33,7 @@ namespace ValidationWeb
             bundles.Add(new StyleBundle("~/Content/datePickerCSS").Include("~/Content/Styles/bootstrap-datetimepicker.min.css"));
             bundles.Add(new ScriptBundle("~/bundles/datePickerJS").Include("~/Content/Scripts/moment.js", "~/Content/Scripts/bootstrap-datetimepicker.min.js"));
 
-            bundles.Add(new StyleBundle("~/Content/DataTables/css").Include(
+            bundles.Add(new StyleBundle("~/Content/DataTables/css/dataTables.css").Include(
                 "~/Content/DataTables/css/dataTables.bootstrap.css",
                 "~/Content/DataTables/css/dataTables.fontAwesome.css",
                 "~/Content/DataTables/css/fixedheader.bootstrap.css",
