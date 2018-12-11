@@ -139,6 +139,7 @@ namespace ValidationWeb
             {
                 Func<StudentDrillDownQuery, string> orderingFunctionString = null;
                 Func<StudentDrillDownQuery, int?> orderingFunctionNullableInt = null;
+                Func<StudentDrillDownQuery, int> orderingFunctionInt = null;
                 Func<StudentDrillDownQuery, DateTime?> orderingFunctionNullableDateTime = null;
                 
                 switch (sortColumn.Name)
@@ -194,10 +195,10 @@ namespace ValidationWeb
                         }
                     case "grade":
                         {
-                            orderingFunctionString = x => x.Grade;
+                            orderingFunctionInt = x => int.Parse(x.Grade);
                             sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
-                                                ? results.OrderBy(orderingFunctionString)
-                                                : results.OrderByDescending(orderingFunctionString);
+                                                ? results.OrderBy(orderingFunctionInt)
+                                                : results.OrderByDescending(orderingFunctionInt);
                             break;
                         }
                     default:
