@@ -1,13 +1,11 @@
 ﻿@model OdsChangeOfEnrollmentReportViewModel
 
-<div id="pagetop" class="row tbmargin10">
-    <div><a href="#notes" class="col-md-1">See notes</a></div>
-</div>
-<div class="row tbmargin10">
+<div class="row tbmargin10" id="pagetop">
     <div class="vp-body-header justify-content-start align-self-center">Changes of Enrollment in the Last 30 Days for District @Model.EdOrgName (@Model.EdOrgId.ToString())</div>
 </div>
 <div class="row tbmargin10">
-    <div class="vp-body-header justify-content-start align-self-center">Enrolling</div>
+    <div class="col-md-4 vp-body-header justify-content-start align-self-center">Enrolling</div>
+    <div class="col-md-3 offset-5 text-right"><a href="#notes">View Report notes</a></div>
 </div>
 <div id="requestedReportContent" class="row">
     <table class="table table-sm table-responsive-md table-bordered" id="reportsTable">
@@ -99,7 +97,8 @@
     }
 </div>
 <div class="row tbmargin10">
-    <div class="vp-body-header justify-content-start align-self-center">Withdrawing</div>
+    <div class="col-md-4 vp-body-header justify-content-start align-self-center">Withdrawing</div>
+    <div class="col-md-3 offset-5 text-right"><a href="#notes">View Report notes</a></div>
 </div>
 <div id="requestedReportContent" class="row">
     <table class="table table-sm table-responsive-md table-bordered" id="reportsTable">
