@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace ValidationWeb.DataCache
+﻿namespace ValidationWeb.DataCache
 {
-    using System.Collections;
+    using System;
+    using System.Collections.Generic;
     using System.Runtime.Caching;
 
     using ValidationWeb.Services;
-    using ValidationWeb.Utility;
 
     public class CacheManager : ICacheManager
     {
