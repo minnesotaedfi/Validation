@@ -1,14 +1,11 @@
 ﻿@model OdsChangeOfEnrollmentReportViewModel
 
-<div id="pagetop" class="row tbmargin10">
-    <div><a href="@Url.Action("Reports")" class="back-link"><i class="fas fa-arrow-alt-circle-left"></i> Back to ODS Reports</a></div>
-    <div><a href="#notes" class="vp-page-link"><i class="fas fa-arrow-alt-circle-down"></i> See notes</a></div>
-</div>
-<div class="row tbmargin10">
+<div class="row tbmargin10" id="pagetop">
     <div class="vp-body-header justify-content-start align-self-center">Changes of Enrollment in the Last 30 Days for District @Model.EdOrgName (@Model.EdOrgId.ToString())</div>
 </div>
 <div class="row tbmargin10">
-    <div class="vp-body-header justify-content-start align-self-center">Enrolling</div>
+    <div class="col-md-4 vp-body-header justify-content-start align-self-center">Enrolling</div>
+    <div class="col-md-3 offset-5 text-right"><a href="#notes">View Report notes</a></div>
 </div>
 <div id="requestedReportContent" class="row">
     <table class="table table-sm table-responsive-md table-bordered" id="reportsTable">
@@ -100,7 +97,8 @@
     }
 </div>
 <div class="row tbmargin10">
-    <div class="vp-body-header justify-content-start align-self-center">Withdrawing</div>
+    <div class="col-md-4 vp-body-header justify-content-start align-self-center">Withdrawing</div>
+    <div class="col-md-3 offset-5 text-right"><a href="#notes">View Report notes</a></div>
 </div>
 <div id="requestedReportContent" class="row">
     <table class="table table-sm table-responsive-md table-bordered" id="reportsTable">
@@ -163,12 +161,11 @@
 <div class="row">(1) Enrolling students are those who enrolled in a district school in the past 30 days and had enrolled in some other school in the state prior to 30 days ago.</div>
 <div class="row">(2) Withdrawing students are those that withdrew in the past thirty days and subsequently enrolled elsewhere in the state.</div>
 <div class="row tbmargin10">
-    <a href="@Url.Action("Reports")" class="back-link"><i class="fas fa-arrow-alt-circle-left"></i> Back to ODS Reports</a>
-    <a href="#pagetop" class="vp-page-link"><i class="fas fa-arrow-alt-circle-up"></i> Back to Top</a>
+    <a href="#pagetop">Back to Top</a>
 </div>
 
 
 @section scripts {
     <script>
     </script>
-}}
+}

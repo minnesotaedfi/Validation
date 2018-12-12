@@ -1,26 +1,25 @@
 ﻿@model OdsResidentsEnrolledElsewhereReportViewModel
 
 <div id="pagetop" class="row tbmargin10">
-    <div><a href="@Url.Action("Reports")" class="back-link"><i class="fas fa-arrow-alt-circle-left"></i> Back to ODS Reports</a></div>
-    <div><a href="#notes" class="vp-page-link"><i class="fas fa-arrow-alt-circle-down"></i> See notes</a></div>
     @if (Model.IsStateMode)
     {
-        <div><a href="@Url.Action("ResidentsEnrolledElsewhereReport", "Ods", new { isStateMode = false })" class="vp-page-link show-data-loading"><i class="fas fa-chalkboard-teacher"></i> View Single District</a></div>
+        <div class="vp-body-header col-md-6 justify-content-start align-self-center">Residents Enrolled Elsewhere for All Minnesota Districts</div>
     }
     else
     {
-        <div><a href="@Url.Action("ResidentsEnrolledElsewhereReport", "Ods", new { isStateMode = true })" class="vp-page-link show-data-loading"><i class="fas fa-sitemap"></i> View All Districts</a></div>
+        <div class="vp-body-header col-md-6 justify-content-start align-self-center">Residents Enrolled Elsewhere for District @Model.EdOrgName (@Model.EdOrgId.ToString())</div>
     }
-</div>
-<div class="row tbmargin10">
+
     @if (Model.IsStateMode)
     {
-        <div class="vp-body-header justify-content-start align-self-center">Residents Enrolled Elsewhere for All Minnesota Districts</div>
+        <div class="col-md-3"><a href="@Url.Action("ResidentsEnrolledElsewhereReport", "Ods", new { isStateMode = false })" class="show-data-loading">View Single District</a></div>
     }
     else
     {
-        <div class="vp-body-header justify-content-start align-self-center">Residents Enrolled Elsewhere for District @Model.EdOrgName (@Model.EdOrgId.ToString())</div>
+        <div class="col-md-3"><a href="@Url.Action("ResidentsEnrolledElsewhereReport", "Ods", new { isStateMode = true })" class="show-data-loading">View All Districts</a></div>
     }
+
+    <div class="col-md-3 text-right"><a href="#notes">View Report notes</a></div>
 </div>
 <div id="requestedReportContent" class="row">
     <table class="table table-sm table-responsive-md table-bordered" id="reportsTable">
@@ -68,8 +67,9 @@
 </div>
 <div class="row">The district where the student resides is determined from the student-school association extensions in the Ed Fi ODS database.</div>
 <div class="row tbmargin10">
-    <a href="@Url.Action("Reports")" class="back-link"><i class="fas fa-arrow-alt-circle-left"></i> Back to ODS Reports</a>
-    <a href="#pagetop" class="vp-page-link"><i class="fas fa-arrow-alt-circle-up"></i> Back to Top</a>
+    <div  class="col-md-2">
+        <a href="#pagetop">Back to Top</a>
+    </div>
 </div>
 
 

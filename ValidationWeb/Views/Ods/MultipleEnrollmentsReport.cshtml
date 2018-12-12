@@ -1,19 +1,7 @@
 ﻿@model OdsMultipleEnrollmentsReportViewModel
 
 <div id="pagetop" class="row tbmargin10">
-    <div><a href="@Url.Action("Reports")" class="back-link"><i class="fas fa-arrow-alt-circle-left"></i> Back to ODS Reports</a></div>
-    <div><a href="#notes" class="vp-page-link"><i class="fas fa-arrow-alt-circle-down"></i> See notes</a></div>
-    @if (Model.IsStateMode)
-    {
-        <div><a href="@Url.Action("MultipleEnrollmentsReport", "Ods", new { isStateMode = false })" class="vp-page-link show-data-loading"><i class="fas fa-chalkboard-teacher"></i> View Single District</a></div>
-    }
-    else
-    {
-        <div><a href="@Url.Action("MultipleEnrollmentsReport", "Ods", new { isStateMode = true })" class="vp-page-link show-data-loading"><i class="fas fa-sitemap"></i> View All Districts</a></div>
-    }
 
-</div>
-<div class="row tbmargin10">
     @if (Model.IsStateMode)
     {
         <div class="vp-body-header justify-content-start align-self-center">Students with Multiple Open Enrollment for All Minnesota Districts</div>
@@ -22,6 +10,18 @@
     {
         <div class="vp-body-header justify-content-start align-self-center">Students with Multiple Open Enrollments for District @Model.EdOrgName (@Model.EdOrgId.ToString())</div>
     }
+
+    @if (Model.IsStateMode)
+    {
+        <div class="col-md-2"><a href="@Url.Action("MultipleEnrollmentsReport", "Ods", new { isStateMode = false })" class="show-data-loading">View Single District</a></div>
+    }
+    else
+    {
+        <div class="col-md-2"><a href="@Url.Action("MultipleEnrollmentsReport", "Ods", new { isStateMode = true })" class="show-data-loading">View All Districts</a></div>
+    }
+</div>
+<div class="row">
+    <div class="col-md-3 offset-9 text-right"><a href="#notes">View Report notes</a></div>
 </div>
 <div id="requestedReportContent" class="row">
     <table class="table table-sm table-responsive-md table-bordered" id="reportsTable">
@@ -71,8 +71,9 @@
 <div class="row">(2) All columns including Cumulative Enrollments count individual students only once, even if they have multiple enrollments.</div>
 <div class="row">(3) &quot;Cumulative&quot; means that enrollments are accounted as at least one enrollment any time during the school year - not only &quot;Currently Enrolled&quot;.</div>
 <div class="row tbmargin10">
-    <a href="@Url.Action("Reports")" class="back-link"><i class="fas fa-arrow-alt-circle-left"></i> Back to ODS Reports</a>
-    <a href="#pagetop" class="vp-page-link"><i class="fas fa-arrow-alt-circle-up"></i> Back to Top</a>
+    <div class="col-md-2">
+        <a href="#pagetop">Back to Top</a>
+    </div>
 </div>
 
 @section scripts {

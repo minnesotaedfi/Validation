@@ -33,6 +33,7 @@ namespace ValidationWeb
 
         [ForeignKey("ValidationReportDetails")]
         public int ValidationReportDetailsId { get; set; }
+        public int SchoolYearId { get; set; }
         public ValidationReportDetails ValidationReportDetails { get; set; }
 
         public bool TryGetErrorSeverity(out ErrorSeverity edOrgType)

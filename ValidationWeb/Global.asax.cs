@@ -46,6 +46,9 @@ namespace ValidationWeb
             
             // Configure the Web API
             GlobalConfiguration.Configure(ConfigureWebApi);
+
+            // set up model binding for dataTable requests
+            DataTables.AspNet.Mvc5.Configuration.RegisterDataTables();
         }
 
         /// <summary>

@@ -3,19 +3,21 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
-    <title>MN DOE District Data Validation Portal</title>
+    <title>Ed-Fi Data Validation Portal</title>
     <link rel="SHORTCUT ICON" href="~/favicon.ico" />
-    @Styles.Render("~/Content/css")
+    @Styles.Render("~/Content/Styles/css")
     @Styles.Render("~/Content/jqueryUICSS")
     @Styles.Render("~/Content/datePickerCSS")
+    @Styles.Render("~/Content/DataTables/css/DataTablesCSS")
+    @Styles.Render("~/Content/ValidationPortal")
 </head>
 <body>
     <div class="container-fluid layout">
         <div class="row ">
             <div class="top-banner col-12">
-                <img src="~/Content/Images/mdelogo450.png" class="img-fluid mdelogo" />
+                <img src="~/Content/Images/mdelogo450.png" class="mdelogo" />
                 <p><a href="#skipnavigation">Skip navigation</a></p>
-                <div class="app-title clear-margin">District Data Validation Portal</div>
+                <div class="app-title clear-margin">Ed-Fi Data Validation Portal</div>
             </div>
         </div>
         <div class="row noprint">
@@ -27,21 +29,26 @@
                     <div class="collapse navbar-collapse" id="theNavBar">
                         <ul class="navbar-nav">
                             <li>@Html.Raw(Html.ActionLink("LinkText", "Index", "Home", new { area = "" }, new { @class = "nav-link validation-nav-link show-page-loading" }).ToHtmlString().Replace("LinkText", "<i class=\"fas fa-home white-heavy-text\"></i> Home"))</li>
-                            <li>@Html.Raw(Html.ActionLink("LinkText", "Reports", "Validation", new { area = "" }, new { @class = "nav-link validation-nav-link show-page-loading" }).ToHtmlString().Replace("LinkText", "<i class=\"fas fa-file-alt white-heavy-text\"></i>  Validation Reports"))</li>
-                            <li>@Html.Raw(Html.ActionLink("LinkText", "Reports", "Ods", new { area = "" }, new { @class = "nav-link validation-nav-link show-page-loading" }).ToHtmlString().Replace("LinkText", "<i class=\"fas fa-database white-heavy-text\"></i> ODS Reports"))</li>
+                            <li>@Html.Raw(Html.ActionLink("LinkText", "Reports", "Validation", new { area = "" }, new { @class = "nav-link validation-nav-link show-page-loading" }).ToHtmlString().Replace("LinkText", "Validation Reports"))</li>
+                            <li>@Html.Raw(Html.ActionLink("LinkText", "Reports", "Ods", new { area = "" }, new { @class = "nav-link validation-nav-link show-page-loading" }).ToHtmlString().Replace("LinkText", "ODS Reports"))</li>
                             <!--
                                 
                             <li>@Html.Raw(Html.ActionLink("LinkText", "Collections", "Rules", new { area = "" }, new { @class = "nav-link validation-nav-link" }).ToHtmlString().Replace("LinkText", "<i class=\"fas fa-list-alt white-heavy-text\"></i> Rule Collections"))</li>
                             
                             -->
-                            <li class="mr-auto"><a class="nav-link validation-nav-link mr-auto show-page-loading" href="https://w1.education.state.mn.us/MIDMSWEB/MDELogin.html"><i class="fas fa-coins white-heavy-text"></i> MARSS WES</a></li>
+                            <li class="mr-auto"><a class="nav-link validation-nav-link mr-auto show-page-loading" href="https://w1.education.state.mn.us/MIDMSWEB/MDELogin.html">MARSS WES</a></li>
                             @Html.Action("NavDropDowns", "Nav")
                         </ul>
                     </div>
                 </nav>
             </div>
         </div>
-        <div class="row layout">
+        <div class="row">
+            <div class="col-12">
+                @Html.MvcSiteMap().SiteMapPath()
+            </div>
+        </div>
+        <div class="row layout mainSection">
             <div class="col-12">
                 <a name="skipnavigation" id="skipNavigationAnchor" tabindex="-1"></a>
                 @RenderBody()
@@ -55,6 +62,7 @@
     @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/bundles/jqueryUI")
     @Scripts.Render("~/bundles/datePickerJS")
+    @Scripts.Render("~/bundles/DataTables")
     <script>
         @*  The contents of this script tag are not in a separate file because portions are generated on the sever side with ASP.NET MVC *@
         // Supports overlay

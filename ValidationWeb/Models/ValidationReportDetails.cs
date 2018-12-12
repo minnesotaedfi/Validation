@@ -23,8 +23,10 @@ namespace ValidationWeb
         public string CollectionName { get; set; }
         public DateTime? CompletedWhen { get; set; }
 
-        [ForeignKey("ValidationReportSummary")]
+        [ForeignKey("ValidationReportSummary"), Column(Order = 0)]
         public long ValidationReportSummaryId { get; set; }
+        [ForeignKey("ValidationReportSummary"), Column(Order = 1)]
+        public int SchoolYearId { get; set; }
         public ValidationReportSummary ValidationReportSummary { get; set; }
 
         public ICollection<ValidationErrorSummary> ErrorSummaries { get; set; }
