@@ -96,7 +96,8 @@ namespace ValidationWeb.Services
                 {
                     CollectionName = collectionId,
                     DistrictName = $"{_edOrgService.GetEdOrgById(newReportSummary.EdOrgId, newReportSummary.SchoolYear.Id).OrganizationName} ({newReportSummary.EdOrgId.ToString()})",
-                    ValidationReportSummaryId = newReportSummary.Id
+                    ValidationReportSummaryId = newReportSummary.Id,
+                    SchoolYearId = newReportSummary.SchoolYear.Id
                 };
                 _dbContext.ValidationReportDetails.Add(newReportDetails);
                 _dbContext.SaveChanges();
