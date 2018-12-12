@@ -25,15 +25,14 @@ namespace ValidationWeb.Services
             var announcements = new List<Announcement>();
             try
             {
-                var userSession = _appUserService.GetSession();
-                var dismissedAnnouncementIds = userSession.DismissedAnnouncements.Select(da => da.AnnouncementId).ToArray();
-                var edOrgIds = userSession.UserIdentity.AuthorizedEdOrgs.Select(aeo => aeo.Id).ToArray();
+                var dismissedAnnouncementIds = _appUserService.GetSession().DismissedAnnouncements.Select(da => da.AnnouncementId).ToArray();
+                var edOrgIds = _appUserService.GetSession().UserIdentity.AuthorizedEdOrgs.Select(aeo => aeo.Id).ToArray();
                 var allAnnouncements = _validationPortalDataContext.Announcements.ToList();
                 announcements = allAnnouncements.Where(ann =>
-                    ann.LimitToEdOrgs.Count == 0 ||
-                    (ann.LimitToEdOrgs.Select(lte => lte.Id).Intersect(edOrgIds).Any() &&
-                        !dismissedAnnouncementIds.Contains(ann.Id))
-                    ).OrderByDescending(ann => ann.Priority).ToList();
+                    (ann.LimitToEdOrgs.Count == 0) ||
+                    (ann.LimitToEdOrgs.Select(lte => lte.Id).Intersect(edOrgIds).Count() > 0
+                     && !dismissedAnnouncementIds.Contains(ann.Id))
+                ).OrderByDescending(ann => ann.Priority).ToList();
             }
             catch(Exception ex)
             {
