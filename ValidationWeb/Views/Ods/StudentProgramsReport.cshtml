@@ -8,6 +8,14 @@
     else
     {
         <div class="col-md-2"><a href="@Url.Action("StudentProgramsReport", "Ods", new { isStateMode = true })" class="show-data-loading">View All Districts</a></div>
+
+        if (Model.SchoolId.HasValue && !string.IsNullOrWhiteSpace(Model.SchoolName))
+        {
+            <div class="vp-body-header justify-content-start align-self-center">
+                For @Model.SchoolName (@Model.SchoolId)
+            </div>
+        }
+
     }
 </div>
 <div class="row tbmargin10">
@@ -21,69 +29,27 @@
     }
 </div>
 <div class="row tbmargin10">
-    
-</div>
-<div class="row tbmargin10">
     <div class="col-md-2 vp-body-header justify-content-start align-self-center">Characteristics:</div>
-    <div class="col-md-4"><a href="#reportsTable2">Jump to Program Participation</a></div>
+    <div class="col-md-4"><a href="#requestedReportContent2">Jump to Program Participation</a></div>
     <div class="col-md-3 offset-3 text-right"><a href="#notes">View Report notes</a></div>
 </div>
-<div id="requestedReportContent1" class="row">
-    <table class="table table-sm table-responsive-md table-bordered" id="reportsTable1">
-        <tr class="table-primary">
-            <th>ID</th>
-            <th>District/School</th>
-            <th>Cumulative Enrollments</th>
-            <th>Demographic Records</th>
-            <th>Active Duty Parents (ADP)</th>
-            <th>American Indian - Alaska Native (Minnesota)</th>
-            <th>Migrant</th>
-            <th>Homeless</th>
-            <th>Immigrant</th>
-            <th>Recently&nbsp;Arrived<br />English&nbsp;Learner</th>
-            <th>SLIFE</th>
-        </tr>
-        @foreach (var result in Model.Results)
-        {
-            <tr>
-                <td>
-                    @if (Model.IsStateMode)
-                    {
-                        if (result.EdOrgId.HasValue && result.OrgType == OrgType.District)
-                        {
-                            <a href="@Url.Action("StudentProgramsReport", "Ods", new { isStateMode = false, districtToDisplay = result.EdOrgId.Value })" class="show-data-loading">@(result.EdOrgId.Value.ToString())</a>
-                        }
-                        else
-                        {
-                            @(result.EdOrgId.HasValue ? result.EdOrgId.Value.ToString() : string.Empty)
-                        }
-                    }
-                    else
-                    {
-                        @(result.EdOrgId.HasValue ? result.EdOrgId.Value.ToString() : string.Empty)
-                    }
-                </td>
-                <td>@(result.LEASchool)</td>
-                <td><a href="@Url.Action("StudentProgramsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 0, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType})" target="_blank">@(result.DistinctEnrollmentCount.ToString())</a></td>
-                <td><a href="@Url.Action("StudentProgramsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 1, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType})" target="_blank">@(result.DistinctDemographicsCount.ToString())</a></td>
-                <td><a href="@Url.Action("StudentProgramsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 2, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType})" target="_blank">@(result.ADParentCount.ToString())</a></td>
-                <td><a href="@Url.Action("StudentProgramsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 3, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType})" target="_blank">@(result.IndianNativeCount.ToString())</a></td>
-                <td><a href="@Url.Action("StudentProgramsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 4, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType})" target="_blank">@(result.MigrantCount.ToString())</a></td>
-                <td><a href="@Url.Action("StudentProgramsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 5, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType})" target="_blank">@(result.HomelessCount.ToString())</a></td>
-                <td><a href="@Url.Action("StudentProgramsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 6, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType})" target="_blank">@(result.ImmigrantCount.ToString())</a></td>
-                <td><a href="@Url.Action("StudentProgramsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 7, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType})" target="_blank">@(result.RecentEnglishCount.ToString())</a></td>
-                <td><a href="@Url.Action("StudentProgramsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 8, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType})" target="_blank">@(result.SLIFECount.ToString())</a></td>
-            </tr>
-        }
-    </table>
+
+<div id="requestedReportContent1">
+    <table class="table table-bordered nowrap" id="reportsTable1" style="table-layout: fixed; width: 98% !important;"></table>
 </div>
+
 <div class="row tbmargin10">
     <div class="col-md-2 vp-body-header justify-content-start align-self-center">Program Participation:</div>
-    <div class="col-md-4"><a href="#reportsTable1">Jump to Characteristics</a></div>
+    <div class="col-md-4"><a href="#requestedReportContent1">Jump to Characteristics</a></div>
     <div class="col-md-3 offset-3 text-right"><a href="#notes">View Report notes</a></div>
 </div>
-<div id="requestedReportContent2" class="row">
-    <table class="table table-sm table-responsive-md table-bordered" id="reportsTable2">
+
+<div id="requestedReportContent2" class="tbmargin10">
+    <table class="table table-bordered nowrap" id="reportsTable2" style="table-layout: fixed; width: 98% !important;"></table>
+</div>
+
+<div id="_requestedReportContent2" class="row">
+    <table class="table table-sm table-responsive-md table-bordered" id="_reportsTable2">
         <tr class="table-primary">
             <th>ID</th>
             <th>District/School</th>
@@ -94,42 +60,9 @@
             <th>Title I Part A</th>
             <th>Eligible for Free and Reduced Meals</th>
         </tr>
-        @foreach (var result in Model.Results)
-        {
-            <tr>
-                <td>
-                    @if (Model.IsStateMode)
-                    {
-                        if (result.EdOrgId.HasValue && result.OrgType == OrgType.District)
-                        {
-                            <a href="@Url.Action("DemographicsReport", "Ods", new { isStateMode = false, districtToDisplay = result.EdOrgId.Value })" class="show-data-loading">@(result.EdOrgId.Value.ToString())</a>
-                        }
-                        else
-                        {
-                            @(result.EdOrgId.HasValue ? result.EdOrgId.Value.ToString() : string.Empty)
-                        }
-                    }
-                    else
-                    {
-                        @(result.EdOrgId.HasValue ? result.EdOrgId.Value.ToString() : string.Empty)
-                    }
-                </td>
-                <td>@(result.LEASchool)</td>
-                <td><a href="@Url.Action("StudentProgramsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 9, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType})" target="_blank">@(result.EnglishLearnerIdentifiedCount.ToString())</a></td>
-                <td><a href="@Url.Action("StudentProgramsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 10, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType})" target="_blank">@(result.EnglishLearnerServedCount.ToString())</a></td>
-                <td><a href="@Url.Action("StudentProgramsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 11, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType})" target="_blank">@(result.IndependentStudyCount.ToString())</a></td>
-                <td><a href="@Url.Action("StudentProgramsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 12, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType})" target="_blank">@(result.Section504Count.ToString())</a></td>
-                <td><a href="@Url.Action("StudentProgramsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 13, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType})" target="_blank">@(result.Title1PartACount.ToString())</a></td>
-                <td><a href="@Url.Action("StudentProgramsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 14, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType})" target="_blank">@(result.FreeReducedCount.ToString())</a></td>
-            </tr>
-        }
     </table>
 </div>
-@*<div class="row tbmargin10">
-    <div class="col-md-2"><a href="#reportsTable1">See Characteristics</a></div>
-    <div class="col-md-2"><a href="#reportsTable2">See Program Participation</a></div>
-</div>*@
-<div id="notes" class="row">
+<div id="notes" class="row tbmargin10">
     <div class="vp-body-header">Notes:</div>
 </div>
 <div class="row">(1) A student is counted as enrolled if the student was enrolled at least once during the school year.</div>
@@ -142,5 +75,310 @@
 
 @section scripts {
     <script>
+        $(function() {
+            var drillDownLinkTemplate =
+                '<a href="@Html.Raw(Url.Action(
+                              "StudentProgramsReport",
+                              "Ods",
+                              new
+                                {
+                                    schoolId = "_EdOrgId_",
+                                    drillDownColumnIndex = "_DrillDownIndex_",
+                                    isStateMode = Model.IsStateMode,
+                                    districtToDisplay = "_EdOrgId_",
+                                    isStudentDrillDown = true,
+                                    orgType = "_OrgType_"
+                                }))" target="_blank">_LinkText_</a>';
+
+            function createDrillDownLink(edOrgId, drillDownIndex, orgType, linkText) {
+                return drillDownLinkTemplate
+                    .replace(/_EdOrgId_/g, edOrgId)
+                    .replace(/_DrillDownIndex_/g, drillDownIndex)
+                    .replace(/_OrgType_/g, orgType)
+                    .replace(/_LinkText_/g, linkText);
+            }
+
+            var stateLinkTemplate =
+                '<a href="@Html.Raw(Url.Action(
+                              "StudentProgramsReport",
+                              "Ods",
+                              new
+                                { isStateMode = false, districtToDisplay = "_EdOrgId_" }))" class="show-data-loading">_EdOrgId_</a>';
+
+            function createStateLink(edOrgId) {
+                return stateLinkTemplate.replace(/_EdOrgId_/g, edOrgId);
+            }
+
+            $('div.dataTables_scrollBody').css('min-height', '350px');
+
+            var dataTable = $('#reportsTable1').DataTable({
+                paging: true,
+                info: false,
+                scrollX: true,
+                scrollY: '350px',
+                scrollCollapse: true,
+                deferRender: true,
+                searching: false,
+                serverSide: true,
+                processing: true,
+                scroller: {
+                    loadingIndicator: true
+                },
+                fnInitComplete: function() {
+                    $('div.dataTables_scrollBody').css('min-height', 0);
+                },
+                ajax: {
+                    url: "@Html.Raw(Url.Action("GetStudentProgramsReportData", new
+                     {
+                         isStateMode = Model.IsStateMode,
+                         edOrgId = Model.EdOrgId,
+                         fourDigitSchoolYear = Model.FourDigitSchoolYear
+                     }))"
+                },
+                columns: [
+                    {
+                        title: 'ID',
+                        data: 'edOrgId',
+                        width: '100px',
+                        @if (Model.IsStateMode)
+                        {
+                            <text>
+                        render: function(data, type, row, meta) {
+                            if (data != null && type === 'display' && row.orgType === 200) {
+                                return createStateLink(data);
+                            } else {
+                                return data;
+                            }
+                        }
+                            </text>
+                        }
+                    },
+                    {
+                        title: 'District/School',
+                        data: 'leaSchool',
+                        width: '300px',
+                    },
+                    {
+                        title: 'Cumulative Enrollments',
+                        data: 'distinctEnrollmentCount',
+                        render: function (data, type, row, meta) {
+                            if (type === 'display') {
+                                return (data === 0) ? "-" : createDrillDownLink(row.edOrgId, 0, row.orgType, data);
+                            } else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        title: 'Demographic Records',
+                        data: 'distinctDemographicsCount',
+                        render: function (data, type, row, meta) {
+                            if (type === 'display') {
+                                return (data === 0) ? "-" : createDrillDownLink(row.edOrgId, 1, row.orgType, data);
+                            } else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        title: 'Active Duty Parents (ADP)',
+                        data: 'adParentCount',
+                        render: function (data, type, row, meta) {
+                            if (type === 'display') {
+                                return (data === 0) ? "-" : createDrillDownLink(row.edOrgId, 2, row.orgType, data);
+                            } else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        title: 'American Indian - Alaska Native (Minnesota)',
+                        data: 'indianNativeCount',
+                        render: function (data, type, row, meta) {
+                            if (type === 'display') {
+                                return (data === 0) ? "-" : createDrillDownLink(row.edOrgId, 3, row.orgType, data);
+                            } else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        title: 'Migrant',
+                        data: 'migrantCount',
+                        render: function (data, type, row, meta) {
+                            if (type === 'display') {
+                                return (data === 0) ? "-" : createDrillDownLink(row.edOrgId, 4, row.orgType, data);
+                            } else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        title: 'Homeless',
+                        data: 'homelessCount',
+                        render: function (data, type, row, meta) {
+                            if (type === 'display') {
+                                return (data === 0) ? "-" : createDrillDownLink(row.edOrgId, 5, row.orgType, data);
+                            } else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        title: 'Immigrant',
+                        data: 'immigrantCount',
+                        render: function (data, type, row, meta) {
+                            if (type === 'display') {
+                                return (data === 0) ? "-" : createDrillDownLink(row.edOrgId, 6, row.orgType, data);
+                            } else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        title: 'Recently Arrived English Learner',
+                        data: 'recentEnglishCount',
+                        render: function (data, type, row, meta) {
+                            if (type === 'display') {
+                                return (data === 0) ? "-" : createDrillDownLink(row.edOrgId, 7, row.orgType, data);
+                            } else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        title: 'SLIFE',
+                        data: 'slifeCount',
+                        render: function (data, type, row, meta) {
+                            if (type === 'display') {
+                                return (data === 0) ? "-" : createDrillDownLink(row.edOrgId, 8, row.orgType, data);
+                            } else {
+                                return data;
+                            }
+                        }
+                    },
+                ]
+            });
+
+            $(dataTable.table().header()).addClass('table-primary');
+
+            dataTable = $('#reportsTable2').DataTable({
+                paging: true,
+                info: false,
+                scrollX: true,
+                scrollY: '350px',
+                scrollCollapse: true,
+                deferRender: true,
+                searching: false,
+                serverSide: true,
+                processing: true,
+                scroller: {
+                    loadingIndicator: true
+                },
+                fnInitComplete: function() {
+                    $('div.dataTables_scrollBody').css('min-height', 0);
+                },
+                ajax: {
+                    url: "@Html.Raw(Url.Action("GetStudentProgramsReportData", new
+                     {
+                         isStateMode = Model.IsStateMode,
+                         edOrgId = Model.EdOrgId,
+                         fourDigitSchoolYear = Model.FourDigitSchoolYear
+                     }))"
+                },
+                columns: [
+                    {
+                        title: 'ID',
+                        data: 'edOrgId',
+                        width: '100px',
+                        @if (Model.IsStateMode)
+                        {
+                            <text>
+                        render: function(data, type, row, meta) {
+                            if (data != null && type === 'display' && row.orgType === 200) {
+                                return createStateLink(data);
+                            } else {
+                                return data;
+                            }
+                        }
+                            </text>
+                        }
+                    },
+                    {
+                        title: 'District/School',
+                        data: 'leaSchool',
+                        width: '300px',
+                    },
+                    {
+                        title: 'English Learner Identified',
+                        data: 'englishLearnerIdentifiedCount',
+                        render: function (data, type, row, meta) {
+                            if (type === 'display') {
+                                return (data === 0) ? "-" : createDrillDownLink(row.edOrgId, 9, row.orgType, data);
+                            } else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        title: 'English Learner Served',
+                        data: 'englishLearnerServedCount',
+                        render: function (data, type, row, meta) {
+                            if (type === 'display') {
+                                return (data === 0) ? "-" : createDrillDownLink(row.edOrgId, 10, row.orgType, data);
+                            } else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        title: 'Independent Study',
+                        data: 'independentStudyCount',
+                        render: function (data, type, row, meta) {
+                            if (type === 'display') {
+                                return (data === 0) ? "-" : createDrillDownLink(row.edOrgId, 11, row.orgType, data);
+                            } else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        title: 'Section 504',
+                        data: 'section504Count',
+                        render: function (data, type, row, meta) {
+                            if (type === 'display') {
+                                return (data === 0) ? "-" : createDrillDownLink(row.edOrgId, 12, row.orgType, data);
+                            } else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        title: 'Title I Part A',
+                        data: 'title1PartACount',
+                        render: function (data, type, row, meta) {
+                            if (type === 'display') {
+                                return (data === 0) ? "-" : createDrillDownLink(row.edOrgId, 13, row.orgType, data);
+                            } else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        title: 'Free and Reduced Meals',
+                        data: 'freeReducedCount',
+                        render: function (data, type, row, meta) {
+                            if (type === 'display') {
+                                return (data === 0) ? "-" : createDrillDownLink(row.edOrgId, 14, row.orgType, data);
+                            } else {
+                                return data;
+                            }
+                        }
+                    },
+                ]
+            });
+
+            $(dataTable.table().header()).addClass('table-primary');
+        });
     </script>
 }

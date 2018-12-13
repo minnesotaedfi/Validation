@@ -4,6 +4,7 @@
     {
         Demographics,
         MultipleEnrollment,
-        Programs
+        Programs,
+        EnrolledElsewhere,
     }
 }
