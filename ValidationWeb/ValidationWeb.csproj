@@ -602,6 +602,7 @@
     <Compile Include="Database\EnumLookup.cs" />
     <Compile Include="Database\Queries\ChangeOfEnrollmentReportQuery.cs" />
     <Compile Include="Database\Queries\DemographicsCountReportQuery.cs" />
+    <Compile Include="Database\Queries\SingleEdOrgByIdQuery.cs" />
     <Compile Include="Database\Queries\EdOrgQuery.cs" />
     <Compile Include="Database\Queries\MultipleEnrollmentsCountReportQuery.cs" />
     <Compile Include="Database\Queries\ResidentsEnrolledElsewhereReportQuery.cs" />

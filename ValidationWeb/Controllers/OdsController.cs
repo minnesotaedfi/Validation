@@ -88,10 +88,13 @@ namespace ValidationWeb
                 edOrgName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
             }
 
-            var schoolName = schoolId.HasValue
-                                 ? "placeholder" // EdOrgService.GetEdOrgById(schoolId.Value, session.FocusedSchoolYearId)?.OrganizationName
-                                 : string.Empty;
+            string schoolName = string.Empty;
 
+            if (orgType == OrgType.School && schoolId.HasValue)
+            {
+                schoolName = EdOrgService.GetSingleEdOrg(schoolId.Value, session.FocusedSchoolYearId)?.OrganizationName;
+            }
+            
             var fourDigitSchoolYear = SchoolyearService.GetSchoolYearById(session.FocusedSchoolYearId).EndYear;
             var theUser = AppUserService.GetUser();
 
@@ -107,7 +110,8 @@ namespace ValidationWeb
                     DrillDownColumnIndex = drillDownColumnIndex,
                     IsStateMode = isStateMode,
                     SchoolId = schoolId,
-                    OrgType = orgType
+                    OrgType = orgType,
+                    SchoolName = schoolName
                 };
 
                 return View("StudentDrillDown", studentDrillDownModel);
@@ -140,7 +144,7 @@ namespace ValidationWeb
 #if DEBUG
             var startTime = DateTime.Now;
 #endif
-            IEnumerable<StudentDrillDownQuery> results = this.CacheManager.GetStudentDrilldownData(
+            IEnumerable<StudentDrillDownQuery> results = CacheManager.GetStudentDrilldownData(
                 OdsDataService,
                 orgType,
                 schoolId,

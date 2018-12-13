@@ -11,5 +11,7 @@ namespace ValidationWeb.Services
         List<EdOrg> GetEdOrgs();
         EdOrg GetEdOrgById(int edorgId, int fourDigitOdsDbYear);
         void RefreshEdOrgCache(int fourDigitOdsDbYear);
+
+        SingleEdOrgByIdQuery GetSingleEdOrg(int edOrgId, int schoolYearId);
     }
 }
