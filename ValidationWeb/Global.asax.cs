@@ -28,6 +28,8 @@ using System.Web.Http.ModelBinding;
 
 namespace ValidationWeb
 {
+    using ValidationWeb.DataCache;
+
     public class Global : System.Web.HttpApplication
     {
         private AppSettingsFileConfigurationValues config = new AppSettingsFileConfigurationValues();
@@ -84,6 +86,8 @@ namespace ValidationWeb
             container.Register<IValidatedDataSubmissionService, ValidatedDataSubmissionService>(Lifestyle.Scoped);
             container.Register<IValidationResultsService, ValidationResultsService>(Lifestyle.Scoped);
             container.Register<ISubmissionCycleService, SubmissionCycleService>(Lifestyle.Scoped);
+
+            container.Register<ICacheManager, CacheManager>(Lifestyle.Singleton);
 
             // Entity Framework Database Contexts
             container.Register<ValidationPortalDbContext>(Lifestyle.Scoped);

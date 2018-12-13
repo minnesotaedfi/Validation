@@ -7,7 +7,14 @@
     }
     else
     {
-        <div class="vp-body-header justify-content-start align-self-center">@(Model.ReportName) Student Details for @Model.EdOrgName (@Model.EdOrgId.ToString())</div>
+        if (Model.OrgType == OrgType.School)
+        {
+            <div class="vp-body-header justify-content-start align-self-center">@(Model.ReportName) Student Details for @Model.SchoolName (@Model.SchoolId.ToString())</div>
+        }
+        else
+        {
+            <div class="vp-body-header justify-content-start align-self-center">@(Model.ReportName) Student Details for @Model.EdOrgName (@Model.EdOrgId.ToString())</div>
+        }
     }
 </div>
 <div id="requestedReportContent" class="row">

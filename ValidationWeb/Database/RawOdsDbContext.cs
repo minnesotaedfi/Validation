@@ -20,7 +20,9 @@ namespace ValidationWeb
         }
 
         public virtual DbSet<RuleValidation> RuleValidations { get; set; }
+
         public virtual DbSet<RuleValidationDetail> RuleValidationDetails { get; set; }
+
         public virtual DbSet<RuleValidationRuleComponent> RuleValidationRuleComponents { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
