@@ -610,6 +610,7 @@
     <Compile Include="Database\Queries\StudentDrillDownQuery.cs" />
     <Compile Include="Database\Queries\StudentProgramsCountReportQuery.cs" />
     <Compile Include="Database\RawOdsDbContext.cs" />
+    <Compile Include="ViewModels\StudentDrillDownReportType.cs" />
     <Compile Include="Database\ValidatedOdsDbContext.cs" />
     <Compile Include="Database\ValidationPortalDbContext.cs" />
     <Compile Include="Database\ValidationPortalDbMigrationConfiguration.cs" />

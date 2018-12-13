@@ -12,12 +12,25 @@
             int? edOrgId, 
             string fourDigitSchoolYear);
 
-        IEnumerable<StudentDrillDownQuery> GetStudentDrilldownData(
+        IEnumerable<StudentDrillDownQuery> GetStudentDemographicsDrilldownData(
             IOdsDataService odsDataService, 
             OrgType orgType, 
             int? schoolId, 
             int edOrgId, 
             int drillDownColumnIndex, 
+            string fourDigitSchoolYear);
+
+        IEnumerable<MultipleEnrollmentsCountReportQuery> GetMultipleEnrollmentCounts(
+            IOdsDataService odsDataService,
+            int? edOrgId, 
+            string fourDigitSchoolYear);
+
+        IEnumerable<StudentDrillDownQuery> GetStudentMultipleEnrollmentsDrilldownData(
+            IOdsDataService odsDataService,
+            OrgType orgType,
+            int? schoolId,
+            int edOrgId,
+            int drillDownColumnIndex,
             string fourDigitSchoolYear);
     }
 }
