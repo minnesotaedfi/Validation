@@ -2,6 +2,8 @@
 {
     using System.Collections.Generic;
 
+    using ValidationWeb.ViewModels;
+
     public class StudentDrillDownViewModel
     {
         public string ReportName { get; set; } = string.Empty;
@@ -25,5 +27,7 @@
         public int? DrillDownColumnIndex { get; set; }
 
         public string SchoolName { get; set; }
+
+        public StudentDrillDownReportType ReportType { get; set; }
     }
 }

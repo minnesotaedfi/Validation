@@ -112,7 +112,7 @@
                         data: 'enrollmentCount',
                         render: function (data, type, row, meta) {
                             if (type === 'display') {
-                                return createDrillDownLink(row.edOrgId, 0, row.orgType, data);
+                                return (data === 0) ? "-" : createDrillDownLink(row.edOrgId, 0, row.orgType, data);
                             } else {
                                 return data;
                             }
@@ -123,7 +123,7 @@
                         data: 'demographicsCount',
                         render: function(data, type, row, meta) {
                             if (type === 'display') {
-                                return createDrillDownLink(row.edOrgId, 1, row.orgType, data);
+                                return (data === 0) ? "-" : createDrillDownLink(row.edOrgId, 1, row.orgType, data);
                             } else {
                                 return data;
                             }
@@ -134,7 +134,7 @@
                         data: 'raceGivenCount',
                         render: function(data, type, row, meta) {
                             if (type === 'display') {
-                                return createDrillDownLink(row.edOrgId, 2, row.orgType, data);
+                                return (data === 0) ? "-" : createDrillDownLink(row.edOrgId, 2, row.orgType, data);
                             } else {
                                 return data;
                             }
@@ -145,7 +145,7 @@
                         data: 'ancestryGivenCount',
                         render: function(data, type, row, meta) {
                             if (type === 'display') {
-                                return createDrillDownLink(row.edOrgId, 3, row.orgType, data);
+                                return (data === 0) ? "-" : createDrillDownLink(row.edOrgId, 3, row.orgType, data);
                             } else {
                                 return data;
                             }
