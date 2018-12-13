@@ -32,5 +32,31 @@
             int edOrgId,
             int drillDownColumnIndex,
             string fourDigitSchoolYear);
+
+        IEnumerable<StudentProgramsCountReportQuery> GetStudentProgramsCounts(
+            IOdsDataService odsDataService,
+            int? edOrgId,
+            string fourDigitSchoolYear);
+
+        IEnumerable<StudentDrillDownQuery> GetStudentProgramsStudentDrillDownData(
+            IOdsDataService odsDataService,
+            OrgType orgType,
+            int? schoolId,
+            int edOrgId,
+            int drillDownColumnIndex,
+            string fourDigitSchoolYear);
+
+        IEnumerable<ResidentsEnrolledElsewhereReportQuery> GetResidentsEnrolledElsewhereReport(
+            IOdsDataService odsDataService,
+            int edOrgId,
+            string fourDigitSchoolYear);
+
+        IEnumerable<StudentDrillDownQuery> GetResidentsEnrolledElsewhereStudentDrillDown(
+            IOdsDataService odsDataService,
+            OrgType orgType,
+            int? schoolId,
+            int edOrgId,
+            int drillDownColumnIndex,
+            string fourDigitSchoolYear);
     }
 }

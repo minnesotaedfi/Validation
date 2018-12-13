@@ -9,6 +9,13 @@
     else
     {
         <div class="vp-body-header justify-content-start align-self-center">Students with Multiple Open Enrollments for District @Model.EdOrgName (@Model.EdOrgId.ToString())</div>
+
+        if (Model.SchoolId.HasValue && !string.IsNullOrWhiteSpace(Model.SchoolName))
+        {
+            <div class="vp-body-header justify-content-start align-self-center">
+                For @Model.SchoolName (@Model.SchoolId)
+            </div>
+        }
     }
 
     @if (Model.IsStateMode)
@@ -25,82 +32,6 @@
 </div>
 <div id="requestedReportContent" class="row">
     <table class="table table-bordered nowrap" id="reportsTable" style="table-layout: fixed; width: 98% !important;"></table>
-
-    @*<table class="table table-sm table-bordered" id="reportsTable_old">
-        <tr class="table-primary">
-            <th>ID</th>
-            <th>District/School</th>
-            <th>Cumulative Enrollments</th>
-            <th>Enrolled at multiple schools</th>
-            <th>Enrolled at other districts</th>
-        </tr>*@
-
-        @*foreach (var result in Model.Results)
-        {
-            <tr>
-                <td>
-                    @if (Model.IsStateMode)
-                    {
-                        if (result.EdOrgId.HasValue && result.OrgType == OrgType.District)
-                        {
-                            <a href="@Url.Action("MultipleEnrollmentsReport", "Ods", new
-                                                                                     {
-                                                                                         isStateMode = false,
-                                                                                         districtToDisplay = result.EdOrgId.Value
-                                                                                     })" class="show-data-loading">@(result.EdOrgId.Value.ToString())</a>
-                        }
-                        else
-                        {
-                            @(result.EdOrgId.HasValue ? result.EdOrgId.Value.ToString() : string.Empty)
-                        }
-                    }
-                    else
-                    {
-                        @(result.EdOrgId.HasValue ? result.EdOrgId.Value.ToString() : string.Empty)
-                    }
-                </td>
-                <td>@(result.LEASchool)</td>
-                <td>
-                    <a href="@Url.Action("MultipleEnrollmentsReport", "Ods", new
-                                                                             {
-                                                                                 schoolId = result.EdOrgId,
-                                                                                 drillDownColumnIndex = 0,
-                                                                                 isStateMode = Model.IsStateMode,
-                                                                                 districtToDisplay = result.EdOrgId,
-                                                                                 isStudentDrillDown = true,
-                                                                                 orgType = result.OrgType
-                                                                             })" target="_blank">@(result.DistinctEnrollmentCount.ToString())</a>
-                </td>
-                <td>
-                    <a href="@Url.Action("MultipleEnrollmentsReport", "Ods", new
-                     {
-                         schoolId = result.EdOrgId,
-                         drillDownColumnIndex = 1,
-                         isStateMode = Model.IsStateMode,
-                         districtToDisplay = result.EdOrgId,
-                         isStudentDrillDown = true,
-                         orgType = result.OrgType
-                     })" target="_blank">@(result.EnrolledInOtherSchoolsCount.ToString())</a>
-                </td>
-                <td>
-                    <a href="@Url.Action("MultipleEnrollmentsReport", "Ods", new
-                     {
-                         schoolId = result.EdOrgId,
-                         drillDownColumnIndex = 2,
-                         isStateMode = Model.IsStateMode,
-                         districtToDisplay = result.EdOrgId,
-                         isStudentDrillDown = true,
-                         orgType = result.OrgType
-                     })" target="_blank">@(result.EnrolledInOtherDistrictsCount.ToString())</a>
-                </td>
-            </tr>
-        }*@
-    @*</table>*@
-
-    @*@if (Model.Results.Count == 0)
-        {
-            <div class="vp-body-header col-8 justify-content-start align-self-center">No records were found.</div>
-        }*@
 </div>
 <div id="notes" class="row">
     <div class="vp-body-header">Notes:</div>

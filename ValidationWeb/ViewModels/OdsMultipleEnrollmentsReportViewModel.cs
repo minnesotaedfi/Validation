@@ -13,10 +13,12 @@ namespace ValidationWeb
 
         public string EdOrgName { get; set; }
 
-        public List<MultipleEnrollmentsCountReportQuery> Results { get; set; }
-
         public bool IsStateMode { get; set; }
 
         public string FourDigitSchoolYear { get; set; }
+
+        public int? SchoolId { get; set; }
+
+        public string SchoolName { get; set; }
     }
 }

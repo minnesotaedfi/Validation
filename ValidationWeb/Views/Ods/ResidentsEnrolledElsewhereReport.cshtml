@@ -22,6 +22,10 @@
     <div class="col-md-3 text-right"><a href="#notes">View Report notes</a></div>
 </div>
 <div id="requestedReportContent" class="row">
+    <table class="table table-bordered nowrap" id="reportsTable" style="table-layout: fixed; width: 98% !important;"></table>
+</div>
+
+    @*
     <table class="table table-sm table-responsive-md table-bordered" id="reportsTable">
         <tr class="table-primary">
             <th>ID</th>
@@ -56,12 +60,8 @@
                 <td><a href="@Url.Action("ResidentsEnrolledElsewhereReport", "Ods", new { isStateMode = false, districtToDisplay = result.EdOrgId.Value, isStudentDrillDown = true})" target="_blank">@(result.ResidentsEnrolled.ToString())</a></td>
             </tr>
         }
-    </table>
-    @if (Model.Results.Count == 0)
-    {
-        <div class="vp-body-header col-8 justify-content-start align-self-center">No records were found.</div>
-    }
-</div>
+    </table>*@
+
 <div id="notes" class="row">
     <div class="vp-body-header">Notes:</div>
 </div>
@@ -75,5 +75,113 @@
 
 @section scripts {
     <script>
+        $(function() {
+            var drillDownLinkTemplate =
+                '<a href="@Html.Raw(Url.Action(
+                              "ResidentsEnrolledElsewhereReport",
+                              "Ods",
+                              new
+                                {
+                                    schoolId = "_EdOrgId_",
+                                    drillDownColumnIndex = "_DrillDownIndex_",
+                                    isStateMode = Model.IsStateMode,
+                                    districtToDisplay = "_EdOrgId_",
+                                    isStudentDrillDown = true,
+                                    orgType = "_OrgType_"
+                                }))" target="_blank">_LinkText_</a>';
+
+            function createDrillDownLink(edOrgId, drillDownIndex, orgType, linkText) {
+                return drillDownLinkTemplate
+                    .replace(/_EdOrgId_/g, edOrgId)
+                    .replace(/_DrillDownIndex_/g, drillDownIndex)
+                    .replace(/_OrgType_/g, orgType)
+                    .replace(/_LinkText_/g, linkText);
+            }
+
+            var stateLinkTemplate =
+                '<a href="@Html.Raw(Url.Action(
+                              "ResidentsEnrolledElsewhereReport", 
+                              "Ods", 
+                              new
+                                { isStateMode = false, districtToDisplay = "_EdOrgId_" }))" class="show-data-loading">_EdOrgId_</a>';
+
+            function createStateLink(edOrgId) {
+                return stateLinkTemplate.replace(/_EdOrgId_/g, edOrgId);
+            }
+
+            $('div.dataTables_scrollBody').css('min-height', '350px');
+
+            var dataTable = $('#reportsTable').DataTable({
+                paging: true,
+                info: false,
+                scrollX: true,
+                scrollY: '350px',
+                scrollCollapse: true,
+                deferRender: true,
+                searching: false,
+                serverSide: true,
+                processing: true,
+                scroller: {
+                    loadingIndicator: true
+                },
+                fnInitComplete: function() {
+                    $('div.dataTables_scrollBody').css('min-height', 0);
+                },
+                ajax: {
+                    url: "@Html.Raw(Url.Action("GetResidentsEnrolledElsewhereData", new
+                     {
+                         isStateMode = Model.IsStateMode,
+                         edOrgId = Model.EdOrgId,
+                         fourDigitSchoolYear = Model.FourDigitSchoolYear
+                     }))"
+                },
+                columns: [
+                    {
+                        title: 'ID',
+                        data: 'edOrgId',
+                        width: '100px',
+                        @if (Model.IsStateMode)
+                        {
+                            <text>
+                        render: function(data, type, row, meta) {
+                            if (data != null && type === 'display' && row.orgType === 200) {
+                                return createStateLink(data);
+                            } else {
+                                return data;
+                            }
+                        }
+                            </text>
+                        }
+                    },
+                    {
+                        title: 'Resident District',
+                        data: 'edOrgName',
+                        width: '300px',
+                    },
+                    {
+                        title: 'District of Enrollment ID',
+                        data: 'districtOfEnrollmentId',
+                    },
+                    {
+                        title: 'District of Enrollment',
+                        data: 'districtOfEnrollmentName',
+                        width: '300px',
+                    },
+                    {
+                        title: 'Residents Enrolled',
+                        data: 'residentsEnrolled',
+                        render: function (data, type, row, meta) {
+                            if (type === 'display') {
+                                return (data === 0) ? "-" : createDrillDownLink(row.edOrgId, 0, row.orgType, data);
+                            } else {
+                                return data;
+                            }
+                        }
+                    },
+                ]
+            });
+
+            $(dataTable.table().header()).addClass('table-primary');
+        });
     </script>
 }

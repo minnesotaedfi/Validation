@@ -117,5 +117,99 @@
                 return Cache.Get(cacheKey) as IEnumerable<StudentDrillDownQuery>;
             }
         }
+
+        public IEnumerable<StudentProgramsCountReportQuery> GetStudentProgramsCounts(
+            IOdsDataService odsDataService, 
+            int? edOrgId, 
+            string fourDigitSchoolYear)
+        {
+            var cacheKey = $"GetStudentProgramsCounts_{edOrgId}_{fourDigitSchoolYear}";
+
+            lock (LockObject)
+            {
+                if (!Cache.Contains(cacheKey))
+                {
+                    var results = odsDataService.GetStudentProgramsCounts(edOrgId, fourDigitSchoolYear);
+                    Cache.Add(cacheKey, results, CacheExpirationOffset);
+                }
+
+                return Cache.Get(cacheKey) as IEnumerable<StudentProgramsCountReportQuery>;
+            }
+        }
+
+        public IEnumerable<StudentDrillDownQuery> GetStudentProgramsStudentDrillDownData(
+            IOdsDataService odsDataService,
+            OrgType orgType,
+            int? schoolId,
+            int edOrgId,
+            int drillDownColumnIndex,
+            string fourDigitSchoolYear)
+        {
+            var cacheKey = $"GetStudentProgramsStudentDrillDownData_{orgType}_{schoolId}_{edOrgId}_{drillDownColumnIndex}_{fourDigitSchoolYear}";
+
+            lock (LockObject)
+            {
+                if (!Cache.Contains(cacheKey))
+                {
+                    var results = odsDataService.GetStudentProgramsStudentDrillDown(
+                        orgType,
+                        schoolId,
+                        schoolId ?? edOrgId,
+                        drillDownColumnIndex,
+                        fourDigitSchoolYear);
+
+                    Cache.Add(cacheKey, results, CacheExpirationOffset);
+                }
+
+                return Cache.Get(cacheKey) as IEnumerable<StudentDrillDownQuery>;
+            }
+        }
+
+        public IEnumerable<ResidentsEnrolledElsewhereReportQuery> GetResidentsEnrolledElsewhereReport(
+            IOdsDataService odsDataService,
+            int edOrgId,
+            string fourDigitSchoolYear)
+        {
+            var cacheKey = $"GetResidentsEnrolledElsewhereReport_{edOrgId}_{fourDigitSchoolYear}";
+
+            lock (LockObject)
+            {
+                if (!Cache.Contains(cacheKey))
+                {
+                    var results = odsDataService.GetResidentsEnrolledElsewhereReport(
+                        edOrgId,
+                        fourDigitSchoolYear);
+
+                    Cache.Add(cacheKey, results, CacheExpirationOffset);
+                }
+
+                return Cache.Get(cacheKey) as IEnumerable<ResidentsEnrolledElsewhereReportQuery>;
+            }
+        }
+
+        public IEnumerable<StudentDrillDownQuery> GetResidentsEnrolledElsewhereStudentDrillDown(
+            IOdsDataService odsDataService,
+            OrgType orgType,
+            int? schoolId,
+            int edOrgId,
+            int drillDownColumnIndex,
+            string fourDigitSchoolYear)
+        {
+            var cacheKey = $"GetResidentsEnrolledElsewhereStudentDrillDown_{edOrgId}_{fourDigitSchoolYear}";
+
+            lock (LockObject)
+            {
+                if (!Cache.Contains(cacheKey))
+                {
+                    var results = odsDataService.GetResidentsEnrolledElsewhereStudentDrillDown(
+                        edOrgId,
+                        fourDigitSchoolYear);
+
+                    Cache.Add(cacheKey, results, CacheExpirationOffset);
+                }
+
+                return Cache.Get(cacheKey) as IEnumerable<StudentDrillDownQuery>;
+            }
+        }
     }
 }
