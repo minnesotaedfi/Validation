@@ -12,39 +12,51 @@ namespace ValidationWeb
     using DataTables.AspNet.Core;
     using DataTables.AspNet.Mvc5;
 
+    using ValidationWeb.DataCache;
+
     public class OdsController : Controller
     {
-        protected readonly IAppUserService _appUserService;
-        protected readonly IEdOrgService _edOrgService;
-        protected readonly IOdsDataService _odsDataService;
-        protected readonly IRulesEngineService _rulesEngineService;
-        protected readonly ISchoolYearService _schoolyearService;
-        protected readonly Model _engineObjectModel;
-
+        
         public OdsController(
             IAppUserService appUserService,
             IEdOrgService edOrgService,
             IOdsDataService odsDataService,
             IRulesEngineService rulesEngineService,
             ISchoolYearService schoolyearService,
+            ICacheManager cacheManager,
             Model engineObjectModel)
         {
-            _appUserService = appUserService;
-            _edOrgService = edOrgService;
-            _odsDataService = odsDataService;
-            _engineObjectModel = engineObjectModel;
-            _rulesEngineService = rulesEngineService;
-            _schoolyearService = schoolyearService;
+            AppUserService = appUserService;
+            EdOrgService = edOrgService;
+            OdsDataService = odsDataService;
+            EngineObjectModel = engineObjectModel;
+            RulesEngineService = rulesEngineService;
+            SchoolyearService = schoolyearService;
+            CacheManager = cacheManager;
         }
+
+        protected readonly IAppUserService AppUserService;
+        
+        protected readonly IEdOrgService EdOrgService;
+
+        protected readonly IOdsDataService OdsDataService;
+
+        protected readonly IRulesEngineService RulesEngineService;
+
+        protected readonly ISchoolYearService SchoolyearService;
+
+        protected readonly ICacheManager CacheManager;
+
+        protected readonly Model EngineObjectModel;
 
         // GET: Ods/Reports
         public ActionResult Reports()
         {
-            var session = _appUserService.GetSession();
-            var edOrg = _edOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
+            var session = AppUserService.GetSession();
+            var edOrg = EdOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
             var edOrgName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
             var edOrgId = edOrg.Id;
-            var theUser = _appUserService.GetUser();
+            var theUser = AppUserService.GetUser();
             var model = new OdsReportsViewModel
             {
                 EdOrgId = edOrgId,
@@ -63,8 +75,8 @@ namespace ValidationWeb
             int? drillDownColumnIndex = null,
             OrgType orgType = OrgType.District)
         {
-            var session = _appUserService.GetSession();
-            var edOrg = _edOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
+            var session = AppUserService.GetSession();
+            var edOrg = EdOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
             var edOrgName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
             var edOrgId = edOrg.Id;
 
@@ -72,16 +84,19 @@ namespace ValidationWeb
             if (districtToDisplay.HasValue && session.UserIdentity.AuthorizedEdOrgs.Select(eorg => eorg.Id).Contains(districtToDisplay.Value))
             {
                 edOrgId = districtToDisplay.Value;
-                edOrg = _edOrgService.GetEdOrgById(edOrgId, session.FocusedSchoolYearId);
+                edOrg = EdOrgService.GetEdOrgById(edOrgId, session.FocusedSchoolYearId);
                 edOrgName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
             }
 
-            var schoolName = schoolId.HasValue
-                                 ? "placeholder" // _edOrgService.GetEdOrgById(schoolId.Value, session.FocusedSchoolYearId)?.OrganizationName
-                                 : string.Empty;
+            string schoolName = string.Empty;
 
-            var fourDigitSchoolYear = _schoolyearService.GetSchoolYearById(session.FocusedSchoolYearId).EndYear;
-            var theUser = _appUserService.GetUser();
+            if (orgType == OrgType.School && schoolId.HasValue)
+            {
+                schoolName = EdOrgService.GetSingleEdOrg(schoolId.Value, session.FocusedSchoolYearId)?.OrganizationName;
+            }
+            
+            var fourDigitSchoolYear = SchoolyearService.GetSchoolYearById(session.FocusedSchoolYearId).EndYear;
+            var theUser = AppUserService.GetUser();
 
             if (isStudentDrillDown)
             {
@@ -95,7 +110,8 @@ namespace ValidationWeb
                     DrillDownColumnIndex = drillDownColumnIndex,
                     IsStateMode = isStateMode,
                     SchoolId = schoolId,
-                    OrgType = orgType
+                    OrgType = orgType,
+                    SchoolName = schoolName
                 };
 
                 return View("StudentDrillDown", studentDrillDownModel);
@@ -125,14 +141,21 @@ namespace ValidationWeb
             string fourDigitSchoolYear,
             IDataTablesRequest request)
         {
-            IEnumerable<StudentDrillDownQuery> results = _odsDataService.GetDistrictAncestryRaceStudentDrillDown(
+#if DEBUG
+            var startTime = DateTime.Now;
+#endif
+            IEnumerable<StudentDrillDownQuery> results = CacheManager.GetStudentDrilldownData(
+                OdsDataService,
                 orgType,
                 schoolId,
-                schoolId ?? edOrgId,
+                edOrgId,
                 drillDownColumnIndex,
                 fourDigitSchoolYear);
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine($"GetDistrictAncestryRaceCounts: {(DateTime.Now - startTime).Milliseconds}ms");
+#endif 
 
-            IEnumerable<StudentDrillDownQuery> sortedResults = results;
+            var sortedResults = results;
 
             var sortColumn = request.Columns.FirstOrDefault(x => x.Sort != null);
             if (sortColumn != null)
@@ -221,10 +244,17 @@ namespace ValidationWeb
             bool isStateMode,
             IDataTablesRequest request)
         {
-            IEnumerable<DemographicsCountReportQuery> results = _odsDataService.GetDistrictAncestryRaceCounts(
-                isStateMode ? (int?)null : edOrgId,
+#if DEBUG
+            var startTime = DateTime.Now;
+#endif
+            var results = CacheManager.GetDistrictAncestryRaceCounts(
+                OdsDataService,
+                isStateMode,
+                edOrgId,
                 fourDigitSchoolYear);
-
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine($"GetDistrictAncestryRaceCounts: {(DateTime.Now - startTime).Milliseconds}ms");
+#endif 
             IEnumerable<DemographicsCountReportQuery> sortedResults = results;
 
             var sortColumn = request.Columns.FirstOrDefault(x => x.Sort != null);
@@ -301,8 +331,8 @@ namespace ValidationWeb
         // GET: Ods/MultipleEnrollmentsReport
         public ActionResult MultipleEnrollmentsReport(bool isStateMode = false, int? districtToDisplay = null, bool isStudentDrillDown = false, int? schoolId = null, int? drillDownColumnIndex = null, OrgType orgType = OrgType.District)
         {
-            var session = _appUserService.GetSession();
-            var edOrg = _edOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
+            var session = AppUserService.GetSession();
+            var edOrg = EdOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
             var edOrgName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
             var edOrgId = edOrg.Id;
 
@@ -310,14 +340,14 @@ namespace ValidationWeb
             if (districtToDisplay.HasValue && session.UserIdentity.AuthorizedEdOrgs.Select(eorg => eorg.Id).Contains(districtToDisplay.Value))
             {
                 edOrgId = districtToDisplay.Value;
-                edOrg = _edOrgService.GetEdOrgById(edOrgId, session.FocusedSchoolYearId);
+                edOrg = EdOrgService.GetEdOrgById(edOrgId, session.FocusedSchoolYearId);
                 edOrgName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
             }
-            var fourDigitSchoolYear = _schoolyearService.GetSchoolYearById(session.FocusedSchoolYearId).EndYear;
-            var theUser = _appUserService.GetUser();
+            var fourDigitSchoolYear = SchoolyearService.GetSchoolYearById(session.FocusedSchoolYearId).EndYear;
+            var theUser = AppUserService.GetUser();
             if (isStudentDrillDown)
             {
-                var studentDrillDownResults = _odsDataService.GetMultipleEnrollmentStudentDrillDown(orgType, schoolId, schoolId ?? edOrgId, drillDownColumnIndex, fourDigitSchoolYear);
+                var studentDrillDownResults = OdsDataService.GetMultipleEnrollmentStudentDrillDown(orgType, schoolId, schoolId ?? edOrgId, drillDownColumnIndex, fourDigitSchoolYear);
                 var studentDrillDownModel = new StudentDrillDownViewModel
                 {
                     ReportName = "Multiple Enrollment",
@@ -329,7 +359,7 @@ namespace ValidationWeb
                 };
                 return View("StudentDrillDown", studentDrillDownModel);
             }
-            var results = _odsDataService.GetMultipleEnrollmentCounts(isStateMode ? (int?)null : edOrgId, fourDigitSchoolYear);
+            var results = OdsDataService.GetMultipleEnrollmentCounts(isStateMode ? (int?)null : edOrgId, fourDigitSchoolYear);
             var model = new OdsMultipleEnrollmentsReportViewModel
             {
                 EdOrgId = edOrgId,
@@ -344,22 +374,22 @@ namespace ValidationWeb
         // GET: Ods/StudentProgramsReport
         public ActionResult StudentProgramsReport(bool isStateMode = false, int? districtToDisplay = null, bool isStudentDrillDown = false, int? schoolId = null, int? drillDownColumnIndex = null, OrgType orgType = OrgType.District)
         {
-            var session = _appUserService.GetSession();
-            var edOrg = _edOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
+            var session = AppUserService.GetSession();
+            var edOrg = EdOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
             var edOrgName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
             var edOrgId = edOrg.Id;
             // A state user can look at any district via a link, without changing the default district.
             if (districtToDisplay.HasValue && session.UserIdentity.AuthorizedEdOrgs.Select(eorg => eorg.Id).Contains(districtToDisplay.Value))
             {
                 edOrgId = districtToDisplay.Value;
-                edOrg = _edOrgService.GetEdOrgById(edOrgId, session.FocusedSchoolYearId);
+                edOrg = EdOrgService.GetEdOrgById(edOrgId, session.FocusedSchoolYearId);
                 edOrgName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
             }
-            var fourDigitSchoolYear = _schoolyearService.GetSchoolYearById(session.FocusedSchoolYearId).EndYear;
-            var theUser = _appUserService.GetUser();
+            var fourDigitSchoolYear = SchoolyearService.GetSchoolYearById(session.FocusedSchoolYearId).EndYear;
+            var theUser = AppUserService.GetUser();
             if (isStudentDrillDown)
             {
-                var studentDrillDownResults = _odsDataService.GetStudentProgramsStudentDrillDown(orgType, schoolId, schoolId ?? edOrgId, drillDownColumnIndex, fourDigitSchoolYear);
+                var studentDrillDownResults = OdsDataService.GetStudentProgramsStudentDrillDown(orgType, schoolId, schoolId ?? edOrgId, drillDownColumnIndex, fourDigitSchoolYear);
                 var studentDrillDownModel = new StudentDrillDownViewModel
                 {
                     ReportName = "Student Characteristics and Program Participation",
@@ -371,7 +401,7 @@ namespace ValidationWeb
                 };
                 return View("StudentDrillDown", studentDrillDownModel);
             }
-            var results = _odsDataService.GetStudentProgramsCounts(isStateMode ? (int?)null : edOrgId, fourDigitSchoolYear);
+            var results = OdsDataService.GetStudentProgramsCounts(isStateMode ? (int?)null : edOrgId, fourDigitSchoolYear);
             var model = new OdsStudentProgramsReportViewModel
             {
                 EdOrgId = edOrgId,
@@ -386,13 +416,13 @@ namespace ValidationWeb
         // GET: Ods/ChangeOfEnrollmentReport
         public ActionResult ChangeOfEnrollmentReport()
         {
-            var session = _appUserService.GetSession();
-            var edOrg = _edOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
+            var session = AppUserService.GetSession();
+            var edOrg = EdOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
             var edOrgName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
             var edOrgId = edOrg.Id;
-            var fourDigitSchoolYear = _schoolyearService.GetSchoolYearById(session.FocusedSchoolYearId).EndYear;
-            var theUser = _appUserService.GetUser();
-            var results = _odsDataService.GetChangeOfEnrollmentReport(edOrgId, fourDigitSchoolYear);
+            var fourDigitSchoolYear = SchoolyearService.GetSchoolYearById(session.FocusedSchoolYearId).EndYear;
+            var theUser = AppUserService.GetUser();
+            var results = OdsDataService.GetChangeOfEnrollmentReport(edOrgId, fourDigitSchoolYear);
             var model = new OdsChangeOfEnrollmentReportViewModel
             {
                 EdOrgId = edOrgId,
@@ -406,22 +436,22 @@ namespace ValidationWeb
         // GET: Ods/ResidentsEnrolledElsewhereReport
         public ActionResult ResidentsEnrolledElsewhereReport(bool isStateMode = false, int? districtToDisplay = null, bool isStudentDrillDown = false)
         {
-            var session = _appUserService.GetSession();
-            var edOrg = _edOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
+            var session = AppUserService.GetSession();
+            var edOrg = EdOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
             var edOrgName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
             var edOrgId = edOrg.Id;
             // A state user can look at any district via a link, without changing the default district.
             if (districtToDisplay.HasValue && session.UserIdentity.AuthorizedEdOrgs.Select(eorg => eorg.Id).Contains(districtToDisplay.Value))
             {
                 edOrgId = districtToDisplay.Value;
-                edOrg = _edOrgService.GetEdOrgById(edOrgId, session.FocusedSchoolYearId);
+                edOrg = EdOrgService.GetEdOrgById(edOrgId, session.FocusedSchoolYearId);
                 edOrgName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
             }
-            var fourDigitSchoolYear = _schoolyearService.GetSchoolYearById(session.FocusedSchoolYearId).EndYear;
-            var theUser = _appUserService.GetUser();
+            var fourDigitSchoolYear = SchoolyearService.GetSchoolYearById(session.FocusedSchoolYearId).EndYear;
+            var theUser = AppUserService.GetUser();
             if (isStudentDrillDown)
             {
-                var studentDrillDownResults = _odsDataService.GetResidentsEnrolledElsewhereStudentDrillDown(isStateMode ? (int?)null : edOrgId, fourDigitSchoolYear);
+                var studentDrillDownResults = OdsDataService.GetResidentsEnrolledElsewhereStudentDrillDown(isStateMode ? (int?)null : edOrgId, fourDigitSchoolYear);
                 var studentDrillDownModel = new StudentDrillDownViewModel
                 {
                     ReportName = "Residents Enrolled Elsewhere",
@@ -433,7 +463,7 @@ namespace ValidationWeb
                 };
                 return View("StudentDrillDown", studentDrillDownModel);
             }
-            var results = _odsDataService.GetResidentsEnrolledElsewhereReport(isStateMode ? (int?)null : edOrgId, fourDigitSchoolYear);
+            var results = OdsDataService.GetResidentsEnrolledElsewhereReport(isStateMode ? (int?)null : edOrgId, fourDigitSchoolYear);
             var model = new OdsResidentsEnrolledElsewhereReportViewModel
             {
                 EdOrgId = edOrgId,

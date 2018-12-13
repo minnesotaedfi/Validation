@@ -89,18 +89,18 @@
                         title: 'ID',
                         data: 'edOrgId',
                         width: '100px',
-                        @if (Model.IsStateMode)
-                        {
-                            <text>
+                    @if (Model.IsStateMode)
+                    {
+                        <text>  
                         render: function(data, type, row, meta) {
-                            if (data != null && type === 'display' && row.OrgType === 200) {
+                            if (data != null && type === 'display' && row.orgType === 200) {
                                 return createStateLink(data);
                             } else {
                                 return data;
                             }
                         }
-                            </text>
-                        }
+                        </text>
+                    }
                     },
                     {
                         title: 'District/School',
@@ -110,9 +110,9 @@
                     {
                         title: 'Cumulative Enrollments',
                         data: 'enrollmentCount',
-                        render: function(data, type, row, meta) {
+                        render: function (data, type, row, meta) {
                             if (type === 'display') {
-                                return createDrillDownLink(row.EdOrgId, 0, row.OrgType, data);
+                                return createDrillDownLink(row.edOrgId, 0, row.orgType, data);
                             } else {
                                 return data;
                             }
@@ -123,7 +123,7 @@
                         data: 'demographicsCount',
                         render: function(data, type, row, meta) {
                             if (type === 'display') {
-                                return createDrillDownLink(row.EdOrgId, 1, row.OrgType, data);
+                                return createDrillDownLink(row.edOrgId, 1, row.orgType, data);
                             } else {
                                 return data;
                             }
@@ -134,7 +134,7 @@
                         data: 'raceGivenCount',
                         render: function(data, type, row, meta) {
                             if (type === 'display') {
-                                return createDrillDownLink(row.EdOrgId, 2, row.OrgType, data);
+                                return createDrillDownLink(row.edOrgId, 2, row.orgType, data);
                             } else {
                                 return data;
                             }
@@ -145,7 +145,7 @@
                         data: 'ancestryGivenCount',
                         render: function(data, type, row, meta) {
                             if (type === 'display') {
-                                return createDrillDownLink(row.EdOrgId, 3, row.OrgType, data);
+                                return createDrillDownLink(row.edOrgId, 3, row.orgType, data);
                             } else {
                                 return data;
                             }
