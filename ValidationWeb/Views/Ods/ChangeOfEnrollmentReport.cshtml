@@ -7,152 +7,16 @@
     <div class="col-md-4 vp-body-header justify-content-start align-self-center">Enrolling</div>
     <div class="col-md-3 offset-5 text-right"><a href="#notes">View Report notes</a></div>
 </div>
-<div id="requestedReportContent" class="row">
-    <table class="table table-sm table-responsive-md table-bordered" id="reportsTable">
-        <tr class="table-primary">
-            <th>State Reporting Number</th>
-            <th>Student<br />Last Name</th>
-            <th>Student<br />First Name</th>
-            <th>Student<br />Middle Name</th>
-            <th>Birth Date</th>
-            <th class="d-none">Current<br />District ID</th>
-            <th class="d-none">Current<br />District Name</th>
-            <th class="d-none">Current<br />School ID</th>
-            <th class="d-none">Current<br />School Name</th>
-            <th>Current<br />Enrollment</th>
-            <th class="d-none">Current<br />Withdraw</th>
-            <th>Current<br />Grade</th>
-            <th>Previous<br />District ID</th>
-            <th>Previous<br />District Name</th>
-            <th class="d-none">Previous<br />School ID</th>
-            <th class="d-none">Previous<br />School Name</th>
-            <th>Previous<br />Enrollment</th>
-            <th>Previous<br />Withdraw</th>
-            <th class="d-none">Previous<br />Grade</th>
-            <th>Request</th>
-            <th></th>
-        </tr>
-        <tr>
-            <td>123456789</td>
-            <td>Doe</td>
-            <td>John</td>
-            <td>Quincy</td>
-            <td>12/31/2005</td>
-            <td class="d-none">Current<br />District ID</td>
-            <td class="d-none">Current<br />District Name</td>
-            <td class="d-none">Current<br />School ID</td>
-            <td class="d-none">Current<br />School Name</td>
-            <td>11/01/2018</td>
-            <td class="d-none">Current<br />Withdraw</td>
-            <td>8</td>
-            <td>99999</td>
-            <td>Minneapolis Public Schools</td>
-            <td class="d-none">Previous<br />School ID</td>
-            <td class="d-none">Previous<br />School Name</td>
-            <td>09/01/2018</td>
-            <td>10/25/2018</td>
-            <td class="d-none">Previous<br />Grade</td>
-            <td style="padding-left: 1.5rem;">
-                <input type="checkbox" class="form-check-input" name="requestAssessments" value="10625|123456789"> Assessment Results<br />
-                <input type="checkbox" class="form-check-input" name="requestImmunizations" value="10625|123456789"> Immunizations<br />
-                <input type="checkbox" class="form-check-input" name="requestCumulativeFiles" value="10625|123456789"> Cumulative Files
-            </td>
-            <td style="vertical-align: middle;"><button class="btn btn-sm btn-primary">Send</button></td>
-        </tr>
-        @foreach (var result in Model.Results.Where(r=>r.IsCurrentDistrict).ToList())
-        {
-            <tr>
-                <td>@(result.StudentID ?? string.Empty)</td>
-                <td>@(result.StudentLastName ?? string.Empty)</td>
-                <td>@(result.StudentFirstName ?? string.Empty)</td>
-                <td>@(result.StudentMiddleName ?? string.Empty)</td>
-                <td>@(result.StudentBirthDate.HasValue ? result.StudentBirthDate.Value.ToString("MM/dd/yyyy") : "Unknown")</td>
-                <td class="d-none">@(result.CurrentDistEdOrgId.ToString())</td>
-                <td class="d-none">@(result.CurrentDistrictName ?? string.Empty)</td>
-                <td class="d-none">@(result.CurrentSchoolEdOrgId.ToString())</td>
-                <td class="d-none">@(result.CurrentSchoolName ?? string.Empty)</td>
-                <td>@(result.CurrentEdOrgEnrollmentDate.HasValue ? result.CurrentEdOrgEnrollmentDate.Value.ToString("MM/dd/yyyy") : "Unknown")</td>
-                <td class="d-none">@(result.CurrentEdOrgExitDate.HasValue ? result.CurrentEdOrgExitDate.Value.ToString("MM/dd/yyyy") : "Unknown")</td>
-                <td>@(result.CurrentGrade ?? string.Empty)</td>
-                <td>@(result.PastDistEdOrgId.ToString())</td>
-                <td>@(result.PastDistrictName ?? string.Empty)</td>
-                <td class="d-none">@(result.PastSchoolEdOrgId.ToString())</td>
-                <td class="d-none">@(result.PastSchoolName ?? string.Empty)</td>
-                <td>@(result.PastEdOrgEnrollmentDate.HasValue ? result.PastEdOrgEnrollmentDate.Value.ToString("MM/dd/yyyy") : "Unknown")</td>
-                <td>@(result.PastEdOrgExitDate.HasValue ? result.PastEdOrgExitDate.Value.ToString("MM/dd/yyyy") : "Unknown")</td>
-                <td class="d-none">@(result.PastGrade ?? string.Empty)</td>
-                <td style="padding-left: 1.25rem;">
-                    <input type="checkbox" class="form-check-input" name="requestAssessments" value="@(result.PastDistEdOrgId.ToString())|@(result.StudentID)"> Assessment Results<br />
-                    <input type="checkbox" class="form-check-input" name="requestImmunizations" value="@(result.PastDistEdOrgId.ToString())|@(result.StudentID)"> Immunizations<br />
-                    <input type="checkbox" class="form-check-input" name="requestCumulativeFiles" value="@(result.PastDistEdOrgId.ToString())|@(result.StudentID)"> Cumulative Files
-                </td>
-                <td style="vertical-align: middle;"><button class="btn btn-sm btn-primary">Send</button></td>
-            </tr>
-        }
-    </table>
 
-    @if (Model.Results.Where(r => r.IsCurrentDistrict).Count() == 0)
-    {
-        <div class="vp-body-header col-8 justify-content-start align-self-center">No records were found.</div>
-    }
+<div id="requestedReportContent">
+    <div class="col-md-12 nopadding">
+        <!-- -->
+        <table class="table nowrap" id="reportsTable1" style="table-layout: fixed; width: 98% !important;"></table>
+    </div>
 </div>
 <div class="row tbmargin10">
     <div class="col-md-4 vp-body-header justify-content-start align-self-center">Withdrawing</div>
     <div class="col-md-3 offset-5 text-right"><a href="#notes">View Report notes</a></div>
-</div>
-<div id="requestedReportContent" class="row">
-    <table class="table table-sm table-responsive-md table-bordered" id="reportsTable">
-        <tr class="table-primary">
-            <th>State Reporting Number</th>
-            <th>Student<br />Last Name</th>
-            <th>Student<br />First Name</th>
-            <th>Student<br />Middle Name</th>
-            <th>Birth Date</th>
-            <th>Current<br />District ID</th>
-            <th>Current<br />District Name</th>
-            <th>Current<br />School ID</th>
-            <th>Current<br />School Name</th>
-            <th>Current<br />Enrollment</th>
-            <th>Current<br />Withdraw</th>
-            <th>Current<br />Grade</th>
-            <th>Previous<br />District ID</th>
-            <th>Previous<br />District Name</th>
-            <th>Previous<br />School ID</th>
-            <th>Previous<br />School Name</th>
-            <th>Previous<br />Enrollment</th>
-            <th>Previous<br />Withdraw</th>
-            <th>Previous<br />Grade</th>
-        </tr>
-        @foreach (var result in Model.Results.Where(r => !r.IsCurrentDistrict).ToList())
-        {
-            <tr>
-                <td>@(result.StudentID ?? string.Empty)</td>
-                <td>@(result.StudentLastName ?? string.Empty)</td>
-                <td>@(result.StudentFirstName ?? string.Empty)</td>
-                <td>@(result.StudentMiddleName ?? string.Empty)</td>
-                <td>@(result.StudentBirthDate.HasValue ? result.StudentBirthDate.Value.ToString("MM/dd/yyyy") : "Unknown")</td>
-                <td>@(result.CurrentDistEdOrgId.ToString())</td>
-                <td>@(result.CurrentDistrictName ?? string.Empty)</td>
-                <td>@(result.CurrentSchoolEdOrgId.ToString())</td>
-                <td>@(result.CurrentSchoolName ?? string.Empty)</td>
-                <td>@(result.CurrentEdOrgEnrollmentDate.HasValue ? result.CurrentEdOrgEnrollmentDate.Value.ToString("MM/dd/yyyy") : "Unknown")</td>
-                <td>@(result.CurrentEdOrgExitDate.HasValue ? result.CurrentEdOrgExitDate.Value.ToString("MM/dd/yyyy") : "Unknown")</td>
-                <td>@(result.CurrentGrade ?? string.Empty)</td>
-                <td>@(result.PastDistEdOrgId.ToString())</td>
-                <td>@(result.PastDistrictName ?? string.Empty)</td>
-                <td>@(result.PastSchoolEdOrgId.ToString())</td>
-                <td>@(result.PastSchoolName ?? string.Empty)</td>
-                <td>@(result.PastEdOrgEnrollmentDate.HasValue ? result.PastEdOrgEnrollmentDate.Value.ToString("MM/dd/yyyy") : "Unknown")</td>
-                <td>@(result.PastEdOrgExitDate.HasValue ? result.PastEdOrgExitDate.Value.ToString("MM/dd/yyyy") : "Unknown")</td>
-                <td>@(result.PastGrade ?? string.Empty)</td>
-            </tr>
-        }
-    </table>
-
-    @if (Model.Results.Where(r => !r.IsCurrentDistrict).Count() == 0)
-    {
-        <div class="vp-body-header col-8 justify-content-start align-self-center">No records were found.</div>
-    }
 </div>
 
 <div id="notes" class="row">
@@ -164,8 +28,118 @@
     <a href="#pagetop">Back to Top</a>
 </div>
 
+@Html.Partial("Partials/RequestRecordsModal")
 
 @section scripts {
     <script>
+        $(function() {
+            $('div.dataTables_scrollBody').css('min-height', '350px');
+
+            var dataTable = $('#reportsTable1').DataTable({
+                paging: true,
+                info: false,
+                scrollX: false,
+                scrollY: '350px',
+                scrollCollapse: true,
+                deferRender: true,
+                searching: false,
+                serverSide: true,
+                processing: true,
+                scroller: {
+                    loadingIndicator: true
+                },
+                fnInitComplete: function() {
+                    $('div.dataTables_scrollBody').css('min-height', 0);
+                },
+                ajax: {
+                    url: "@Html.Raw(Url.Action("GetChangeOfEnrollmentReportData", new
+                                                                                  {
+                                                                                      edOrgId = Model.EdOrgId,
+                                                                                      fourDigitSchoolYear = Model.FourDigitSchoolYear,
+                                                                                      isCurrentDistrict = true
+                                                                                  }))"
+                },
+                columns: [
+                    {
+                        title: 'Student Name',
+                        name: 'studentName',
+                        width: '200px',
+                        data: function(row, type, set) {
+                            return row.studentLastName + ", " + row.studentFirstName + " " + row.studentMiddleName;
+                        },
+                        render: function(data, type, row, meta) {
+                            if (type === 'display') {
+                                return row.studentLastName + ", " + row.studentFirstName + " " + row.studentMiddleName;
+                            } else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        title: 'State Reporting Number',
+                        name: 'studentID',
+                        data: 'studentID'
+                    },
+                    {
+                        title: 'Birthdate',
+                        name: 'studentBirthDate',
+                        data: 'studentBirthDate',
+                        render: function(data, type, row, meta) {
+                            if (type === 'display') {
+                                return data == null ? "Unknown" : new Date(data).toLocaleDateString("en-US");
+                            } else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        title: 'Grade',
+                        name: 'currentGrade',
+                        data: 'currentGrade'
+                    },
+                    {
+                        title: 'District ID',
+                        name: 'currentDistEdOrgId',
+                        data: 'currentDistEdOrgId'
+                    },
+                    {
+                        title: 'Entry Date',
+                        name: 'currentEdOrgEnrollmentDate',
+                        data: 'currentEdOrgEnrollmentDate',
+                        render: function(data, type, row, meta) {
+                            if (type === 'display') {
+                                return data == null ? "Unknown" : new Date(data).toLocaleDateString("en-US");
+                            } else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        title: 'Exit Withdraw Date',
+                        name: 'currentEdOrgExitDate',
+                        data: 'currentEdOrgExitDate',
+                        render: function(data, type, row, meta) {
+                            if (type === 'display') {
+                                return data == null ? "Unknown" : new Date(data).toLocaleDateString("en-US");
+                            } else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        title: 'Records Requested',
+                        orderable: false,
+                        data: 'null',
+                        render: function(data, type, row) {
+                            return '<button class="btn btn-sm prime-blue white-heavy-text" data-toggle="modal" data-target="#request-records-modal">Request Records</button>';
+                        }
+
+
+                    }
+                ]
+            });
+
+            $(dataTable.table().header()).addClass('table-primary');
+        });
     </script>
 }

@@ -1,50 +1,62 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Web.Mvc;
-using Engine.Models;
-using ValidationWeb.Services;
-
-namespace ValidationWeb
+﻿namespace ValidationWeb
 {
     using System;
-    using System.Collections;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Web.Mvc;
 
     using DataTables.AspNet.Core;
     using DataTables.AspNet.Mvc5;
 
+    using Engine.Models;
+
+    using ValidationWeb.DataCache;
+    using ValidationWeb.Services;
+    using ValidationWeb.ViewModels;
+
+    // TODO: refactor repeated code. move cache manager and serialization calls into a separate layer. 
     public class OdsController : Controller
     {
-        protected readonly IAppUserService _appUserService;
-        protected readonly IEdOrgService _edOrgService;
-        protected readonly IOdsDataService _odsDataService;
-        protected readonly IRulesEngineService _rulesEngineService;
-        protected readonly ISchoolYearService _schoolyearService;
-        protected readonly Model _engineObjectModel;
-
         public OdsController(
             IAppUserService appUserService,
             IEdOrgService edOrgService,
             IOdsDataService odsDataService,
             IRulesEngineService rulesEngineService,
-            ISchoolYearService schoolyearService,
+            ISchoolYearService schoolYearService,
+            ICacheManager cacheManager,
             Model engineObjectModel)
         {
-            _appUserService = appUserService;
-            _edOrgService = edOrgService;
-            _odsDataService = odsDataService;
-            _engineObjectModel = engineObjectModel;
-            _rulesEngineService = rulesEngineService;
-            _schoolyearService = schoolyearService;
+            AppUserService = appUserService;
+            EdOrgService = edOrgService;
+            OdsDataService = odsDataService;
+            EngineObjectModel = engineObjectModel;
+            RulesEngineService = rulesEngineService;
+            SchoolYearService = schoolYearService;
+            CacheManager = cacheManager;
         }
+
+        protected IAppUserService AppUserService { get; set; }
+
+        protected IEdOrgService EdOrgService { get; set; }
+
+        protected IOdsDataService OdsDataService { get; set; }
+
+        protected IRulesEngineService RulesEngineService { get; set; }
+
+        protected ISchoolYearService SchoolYearService { get; set; }
+
+        protected ICacheManager CacheManager { get; set; }
+
+        protected Model EngineObjectModel { get; set; }
 
         // GET: Ods/Reports
         public ActionResult Reports()
         {
-            var session = _appUserService.GetSession();
-            var edOrg = _edOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
+            var session = AppUserService.GetSession();
+            var edOrg = EdOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
             var edOrgName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
             var edOrgId = edOrg.Id;
-            var theUser = _appUserService.GetUser();
+            var theUser = AppUserService.GetUser();
             var model = new OdsReportsViewModel
             {
                 EdOrgId = edOrgId,
@@ -63,8 +75,8 @@ namespace ValidationWeb
             int? drillDownColumnIndex = null,
             OrgType orgType = OrgType.District)
         {
-            var session = _appUserService.GetSession();
-            var edOrg = _edOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
+            var session = AppUserService.GetSession();
+            var edOrg = EdOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
             var edOrgName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
             var edOrgId = edOrg.Id;
 
@@ -72,16 +84,19 @@ namespace ValidationWeb
             if (districtToDisplay.HasValue && session.UserIdentity.AuthorizedEdOrgs.Select(eorg => eorg.Id).Contains(districtToDisplay.Value))
             {
                 edOrgId = districtToDisplay.Value;
-                edOrg = _edOrgService.GetEdOrgById(edOrgId, session.FocusedSchoolYearId);
+                edOrg = EdOrgService.GetEdOrgById(edOrgId, session.FocusedSchoolYearId);
                 edOrgName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
             }
 
-            var schoolName = schoolId.HasValue
-                                 ? "placeholder" // _edOrgService.GetEdOrgById(schoolId.Value, session.FocusedSchoolYearId)?.OrganizationName
-                                 : string.Empty;
+            string schoolName = string.Empty;
 
-            var fourDigitSchoolYear = _schoolyearService.GetSchoolYearById(session.FocusedSchoolYearId).EndYear;
-            var theUser = _appUserService.GetUser();
+            if (orgType == OrgType.School && schoolId.HasValue)
+            {
+                schoolName = EdOrgService.GetSingleEdOrg(schoolId.Value, session.FocusedSchoolYearId)?.OrganizationName;
+            }
+
+            var fourDigitSchoolYear = SchoolYearService.GetSchoolYearById(session.FocusedSchoolYearId).EndYear;
+            var theUser = AppUserService.GetUser();
 
             if (isStudentDrillDown)
             {
@@ -95,7 +110,9 @@ namespace ValidationWeb
                     DrillDownColumnIndex = drillDownColumnIndex,
                     IsStateMode = isStateMode,
                     SchoolId = schoolId,
-                    OrgType = orgType
+                    OrgType = orgType,
+                    SchoolName = schoolName,
+                    ReportType = StudentDrillDownReportType.Demographics
                 };
 
                 return View("StudentDrillDown", studentDrillDownModel);
@@ -123,16 +140,45 @@ namespace ValidationWeb
             int edOrgId,
             int drillDownColumnIndex,
             string fourDigitSchoolYear,
+            StudentDrillDownReportType reportType,
             IDataTablesRequest request)
         {
-            IEnumerable<StudentDrillDownQuery> results = _odsDataService.GetDistrictAncestryRaceStudentDrillDown(
+#if DEBUG
+            var startTime = DateTime.Now;
+#endif
+            IEnumerable<StudentDrillDownQuery> results;
+            Func<IOdsDataService, OrgType, int?, int, int, string, IEnumerable<StudentDrillDownQuery>> queryFunction;
+
+            switch (reportType)
+            {
+                case StudentDrillDownReportType.Demographics:
+                    queryFunction = CacheManager.GetStudentDemographicsDrilldownData;
+                    break;
+                case StudentDrillDownReportType.MultipleEnrollment:
+                    queryFunction = CacheManager.GetStudentMultipleEnrollmentsDrilldownData;
+                    break;
+                case StudentDrillDownReportType.Programs:
+                    queryFunction = CacheManager.GetStudentProgramsStudentDrillDownData;
+                    break;
+                case StudentDrillDownReportType.EnrolledElsewhere:
+                    queryFunction = CacheManager.GetResidentsEnrolledElsewhereStudentDrillDown;
+                    break;
+                default:
+                    throw new InvalidOperationException($"reportType of {reportType} not supported");
+            }
+
+            results = queryFunction(
+                OdsDataService,
                 orgType,
                 schoolId,
-                schoolId ?? edOrgId,
+                edOrgId,
                 drillDownColumnIndex,
                 fourDigitSchoolYear);
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine($"GetStudentDrillDownData ({reportType}): {(DateTime.Now - startTime).Milliseconds}ms");
+#endif 
 
-            IEnumerable<StudentDrillDownQuery> sortedResults = results;
+            var sortedResults = results;
 
             var sortColumn = request.Columns.FirstOrDefault(x => x.Sort != null);
             if (sortColumn != null)
@@ -141,7 +187,7 @@ namespace ValidationWeb
                 Func<StudentDrillDownQuery, int?> orderingFunctionNullableInt = null;
                 Func<StudentDrillDownQuery, int> orderingFunctionInt = null;
                 Func<StudentDrillDownQuery, DateTime?> orderingFunctionNullableDateTime = null;
-                
+
                 switch (sortColumn.Name)
                 {
                     case "studentId":
@@ -221,10 +267,17 @@ namespace ValidationWeb
             bool isStateMode,
             IDataTablesRequest request)
         {
-            IEnumerable<DemographicsCountReportQuery> results = _odsDataService.GetDistrictAncestryRaceCounts(
-                isStateMode ? (int?)null : edOrgId,
+#if DEBUG
+            var startTime = DateTime.Now;
+#endif
+            var results = CacheManager.GetDistrictAncestryRaceCounts(
+                OdsDataService,
+                isStateMode,
+                edOrgId,
                 fourDigitSchoolYear);
-
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine($"GetDistrictAncestryRaceCounts: {(DateTime.Now - startTime).Milliseconds}ms");
+#endif 
             IEnumerable<DemographicsCountReportQuery> sortedResults = results;
 
             var sortColumn = request.Columns.FirstOrDefault(x => x.Sort != null);
@@ -301,8 +354,8 @@ namespace ValidationWeb
         // GET: Ods/MultipleEnrollmentsReport
         public ActionResult MultipleEnrollmentsReport(bool isStateMode = false, int? districtToDisplay = null, bool isStudentDrillDown = false, int? schoolId = null, int? drillDownColumnIndex = null, OrgType orgType = OrgType.District)
         {
-            var session = _appUserService.GetSession();
-            var edOrg = _edOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
+            var session = AppUserService.GetSession();
+            var edOrg = EdOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
             var edOrgName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
             var edOrgId = edOrg.Id;
 
@@ -310,140 +363,600 @@ namespace ValidationWeb
             if (districtToDisplay.HasValue && session.UserIdentity.AuthorizedEdOrgs.Select(eorg => eorg.Id).Contains(districtToDisplay.Value))
             {
                 edOrgId = districtToDisplay.Value;
-                edOrg = _edOrgService.GetEdOrgById(edOrgId, session.FocusedSchoolYearId);
+                edOrg = EdOrgService.GetEdOrgById(edOrgId, session.FocusedSchoolYearId);
                 edOrgName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
             }
-            var fourDigitSchoolYear = _schoolyearService.GetSchoolYearById(session.FocusedSchoolYearId).EndYear;
-            var theUser = _appUserService.GetUser();
+
+            string schoolName = string.Empty;
+
+            if (orgType == OrgType.School && schoolId.HasValue)
+            {
+                schoolName = EdOrgService.GetSingleEdOrg(schoolId.Value, session.FocusedSchoolYearId)?.OrganizationName;
+            }
+
+            var fourDigitSchoolYear = SchoolYearService.GetSchoolYearById(session.FocusedSchoolYearId).EndYear;
+            var theUser = AppUserService.GetUser();
             if (isStudentDrillDown)
             {
-                var studentDrillDownResults = _odsDataService.GetMultipleEnrollmentStudentDrillDown(orgType, schoolId, schoolId ?? edOrgId, drillDownColumnIndex, fourDigitSchoolYear);
                 var studentDrillDownModel = new StudentDrillDownViewModel
                 {
                     ReportName = "Multiple Enrollment",
                     EdOrgId = edOrgId,
                     EdOrgName = edOrgName,
                     User = theUser,
-                    Results = studentDrillDownResults,
-                    IsStateMode = isStateMode
+                    FourDigitSchoolYear = fourDigitSchoolYear,
+                    DrillDownColumnIndex = drillDownColumnIndex,
+                    IsStateMode = isStateMode,
+                    SchoolId = schoolId,
+                    OrgType = orgType,
+                    SchoolName = schoolName,
+                    ReportType = StudentDrillDownReportType.MultipleEnrollment
                 };
                 return View("StudentDrillDown", studentDrillDownModel);
             }
-            var results = _odsDataService.GetMultipleEnrollmentCounts(isStateMode ? (int?)null : edOrgId, fourDigitSchoolYear);
+
             var model = new OdsMultipleEnrollmentsReportViewModel
             {
                 EdOrgId = edOrgId,
                 EdOrgName = edOrgName,
                 User = theUser,
-                Results = results,
-                IsStateMode = isStateMode
+                IsStateMode = isStateMode,
+                SchoolName = schoolName,
+                SchoolId = schoolId,
+                FourDigitSchoolYear = fourDigitSchoolYear
             };
             return View(model);
+        }
+
+        public JsonResult GetMultipleEnrollmentCountsData(
+            bool isStateMode,
+            int edOrgId,
+            string fourDigitSchoolYear,
+            IDataTablesRequest request)
+        {
+#if DEBUG
+            var startTime = DateTime.Now;
+#endif
+            var results = CacheManager.GetMultipleEnrollmentCounts(OdsDataService, edOrgId, fourDigitSchoolYear);
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine($"GetMultipleEnrollmentCounts: {(DateTime.Now - startTime).Milliseconds}ms");
+#endif 
+            IEnumerable<MultipleEnrollmentsCountReportQuery> sortedResults = results;
+
+            var sortColumn = request.Columns.FirstOrDefault(x => x.Sort != null);
+            if (sortColumn != null)
+            {
+                Func<MultipleEnrollmentsCountReportQuery, string> orderingFunctionString = null;
+                Func<MultipleEnrollmentsCountReportQuery, int?> orderingFunctionNullableInt = null;
+                Func<MultipleEnrollmentsCountReportQuery, int> orderingFunctionInt = null;
+
+                switch (sortColumn.Field)
+                {
+                    case "edOrgId":
+                        {
+                            orderingFunctionNullableInt = x => x.EdOrgId;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? results.OrderBy(orderingFunctionNullableInt)
+                                                : results.OrderByDescending(orderingFunctionNullableInt);
+                            break;
+                        }
+                    case "leaSchool":
+                        {
+                            orderingFunctionString = x => x.LEASchool;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? results.OrderBy(orderingFunctionString)
+                                                : results.OrderByDescending(orderingFunctionString);
+                            break;
+                        }
+                    case "distinctEnrollmentCount":
+                        {
+                            orderingFunctionInt = x => x.DistinctEnrollmentCount;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? results.OrderBy(orderingFunctionInt)
+                                                : results.OrderByDescending(orderingFunctionInt);
+                            break;
+                        }
+                    case "enrolledInOtherSchoolsCount":
+                        {
+                            orderingFunctionInt = x => x.EnrolledInOtherSchoolsCount;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? results.OrderBy(orderingFunctionInt)
+                                                : results.OrderByDescending(orderingFunctionInt);
+                            break;
+                        }
+                    case "enrolledInOtherDistrictsCount":
+                        {
+                            orderingFunctionInt = x => x.EnrolledInOtherDistrictsCount;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? results.OrderBy(orderingFunctionInt)
+                                                : results.OrderByDescending(orderingFunctionInt);
+                            break;
+                        }
+                    default:
+                        {
+                            sortedResults = results;
+                            break;
+                        }
+                }
+            }
+
+            var pagedResults = sortedResults.Skip(request.Start).Take(request.Length);
+            var response = DataTablesResponse.Create(request, results.Count(), results.Count(), pagedResults);
+            var jsonResult = new DataTablesJsonResult(response, JsonRequestBehavior.AllowGet);
+            return jsonResult;
         }
 
         // GET: Ods/StudentProgramsReport
         public ActionResult StudentProgramsReport(bool isStateMode = false, int? districtToDisplay = null, bool isStudentDrillDown = false, int? schoolId = null, int? drillDownColumnIndex = null, OrgType orgType = OrgType.District)
         {
-            var session = _appUserService.GetSession();
-            var edOrg = _edOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
+            var session = AppUserService.GetSession();
+            var edOrg = EdOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
             var edOrgName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
             var edOrgId = edOrg.Id;
+
             // A state user can look at any district via a link, without changing the default district.
             if (districtToDisplay.HasValue && session.UserIdentity.AuthorizedEdOrgs.Select(eorg => eorg.Id).Contains(districtToDisplay.Value))
             {
                 edOrgId = districtToDisplay.Value;
-                edOrg = _edOrgService.GetEdOrgById(edOrgId, session.FocusedSchoolYearId);
+                edOrg = EdOrgService.GetEdOrgById(edOrgId, session.FocusedSchoolYearId);
                 edOrgName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
             }
-            var fourDigitSchoolYear = _schoolyearService.GetSchoolYearById(session.FocusedSchoolYearId).EndYear;
-            var theUser = _appUserService.GetUser();
+
+            string schoolName = string.Empty;
+
+            if (orgType == OrgType.School && schoolId.HasValue)
+            {
+                schoolName = EdOrgService.GetSingleEdOrg(schoolId.Value, session.FocusedSchoolYearId)?.OrganizationName;
+            }
+
+            var fourDigitSchoolYear = SchoolYearService.GetSchoolYearById(session.FocusedSchoolYearId).EndYear;
+            var theUser = AppUserService.GetUser();
             if (isStudentDrillDown)
             {
-                var studentDrillDownResults = _odsDataService.GetStudentProgramsStudentDrillDown(orgType, schoolId, schoolId ?? edOrgId, drillDownColumnIndex, fourDigitSchoolYear);
                 var studentDrillDownModel = new StudentDrillDownViewModel
                 {
                     ReportName = "Student Characteristics and Program Participation",
                     EdOrgId = edOrgId,
                     EdOrgName = edOrgName,
                     User = theUser,
-                    Results = studentDrillDownResults,
-                    IsStateMode = isStateMode
+                    FourDigitSchoolYear = fourDigitSchoolYear,
+                    DrillDownColumnIndex = drillDownColumnIndex,
+                    IsStateMode = isStateMode,
+                    SchoolId = schoolId,
+                    OrgType = orgType,
+                    SchoolName = schoolName,
+                    ReportType = StudentDrillDownReportType.Programs
                 };
                 return View("StudentDrillDown", studentDrillDownModel);
             }
-            var results = _odsDataService.GetStudentProgramsCounts(isStateMode ? (int?)null : edOrgId, fourDigitSchoolYear);
+
             var model = new OdsStudentProgramsReportViewModel
             {
                 EdOrgId = edOrgId,
                 EdOrgName = edOrgName,
                 User = theUser,
-                Results = results,
+                FourDigitSchoolYear = fourDigitSchoolYear,
+                SchoolName = schoolName,
+                SchoolId = schoolId,
                 IsStateMode = isStateMode
             };
             return View(model);
+        }
+
+        public JsonResult GetStudentProgramsReportData(
+            int edOrgId,
+            string fourDigitSchoolYear,
+            bool isStateMode,
+            IDataTablesRequest request)
+        {
+#if DEBUG
+            var startTime = DateTime.Now;
+#endif
+            var results = CacheManager.GetStudentProgramsCounts(
+                OdsDataService,
+                edOrgId,
+                fourDigitSchoolYear);
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine($"GetStudentProgramsCounts: {(DateTime.Now - startTime).Milliseconds}ms");
+#endif 
+            IEnumerable<StudentProgramsCountReportQuery> sortedResults = results;
+
+            var sortColumn = request.Columns.FirstOrDefault(x => x.Sort != null);
+            if (sortColumn != null)
+            {
+                Func<StudentProgramsCountReportQuery, string> orderingFunctionString = null;
+                Func<StudentProgramsCountReportQuery, int?> orderingFunctionNullableInt = null;
+                Func<StudentProgramsCountReportQuery, int> orderingFunctionInt = null;
+
+                switch (sortColumn.Field)
+                {
+                    case "edOrgId":
+                        {
+                            orderingFunctionNullableInt = x => x.EdOrgId;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? results.OrderBy(orderingFunctionNullableInt)
+                                                : results.OrderByDescending(orderingFunctionNullableInt);
+                            break;
+                        }
+                    case "leaSchool":
+                        {
+                            orderingFunctionString = x => x.LEASchool;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? results.OrderBy(orderingFunctionString)
+                                                : results.OrderByDescending(orderingFunctionString);
+                            break;
+                        }
+                    case "distinctEnrollmentCount":
+                        {
+                            orderingFunctionInt = x => x.DistinctEnrollmentCount;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? results.OrderBy(orderingFunctionInt)
+                                                : results.OrderByDescending(orderingFunctionInt);
+                            break;
+                        }
+                    case "distinctDemographicsCount":
+                        {
+                            orderingFunctionInt = x => x.DistinctDemographicsCount;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? results.OrderBy(orderingFunctionInt)
+                                                : results.OrderByDescending(orderingFunctionInt);
+                            break;
+                        }
+                    case "adParentCount":
+                        {
+                            orderingFunctionInt = x => x.ADParentCount;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? results.OrderBy(orderingFunctionInt)
+                                                : results.OrderByDescending(orderingFunctionInt);
+                            break;
+                        }
+                    case "indianNativeCount":
+                        {
+                            orderingFunctionInt = x => x.IndianNativeCount;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? results.OrderBy(orderingFunctionInt)
+                                                : results.OrderByDescending(orderingFunctionInt);
+                            break;
+                        }
+                    case "migrantCount":
+                        {
+                            orderingFunctionInt = x => x.MigrantCount;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? results.OrderBy(orderingFunctionInt)
+                                                : results.OrderByDescending(orderingFunctionInt);
+                            break;
+                        }
+                    case "homelessCount":
+                        {
+                            orderingFunctionInt = x => x.HomelessCount;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? results.OrderBy(orderingFunctionInt)
+                                                : results.OrderByDescending(orderingFunctionInt);
+                            break;
+                        }
+                    case "immigrantCount":
+                        {
+                            orderingFunctionInt = x => x.ImmigrantCount;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? results.OrderBy(orderingFunctionInt)
+                                                : results.OrderByDescending(orderingFunctionInt);
+                            break;
+                        }
+                    case "recentEnglishCount":
+                        {
+                            orderingFunctionInt = x => x.RecentEnglishCount;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? results.OrderBy(orderingFunctionInt)
+                                                : results.OrderByDescending(orderingFunctionInt);
+                            break;
+                        }
+                    case "slifeCount":
+                        {
+                            orderingFunctionInt = x => x.SLIFECount;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? results.OrderBy(orderingFunctionInt)
+                                                : results.OrderByDescending(orderingFunctionInt);
+                            break;
+                        }
+                    case "englishLearnerIdentifiedCount":
+                        {
+                            orderingFunctionInt = x => x.EnglishLearnerIdentifiedCount;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? results.OrderBy(orderingFunctionInt)
+                                                : results.OrderByDescending(orderingFunctionInt);
+                            break;
+                        }
+                    case "englishLearnerServedCount":
+                        {
+                            orderingFunctionInt = x => x.EnglishLearnerServedCount;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? results.OrderBy(orderingFunctionInt)
+                                                : results.OrderByDescending(orderingFunctionInt);
+                            break;
+                        }
+                    case "independentStudyCount":
+                        {
+                            orderingFunctionInt = x => x.IndependentStudyCount;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? results.OrderBy(orderingFunctionInt)
+                                                : results.OrderByDescending(orderingFunctionInt);
+                            break;
+                        }
+                    case "section504Count":
+                        {
+                            orderingFunctionInt = x => x.Section504Count;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? results.OrderBy(orderingFunctionInt)
+                                                : results.OrderByDescending(orderingFunctionInt);
+                            break;
+                        }
+                    case "title1PartACount":
+                        {
+                            orderingFunctionInt = x => x.Title1PartACount;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? results.OrderBy(orderingFunctionInt)
+                                                : results.OrderByDescending(orderingFunctionInt);
+                            break;
+                        }
+                    case "freeReducedCount":
+                        {
+                            orderingFunctionInt = x => x.FreeReducedCount;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? results.OrderBy(orderingFunctionInt)
+                                                : results.OrderByDescending(orderingFunctionInt);
+                            break;
+                        }
+                    default:
+                        {
+                            throw new InvalidOperationException($"Unknown field {sortColumn.Field}");
+                        }
+                }
+            }
+
+            var pagedResults = sortedResults.Skip(request.Start).Take(request.Length);
+            var response = DataTablesResponse.Create(request, results.Count(), results.Count(), pagedResults);
+            var jsonResult = new DataTablesJsonResult(response, JsonRequestBehavior.AllowGet);
+            return jsonResult;
         }
 
         // GET: Ods/ChangeOfEnrollmentReport
         public ActionResult ChangeOfEnrollmentReport()
         {
-            var session = _appUserService.GetSession();
-            var edOrg = _edOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
+            var session = AppUserService.GetSession();
+            var edOrg = EdOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
             var edOrgName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
             var edOrgId = edOrg.Id;
-            var fourDigitSchoolYear = _schoolyearService.GetSchoolYearById(session.FocusedSchoolYearId).EndYear;
-            var theUser = _appUserService.GetUser();
-            var results = _odsDataService.GetChangeOfEnrollmentReport(edOrgId, fourDigitSchoolYear);
+            var fourDigitSchoolYear = SchoolYearService.GetSchoolYearById(session.FocusedSchoolYearId).EndYear;
+            var theUser = AppUserService.GetUser();
+            var results = OdsDataService.GetChangeOfEnrollmentReport(edOrgId, fourDigitSchoolYear);
             var model = new OdsChangeOfEnrollmentReportViewModel
             {
                 EdOrgId = edOrgId,
                 EdOrgName = edOrgName,
                 User = theUser,
-                Results = results
+                FourDigitSchoolYear = fourDigitSchoolYear
             };
             return View(model);
+        }
+
+        public JsonResult GetChangeOfEnrollmentReportData(
+            int edOrgId,
+            string fourDigitSchoolYear,
+            bool isCurrentDistrict,
+            IDataTablesRequest request)
+        {
+#if DEBUG
+            var startTime = DateTime.Now;
+#endif
+            var results = CacheManager.GetChangeOfEnrollmentReport(
+                OdsDataService,
+                edOrgId,
+                fourDigitSchoolYear);
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine($"GetChangeOfEnrollmentReport: {(DateTime.Now - startTime).Milliseconds}ms");
+#endif
+            results = results.Where(x => x.IsCurrentDistrict == isCurrentDistrict);
+
+            IEnumerable<ChangeOfEnrollmentReportQuery> sortedResults = results;
+
+            var sortColumn = request.Columns.FirstOrDefault(x => x.Sort != null);
+            if (sortColumn != null)
+            {
+                Func<ChangeOfEnrollmentReportQuery, string> orderingFunctionString = null;
+                Func<ChangeOfEnrollmentReportQuery, int?> orderingFunctionNullableInt = null;
+                Func<ChangeOfEnrollmentReportQuery, DateTime?> orderingFunctionNullableDateTime = null;
+                Func<ChangeOfEnrollmentReportQuery, int> orderingFunctionInt = null;
+
+                switch (sortColumn.Name)
+                {
+                    case "studentID":
+                        {
+                            orderingFunctionInt = x => int.Parse(x.StudentID);
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? results.OrderBy(orderingFunctionInt)
+                                                : results.OrderByDescending(orderingFunctionInt);
+                            break;
+                        }
+                    case "studentName":
+                        {
+                            orderingFunctionString = x => $"{x.StudentLastName}, {x.StudentFirstName} {x.StudentMiddleName}";
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? results.OrderBy(orderingFunctionString)
+                                                : results.OrderByDescending(orderingFunctionString);
+                            break;
+                        }
+                    case "studentBirthDate":
+                        {
+                            orderingFunctionNullableDateTime = x => x.StudentBirthDate;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? results.OrderBy(orderingFunctionNullableDateTime)
+                                                : results.OrderByDescending(orderingFunctionNullableDateTime);
+                            break;
+                        }
+                    case "currentGrade":
+                        {
+                            orderingFunctionInt = x => int.Parse(x.CurrentGrade);
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? results.OrderBy(orderingFunctionInt)
+                                                : results.OrderByDescending(orderingFunctionInt);
+                            break;
+                        }
+                    case "currentDistEdOrgId":
+                        {
+                            orderingFunctionInt = x => x.CurrentDistEdOrgId;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? results.OrderBy(orderingFunctionInt)
+                                                : results.OrderByDescending(orderingFunctionInt);
+                            break;
+                        }
+                    case "currentEdOrgEnrollmentDate":
+                        {
+                            orderingFunctionNullableDateTime = x => x.CurrentEdOrgEnrollmentDate;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? results.OrderBy(orderingFunctionNullableDateTime)
+                                                : results.OrderByDescending(orderingFunctionNullableDateTime);
+                            break;
+                        }
+                    case "currentEdOrgExitDate":
+                        {
+                            orderingFunctionNullableDateTime = x => x.CurrentEdOrgExitDate;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? results.OrderBy(orderingFunctionNullableDateTime)
+                                                : results.OrderByDescending(orderingFunctionNullableDateTime);
+                            break;
+                        }
+                    default:
+                        {
+                            throw new InvalidOperationException($"Unknown field {sortColumn.Field}");
+                        }
+                }
+            }
+
+            var pagedResults = sortedResults.Skip(request.Start).Take(request.Length);
+            var response = DataTablesResponse.Create(request, results.Count(), results.Count(), pagedResults);
+            var jsonResult = new DataTablesJsonResult(response, JsonRequestBehavior.AllowGet);
+            return jsonResult;
         }
 
         // GET: Ods/ResidentsEnrolledElsewhereReport
         public ActionResult ResidentsEnrolledElsewhereReport(bool isStateMode = false, int? districtToDisplay = null, bool isStudentDrillDown = false)
         {
-            var session = _appUserService.GetSession();
-            var edOrg = _edOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
+            var session = AppUserService.GetSession();
+            var edOrg = EdOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
             var edOrgName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
             var edOrgId = edOrg.Id;
+
             // A state user can look at any district via a link, without changing the default district.
             if (districtToDisplay.HasValue && session.UserIdentity.AuthorizedEdOrgs.Select(eorg => eorg.Id).Contains(districtToDisplay.Value))
             {
                 edOrgId = districtToDisplay.Value;
-                edOrg = _edOrgService.GetEdOrgById(edOrgId, session.FocusedSchoolYearId);
+                edOrg = EdOrgService.GetEdOrgById(edOrgId, session.FocusedSchoolYearId);
                 edOrgName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
             }
-            var fourDigitSchoolYear = _schoolyearService.GetSchoolYearById(session.FocusedSchoolYearId).EndYear;
-            var theUser = _appUserService.GetUser();
+            var fourDigitSchoolYear = SchoolYearService.GetSchoolYearById(session.FocusedSchoolYearId).EndYear;
+            var theUser = AppUserService.GetUser();
             if (isStudentDrillDown)
             {
-                var studentDrillDownResults = _odsDataService.GetResidentsEnrolledElsewhereStudentDrillDown(isStateMode ? (int?)null : edOrgId, fourDigitSchoolYear);
                 var studentDrillDownModel = new StudentDrillDownViewModel
                 {
                     ReportName = "Residents Enrolled Elsewhere",
                     EdOrgId = edOrgId,
+                    DrillDownColumnIndex = 0,
                     EdOrgName = edOrgName,
                     User = theUser,
-                    Results = studentDrillDownResults,
-                    IsStateMode = isStateMode
+                    IsStateMode = isStateMode,
+                    FourDigitSchoolYear = fourDigitSchoolYear,
+                    ReportType = StudentDrillDownReportType.EnrolledElsewhere,
                 };
                 return View("StudentDrillDown", studentDrillDownModel);
             }
-            var results = _odsDataService.GetResidentsEnrolledElsewhereReport(isStateMode ? (int?)null : edOrgId, fourDigitSchoolYear);
+
             var model = new OdsResidentsEnrolledElsewhereReportViewModel
             {
                 EdOrgId = edOrgId,
                 EdOrgName = edOrgName,
                 User = theUser,
-                Results = results,
-                IsStateMode = isStateMode
+                IsStateMode = isStateMode,
+                FourDigitSchoolYear = fourDigitSchoolYear
             };
+
             return View(model);
         }
+
+        public JsonResult GetResidentsEnrolledElsewhereData(
+            int edOrgId,
+            string fourDigitSchoolYear,
+            bool isStateMode,
+            IDataTablesRequest request)
+        {
+#if DEBUG
+            var startTime = DateTime.Now;
+#endif
+            var results = CacheManager.GetResidentsEnrolledElsewhereReport(OdsDataService, edOrgId, fourDigitSchoolYear);
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine(
+                $"GetResidentsEnrolledElsewhere: {(DateTime.Now - startTime).Milliseconds}ms");
+#endif
+            IEnumerable<ResidentsEnrolledElsewhereReportQuery> sortedResults = results;
+
+            var sortColumn = request.Columns.FirstOrDefault(x => x.Sort != null);
+            if (sortColumn != null)
+            {
+                Func<ResidentsEnrolledElsewhereReportQuery, string> orderingFunctionString = null;
+                Func<ResidentsEnrolledElsewhereReportQuery, int?> orderingFunctionNullableInt = null;
+                Func<ResidentsEnrolledElsewhereReportQuery, int> orderingFunctionInt = null;
+
+                switch (sortColumn.Field)
+                {
+                    case "edOrgId":
+                        {
+                            orderingFunctionNullableInt = x => x.EdOrgId;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? results.OrderBy(orderingFunctionNullableInt)
+                                                : results.OrderByDescending(orderingFunctionNullableInt);
+                            break;
+                        }
+                    case "edOrgName":
+                        {
+                            orderingFunctionString = x => x.EdOrgName;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? results.OrderBy(orderingFunctionString)
+                                                : results.OrderByDescending(orderingFunctionString);
+                            break;
+                        }
+                    case "districtOfEnrollmentId":
+                        {
+                            orderingFunctionInt = x => x.DistrictOfEnrollmentId;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? results.OrderBy(orderingFunctionInt)
+                                                : results.OrderByDescending(orderingFunctionInt);
+                            break;
+                        }
+                    case "districtOfEnrollmentName":
+                        {
+                            orderingFunctionString = x => x.DistrictOfEnrollmentName;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? results.OrderBy(orderingFunctionString)
+                                                : results.OrderByDescending(orderingFunctionString);
+                            break;
+                        }
+                    case "residentsEnrolled":
+                        {
+                            orderingFunctionInt = x => x.ResidentsEnrolled;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? results.OrderBy(orderingFunctionInt)
+                                                : results.OrderByDescending(orderingFunctionInt);
+                            break;
+                        }
+                }
+            }
+            
+            var pagedResults = sortedResults.Skip(request.Start).Take(request.Length);
+            var response = DataTablesResponse.Create(request, results.Count(), results.Count(), pagedResults);
+            var jsonResult = new DataTablesJsonResult(response, JsonRequestBehavior.AllowGet);
+            return jsonResult;
+        }
+
 
         // GET: Ods/IdentityIssuesReport
         public ActionResult IdentityIssuesReport()

@@ -44,6 +44,7 @@
     </PublishDatabaseSettings>
     <ExcludeGeneratedDebugSymbol>false</ExcludeGeneratedDebugSymbol>
     <PublishDatabases>false</PublishDatabases>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -72,6 +73,8 @@
     </PublishDatabaseSettings>
     <FilesToIncludeForPublish>OnlyFilesToRunTheApp</FilesToIncludeForPublish>
     <IncludeIisSettings>false</IncludeIisSettings>
+    <PublishDatabases>false</PublishDatabases>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Antlr3.Runtime, Version=3.4.1.9004, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
@@ -139,6 +142,7 @@
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -523,8 +527,9 @@
     <None Include="MvcSiteMapSchema.xsd">
       <SubType>Designer</SubType>
     </None>
-    <Content Include="Views\Ods\DemographicsReportTable.cshtml" />
-    <Content Include="Views\Ods\StudentDrillDownTable.cshtml" />
+    <Content Include="Views\Ods\Partials\DemographicsReportTable.cshtml" />
+    <Content Include="Views\Ods\Partials\StudentDrillDownTable.cshtml" />
+    <Content Include="Views\Ods\Partials\RequestRecordsModal.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -599,6 +604,7 @@
     <Compile Include="Database\IValidationPortalDbContext.cs" />
     <Compile Include="Database\Queries\ChangeOfEnrollmentReportQuery.cs" />
     <Compile Include="Database\Queries\DemographicsCountReportQuery.cs" />
+    <Compile Include="Database\Queries\SingleEdOrgByIdQuery.cs" />
     <Compile Include="Database\Queries\EdOrgQuery.cs" />
     <Compile Include="Database\Queries\MultipleEnrollmentsCountReportQuery.cs" />
     <Compile Include="Database\Queries\ResidentsEnrolledElsewhereReportQuery.cs" />
@@ -606,9 +612,12 @@
     <Compile Include="Database\Queries\StudentDrillDownQuery.cs" />
     <Compile Include="Database\Queries\StudentProgramsCountReportQuery.cs" />
     <Compile Include="Database\RawOdsDbContext.cs" />
+    <Compile Include="ViewModels\StudentDrillDownReportType.cs" />
     <Compile Include="Database\ValidatedOdsDbContext.cs" />
     <Compile Include="Database\ValidationPortalDbContext.cs" />
     <Compile Include="Database\ValidationPortalDbMigrationConfiguration.cs" />
+    <Compile Include="DataCache\CacheManager.cs" />
+    <Compile Include="DataCache\ICacheManager.cs" />
     <Compile Include="Filters\AddChallengeOnUnauthorizedResult.cs" />
     <Compile Include="Filters\LoggingHandler.cs" />
     <Compile Include="Filters\PortalAuthenticationFilter.cs" />
@@ -668,6 +677,7 @@
     <Compile Include="Services\Interfaces\ISubmissionCycleService.cs" />
     <Compile Include="Services\Interfaces\IValidatedDataSubmissionService.cs" />
     <Compile Include="Services\Interfaces\IValidationResultsService.cs" />
+    <Compile Include="Utility\DateTimeExtension.cs" />
     <Compile Include="Utility\ExceptionExtension.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

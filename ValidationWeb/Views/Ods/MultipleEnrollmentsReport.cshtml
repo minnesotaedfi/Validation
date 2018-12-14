@@ -9,6 +9,13 @@
     else
     {
         <div class="vp-body-header justify-content-start align-self-center">Students with Multiple Open Enrollments for District @Model.EdOrgName (@Model.EdOrgId.ToString())</div>
+
+        if (Model.SchoolId.HasValue && !string.IsNullOrWhiteSpace(Model.SchoolName))
+        {
+            <div class="vp-body-header justify-content-start align-self-center">
+                For @Model.SchoolName (@Model.SchoolId)
+            </div>
+        }
     }
 
     @if (Model.IsStateMode)
@@ -24,45 +31,7 @@
     <div class="col-md-3 offset-9 text-right"><a href="#notes">View Report notes</a></div>
 </div>
 <div id="requestedReportContent" class="row">
-    <table class="table table-sm table-responsive-md table-bordered" id="reportsTable">
-        <tr class="table-primary">
-            <th>ID</th>
-            <th>District/School</th>
-            <th>Cumulative Enrollments</th>
-            <th>Students enrolled<br />at multiple schools<br />within the district</th>
-            <th>Students enrolled<br />at other districts</th>
-        </tr>
-        @foreach (var result in Model.Results)
-        {
-        <tr>
-            <td>
-                @if (Model.IsStateMode)
-                {
-                    if (result.EdOrgId.HasValue && result.OrgType == OrgType.District)
-                    {
-                        <a href="@Url.Action("MultipleEnrollmentsReport", "Ods", new { isStateMode = false, districtToDisplay = result.EdOrgId.Value})" class="show-data-loading">@(result.EdOrgId.Value.ToString())</a>
-                    }
-                    else
-                    {
-                        @(result.EdOrgId.HasValue ? result.EdOrgId.Value.ToString() : string.Empty)
-                    }
-                }
-                else
-                {
-                    @(result.EdOrgId.HasValue ? result.EdOrgId.Value.ToString() : string.Empty)
-                }
-            </td>
-            <td>@(result.LEASchool)</td>
-            <td><a href="@Url.Action("MultipleEnrollmentsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 0, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType})" target="_blank">@(result.DistinctEnrollmentCount.ToString())</a></td>
-            <td><a href="@Url.Action("MultipleEnrollmentsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 1, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType})" target="_blank">@(result.EnrolledInOtherSchoolsCount.ToString())</a></td>
-            <td><a href="@Url.Action("MultipleEnrollmentsReport", "Ods", new { schoolId = result.EdOrgId, drillDownColumnIndex = 2, isStateMode = Model.IsStateMode, districtToDisplay = result.EdOrgId, isStudentDrillDown = true, orgType = result.OrgType})" target="_blank">@(result.EnrolledInOtherDistrictsCount.ToString())</a></td>
-        </tr>
-        }
-    </table>
-    @if (Model.Results.Count == 0)
-    {
-        <div class="vp-body-header col-8 justify-content-start align-self-center">No records were found.</div>
-    }
+    <table class="table table-bordered nowrap" id="reportsTable" style="table-layout: fixed; width: 98% !important;"></table>
 </div>
 <div id="notes" class="row">
     <div class="vp-body-header">Notes:</div>
@@ -78,5 +47,126 @@
 
 @section scripts {
     <script>
+        $(function() {
+            var drillDownLinkTemplate =
+                '<a href="@Html.Raw(Url.Action(
+                              "MultipleEnrollmentsReport",
+                              "Ods",
+                              new
+                                {
+                                    schoolId = "_EdOrgId_",
+                                    drillDownColumnIndex = "_DrillDownIndex_",
+                                    isStateMode = Model.IsStateMode,
+                                    districtToDisplay = "_EdOrgId_",
+                                    isStudentDrillDown = true,
+                                    orgType = "_OrgType_"
+                                }))" target="_blank">_LinkText_</a>';
+
+            function createDrillDownLink(edOrgId, drillDownIndex, orgType, linkText) {
+                return drillDownLinkTemplate
+                    .replace(/_EdOrgId_/g, edOrgId)
+                    .replace(/_DrillDownIndex_/g, drillDownIndex)
+                    .replace(/_OrgType_/g, orgType)
+                    .replace(/_LinkText_/g, linkText);
+            }
+
+            var stateLinkTemplate =
+                '<a href="@Html.Raw(Url.Action(
+                              "MultipleEnrollmentsReport", 
+                              "Ods", 
+                              new
+                                { isStateMode = false, districtToDisplay = "_EdOrgId_" }))" class="show-data-loading">_EdOrgId_</a>';
+
+            function createStateLink(edOrgId) {
+                return stateLinkTemplate.replace(/_EdOrgId_/g, edOrgId);
+            }
+
+            $('div.dataTables_scrollBody').css('min-height', '350px');
+
+            var dataTable = $('#reportsTable').DataTable({
+                paging: true,
+                info: false,
+                scrollX: true,
+                scrollY: '350px',
+                scrollCollapse: true,
+                deferRender: true,
+                searching: false,
+                serverSide: true,
+                processing: true,
+                scroller: {
+                    loadingIndicator: true
+                },
+                fnInitComplete: function() {
+                    $('div.dataTables_scrollBody').css('min-height', 0);
+                },
+                ajax: {
+                    url: "@Html.Raw(Url.Action("GetMultipleEnrollmentCountsData", new
+                     {
+                         isStateMode = Model.IsStateMode,
+                         edOrgId = Model.EdOrgId,
+                         fourDigitSchoolYear = Model.FourDigitSchoolYear
+                     }))"
+                },
+                columns: [
+                    {
+                        title: 'ID',
+                        data: 'edOrgId',
+                        width: '100px',
+                        @if (Model.IsStateMode)
+                        {
+                            <text>
+                        render: function(data, type, row, meta) {
+                            if (data != null && type === 'display' && row.orgType === 200) {
+                                return createStateLink(data);
+                            } else {
+                                return data;
+                            }
+                        }
+                            </text>
+                        }
+                    },
+                    {
+                        title: 'District/School',
+                        data: 'leaSchool',
+                        width: '300px',
+                    },
+                    {
+                        title: 'Cumulative Enrollments',
+                        data: 'distinctEnrollmentCount',
+                        render: function (data, type, row, meta) {
+                            if (type === 'display') {
+                                return (data === 0) ? "-" : createDrillDownLink(row.edOrgId, 0, row.orgType, data);
+                            } else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        title: 'Enrolled in Multiple Schools',
+                        data: 'enrolledInOtherSchoolsCount',
+                        render: function (data, type, row, meta) {
+                            if (type === 'display') {
+                                return (data === 0) ? "-" : createDrillDownLink(row.edOrgId, 1, row.orgType, data);
+                            } else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        title: 'Enrolled at Other Districts',
+                        data: 'enrolledInOtherDistrictsCount',
+                        render: function (data, type, row, meta) {
+                            if (type === 'display') {
+                                return (data === 0) ? "-" : createDrillDownLink(row.edOrgId, 2, row.orgType, data);
+                            } else {
+                                return data;
+                            }
+                        }
+                    },
+                ]
+            });
+
+            $(dataTable.table().header()).addClass('table-primary');
+        });
     </script>
 }

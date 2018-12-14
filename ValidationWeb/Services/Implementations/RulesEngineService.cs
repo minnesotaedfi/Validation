@@ -95,11 +95,19 @@ namespace ValidationWeb.Services
                 var newReportDetails = new ValidationReportDetails
                 {
                     CollectionName = collectionId,
+                    SchoolYearId = newReportSummary.SchoolYear.Id,
                     DistrictName = $"{_edOrgService.GetEdOrgById(newReportSummary.EdOrgId, newReportSummary.SchoolYear.Id).OrganizationName} ({newReportSummary.EdOrgId.ToString()})",
                     ValidationReportSummaryId = newReportSummary.Id
                 };
                 _dbContext.ValidationReportDetails.Add(newReportDetails);
-                _dbContext.SaveChanges();
+                try
+                {
+                    _dbContext.SaveChanges();
+                }
+                catch(Exception ex)
+                {
+                    _loggingService.LogErrorMessage(ex.ChainInnerExceptionMessages());
+                }
                 _loggingService.LogDebugMessage($"Successfully added additional Validation Report details to the Validation Portal database for EdOrgID {newReportSummary.EdOrgId}.");
                 #endregion The ValidationReportDetails is one-for-one with the ValidationReportSummary - it should be refactored away. It contains the error/warning details.
 

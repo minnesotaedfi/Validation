@@ -9,10 +9,11 @@ namespace ValidationWeb.Services
 {
     public class OdsDataService : IOdsDataService
     {
-        public readonly ILoggingService _loggingService;
+        public readonly ILoggingService LoggingService;
+
         public OdsDataService(ILoggingService loggingService)
         {
-            _loggingService = loggingService;
+            LoggingService = loggingService;
         }
 
         public List<DemographicsCountReportQuery> GetDistrictAncestryRaceCounts(int? districtEdOrgId, string fourDigitOdsDbYear)
@@ -55,7 +56,7 @@ namespace ValidationWeb.Services
                 }
                 catch (Exception ex)
                 {
-                    _loggingService.LogErrorMessage($"While compiling report on ancestry/ethnic origin supplied counts: {ex.ChainInnerExceptionMessages()}");
+                    LoggingService.LogErrorMessage($"While compiling report on ancestry/ethnic origin supplied counts: {ex.ChainInnerExceptionMessages()}");
                     throw;
                 }
                 finally
@@ -112,7 +113,7 @@ namespace ValidationWeb.Services
                 }
                 catch (Exception ex)
                 {
-                    _loggingService.LogErrorMessage($"While compiling report on multiple enrollments: {ex.ChainInnerExceptionMessages()}");
+                    LoggingService.LogErrorMessage($"While compiling report on multiple enrollments: {ex.ChainInnerExceptionMessages()}");
                     throw;
                 }
                 finally
@@ -181,7 +182,7 @@ namespace ValidationWeb.Services
                 }
                 catch (Exception ex)
                 {
-                    _loggingService.LogErrorMessage($"While compiling report on student characteristics and programs: {ex.ChainInnerExceptionMessages()}");
+                    LoggingService.LogErrorMessage($"While compiling report on student characteristics and programs: {ex.ChainInnerExceptionMessages()}");
                     throw;
                 }
                 finally
@@ -251,11 +252,12 @@ namespace ValidationWeb.Services
                             });
                         }
                     }
+
                     return reportData;
                 }
                 catch (Exception ex)
                 {
-                    _loggingService.LogErrorMessage($"While compiling report on changes of enrollment: {ex.ChainInnerExceptionMessages()}");
+                    LoggingService.LogErrorMessage($"While compiling report on changes of enrollment: {ex.ChainInnerExceptionMessages()}");
                     throw;
                 }
                 finally
@@ -311,7 +313,7 @@ namespace ValidationWeb.Services
                 }
                 catch (Exception ex)
                 {
-                    _loggingService.LogErrorMessage($"While compiling report on residents enrolled elsewhere: {ex.ChainInnerExceptionMessages()}");
+                    LoggingService.LogErrorMessage($"While compiling report on residents enrolled elsewhere: {ex.ChainInnerExceptionMessages()}");
                     throw;
                 }
                 finally
@@ -354,7 +356,7 @@ namespace ValidationWeb.Services
                 }
                 catch (Exception ex)
                 {
-                    _loggingService.LogErrorMessage($"While providing student details on race and ethnic origin: {ex.ChainInnerExceptionMessages()}");
+                    LoggingService.LogErrorMessage($"While providing student details on race and ethnic origin: {ex.ChainInnerExceptionMessages()}");
                     throw;
                 }
                 finally
@@ -397,7 +399,7 @@ namespace ValidationWeb.Services
                 }
                 catch (Exception ex)
                 {
-                    _loggingService.LogErrorMessage($"While providing student details on multiple enrollments: {ex.ChainInnerExceptionMessages()}");
+                    LoggingService.LogErrorMessage($"While providing student details on multiple enrollments: {ex.ChainInnerExceptionMessages()}");
                     throw;
                 }
                 finally
@@ -440,7 +442,7 @@ namespace ValidationWeb.Services
                 }
                 catch (Exception ex)
                 {
-                    _loggingService.LogErrorMessage($"While providing student details on program participation and student characteristics: {ex.ChainInnerExceptionMessages()}");
+                    LoggingService.LogErrorMessage($"While providing student details on program participation and student characteristics: {ex.ChainInnerExceptionMessages()}");
                     throw;
                 }
                 finally
@@ -479,7 +481,7 @@ namespace ValidationWeb.Services
                 }
                 catch (Exception ex)
                 {
-                    _loggingService.LogErrorMessage($"While providing student details on residents enrolled elsewhere: {ex.ChainInnerExceptionMessages()}");
+                    LoggingService.LogErrorMessage($"While providing student details on residents enrolled elsewhere: {ex.ChainInnerExceptionMessages()}");
                     throw;
                 }
                 finally
