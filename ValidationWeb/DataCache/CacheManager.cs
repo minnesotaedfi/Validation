@@ -264,15 +264,19 @@
                                 new ChangeOfEnrollmentReportQuery
                                 {
                                     CurrentDistEdOrgId = oldDistrict,
-                                    CurrentGrade = (i % 12).ToString(),
-                                    CurrentDistrictName = "Old District",
+                                    PastGrade = ((i % 12) + 1).ToString(),
+                                    PastDistrictName = "Old District",
+                                    CurrentDistrictName = "incoming district",                                                                                          
+                                    CurrentSchoolName = "New School",
                                     CurrentEdOrgEnrollmentDate = DateTime.Now.Subtract(new TimeSpan(random.Next(1, 90), 0, 0, 0)),
+                                    PastEdOrgEnrollmentDate = DateTime.Now.Subtract(new TimeSpan(random.Next(180, 365), 0, 0, 0)),
+                                    PastEdOrgExitDate = DateTime.Now.Subtract(new TimeSpan(random.Next(180, 365), 0, 0, 0)),
                                     IsCurrentDistrict = false,
-                                    StudentID = (1000 + i).ToString(),
+                                    StudentID = (2000 + i).ToString(),
                                     StudentBirthDate = new DateTime(random.Next(1990, 2010), random.Next(1, 12), random.Next(1, 28)),
-                                    StudentFirstName = $"First_{i}",
-                                    StudentMiddleName = "Q.",
-                                    StudentLastName = $"Last_{i}"
+                                    StudentFirstName = $"First_{i+2000}",
+                                    StudentMiddleName = "P.",
+                                    StudentLastName = $"Last_{i + 2000}"
                                 });
                         }
 

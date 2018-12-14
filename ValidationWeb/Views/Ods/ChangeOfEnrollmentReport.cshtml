@@ -10,13 +10,17 @@
 
 <div id="requestedReportContent">
     <div class="col-md-12 nopadding">
-        <!-- -->
         <table class="table nowrap" id="reportsTable1" style="table-layout: fixed; width: 98% !important;"></table>
     </div>
 </div>
 <div class="row tbmargin10">
     <div class="col-md-4 vp-body-header justify-content-start align-self-center">Withdrawing</div>
     <div class="col-md-3 offset-5 text-right"><a href="#notes">View Report notes</a></div>
+</div>
+<div id="requestedReportContent2">
+    <div class="col-md-12 nopadding">
+        <table class="table nowrap" id="reportsTable2" style="table-layout: fixed; width: 98% !important;"></table>
+    </div>
 </div>
 
 <div id="notes" class="row">
@@ -135,6 +139,127 @@
                         }
 
 
+                    }
+                ]
+            });
+
+            $(dataTable.table().header()).addClass('table-primary');
+
+            dataTable = $('#reportsTable2').DataTable({
+                paging: true,
+                info: false,
+                scrollX: false,
+                scrollY: '350px',
+                scrollCollapse: true,
+                deferRender: true,
+                searching: false,
+                serverSide: true,
+                processing: true,
+                scroller: {
+                    loadingIndicator: true
+                },
+                fnInitComplete: function() {
+                    $('div.dataTables_scrollBody').css('min-height', 0);
+                },
+                ajax: {
+                    url: "@Html.Raw(Url.Action("GetChangeOfEnrollmentReportData", new
+                                                                                  {
+                                                                                      edOrgId = Model.EdOrgId,
+                                                                                      fourDigitSchoolYear = Model.FourDigitSchoolYear,
+                                                                                      isCurrentDistrict = false
+                                                                                  }))"
+                },
+                columns: [
+                    {
+                        title: 'Student Name',
+                        name: 'studentName',
+                        width: '200px',
+                        data: function(row, type, set) {
+                            return row.studentLastName + ", " + row.studentFirstName + " " + row.studentMiddleName;
+                        },
+                        render: function(data, type, row, meta) {
+                            if (type === 'display') {
+                                return row.studentLastName + ", " + row.studentFirstName + " " + row.studentMiddleName;
+                            } else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        title: 'State Reporting Number',
+                        name: 'studentID',
+                        data: 'studentID'
+                    },
+                    {
+                        title: 'Birthdate',
+                        name: 'studentBirthDate',
+                        data: 'studentBirthDate',
+                        render: function(data, type, row, meta) {
+                            if (type === 'display') {
+                                return data == null ? "Unknown" : new Date(data).toLocaleDateString("en-US");
+                            } else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        title: 'Grade',
+                        name: 'pastGrade',
+                        data: 'pastGrade'
+                    },
+                    {
+                        title: 'Old Entry Date',
+                        name: 'pastEdOrgEnrollmentDate',
+                        data: 'pastEdOrgEnrollmentDate',
+                        render: function(data, type, row, meta) {
+                            if (type === 'display') {
+                                return data == null ? "Unknown" : new Date(data).toLocaleDateString("en-US");
+                            } else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        title: 'Old Exit Withdraw Date',
+                        name: 'pastEdOrgExitDate',
+                        data: 'pastEdOrgExitDate',
+                        render: function(data, type, row, meta) {
+                            if (type === 'display') {
+                                return data == null ? "Unknown" : new Date(data).toLocaleDateString("en-US");
+                            } else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        title: 'NEW District',
+                        name: 'currentDistrictName',
+                        data: 'currentDistrictName',
+                    },
+                    {
+                        title: 'NEW School',
+                        name: 'currentSchoolName',
+                        data: 'currentSchoolName',
+                    },
+                    {
+                        title: 'NEW Entry Date',
+                        name: 'currentEdOrgEnrollmentDate',
+                        data: 'currentEdOrgEnrollmentDate',
+                        render: function (data, type, row, meta) {
+                            if (type === 'display') {
+                                return data == null ? "Unknown" : new Date(data).toLocaleDateString("en-US");
+                            } else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        title: 'Records Requested',
+                        orderable: false,
+                        data: 'null',
+                        render: function(data, type, row) {
+                            return '<button class="btn btn-sm prime-blue white-heavy-text" data-toggle="modal" data-target="#request-records-modal">Request Records</button>';
+                        }
                     }
                 ]
             });
