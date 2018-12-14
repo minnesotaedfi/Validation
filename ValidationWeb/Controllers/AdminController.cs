@@ -43,7 +43,7 @@ namespace ValidationWeb
                 YearsOpenForDataSubmission = _schoolYearService.GetSubmittableSchoolYears().OrderByDescending(x => x.EndYear),
                 RuleCollections = _rulesEngineService.GetCollections(),
                 SubmissionCycles = _submissionCycleService.GetSubmissionCycles(),
-                Announcements = _announcementService.GetAnnoucements(true)
+                Announcements = _announcementService.GetAnnouncements(true)
             };
 
             // Check user authorization, if user is admin then then return admin page if not return the error page.
@@ -151,7 +151,7 @@ namespace ValidationWeb
                     _announcementService.SaveAnnouncement(announcement.Id, announcement.Priority, announcement.Message,
                         announcement.ContactInfo,
                         announcement.LinkUrl, announcement.Expiration);
-                    var announcements = _announcementService.GetAnnoucements(true);
+                    var announcements = _announcementService.GetAnnouncements(true);
                     return RedirectToAction("Index", new { tab = "announcements" });
                 }
                 catch (Exception ex)
@@ -174,7 +174,7 @@ namespace ValidationWeb
 
         public ActionResult EditAnnouncement(int Id)
         {
-            var announcement = _announcementService.GetAnnoucement(Id);
+            var announcement = _announcementService.GetAnnouncement(Id);
             return PartialView("Partials/AnnouncementEditModal", announcement);
         }
 
@@ -182,7 +182,7 @@ namespace ValidationWeb
         [HttpDelete]
         public ActionResult DeleteAnnouncement(int id)
         {
-            _announcementService.DeleteAnnoucement(id);
+            _announcementService.DeleteAnnouncement(id);
             return RedirectToAction("Index", new { tab = "announcements" });
         }
 

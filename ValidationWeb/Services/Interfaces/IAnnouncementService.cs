@@ -8,9 +8,9 @@ namespace ValidationWeb.Services
 {
     public interface IAnnouncementService
     {
-        List<Announcement> GetAnnoucements(bool includePreviouslyDismissedAnnouncements = false);
-        Announcement GetAnnoucement(int id);
-        void DeleteAnnoucement(int announcementId);
+        List<Announcement> GetAnnouncements(bool includePreviouslyDismissedAnnouncements = false);
+        Announcement GetAnnouncement(int id);
+        void DeleteAnnouncement(int announcementId);
         void SaveAnnouncement(int announcementId, int priority, string message, string contactInfo, string linkUrl, DateTime expirationDate);
     }
 }

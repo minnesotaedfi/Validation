@@ -34,7 +34,7 @@ namespace ValidationWeb
             var model = new HomeIndexViewModel
             {
                 AppUserSession = _appUserService.GetSession(),
-                Announcements = _announcementService.GetAnnoucements(),
+                Announcements = _announcementService.GetAnnouncements(),
                 YearsOpenForDataSubmission = _validatedDataSubmissionService.GetYearsOpenForDataSubmission(),
                 AuthorizedEdOrgs = _edOrgService.GetEdOrgs(),
                 FocusedEdOrg = _edOrgService.GetEdOrgById(_appUserService.GetSession().FocusedEdOrgId, _schoolYearService.GetSchoolYearById(_appUserService.GetSession().FocusedSchoolYearId).Id)
@@ -62,7 +62,7 @@ namespace ValidationWeb
         {
             var model = new HomeAnnouncementsViewModel
             {
-                Announcements = _announcementService.GetAnnoucements()
+                Announcements = _announcementService.GetAnnouncements()
             };
             return View(model);
         }

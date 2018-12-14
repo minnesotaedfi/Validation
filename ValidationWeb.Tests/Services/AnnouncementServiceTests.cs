@@ -68,6 +68,15 @@
             };
         }
 
+        [TearDown]
+        public void TearDown()
+        {
+            ValidationPortalDbContextMock.Reset();
+            AppUserServiceMock.Reset();
+            LoggingServiceMock.Reset();
+            AnnouncementServiceMock.Reset();
+        }
+
         [Test]
         public void GetAnnouncements_WithPreviousDismissedAnnouncementsTrue_Should_ReturnAll()
         {
@@ -114,7 +123,7 @@
 
             var announcementService = new AnnouncementService(ValidationPortalDbContextMock.Object, AppUserServiceMock.Object, LoggingServiceMock.Object);
 
-            var result = announcementService.GetAnnoucements(true);
+            var result = announcementService.GetAnnouncements(true);
 
             result.ShouldNotBeNull();
             result.ShouldNotBeEmpty();
@@ -168,12 +177,105 @@
 
             var announcementService = new AnnouncementService(ValidationPortalDbContextMock.Object, AppUserServiceMock.Object, LoggingServiceMock.Object);
 
-            var result = announcementService.GetAnnoucements(true);
+            var result = announcementService.GetAnnouncements(true);
 
             result.ShouldNotBeNull();
             result.ShouldNotBeEmpty();
             result.ShouldContain(announcements.First(x => x.Id == announcementIdToKeep));
             result.ShouldNotContain(announcements.First(x => x.Id == announcementIdToDismiss));
+        }
+
+        [Test]
+        public void GetAnnouncements_Should_LogCaughtException()
+        {
+            AppUserServiceMock.Setup(x => x.GetSession()).Throws<InvalidOperationException>();
+            LoggingServiceMock.Setup(x => x.LogErrorMessage(It.IsAny<string>()));
+            var announcementService = new AnnouncementService(ValidationPortalDbContextMock.Object, AppUserServiceMock.Object, LoggingServiceMock.Object);
+
+            announcementService.GetAnnouncements();
+
+            LoggingServiceMock.Verify(x => x.LogErrorMessage(It.IsAny<string>()), Times.Once);
+        }
+
+        [Test]
+        public void GetAnnouncement_Should_ReturnOneAnnouncement()
+        {
+            AppUserServiceMock.Setup(x => x.GetSession()).Returns(DefaultTestAppUserSession);
+
+            // authorized ed orgs should match limited-to ed orgs 
+            var authorizedEdOrgId = 12345;
+            DefaultTestAppUserSession.UserIdentity.AuthorizedEdOrgs.Add(new EdOrg { Id = authorizedEdOrgId });
+
+            var announcementIdToReturn = 2345;
+            var announcementIdToNotReturn = 3456;
+
+            var announcements = new List<Announcement>(
+                new[]
+                {
+                    new Announcement
+                    {
+                        Id = announcementIdToReturn,
+                        Message = "return me",
+                        LimitToEdOrgs = new List<EdOrg>(new[] { new EdOrg { Id = authorizedEdOrgId } })
+                    },
+                    new Announcement
+                    {
+                        Id = announcementIdToNotReturn,
+                        Message = "leave me out",
+                        LimitToEdOrgs = new List<EdOrg>(new[] { new EdOrg { Id = authorizedEdOrgId } })
+                    }
+                });
+
+            var announcementDbSetMock = GetQueryableMockDbSet<Announcement>(announcements);
+            ValidationPortalDbContextMock.Setup(x => x.Announcements).Returns(announcementDbSetMock.Object);
+
+            var announcementService = new AnnouncementService(ValidationPortalDbContextMock.Object, AppUserServiceMock.Object, LoggingServiceMock.Object);
+
+            var result = announcementService.GetAnnouncement(announcementIdToReturn);
+
+            result.ShouldNotBeNull();
+            result.Id.ShouldEqual(announcementIdToReturn);
+        }
+
+        [Test]
+        public void GetAnnouncement_Should_LogAndThrowOnNonexistentId()
+        {
+            AppUserServiceMock.Setup(x => x.GetSession()).Returns(DefaultTestAppUserSession);
+            LoggingServiceMock.Setup(x => x.LogErrorMessage(It.IsAny<string>()));
+
+            // authorized ed orgs should match limited-to ed orgs 
+            var authorizedEdOrgId = 12345;
+            DefaultTestAppUserSession.UserIdentity.AuthorizedEdOrgs.Add(new EdOrg { Id = authorizedEdOrgId });
+
+            var announcementIdToReturn = 2345;
+            var announcementIdToNotReturn = 3456;
+            var announcementIdThatsBogus = 4567;
+
+            var announcements = new List<Announcement>(
+                new[]
+                {
+                    new Announcement
+                    {
+                        Id = announcementIdToReturn,
+                        Message = "return me",
+                        LimitToEdOrgs = new List<EdOrg>(new[] { new EdOrg { Id = authorizedEdOrgId } })
+                    },
+                    new Announcement
+                    {
+                        Id = announcementIdToNotReturn,
+                        Message = "leave me out",
+                        LimitToEdOrgs = new List<EdOrg>(new[] { new EdOrg { Id = authorizedEdOrgId } })
+                    }
+                });
+
+            var announcementDbSetMock = GetQueryableMockDbSet<Announcement>(announcements);
+            ValidationPortalDbContextMock.Setup(x => x.Announcements).Returns(announcementDbSetMock.Object);
+
+            var announcementService = new AnnouncementService(ValidationPortalDbContextMock.Object, AppUserServiceMock.Object, LoggingServiceMock.Object);
+
+            Assert.Throws<Exception>(() => announcementService.GetAnnouncement(announcementIdThatsBogus));
+
+            LoggingServiceMock.Verify(x => x.LogErrorMessage(It.IsAny<string>()));
         }
 
         [Test]
@@ -192,7 +294,7 @@
 
             var announcementService = new AnnouncementService(ValidationPortalDbContextMock.Object, AppUserServiceMock.Object, LoggingServiceMock.Object);
 
-            announcementService.DeleteAnnoucement(announcement.Id);
+            announcementService.DeleteAnnouncement(announcement.Id);
 
             announcementDbSetMock.Verify(x => x.Remove(announcement), Times.Once);
             ValidationPortalDbContextMock.Verify(x => x.SaveChanges(), Times.Once);
@@ -219,9 +321,16 @@
                 .Setup(x => x.Announcements)
                 .Returns(announcementDbSetMock.Object);
 
-            ValidationPortalDbContextMock.Setup(x => x.SaveChanges()).Returns(1);
+            var timesCalled = 0; 
 
-            var announcementService = new AnnouncementService(ValidationPortalDbContextMock.Object, AppUserServiceMock.Object, LoggingServiceMock.Object);
+            ValidationPortalDbContextMock
+                .Setup(x => x.SaveChanges())
+                .Returns(1);
+
+            var announcementService = new AnnouncementService(
+                ValidationPortalDbContextMock.Object, 
+                AppUserServiceMock.Object, 
+                LoggingServiceMock.Object);
 
             announcementService.SaveAnnouncement(
                 announcement.Id,
@@ -232,7 +341,7 @@
                 announcement.Expiration);
 
             announcementDbSetMock.Verify(x => x.Add(It.Is<Announcement>(y => y.Id == announcement.Id)), Times.Once);
-            ValidationPortalDbContextMock.Verify(x => x.SaveChanges());
+            ValidationPortalDbContextMock.Verify(x => x.SaveChanges(), Times.Once);
         }
 
         [Test]
@@ -255,7 +364,9 @@
                 .Setup(x => x.Announcements)
                 .Returns(announcementDbSetMock.Object);
 
-            ValidationPortalDbContextMock.Setup(x => x.SaveChanges()).Returns(1);
+            ValidationPortalDbContextMock.Setup(x => x.SaveChanges())
+                .Callback(() => { var y = 1; })
+                .Returns(1);
 
             var announcementService = new AnnouncementService(ValidationPortalDbContextMock.Object, AppUserServiceMock.Object, LoggingServiceMock.Object);
 
@@ -297,7 +408,7 @@
 
             var announcementService = new AnnouncementService(ValidationPortalDbContextMock.Object, AppUserServiceMock.Object, LoggingServiceMock.Object);
 
-            Assert.Throws<Exception>( () => 
+            Assert.Throws<Exception>(() => 
                 announcementService.SaveAnnouncement(
                     announcement.Id + 1,
                     announcement.Priority,
@@ -325,7 +436,7 @@
             var badAnnouncementId = announcement.Id + 1;
             Assert.Throws(
                 Is.TypeOf<Exception>().And.Message.EqualTo($"Could not delete an announcement because announcement with ID {badAnnouncementId} was not found"), 
-                () => announcementService.DeleteAnnoucement(badAnnouncementId));
+                () => announcementService.DeleteAnnouncement(badAnnouncementId));
         }
     }
 }
