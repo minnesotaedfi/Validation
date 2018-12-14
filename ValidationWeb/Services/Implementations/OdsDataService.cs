@@ -252,6 +252,7 @@ namespace ValidationWeb.Services
                             });
                         }
                     }
+
                     return reportData;
                 }
                 catch (Exception ex)
