@@ -6,12 +6,12 @@ namespace ValidationWeb.Services
 {
     public class AnnouncementService : IAnnouncementService
     {
-        protected readonly ValidationPortalDbContext _validationPortalDataContext;
+        protected readonly IValidationPortalDbContext _validationPortalDataContext;
         protected readonly IAppUserService _appUserService;
         protected readonly ILoggingService _loggingService;
 
         public AnnouncementService(
-            ValidationPortalDbContext validationPortalDataContext,
+            IValidationPortalDbContext validationPortalDataContext,
             IAppUserService appUserService,
             ILoggingService loggingService)
         {
@@ -31,8 +31,8 @@ namespace ValidationWeb.Services
                 announcements = allAnnouncements.Where(ann =>
                     (ann.LimitToEdOrgs.Count == 0) ||
                     (ann.LimitToEdOrgs.Select(lte => lte.Id).Intersect(edOrgIds).Count() > 0
-                    && !dismissedAnnouncementIds.Contains(ann.Id))
-                    ).OrderByDescending(ann => ann.Priority).ToList();
+                     && !dismissedAnnouncementIds.Contains(ann.Id))
+                ).OrderByDescending(ann => ann.Priority).ToList();
             }
             catch(Exception ex)
             {
