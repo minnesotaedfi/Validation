@@ -193,6 +193,118 @@
             var announcementService = new AnnouncementService(ValidationPortalDbContextMock.Object, AppUserServiceMock.Object, LoggingServiceMock.Object);
 
             announcementService.DeleteAnnoucement(announcement.Id);
+
+            announcementDbSetMock.Verify(x => x.Remove(announcement), Times.Once);
+            ValidationPortalDbContextMock.Verify(x => x.SaveChanges(), Times.Once);
+        }
+
+        [Test]
+        public void SaveNewAnnouncement_Should_SaveAnnouncement()
+        {
+            var announcement = 
+                new Announcement
+               {
+                   Id = 0,
+                   Priority = 1,
+                   Message = "test message",
+                   ContactInfo = "3-2-1, contact",
+                   LinkUrl = "http://wearedoubleline.com",
+                   Expiration = DateTime.Now.AddMonths(1)
+               };
+
+            var announcementDbSetMock = GetQueryableMockDbSet(new List<Announcement>(new[] { announcement }));
+            announcementDbSetMock.Setup(x => x.Add(It.Is<Announcement>(y => y.Message == announcement.Message))).Returns(announcement);
+
+            ValidationPortalDbContextMock
+                .Setup(x => x.Announcements)
+                .Returns(announcementDbSetMock.Object);
+
+            ValidationPortalDbContextMock.Setup(x => x.SaveChanges()).Returns(1);
+
+            var announcementService = new AnnouncementService(ValidationPortalDbContextMock.Object, AppUserServiceMock.Object, LoggingServiceMock.Object);
+
+            announcementService.SaveAnnouncement(
+                announcement.Id,
+                announcement.Priority,
+                announcement.Message,
+                announcement.ContactInfo,
+                announcement.LinkUrl,
+                announcement.Expiration);
+
+            announcementDbSetMock.Verify(x => x.Add(It.Is<Announcement>(y => y.Id == announcement.Id)), Times.Once);
+            ValidationPortalDbContextMock.Verify(x => x.SaveChanges());
+        }
+
+        [Test]
+        public void SaveExistingAnnouncement_Should_SaveAnnouncement()
+        {
+            var announcement =
+                new Announcement
+                {
+                    Id = 1234,
+                    Priority = 1,
+                    Message = "test message",
+                    ContactInfo = "3-2-1, contact",
+                    LinkUrl = "http://wearedoubleline.com",
+                    Expiration = DateTime.Now.AddMonths(1)
+                };
+
+            var announcementDbSetMock = GetQueryableMockDbSet(new List<Announcement>(new[] { announcement }));
+
+            ValidationPortalDbContextMock
+                .Setup(x => x.Announcements)
+                .Returns(announcementDbSetMock.Object);
+
+            ValidationPortalDbContextMock.Setup(x => x.SaveChanges()).Returns(1);
+
+            var announcementService = new AnnouncementService(ValidationPortalDbContextMock.Object, AppUserServiceMock.Object, LoggingServiceMock.Object);
+
+            announcementService.SaveAnnouncement(
+                announcement.Id,
+                announcement.Priority,
+                announcement.Message,
+                announcement.ContactInfo,
+                announcement.LinkUrl,
+                announcement.Expiration);
+
+            ValidationPortalDbContextMock.Verify(x => x.SaveChanges(), Times.Once);
+        }
+
+
+        [Test]
+        public void SaveExistingAnnouncement_Should_ThrowIfNotExistsAndLogError()
+        {
+            var announcement =
+                new Announcement
+                {
+                    Id = 1234,
+                    Priority = 1,
+                    Message = "test message",
+                    ContactInfo = "3-2-1, contact",
+                    LinkUrl = "http://wearedoubleline.com",
+                    Expiration = DateTime.Now.AddMonths(1)
+                };
+
+            var announcementDbSetMock = GetQueryableMockDbSet(new List<Announcement>(new[] { announcement }));
+
+            ValidationPortalDbContextMock
+                .Setup(x => x.Announcements)
+                .Returns(announcementDbSetMock.Object);
+
+            ValidationPortalDbContextMock.Setup(x => x.SaveChanges()).Returns(1);
+
+            LoggingServiceMock.Setup(x => x.LogErrorMessage(It.IsAny<string>()));
+
+            var announcementService = new AnnouncementService(ValidationPortalDbContextMock.Object, AppUserServiceMock.Object, LoggingServiceMock.Object);
+
+            Assert.Throws<Exception>( () => 
+                announcementService.SaveAnnouncement(
+                    announcement.Id + 1,
+                    announcement.Priority,
+                    announcement.Message,
+                    announcement.ContactInfo,
+                    announcement.LinkUrl,
+                    announcement.Expiration));
         }
 
         [Test]
