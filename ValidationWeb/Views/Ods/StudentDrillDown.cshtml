@@ -18,7 +18,7 @@
     }
 </div>
 <div id="requestedReportContent" class="row">
-    @Html.Partial("StudentDrillDownTable", Model)
+    @Html.Partial("Partials/StudentDrillDownTable", Model)
 </div>
 <div id="notes" class="row">
     <div class="vp-body-header">&nbsp;</div>
@@ -71,7 +71,7 @@
                         name: 'studentName',
                         width: '200px',
                         data: function(row, type, set) {
-                            return row.studentLastName + ", " + row.studentFirstName + " " + row.studentMiddleName
+                            return row.studentLastName + ", " + row.studentFirstName + " " + row.studentMiddleName;
                         },
                         render: function(data, type, row, meta) {
                             if (type === 'display') {

@@ -527,8 +527,9 @@
     <None Include="MvcSiteMapSchema.xsd">
       <SubType>Designer</SubType>
     </None>
-    <Content Include="Views\Ods\DemographicsReportTable.cshtml" />
-    <Content Include="Views\Ods\StudentDrillDownTable.cshtml" />
+    <Content Include="Views\Ods\Partials\DemographicsReportTable.cshtml" />
+    <Content Include="Views\Ods\Partials\StudentDrillDownTable.cshtml" />
+    <Content Include="Views\Ods\Partials\RequestRecordsModal.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

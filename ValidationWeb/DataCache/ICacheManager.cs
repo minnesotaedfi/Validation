@@ -58,5 +58,10 @@
             int edOrgId,
             int drillDownColumnIndex,
             string fourDigitSchoolYear);
+
+        IEnumerable<ChangeOfEnrollmentReportQuery> GetChangeOfEnrollmentReport(
+            IOdsDataService odsDataService,
+            int edOrgId,
+            string fourDigitSchoolYear);
     }
 }

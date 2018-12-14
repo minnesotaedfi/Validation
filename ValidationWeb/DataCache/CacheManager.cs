@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Runtime.Caching;
 
     using ValidationWeb.Services;
@@ -10,6 +11,7 @@
     {
         public CacheManager()
         {
+            // todo: inject cache factory and let it give us this or whatever else ObjectCache it wants
             Cache = MemoryCache.Default;
         }
 
@@ -195,7 +197,7 @@
             int drillDownColumnIndex,
             string fourDigitSchoolYear)
         {
-            var cacheKey = $"GetResidentsEnrolledElsewhereStudentDrillDown_{edOrgId}_{fourDigitSchoolYear}";
+            var cacheKey = $"GetResidentsEnrolledElsewhereStudentDrillDown_{orgType}_{schoolId}_{edOrgId}_{drillDownColumnIndex}_{fourDigitSchoolYear}";
 
             lock (LockObject)
             {
@@ -209,6 +211,78 @@
                 }
 
                 return Cache.Get(cacheKey) as IEnumerable<StudentDrillDownQuery>;
+            }
+        }
+
+        public IEnumerable<ChangeOfEnrollmentReportQuery> GetChangeOfEnrollmentReport(
+            IOdsDataService odsDataService, 
+            int edOrgId, 
+            string fourDigitSchoolYear)
+        {
+            var cacheKey = $"GetResidentsEnrolledElsewhereReport_{edOrgId}_{fourDigitSchoolYear}";
+
+            lock (LockObject)
+            {
+                if (!Cache.Contains(cacheKey))
+                {
+                    var results = odsDataService.GetChangeOfEnrollmentReport(
+                        edOrgId,
+                        fourDigitSchoolYear);
+
+#warning faked data - don't ship this!! - remove before flight
+                    // TODO: remove before flight
+                    if (!results.Any())
+                    {
+                        var fakeResults = new List<ChangeOfEnrollmentReportQuery>();
+                        var oldDistrict = 12345;
+                        var oldSchool = 2345; 
+                        Random random = new Random(); // not cryptographically strong
+                        for (var i = 0; i < 100; i++)
+                        {
+                            fakeResults.Add(
+                                new ChangeOfEnrollmentReportQuery
+                                {
+                                    CurrentDistEdOrgId = edOrgId,
+                                    CurrentGrade = ((i % 12) + 1).ToString(),
+                                    CurrentDistrictName = "incoming district",
+                                    CurrentEdOrgEnrollmentDate = DateTime.Now.Subtract(new TimeSpan(random.Next(1, 90), 0, 0, 0)),
+                                    CurrentEdOrgExitDate = DateTime.Now.Subtract(new TimeSpan(random.Next(91, 180), 0, 0, 0)),
+                                    IsCurrentDistrict = true,
+                                    PastDistEdOrgId = oldDistrict,
+                                    PastDistrictName = "Old District",
+                                    PastSchoolEdOrgId = oldSchool,
+                                    PastSchoolName = "Old School",
+                                    StudentID = (1000 + i).ToString(),
+                                    StudentBirthDate = new DateTime( random.Next(1990, 2010), random.Next(1, 12), random.Next(1, 28)),
+                                    StudentFirstName = $"First_{i}",
+                                    StudentMiddleName = "Q.",
+                                    StudentLastName = $"Last_{i}",
+                                    
+                                });
+
+                            fakeResults.Add(
+                                new ChangeOfEnrollmentReportQuery
+                                {
+                                    CurrentDistEdOrgId = oldDistrict,
+                                    CurrentGrade = (i % 12).ToString(),
+                                    CurrentDistrictName = "Old District",
+                                    CurrentEdOrgEnrollmentDate = DateTime.Now.Subtract(new TimeSpan(random.Next(1, 90), 0, 0, 0)),
+                                    IsCurrentDistrict = false,
+                                    StudentID = (1000 + i).ToString(),
+                                    StudentBirthDate = new DateTime(random.Next(1990, 2010), random.Next(1, 12), random.Next(1, 28)),
+                                    StudentFirstName = $"First_{i}",
+                                    StudentMiddleName = "Q.",
+                                    StudentLastName = $"Last_{i}"
+                                });
+                        }
+
+                        results = fakeResults; 
+                    }
+
+                    Cache.Add(cacheKey, results, CacheExpirationOffset);
+                }
+
+                return Cache.Get(cacheKey) as IEnumerable<ChangeOfEnrollmentReportQuery>;
             }
         }
     }
