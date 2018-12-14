@@ -86,7 +86,6 @@ namespace ValidationWeb
             container.Register<IValidatedDataSubmissionService, ValidatedDataSubmissionService>(Lifestyle.Scoped);
             container.Register<IValidationResultsService, ValidationResultsService>(Lifestyle.Scoped);
             container.Register<ISubmissionCycleService, SubmissionCycleService>(Lifestyle.Scoped);
-
             container.Register<ICacheManager, CacheManager>(Lifestyle.Singleton);
 
             // Entity Framework Database Contexts

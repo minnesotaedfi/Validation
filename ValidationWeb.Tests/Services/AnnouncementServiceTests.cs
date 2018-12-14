@@ -20,7 +20,7 @@
     {
         protected MockRepository MockRepository { get; set; }
 
-        protected Mock<IValidationPortalDbContext> ValidationPortalDbContextMock { get; set; }
+        protected Mock<ValidationPortalDbContext> ValidationPortalDbContextMock { get; set; }
 
         protected Mock<IAppUserService> AppUserServiceMock { get; set; }
 
@@ -49,7 +49,7 @@
         {
             MockRepository = new MockRepository(MockBehavior.Strict);
 
-            ValidationPortalDbContextMock = MockRepository.Create<IValidationPortalDbContext>();
+            ValidationPortalDbContextMock = MockRepository.Create<ValidationPortalDbContext>();
             AppUserServiceMock = MockRepository.Create<IAppUserService>();
             LoggingServiceMock = MockRepository.Create<ILoggingService>();
             AnnouncementServiceMock = MockRepository.Create<IAnnouncementService>();

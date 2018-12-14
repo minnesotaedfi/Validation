@@ -6,12 +6,12 @@ namespace ValidationWeb.Services
 {
     public class AnnouncementService : IAnnouncementService
     {
-        protected readonly IValidationPortalDbContext _validationPortalDataContext;
+        protected readonly ValidationPortalDbContext _validationPortalDataContext;
         protected readonly IAppUserService _appUserService;
         protected readonly ILoggingService _loggingService;
 
         public AnnouncementService(
-            IValidationPortalDbContext validationPortalDataContext,
+            ValidationPortalDbContext validationPortalDataContext,
             IAppUserService appUserService,
             ILoggingService loggingService)
         {

@@ -763,7 +763,6 @@
             if (sortColumn != null)
             {
                 Func<ChangeOfEnrollmentReportQuery, string> orderingFunctionString = null;
-                Func<ChangeOfEnrollmentReportQuery, int?> orderingFunctionNullableInt = null;
                 Func<ChangeOfEnrollmentReportQuery, DateTime?> orderingFunctionNullableDateTime = null;
                 Func<ChangeOfEnrollmentReportQuery, int> orderingFunctionInt = null;
 
