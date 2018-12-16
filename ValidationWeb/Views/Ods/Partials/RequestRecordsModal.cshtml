@@ -1,15 +1,15 @@
 ﻿<div id="request-records-modal" class="modal fade" role="dialog">
     <div class="modal-dialog modal-lg" style="width: 750px; margin: auto;">
         <div class="modal-content">
-            <div class="modal-header bg-primary">
+            <div class="modal-header prime-blue white-heavy-text">
                 <h4 class="modal-title">Request Records</h4>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <button type="button" class="close white-heavy-text" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
                 <form id="request-records-form" method="post" @*action="@Url.Action("AddNewSchoolYear", "Admin")"*@>
-                    <div id="submission-form-rows" style="padding: 10px;">
+                    <div>
                         <div id="form-row-0" class="form-row">
-                            <div class="table-responsive">
+                            <div class="table-sm col-sm-10 offset-1" style="width:90%">
                                 <table class="table table-condensed">
                                     <thead>
                                         <tr>
@@ -26,7 +26,7 @@
                                             </td>
                                             <td><input type="checkbox" name="" checked disabled value="1"></td>
                                             <td>Requested</td>
-                                            <td>John Johnson</td>
+                                            <td></td>
                                         </tr>
                                         <tr>
                                             <td>
@@ -58,7 +58,7 @@
                                             </td>
                                             <td><input type="checkbox" name="" checked disabled value="1"></td>
                                             <td>Requested</td>
-                                            <td>John Johnson</td>
+                                            <td></td>
                                         </tr>
                                         <tr>
                                             <td>
@@ -72,14 +72,14 @@
                                 </table>
                             </div>
                         </div>
-                        <div id="form-row-1" class="form-row">
-                            <div class="col-md-11">
+                        <div id="form-row-1" class="form-row tbmargin10">
+                            <div class="col-md-11 offset-1">
                                 Please provide method of Transmittal and address, email or fax number for each record type.
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="col-md-8 offset-md-2">
-                                <textarea class="form-control" rows="2" placeholder="Enter instructions here" required style="min-width:100%"></textarea>
+                                <textarea class="form-control" rows="6" placeholder="Enter instructions here" required style="min-width:100%"></textarea>
                             </div>
                             <div class="col-md-2"></div>
                         </div>
