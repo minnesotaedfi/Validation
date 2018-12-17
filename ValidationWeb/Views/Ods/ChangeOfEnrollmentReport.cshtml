@@ -3,11 +3,41 @@
 <div class="row tbmargin10" id="pagetop">
     <div class="vp-body-header justify-content-start align-self-center">Changes of Enrollment in the Last 30 Days for District @Model.EdOrgName (@Model.EdOrgId.ToString())</div>
 </div>
+
+<div class="container">
+    <ul class="nav nav-pills">
+        <li class="nav-item">
+            <a class="nav-link active" href="#">Enrolling</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">Withdrawing</a>
+        </li>
+    </ul>
+</div>
+
+<ul class="nav nav-pills">
+    <li class="nav-item">
+        <a class="nav-link active" data-toggle="pill" href="#home">Home</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" data-toggle="pill" href="#menu1">Menu 1</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" data-toggle="pill" href="#menu2">Menu 2</a>
+    </li>
+</ul>
+
+<!-- Tab panes -->
+<div class="tab-content">
+    <div class="tab-pane container active" id="home">home</div>
+    <div class="tab-pane container fade" id="menu1">stuff1</div>
+    <div class="tab-pane container fade" id="menu2">stuff2</div>
+</div>
+
 <div class="row tbmargin10">
     <div class="col-md-4 vp-body-header justify-content-start align-self-center">Enrolling</div>
     <div class="col-md-3 offset-5 text-right"><a href="#notes">View Report notes</a></div>
 </div>
-
 <div id="requestedReportContent">
     <div class="col-md-12 nopadding">
         <table class="table nowrap" id="reportsTable1" style="table-layout: fixed; width: 98% !important;"></table>
