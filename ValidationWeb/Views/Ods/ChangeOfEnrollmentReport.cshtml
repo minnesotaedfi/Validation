@@ -1,7 +1,7 @@
 ﻿@model OdsChangeOfEnrollmentReportViewModel
 
 <div class="row tbmargin10" id="pagetop">
-    <div class="vp-body-header justify-content-start align-self-center">Changes of Enrollment in the Last 30 Days for District @Model.EdOrgName (@Model.EdOrgId.ToString())</div>
+    <div class="vp-body-header justify-content-start align-self-center">Changes of Enrollment for District @Model.EdOrgName (@Model.EdOrgId.ToString())</div>
 </div>
 
 <div class="row tbmargin10">
@@ -22,19 +22,32 @@
     </div>
 </div>
 
+<div class="row">
+    <div class="col-md-2 text-right">Changes within the last:</div>
+    <div class="col-md-6 btn-group btn-group-toggle" data-toggle="buttons">
+        <label class="btn btn-primary active"><input type="radio" name="date-filter" id="30days" value="30-days" autocomplete="off" checked> 30 days</label>
+        <label class="btn btn-primary"><input type="radio" name="date-filter" id="90days" value="90-days" autocomplete="off"> 90 days</label>
+        <label class="btn btn-primary"><input type="radio" name="date-filter" id="1year" value="1-year" autocomplete="off"> 1 year</label>
+    </div>
+</div>
+
 <!-- Tab panes -->
 <div class="tab-content">
     <div class="tab-pane row fade show active" id="enrollmentsPane">
         <div id="requestedReportContent">
-            <div class="col-md-12 nopadding">
-                <table class="table nowrap" id="reportsTable1" style="table-layout: fixed; width: 98% !important;"></table>
+            <div class="row">
+                <div class="col-md-12 nopadding">
+                    <table class="table nowrap" id="reportsTable1" style="table-layout: fixed; width: 98% !important;"></table>
+                </div>
             </div>
         </div>
     </div>
     <div class="tab-pane row fade" id="withdrawalsPane">
         <div id="requestedReportContent2">
-            <div class="col-md-12 nopadding">
-                <table class="table nowrap" id="reportsTable2" style="table-layout: fixed; width: 98% !important;"></table>
+            <div class="row">
+                <div class="col-md-12 nopadding">
+                    <table class="table nowrap" id="reportsTable2" style="table-layout: fixed; width: 98% !important;"></table>
+                </div>
             </div>
         </div>
     </div>
@@ -56,12 +69,13 @@
         $(function() {
             $('div.dataTables_scrollBody').css('min-height', '350px');
 
-            // notify tables within tab panes that it's time to refresh/draw 
-            $('a[data-toggle="pill"]').on( 'shown.bs.tab', function (e) {
-                var tables = $.fn.dataTable.tables({ visible: true, api: true });
-                tables.columns.adjust();
-                tables.scroller.measure();
-            } );
+            // notify tables within tab panes that it's time to refresh/draw
+            $('a[data-toggle="pill"]').on('shown.bs.tab',
+                function(e) {
+                    var tables = $.fn.dataTable.tables({ visible: true, api: true });
+                    tables.columns.adjust();
+                    tables.scroller.measure();
+                });
 
             var dataTable = $('#reportsTable1').DataTable({
                 paging: true,
@@ -73,6 +87,10 @@
                 searching: false,
                 serverSide: true,
                 processing: true,
+                language: {
+                    loadingRecords: 'Loading...',
+                    processing: "Loading..."
+                },
                 scroller: {
                     loadingIndicator: true
                 },
@@ -80,6 +98,14 @@
                     $('div.dataTables_scrollBody').css('min-height', 0);
                 },
                 ajax: {
+                    data: function(data) {
+                        var checkedValue = $('input[name=date-filter]:checked');
+                        if (checkedValue.length !== 1) {
+                            debugger;
+                        }
+
+                        data.columns[5].search.value = checkedValue.attr('id');;
+                    },
                     url: "@Html.Raw(Url.Action("GetChangeOfEnrollmentReportData", new
                                                                                   {
                                                                                       edOrgId = Model.EdOrgId,
@@ -134,6 +160,7 @@
                         title: 'Entry Date',
                         name: 'currentEdOrgEnrollmentDate',
                         data: 'currentEdOrgEnrollmentDate',
+                        searchable: true,
                         render: function(data, type, row, meta) {
                             if (type === 'display') {
                                 return data == null ? "Unknown" : new Date(data).toLocaleDateString("en-US");
@@ -179,6 +206,10 @@
                 searching: false,
                 serverSide: true,
                 processing: true,
+                language: {
+                    loadingRecords: 'Loading...',
+                    processing: "Loading..."
+                },
                 scroller: {
                     loadingIndicator: true
                 },
@@ -186,6 +217,14 @@
                     $('div.dataTables_scrollBody').css('min-height', 0);
                 },
                 ajax: {
+                    data: function(data) {
+                        var checkedValue = $('input[name=date-filter]:checked');
+                        if (checkedValue.length !== 1) {
+                            debugger;
+                        }
+
+                        data.columns[8].search.value = checkedValue.attr('id');;
+                    },
                     url: "@Html.Raw(Url.Action("GetChangeOfEnrollmentReportData", new
                                                                                   {
                                                                                       edOrgId = Model.EdOrgId,
@@ -232,7 +271,7 @@
                         data: 'pastGrade'
                     },
                     {
-                        title: 'Old Entry Date',
+                        title: 'Prior Entry Date',
                         name: 'pastEdOrgEnrollmentDate',
                         data: 'pastEdOrgEnrollmentDate',
                         render: function(data, type, row, meta) {
@@ -244,9 +283,10 @@
                         }
                     },
                     {
-                        title: 'Old Exit Withdraw Date',
+                        title: 'Prior Exit Withdraw Date',
                         name: 'pastEdOrgExitDate',
                         data: 'pastEdOrgExitDate',
+                        searchable: true,
                         render: function(data, type, row, meta) {
                             if (type === 'display') {
                                 return data == null ? "Unknown" : new Date(data).toLocaleDateString("en-US");
@@ -256,20 +296,20 @@
                         }
                     },
                     {
-                        title: 'NEW District',
+                        title: 'New District',
                         name: 'currentDistrictName',
                         data: 'currentDistrictName',
                     },
                     {
-                        title: 'NEW School',
+                        title: 'New School',
                         name: 'currentSchoolName',
                         data: 'currentSchoolName',
                     },
                     {
-                        title: 'NEW Entry Date',
+                        title: 'New Entry Date',
                         name: 'currentEdOrgEnrollmentDate',
                         data: 'currentEdOrgEnrollmentDate',
-                        render: function (data, type, row, meta) {
+                        render: function(data, type, row, meta) {
                             if (type === 'display') {
                                 return data == null ? "Unknown" : new Date(data).toLocaleDateString("en-US");
                             } else {
@@ -289,6 +329,11 @@
             });
 
             $(dataTable.table().header()).addClass('table-primary');
+
+            $("input[name=date-filter]").change(function(e) {
+                $('#reportsTable1').DataTable().ajax.reload();
+                $('#reportsTable2').DataTable().ajax.reload();
+            });
         });
     </script>
 }
