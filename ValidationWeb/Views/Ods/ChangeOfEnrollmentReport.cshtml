@@ -4,52 +4,39 @@
     <div class="vp-body-header justify-content-start align-self-center">Changes of Enrollment in the Last 30 Days for District @Model.EdOrgName (@Model.EdOrgId.ToString())</div>
 </div>
 
-<div class="container">
-    <ul class="nav nav-pills">
-        <li class="nav-item">
-            <a class="nav-link active" href="#">Enrolling</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="#">Withdrawing</a>
-        </li>
-    </ul>
+<div class="row tbmargin10">
+    <div class="col-md-6 vp-body-header justify-content-start align-self-center">
+        <div class="container">
+            <ul class="nav nav-pills">
+                <li class="nav-item">
+                    <a class="nav-link active" data-toggle="pill" href="#enrollmentsPane">Enrolling</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="pill" href="#withdrawalsPane">Withdrawing</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-3 offset-3 text-right">
+        <a href="#notes">View Report notes</a>
+    </div>
 </div>
-
-<ul class="nav nav-pills">
-    <li class="nav-item">
-        <a class="nav-link active" data-toggle="pill" href="#home">Home</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" data-toggle="pill" href="#menu1">Menu 1</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" data-toggle="pill" href="#menu2">Menu 2</a>
-    </li>
-</ul>
 
 <!-- Tab panes -->
 <div class="tab-content">
-    <div class="tab-pane container active" id="home">home</div>
-    <div class="tab-pane container fade" id="menu1">stuff1</div>
-    <div class="tab-pane container fade" id="menu2">stuff2</div>
-</div>
-
-<div class="row tbmargin10">
-    <div class="col-md-4 vp-body-header justify-content-start align-self-center">Enrolling</div>
-    <div class="col-md-3 offset-5 text-right"><a href="#notes">View Report notes</a></div>
-</div>
-<div id="requestedReportContent">
-    <div class="col-md-12 nopadding">
-        <table class="table nowrap" id="reportsTable1" style="table-layout: fixed; width: 98% !important;"></table>
+    <div class="tab-pane row fade show active" id="enrollmentsPane">
+        <div id="requestedReportContent">
+            <div class="col-md-12 nopadding">
+                <table class="table nowrap" id="reportsTable1" style="table-layout: fixed; width: 98% !important;"></table>
+            </div>
+        </div>
     </div>
-</div>
-<div class="row tbmargin10">
-    <div class="col-md-4 vp-body-header justify-content-start align-self-center">Withdrawing</div>
-    <div class="col-md-3 offset-5 text-right"><a href="#notes">View Report notes</a></div>
-</div>
-<div id="requestedReportContent2">
-    <div class="col-md-12 nopadding">
-        <table class="table nowrap" id="reportsTable2" style="table-layout: fixed; width: 98% !important;"></table>
+    <div class="tab-pane row fade" id="withdrawalsPane">
+        <div id="requestedReportContent2">
+            <div class="col-md-12 nopadding">
+                <table class="table nowrap" id="reportsTable2" style="table-layout: fixed; width: 98% !important;"></table>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -68,6 +55,13 @@
     <script>
         $(function() {
             $('div.dataTables_scrollBody').css('min-height', '350px');
+
+            // notify tables within tab panes that it's time to refresh/draw 
+            $('a[data-toggle="pill"]').on( 'shown.bs.tab', function (e) {
+                var tables = $.fn.dataTable.tables({ visible: true, api: true });
+                tables.columns.adjust();
+                tables.scroller.measure();
+            } );
 
             var dataTable = $('#reportsTable1').DataTable({
                 paging: true,
