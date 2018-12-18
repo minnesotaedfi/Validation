@@ -530,6 +530,7 @@
     <Content Include="Views\Ods\Partials\DemographicsReportTable.cshtml" />
     <Content Include="Views\Ods\Partials\StudentDrillDownTable.cshtml" />
     <Content Include="Views\Ods\Partials\RequestRecordsModal.cshtml" />
+    <Content Include="Views\Ods\Partials\ViewRequestModal.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
