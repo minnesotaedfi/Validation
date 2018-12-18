@@ -34,14 +34,13 @@ namespace ValidationWeb
             bundles.Add(new ScriptBundle("~/bundles/datePickerJS").Include("~/Content/Scripts/moment.js", "~/Content/Scripts/bootstrap-datetimepicker.min.js"));
 
             bundles.Add(new StyleBundle("~/Content/DataTables/css/DataTablesCSS").Include(
-                "~/Content/DataTables/css/dataTables.bootstrap.css",
-                "~/Content/DataTables/css/dataTables.fontAwesome.css",
-                "~/Content/DataTables/css/fixedheader.bootstrap.css",
-                "~/Content/DataTables/css/scroller.bootstrap.css"));
+                "~/Content/DataTables/css/dataTables.bootstrap4.css")); //,"~/Content/DataTables/css/dataTables.fontAwesome.css"
+
+
 
             bundles.Add(new ScriptBundle("~/bundles/DataTables").Include(
                 "~/Scripts/DataTables/jquery.dataTables.js",
-                "~/Scripts/DataTables/dataTables.bootstrap.js",
+                "~/Scripts/DataTables/dataTables.bootstrap4.js",
                 "~/Scripts/DataTables/dataTables.fixedheader.js",
                 "~/Scripts/DataTables/dataTables.scroller.js"));
         }
