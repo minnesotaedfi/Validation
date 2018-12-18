@@ -4,30 +4,37 @@
     <div class="vp-body-header justify-content-start align-self-center">Changes of Enrollment for District @Model.EdOrgName (@Model.EdOrgId.ToString())</div>
 </div>
 
-<div class="row tbmargin10">
-    <div class="col-md-6 vp-body-header justify-content-start align-self-center">
-        <div class="container">
-            <ul class="nav nav-pills">
-                <li class="nav-item">
-                    <a class="nav-link active" data-toggle="pill" href="#enrollmentsPane">Enrolling</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-toggle="pill" href="#withdrawalsPane">Withdrawing</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-    <div class="col-md-3 offset-3 text-right">
-        <a href="#notes">View Report notes</a>
+<div class="row">
+    <div class="col-md-12 nopadding">
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" data-toggle="tab" href="#enrollmentsPane">Enrolling</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#withdrawalsPane">Withdrawing</a>
+            </li>
+        </ul>
     </div>
 </div>
 
-<div class="row">
-    <div class="col-md-2 text-right">Changes within the last:</div>
-    <div class="col-md-6 btn-group btn-group-toggle" data-toggle="buttons">
-        <label class="btn btn-primary active"><input type="radio" name="date-filter" id="30days" value="30-days" autocomplete="off" checked> 30 days</label>
-        <label class="btn btn-primary"><input type="radio" name="date-filter" id="90days" value="90-days" autocomplete="off"> 90 days</label>
-        <label class="btn btn-primary"><input type="radio" name="date-filter" id="1year" value="1-year" autocomplete="off"> 1 year</label>
+<div class="row tbmargin10">
+    <div class="col-md-2 text-right"><span class="align-middle">Changes within the last:</span></div>
+    <div class="col-md-7">
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="date-filter" id="30days" value="30-days" autocomplete="off" checked />
+            <label class="form-check-label" for="30days">30 days</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="date-filter" id="90days" value="90-days" autocomplete="off" />
+            <label class="form-check-label" for="90days">90 days</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="date-filter" id="1year" value="1-year" autocomplete="off" />
+            <label class="form-check-label" for="1year">1 year</label>
+        </div>
+    </div>
+    <div class="col-md-3 text-right">
+        <span class="align-middle"><a href="#notes">View Report notes</a></span>
     </div>
 </div>
 
@@ -70,7 +77,7 @@
             $('div.dataTables_scrollBody').css('min-height', '350px');
 
             // notify tables within tab panes that it's time to refresh/draw
-            $('a[data-toggle="pill"]').on('shown.bs.tab',
+            $('a[data-toggle="tab"]').on('shown.bs.tab',
                 function(e) {
                     var tables = $.fn.dataTable.tables({ visible: true, api: true });
                     tables.columns.adjust();
