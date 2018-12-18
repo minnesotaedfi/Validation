@@ -43,18 +43,14 @@
     <div class="tab-pane row fade show active" id="enrollmentsPane">
         <div id="requestedReportContent">
             <div class="row">
-                <div class="col-md-12 nopadding">
-                    <table class="table nowrap" id="reportsTable1" style="table-layout: fixed; width: 98% !important;"></table>
-                </div>
+                <table class="table table-bordered" id="reportsTable1" ></table>
             </div>
         </div>
     </div>
     <div class="tab-pane row fade" id="withdrawalsPane">
         <div id="requestedReportContent2">
             <div class="row">
-                <div class="col-md-12 nopadding">
-                    <table class="table nowrap" id="reportsTable2" style="table-layout: fixed; width: 98% !important;"></table>
-                </div>
+                    <table class="table table-bordered" id="reportsTable2"></table>
             </div>
         </div>
     </div>
@@ -63,8 +59,8 @@
 <div id="notes" class="row">
     <div class="vp-body-header">Notes:</div>
 </div>
-<div class="row">(1) Enrolling students are those who enrolled in a district school in the past 30 days and had enrolled in some other school in the state prior to 30 days ago.</div>
-<div class="row">(2) Withdrawing students are those that withdrew in the past thirty days and subsequently enrolled elsewhere in the state.</div>
+<div class="row">(1) Enrolling students are those who enrolled in a district school in the past and had previously enrolled in some other school in the state.</div>
+<div class="row">(2) Withdrawing students are those that withdrew and subsequently enrolled elsewhere in the state.</div>
 <div class="row tbmargin10">
     <a href="#pagetop">Back to Top</a>
 </div>
@@ -88,9 +84,8 @@
 
             var dataTable = $('#reportsTable1').DataTable({
                 paging: true,
-                info: false,
-                scrollX: false,
-                scrollY: '350px',
+                pagingType: 'full_numbers',
+                info: true,
                 scrollCollapse: true,
                 deferRender: true,
                 searching: false,
@@ -100,12 +95,8 @@
                     loadingRecords: 'Loading...',
                     processing: "Loading..."
                 },
-                scroller: {
-                    loadingIndicator: true
-                },
-                fnInitComplete: function() {
-                    $('div.dataTables_scrollBody').css('min-height', 0);
-                },
+                dom: "<'row'<'col-sm-12'tr>>" +
+                    "<'row'<'col-md-2'l><'col-md-5 offset-5 pull-right'p>>",
                 ajax: {
                     data: function(data) {
                         var checkedValue = $('input[name=date-filter]:checked');
@@ -113,7 +104,7 @@
                             debugger;
                         }
 
-                        data.columns[5].search.value = checkedValue.attr('id');;
+                        data.columns[4].search.value = checkedValue.attr('id');;
                     },
                     url: "@Html.Raw(Url.Action("GetChangeOfEnrollmentReportData", new
                                                                                   {
@@ -161,11 +152,6 @@
                         data: 'currentGrade'
                     },
                     {
-                        title: 'District ID',
-                        name: 'currentDistEdOrgId',
-                        data: 'currentDistEdOrgId'
-                    },
-                    {
                         title: 'Entry Date',
                         name: 'currentEdOrgEnrollmentDate',
                         data: 'currentEdOrgEnrollmentDate',
@@ -179,10 +165,27 @@
                         }
                     },
                     {
-                        title: 'Exit Withdraw Date',
-                        name: 'currentEdOrgExitDate',
-                        data: 'currentEdOrgExitDate',
-                        render: function(data, type, row, meta) {
+                        title: 'Prior District',
+                        name: 'pastDistrictName',
+                        data: 'pastDistrictName',
+                    },
+                    {
+                        title: 'Prior Entry Date',
+                        name: 'pastEdOrgEnrollmentDate',
+                        data: 'pastEdOrgEnrollmentDate',
+                        render: function (data, type, row, meta) {
+                            if (type === 'display') {
+                                return data == null ? "Unknown" : new Date(data).toLocaleDateString("en-US");
+                            } else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        title: 'Prior Exit Date',
+                        name: 'pastEdOrgExitDate',
+                        data: 'pastEdOrgExitDate',
+                        render: function (data, type, row, meta) {
                             if (type === 'display') {
                                 return data == null ? "Unknown" : new Date(data).toLocaleDateString("en-US");
                             } else {
@@ -207,9 +210,8 @@
 
             dataTable = $('#reportsTable2').DataTable({
                 paging: true,
-                info: false,
-                scrollX: false,
-                scrollY: '350px',
+                pagingType: 'full_numbers',
+                info: true,
                 scrollCollapse: true,
                 deferRender: true,
                 searching: false,
@@ -219,12 +221,8 @@
                     loadingRecords: 'Loading...',
                     processing: "Loading..."
                 },
-                scroller: {
-                    loadingIndicator: true
-                },
-                fnInitComplete: function() {
-                    $('div.dataTables_scrollBody').css('min-height', 0);
-                },
+                dom: "<'row'<'col-sm-12'tr>>" +
+                    "<'row'<'col-md-2'l><'col-md-5 offset-5 pull-right'p>>",
                 ajax: {
                     data: function(data) {
                         var checkedValue = $('input[name=date-filter]:checked');
@@ -275,7 +273,7 @@
                         }
                     },
                     {
-                        title: 'Grade',
+                        title: 'Prior Enrollment Grade',
                         name: 'pastGrade',
                         data: 'pastGrade'
                     },
@@ -292,13 +290,13 @@
                         }
                     },
                     {
-                        title: 'Prior Exit Withdraw Date',
+                        title: 'Prior Exit Date',
                         name: 'pastEdOrgExitDate',
                         data: 'pastEdOrgExitDate',
                         searchable: true,
                         render: function(data, type, row, meta) {
                             if (type === 'display') {
-                                return data == null ? "Unknown" : new Date(data).toLocaleDateString("en-US");
+                                return data == null ? "Date Overlap!" : new Date(data).toLocaleDateString("en-US");
                             } else {
                                 return data;
                             }
@@ -334,7 +332,7 @@
                             if (row.studentID % 4 == 0) {
                                 return '<button class="btn btn-sm prime-blue white-heavy-text" data-toggle="modal" data-target="#view-request-modal">View Request</button>';
                             } else {
-                                return '&nbsp;'; 
+                                return '&nbsp;';
                             }
                         }
                     }
