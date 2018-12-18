@@ -219,7 +219,7 @@
             int edOrgId, 
             string fourDigitSchoolYear)
         {
-            var cacheKey = $"GetResidentsEnrolledElsewhereReport_{edOrgId}_{fourDigitSchoolYear}";
+            var cacheKey = $"GetChangeOfEnrollmentReport_{edOrgId}_{fourDigitSchoolYear}";
 
             lock (LockObject)
             {
