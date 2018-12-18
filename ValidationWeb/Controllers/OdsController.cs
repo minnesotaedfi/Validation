@@ -12,6 +12,7 @@
 
     using ValidationWeb.DataCache;
     using ValidationWeb.Services;
+    using ValidationWeb.Utility;
     using ValidationWeb.ViewModels;
 
     // TODO: refactor repeated code. move cache manager and serialization calls into a separate layer. 
@@ -832,18 +833,20 @@
                         }
                     case "currentGrade":
                         {
-                            orderingFunctionInt = x => int.Parse(x.CurrentGrade);
+                            orderingFunctionString = x => x.CurrentGrade;
+                            var comparer = new GradeLevelComparer();
                             sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
-                                                ? sortedResults.OrderBy(orderingFunctionInt)
-                                                : sortedResults.OrderByDescending(orderingFunctionInt);
+                                                ? sortedResults.OrderBy(orderingFunctionString, comparer)
+                                                : sortedResults.OrderByDescending(orderingFunctionString, comparer);
                             break;
                         }
                     case "pastGrade":
                         {
-                            orderingFunctionInt = x => int.Parse(x.PastGrade);
+                            orderingFunctionString = x => x.PastGrade;
+                            var comparer = new GradeLevelComparer();
                             sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
-                                                ? sortedResults.OrderBy(orderingFunctionInt)
-                                                : sortedResults.OrderByDescending(orderingFunctionInt);
+                                                ? sortedResults.OrderBy(orderingFunctionString, comparer)
+                                                : sortedResults.OrderByDescending(orderingFunctionString, comparer);
                             break;
                         }
                     case "pastEdOrgEnrollmentDate":
@@ -889,6 +892,14 @@
                     case "currentDistrictName":
                         {
                             orderingFunctionString = x => x.CurrentDistrictName;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? sortedResults.OrderBy(orderingFunctionString)
+                                                : sortedResults.OrderByDescending(orderingFunctionString);
+                            break;
+                        }
+                    case "pastDistrictName":
+                        {
+                            orderingFunctionString = x => x.PastDistrictName;
                             sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
                                                 ? sortedResults.OrderBy(orderingFunctionString)
                                                 : sortedResults.OrderByDescending(orderingFunctionString);
