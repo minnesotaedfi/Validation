@@ -85,17 +85,19 @@
 
             var dataTable = $('#reportsTable').DataTable({
                 paging: true,
-                info: false,
-                scrollX: true,
-                scrollY: '350px',
+                pagingType: 'full_numbers',
+                info: true,
                 scrollCollapse: true,
                 deferRender: true,
                 searching: false,
                 serverSide: true,
                 processing: true,
-                scroller: {
-                    loadingIndicator: true
+                language: {
+                    loadingRecords: 'Loading...',
+                    processing: "Loading..."
                 },
+                dom: "<'row'<'col-sm-12'tr>>" +
+                     "<'row'<'col-md-2'l><'col-md-5 offset-5 pull-right'p>>",
                 fnInitComplete: function() {
                     $('div.dataTables_scrollBody').css('min-height', 0);
                 },

@@ -62,8 +62,6 @@
                 paging: true,
                 pagingType: 'full_numbers',
                 info: true,
-                //scrollX: true,
-                //scrollY: '350px',
                 scrollCollapse: true,
                 deferRender: true,
                 searching: false,
@@ -73,14 +71,8 @@
                     loadingRecords: 'Loading...',
                     processing: "Loading..."
                 },
-                //dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
-                //     "<'row'<'col-sm-12'tr>>" +
-                //     "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
                 dom: "<'row'<'col-sm-12'tr>>" +
                      "<'row'<'col-md-2'l><'col-md-5 offset-5 pull-right'p>>",
-                fnInitComplete: function(){
-                    $('div.dataTables_scrollBody').css('min-height', 0);         
-                },
                 ajax: {
                     url: "@Html.Raw(Url.Action(
                               "GetDemographicsReportData",

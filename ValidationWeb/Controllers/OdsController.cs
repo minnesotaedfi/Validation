@@ -242,10 +242,11 @@
                         }
                     case "grade":
                         {
-                            orderingFunctionInt = x => int.Parse(x.Grade);
+                            orderingFunctionString = x => x.Grade;
+                            var comparer = new GradeLevelComparer();
                             sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
-                                                ? results.OrderBy(orderingFunctionInt)
-                                                : results.OrderByDescending(orderingFunctionInt);
+                                                ? sortedResults.OrderBy(orderingFunctionString, comparer)
+                                                : sortedResults.OrderByDescending(orderingFunctionString, comparer);
                             break;
                         }
                     default:

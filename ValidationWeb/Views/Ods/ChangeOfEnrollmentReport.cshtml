@@ -43,18 +43,14 @@
     <div class="tab-pane row fade show active" id="enrollmentsPane">
         <div id="requestedReportContent">
             <div class="row">
-                <div class="col-md-12 nopadding">
-                    <table class="table nowrap" id="reportsTable1" style="table-layout: fixed; width: 98% !important;"></table>
-                </div>
+                <table class="table table-bordered" id="reportsTable1" ></table>
             </div>
         </div>
     </div>
     <div class="tab-pane row fade" id="withdrawalsPane">
         <div id="requestedReportContent2">
             <div class="row">
-                <div class="col-md-12 nopadding">
-                    <table class="table nowrap" id="reportsTable2" style="table-layout: fixed; width: 98% !important;"></table>
-                </div>
+                    <table class="table table-bordered" id="reportsTable2"></table>
             </div>
         </div>
     </div>
@@ -88,9 +84,8 @@
 
             var dataTable = $('#reportsTable1').DataTable({
                 paging: true,
-                info: false,
-                scrollX: false,
-                scrollY: '350px',
+                pagingType: 'full_numbers',
+                info: true,
                 scrollCollapse: true,
                 deferRender: true,
                 searching: false,
@@ -100,12 +95,8 @@
                     loadingRecords: 'Loading...',
                     processing: "Loading..."
                 },
-                scroller: {
-                    loadingIndicator: true
-                },
-                fnInitComplete: function() {
-                    $('div.dataTables_scrollBody').css('min-height', 0);
-                },
+                dom: "<'row'<'col-sm-12'tr>>" +
+                    "<'row'<'col-md-2'l><'col-md-5 offset-5 pull-right'p>>",
                 ajax: {
                     data: function(data) {
                         var checkedValue = $('input[name=date-filter]:checked');
@@ -219,9 +210,8 @@
 
             dataTable = $('#reportsTable2').DataTable({
                 paging: true,
-                info: false,
-                scrollX: false,
-                scrollY: '350px',
+                pagingType: 'full_numbers',
+                info: true,
                 scrollCollapse: true,
                 deferRender: true,
                 searching: false,
@@ -231,12 +221,8 @@
                     loadingRecords: 'Loading...',
                     processing: "Loading..."
                 },
-                scroller: {
-                    loadingIndicator: true
-                },
-                fnInitComplete: function() {
-                    $('div.dataTables_scrollBody').css('min-height', 0);
-                },
+                dom: "<'row'<'col-sm-12'tr>>" +
+                    "<'row'<'col-md-2'l><'col-md-5 offset-5 pull-right'p>>",
                 ajax: {
                     data: function(data) {
                         var checkedValue = $('input[name=date-filter]:checked');
@@ -346,7 +332,7 @@
                             if (row.studentID % 4 == 0) {
                                 return '<button class="btn btn-sm prime-blue white-heavy-text" data-toggle="modal" data-target="#view-request-modal">View Request</button>';
                             } else {
-                                return '&nbsp;'; 
+                                return '&nbsp;';
                             }
                         }
                     }
