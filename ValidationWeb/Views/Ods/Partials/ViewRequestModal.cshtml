@@ -1,0 +1,91 @@
+﻿<div id="view-request-modal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg" style="width: 750px; margin: auto;">
+        <div class="modal-content">
+            <div class="modal-header prime-blue white-heavy-text">
+                <h4 class="modal-title">Records Request</h4>
+                <button type="button" class="close white-heavy-text" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="request-records-form" method="post" @*action="@Url.Action("AddNewSchoolYear", "Admin")"*@>
+                    <div>
+                        <div id="form-row-0" class="form-row">
+                            <div class="table-sm col-sm-10 offset-1" style="width:90%">
+                                <table class="table table-condensed">
+                                    <thead>
+                                        <tr>
+                                            <th>Record Type</th>
+                                            <th>Request</th>
+                                            <th>Sent</th>
+                                            <th>Requested by:</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                Assessment Results
+                                            </td>
+                                            <td><input type="checkbox" name="" checked disabled value="1"></td>
+                                            <td><input type="checkbox" name="" checked disabled value="1"></td>
+                                            <td>User Name</td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Cumulative Files
+                                            </td>
+                                            <td><input type="checkbox" name="" checked disabled value="1"></td>
+                                            <td><input type="checkbox" name="" checked disabled value="1"></td>
+                                            <td>User Name</td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Discipline Record
+                                            </td>
+                                            <td><input type="checkbox" name="" checked disabled value="1"></td>
+                                            <td><input type="checkbox" name="" checked disabled value="1"></td>
+                                            <td>User Name</td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                IEP
+                                            </td>
+                                            <td><input type="checkbox" name="" value="1"></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Evaluation Summary Report
+                                            </td>
+                                            <td><input type="checkbox" name="" checked disabled value="1"></td>
+                                            <td><input type="checkbox" name="" checked disabled value="1"></td>
+                                            <td>User Name</td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Immunizations
+                                            </td>
+                                            <td><input type="checkbox" name="" checked disabled value="1"></td>
+                                            <td><input type="checkbox" name="" checked disabled value="1"></td>
+                                            <td>User Name</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col-md-8 offset-md-2">
+                                Fax all records to: <br/>
+                                555-123-4444<br/>
+                                attn: Jackie Williams
+                            </div>
+                            <div class="col-md-2"></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn prime-blue white-heavy-text">Update Record Requests</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

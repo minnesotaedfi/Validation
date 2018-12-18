@@ -70,6 +70,8 @@
 </div>
 
 @Html.Partial("Partials/RequestRecordsModal")
+@Html.Partial("Partials/ViewRequestModal")
+
 
 @section scripts {
     <script>
@@ -329,7 +331,11 @@
                         orderable: false,
                         data: 'null',
                         render: function(data, type, row) {
-                            return '<button class="btn btn-sm prime-blue white-heavy-text" data-toggle="modal" data-target="#request-records-modal">Request Records</button>';
+                            if (row.studentID % 4 == 0) {
+                                return '<button class="btn btn-sm prime-blue white-heavy-text" data-toggle="modal" data-target="#view-request-modal">View Request</button>';
+                            } else {
+                                return '&nbsp;'; 
+                            }
                         }
                     }
                 ]
