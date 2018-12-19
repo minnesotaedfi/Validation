@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Web;
-
-namespace ValidationWeb.Services
+﻿namespace ValidationWeb.Services
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Data.Common;
+    using System.Data.SqlClient;
+
     public class OdsDataService : IOdsDataService
     {
         public readonly ILoggingService LoggingService;

@@ -10,12 +10,14 @@
 
     using Engine.Models;
 
+    using MoreLinq;
+
     using ValidationWeb.DataCache;
     using ValidationWeb.Services;
     using ValidationWeb.Utility;
     using ValidationWeb.ViewModels;
 
-    // TODO: refactor repeated code. move cache manager and serialization calls into a separate layer. 
+    // TODO: refactor repeated code. move cache manager and serialization calls into a separate layer. -pocky
     public class OdsController : Controller
     {
         public OdsController(
@@ -175,6 +177,28 @@
                 edOrgId,
                 drillDownColumnIndex,
                 fourDigitSchoolYear);
+
+            // the underlying sql query is returning for all schools even though we're trying to view for one school 
+            if (orgType == OrgType.School && schoolId.HasValue)
+            {
+                results = results.Where(x => x.SchoolId == schoolId);
+            }
+
+            // some drilldown reports show apparent dupes, but they're only distinct by undisplayed fields
+            // distinct them by basically everything but SpecialEdStatus
+            results = results.DistinctBy(x =>
+                new
+                {
+                    x.StudentId,
+                    StudentName = $"{x.StudentLastName}, {x.StudentFirstName} {x.StudentMiddleName}",
+                    x.DistrictName,
+                    x.SchoolName,
+                    x.Grade,
+                    x.DistrictId,
+                    x.EnrolledDate,
+                    x.WithdrawDate
+                });
+
 #if DEBUG
             System.Diagnostics.Debug.WriteLine($"GetStudentDrillDownData ({reportType}): {(DateTime.Now - startTime).Milliseconds}ms");
 #endif 
@@ -1039,7 +1063,7 @@
                         }
                 }
             }
-            
+
             var pagedResults = sortedResults.Skip(request.Start).Take(request.Length);
             var response = DataTablesResponse.Create(request, results.Count(), results.Count(), pagedResults);
             var jsonResult = new DataTablesJsonResult(response, JsonRequestBehavior.AllowGet);
