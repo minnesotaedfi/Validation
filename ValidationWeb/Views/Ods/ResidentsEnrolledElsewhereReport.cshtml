@@ -18,8 +18,6 @@
     {
         <div class="col-md-3"><a href="@Url.Action("ResidentsEnrolledElsewhereReport", "Ods", new { isStateMode = true })" class="show-data-loading">View All Districts</a></div>
     }
-
-    <div class="col-md-3 text-right"><a href="#notes">View Report notes</a></div>
 </div>
 <div id="requestedReportContent" class="row">
     <table class="table table-bordered" id="reportsTable"></table>
@@ -87,8 +85,9 @@
                     loadingRecords: 'Loading...',
                     processing: "Loading..."
                 },
-                dom: "<'row'<'col-sm-12'tr>>" +
-                    "<'row'<'col-md-2'l><'col-md-5 offset-5 pull-right'p>>",
+                dom: "<'row'<'col-md-3'l><'col-md-3 offset-6 text-right jumpToNotes'>>" +
+                    "<'row'<'col-sm-12'tr>>" +
+                    "<'row'<'col-md-3'i><'col-md-5 offset-4 pull-right'p>>",
                 ajax: {
                     url: "@Html.Raw(Url.Action("GetResidentsEnrolledElsewhereData", new
                      {
@@ -144,6 +143,7 @@
             });
 
             $(dataTable.table().header()).addClass('table-primary');
+            $('.jumpToNotes').html('<a href="#notes">View Report notes</a>');
         });
     </script>
 }

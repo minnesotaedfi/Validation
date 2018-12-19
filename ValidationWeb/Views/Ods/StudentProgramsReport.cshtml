@@ -31,7 +31,6 @@
 <div class="row tbmargin10">
     <div class="col-md-2 vp-body-header justify-content-start align-self-center">Characteristics:</div>
     <div class="col-md-4"><a href="#requestedReportContent2">Jump to Program Participation</a></div>
-    <div class="col-md-3 offset-3 text-right"><a href="#notes">View Report notes</a></div>
 </div>
 
 <div id="requestedReportContent1">
@@ -41,7 +40,6 @@
 <div class="row tbmargin10">
     <div class="col-md-2 vp-body-header justify-content-start align-self-center">Program Participation:</div>
     <div class="col-md-4"><a href="#requestedReportContent1">Jump to Characteristics</a></div>
-    <div class="col-md-3 offset-3 text-right"><a href="#notes">View Report notes</a></div>
 </div>
 
 <div id="requestedReportContent2" class="tbmargin10">
@@ -110,8 +108,9 @@
                     loadingRecords: 'Loading...',
                     processing: "Loading..."
                 },
-                dom: "<'row'<'col-sm-12'tr>>" +
-                     "<'row'<'col-md-2'l><'col-md-5 offset-5 pull-right'p>>",
+                dom: "<'row'<'col-md-3'l><'col-md-3 offset-6 text-right jumpToNotes'>>" +
+                    "<'row'<'col-sm-12'tr>>" +
+                    "<'row'<'col-md-3'i><'col-md-5 offset-4 pull-right'p>>",
                 ajax: {
                     url: "@Html.Raw(Url.Action("GetStudentProgramsReportData", new
                      {
@@ -260,8 +259,9 @@
                     loadingRecords: 'Loading...',
                     processing: "Loading..."
                 },
-                dom: "<'row'<'col-sm-12'tr>>" +
-                    "<'row'<'col-md-2'l><'col-md-5 offset-5 pull-right'p>>",
+                dom: "<'row'<'col-md-3'l><'col-md-3 offset-6 text-right jumpToNotes'>>"+
+                    "<'row'<'col-sm-12'tr>>" +
+                    "<'row'<'col-md-3'i><'col-md-5 offset-4 pull-right'p>>",
                 fnInitComplete: function() {
                     $('div.dataTables_scrollBody').css('min-height', 0);
                 },
@@ -366,6 +366,7 @@
             });
 
             $(dataTable.table().header()).addClass('table-primary');
+            $('.jumpToNotes').html('<a href="#notes">View Report notes</a>');
         });
     </script>
 }

@@ -33,9 +33,6 @@
             <label class="form-check-label" for="1year">1 year</label>
         </div>
     </div>
-    <div class="col-md-3 text-right">
-        <span class="align-middle"><a href="#notes">View Report notes</a></span>
-    </div>
 </div>
 
 <!-- Tab panes -->
@@ -82,7 +79,7 @@
                     tables.scroller.measure();
                 });
 
-            var dataTable = $('#reportsTable1').DataTable({
+            var enrollmentsTable = $('#reportsTable1').DataTable({
                 paging: true,
                 pagingType: 'full_numbers',
                 info: true,
@@ -95,8 +92,9 @@
                     loadingRecords: 'Loading...',
                     processing: "Loading..."
                 },
-                dom: "<'row'<'col-sm-12'tr>>" +
-                    "<'row'<'col-md-2'l><'col-md-5 offset-5 pull-right'p>>",
+                dom: "<'row'<'col-md-3'l><'col-md-3 offset-6 text-right jumpToNotes'>>" +
+                    "<'row'<'col-sm-12'tr>>" +
+                    "<'row'<'col-md-3'i><'col-md-5 offset-4 pull-right'p>>",
                 ajax: {
                     data: function(data) {
                         var checkedValue = $('input[name=date-filter]:checked');
@@ -198,7 +196,7 @@
                         orderable: false,
                         data: 'null',
                         render: function(data, type, row) {
-                            return '<button class="btn btn-sm prime-blue white-heavy-text" data-toggle="modal" data-target="#request-records-modal">Request Records</button>';
+                            return '<a href="#" data-toggle="modal" data-target="#request-records-modal">Request Records</button>';
                         }
 
 
@@ -206,9 +204,17 @@
                 ]
             });
 
-            $(dataTable.table().header()).addClass('table-primary');
+            $('#request-records-modal').on('show.bs.modal', function (event) {
+                debugger;
+                var row = $(event.relatedTarget).closest('tr');
+                var data = enrollmentsTable.row(row).data(); 
+                //var myVal = $(event.relatedTarget).data('val');
+                //$(this).find(".modal-body").text();
+            });
+            
+            $(enrollmentsTable.table().header()).addClass('table-primary');
 
-            dataTable = $('#reportsTable2').DataTable({
+            var withdrawalsTable = $('#reportsTable2').DataTable({
                 paging: true,
                 pagingType: 'full_numbers',
                 info: true,
@@ -221,8 +227,9 @@
                     loadingRecords: 'Loading...',
                     processing: "Loading..."
                 },
-                dom: "<'row'<'col-sm-12'tr>>" +
-                    "<'row'<'col-md-2'l><'col-md-5 offset-5 pull-right'p>>",
+                dom: "<'row'<'col-md-3'l><'col-md-3 offset-6 text-right jumpToNotes'>>" +
+                    "<'row'<'col-sm-12'tr>>" +
+                    "<'row'<'col-md-3'i><'col-md-5 offset-4 pull-right'p>>",
                 ajax: {
                     data: function(data) {
                         var checkedValue = $('input[name=date-filter]:checked');
@@ -339,12 +346,14 @@
                 ]
             });
 
-            $(dataTable.table().header()).addClass('table-primary');
+            $(withdrawalsTable.table().header()).addClass('table-primary');
 
             $("input[name=date-filter]").change(function(e) {
                 $('#reportsTable1').DataTable().ajax.reload();
                 $('#reportsTable2').DataTable().ajax.reload();
             });
+
+            $('.jumpToNotes').html('<a href="#notes">View Report notes</a>');
         });
     </script>
 }

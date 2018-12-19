@@ -27,9 +27,6 @@
         <div class="col-md-2"><a href="@Url.Action("MultipleEnrollmentsReport", "Ods", new { isStateMode = true })" class="show-data-loading">View All Districts</a></div>
     }
 </div>
-<div class="row">
-    <div class="col-md-3 offset-9 text-right"><a href="#notes">View Report notes</a></div>
-</div>
 <div id="requestedReportContent" class="row">
     <table class="table table-bordered nowrap" id="reportsTable" style="table-layout: fixed; width: 98% !important;"></table>
 </div>
@@ -96,8 +93,9 @@
                     loadingRecords: 'Loading...',
                     processing: "Loading..."
                 },
-                dom: "<'row'<'col-sm-12'tr>>" +
-                     "<'row'<'col-md-2'l><'col-md-5 offset-5 pull-right'p>>",
+                dom: "<'row'<'col-md-3'l><'col-md-3 offset-6 text-right jumpToNotes'>>" +
+                    "<'row'<'col-sm-12'tr>>" +
+                    "<'row'<'col-md-3'i><'col-md-5 offset-4 pull-right'p>>",
                 fnInitComplete: function() {
                     $('div.dataTables_scrollBody').css('min-height', 0);
                 },
@@ -169,6 +167,7 @@
             });
 
             $(dataTable.table().header()).addClass('table-primary');
+            $('.jumpToNotes').html('<a href="#notes">View Report notes</a>');
         });
     </script>
 }
