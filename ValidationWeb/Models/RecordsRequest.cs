@@ -19,7 +19,7 @@
         [Key]
         public int Id { get; set; }
 
-        public int StudentId { get; set; }
+        public string StudentId { get; set; }
 
         public string TransmittalInstructions { get; set; }
 

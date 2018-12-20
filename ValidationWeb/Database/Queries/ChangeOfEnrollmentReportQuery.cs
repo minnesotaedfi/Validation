@@ -48,5 +48,6 @@ namespace ValidationWeb
         public string StudentFirstName { get; set; }
         public string StudentMiddleName { get; set; }
         public DateTime? StudentBirthDate { get; set; }
+        public bool HasRecordsRequest { get; set; }
     }
 }

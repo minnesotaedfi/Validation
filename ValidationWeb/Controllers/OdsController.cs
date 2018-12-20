@@ -781,6 +781,10 @@
                 OdsDataService,
                 edOrgId,
                 fourDigitSchoolYear);
+
+            var recordsRequestStudentIds = OdsDataService.GetAllRecordsRequests().Select(x => x.StudentId);
+            results.Where(x => recordsRequestStudentIds.Contains(x.StudentID)).ForEach(y => y.HasRecordsRequest = true);
+
 #if DEBUG
             System.Diagnostics.Debug.WriteLine($"GetChangeOfEnrollmentReport: {(DateTime.Now - startTime).Milliseconds}ms");
 #endif
@@ -830,6 +834,7 @@
             if (sortColumn != null)
             {
                 Func<ChangeOfEnrollmentReportQuery, string> orderingFunctionString = null;
+                Func<ChangeOfEnrollmentReportQuery, bool> orderingFunctionBool = null;
                 Func<ChangeOfEnrollmentReportQuery, DateTime?> orderingFunctionNullableDateTime = null;
                 Func<ChangeOfEnrollmentReportQuery, int> orderingFunctionInt = null;
 
@@ -939,6 +944,14 @@
                             sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
                                                 ? sortedResults.OrderBy(orderingFunctionString)
                                                 : sortedResults.OrderByDescending(orderingFunctionString);
+                            break;
+                        }
+                    case "recordsRequested":
+                        {
+                            orderingFunctionBool = x => x.HasRecordsRequest;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? sortedResults.OrderBy(orderingFunctionBool)
+                                                : sortedResults.OrderByDescending(orderingFunctionBool);
                             break;
                         }
                     default:
@@ -1094,7 +1107,7 @@
             return View(model);
         }
 
-        public JsonResult GetRecordsRequestData(int edOrgId, int studentId)
+        public JsonResult GetRecordsRequestData(int edOrgId, string studentId)
         {
             var result = OdsDataService.GetRecordsRequestData(edOrgId, studentId);
             var session = AppUserService.GetSession();
@@ -1106,13 +1119,14 @@
         public JsonResult SendRecordsRequest([ModelBinder(typeof(JsonNetModelBinder))]RecordsRequestFormData request)
         {
             OdsDataService.SaveRecordsRequest(request);
-            return Json(new {}, JsonRequestBehavior.AllowGet);
+            return Json(new { }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
-        public HttpStatusCodeResult SendRecordsResponse(dynamic formData)
+        public JsonResult SendRecordsResponse([ModelBinder(typeof(JsonNetModelBinder))]RecordsResponseFormData response)
         {
-            return new HttpStatusCodeResult(HttpStatusCode.OK);
+            OdsDataService.SaveRecordsResponse(response);
+            return Json(new { }, JsonRequestBehavior.AllowGet);
         }
     }
 
@@ -1142,7 +1156,7 @@
         public int RequestId { get; set; }
 
         [JsonProperty("studentId")]
-        public int StudentId { get; set; }
+        public string StudentId { get; set; }
 
         [JsonProperty("requesting-user-id")]
         public string RequestingUserId { get; set; }
@@ -1176,5 +1190,46 @@
 
         [JsonProperty("transmittal-instructions")]
         public string TransmittalInstructions { get; set; }
+    }
+
+
+    [JsonObject]
+    public class RecordsResponseFormData
+    {
+        [JsonProperty("requestId")]
+        public int RequestId { get; set; }
+
+        [JsonProperty("studentId")]
+        public string StudentId { get; set; }
+
+        [JsonProperty("responding-user-id")]
+        public string RespondingUserId { get; set; }
+
+        [JsonProperty("responding-district-id")]
+        public int RespondingDistrictId { get; set; }
+
+        [JsonProperty("check-assessment-sent")]
+        [JsonConverter(typeof(BoolConverter))]
+        public bool CheckAssessment { get; set; }
+
+        [JsonProperty("check-cumulative-sent")]
+        [JsonConverter(typeof(BoolConverter))]
+        public bool CheckCumulative { get; set; }
+
+        [JsonProperty("check-discipline-sent")]
+        [JsonConverter(typeof(BoolConverter))]
+        public bool CheckDiscipline { get; set; }
+
+        [JsonProperty("check-iep-sent")]
+        [JsonConverter(typeof(BoolConverter))]
+        public bool CheckIEP { get; set; }
+
+        [JsonProperty("check-evaluation-sent")]
+        [JsonConverter(typeof(BoolConverter))]
+        public bool CheckEvaluation { get; set; }
+
+        [JsonProperty("check-immunization-sent")]
+        [JsonConverter(typeof(BoolConverter))]
+        public bool CheckImmunization { get; set; }
     }
 }

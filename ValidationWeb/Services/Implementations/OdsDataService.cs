@@ -498,7 +498,7 @@
             }
         }
         
-        public RecordsRequest GetRecordsRequestData(int edOrgId, int studentId)
+        public RecordsRequest GetRecordsRequestData(int edOrgId, string studentId)
         {
             using (var dbContext = new ValidationPortalDbContext())
             {
@@ -511,6 +511,22 @@
                                                RequestingDistrict = edOrgId
                                            };
                     return studentRecord;
+                }
+                catch (Exception ex)
+                {
+                    LoggingService.LogErrorMessage($"Unable to retrieve Records Request data: {ex.ChainInnerExceptionMessages()}");
+                    throw;
+                }
+            }
+        }
+
+        public IEnumerable<RecordsRequest> GetAllRecordsRequests()
+        {
+            using (var dbContext = new ValidationPortalDbContext())
+            {
+                try
+                {
+                    return dbContext.RecordsRequests.ToList();
                 }
                 catch (Exception ex)
                 {
@@ -597,8 +613,78 @@
                     throw;
                 }
             }
-
         }
+
+        public void SaveRecordsResponse(RecordsResponseFormData formData)
+        {
+            using (var dbContext = new ValidationPortalDbContext())
+            {
+                try
+                {
+                    RecordsRequest studentRecord = dbContext.RecordsRequests.FirstOrDefault(x => x.StudentId == formData.StudentId);
+
+                    if (studentRecord == null)
+                    {
+                        throw new InvalidOperationException($"Unable to find record request for student ID {formData.StudentId}");
+                    }
+
+                    studentRecord.StudentId = formData.StudentId;
+                    studentRecord.RespondingDistrict = formData.RespondingDistrictId;
+                    studentRecord.RespondingUser = formData.RespondingUserId;
+
+                    if (formData.CheckAssessment)
+                    {
+                        studentRecord.AssessmentResults.Sent = true;
+                        studentRecord.AssessmentResults.RespondingUserId = studentRecord.RespondingUser;
+                        studentRecord.AssessmentResults.RespondingDistrictId = studentRecord.RespondingDistrict;
+                    }
+
+                    if (formData.CheckCumulative)
+                    {
+                        studentRecord.CumulativeFiles.Sent = true;
+                        studentRecord.CumulativeFiles.RespondingUserId = studentRecord.RespondingUser;
+                        studentRecord.CumulativeFiles.RespondingDistrictId = studentRecord.RespondingDistrict;
+                    }
+
+                    if (formData.CheckDiscipline)
+                    {
+                        studentRecord.DisciplineRecords.Sent = true;
+                        studentRecord.DisciplineRecords.RespondingUserId = studentRecord.RespondingUser;
+                        studentRecord.DisciplineRecords.RespondingDistrictId = studentRecord.RespondingDistrict;
+                    }
+
+                    if (formData.CheckEvaluation)
+                    {
+                        studentRecord.EvaluationSummary.Sent = true;
+                        studentRecord.EvaluationSummary.RespondingUserId = studentRecord.RespondingUser;
+                        studentRecord.EvaluationSummary.RespondingDistrictId = studentRecord.RespondingDistrict;
+                    }
+
+                    if (formData.CheckIEP)
+                    {
+                        studentRecord.IEP.Sent = true;
+                        studentRecord.IEP.RespondingUserId = studentRecord.RespondingUser;
+                        studentRecord.IEP.RespondingDistrictId = studentRecord.RespondingDistrict;
+                    }
+
+                    if (formData.CheckImmunization)
+                    {
+                        studentRecord.Immunizations.Sent = true;
+                        studentRecord.Immunizations.RespondingUserId = studentRecord.RespondingUser;
+                        studentRecord.Immunizations.RespondingDistrictId = studentRecord.RespondingDistrict;
+                    }
+
+                    dbContext.Entry(studentRecord).CurrentValues.SetValues(studentRecord);
+                    dbContext.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    LoggingService.LogErrorMessage($"Unable to retrieve Records Request data: {ex.ChainInnerExceptionMessages()}");
+                    throw;
+                }
+            }
+        }
+
 
         protected List<StudentDrillDownQuery> ReadStudentDrillDownDataReader(DbDataReader reader)
         {

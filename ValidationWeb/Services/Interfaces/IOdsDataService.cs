@@ -18,8 +18,12 @@ namespace ValidationWeb.Services
         List<ResidentsEnrolledElsewhereReportQuery> GetResidentsEnrolledElsewhereReport(int? districtEdOrgId, string fourDigitOdsDbYear);
         List<StudentDrillDownQuery> GetResidentsEnrolledElsewhereStudentDrillDown(int? districtEdOrgId, string fourDigitOdsDbYear);
 
-        RecordsRequest GetRecordsRequestData(int edOrgId, int studentId);
+        RecordsRequest GetRecordsRequestData(int edOrgId, string studentId);
+
+        IEnumerable<RecordsRequest> GetAllRecordsRequests();
 
         void SaveRecordsRequest(RecordsRequestFormData recordsRequest);
+
+        void SaveRecordsResponse(RecordsResponseFormData recordsResponse);
     }
 }
