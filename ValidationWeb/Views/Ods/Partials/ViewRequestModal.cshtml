@@ -6,15 +6,16 @@
                 <button type="button" class="close white-heavy-text" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
-                <form id="request-records-form" method="post" @*action="@Url.Action("AddNewSchoolYear", "Admin")"*@>
+                <form id="view-request-form" method="post" action="@Url.Action("SendRecordsResponse", "Ods")">
+                    <input type="hidden" id="requestId" name="requestId"/>
                     <div>
                         <div id="form-row-0" class="form-row">
-                            <div class="table-sm col-sm-10 offset-1" style="width:90%">
+                            <div class="table-sm col-sm-10 offset-1" style="width: 90%">
                                 <table class="table table-condensed">
                                     <thead>
                                         <tr>
                                             <th>Record Type</th>
-                                            <th>Request</th>
+                                            <th>Requested</th>
                                             <th>Sent</th>
                                             <th>Requested by:</th>
                                         </tr>
@@ -24,59 +25,57 @@
                                             <td>
                                                 Assessment Results
                                             </td>
-                                            <td><input type="checkbox" name="" checked disabled value="1"></td>
-                                            <td><input type="checkbox" name="" value="1"></td>
-                                            <td>User Name</td>
+                                            <td><input type="checkbox" name="check-assessment" id="check-assessment" disabled value="1"></td>
+                                            <td><input type="checkbox" name="check-assessment-sent" id="check-assessment-sent" value="1"></td>
+                                            <td><span id="status-assessment-requester" name="status-assessment-requester"></span></td>
                                         </tr>
                                         <tr>
                                             <td>
                                                 Cumulative Files
                                             </td>
-                                            <td><input type="checkbox" name="" checked disabled value="1"></td>
-                                            <td><input type="checkbox" name="" value="1"></td>
-                                            <td>User Name</td>
+                                            <td><input type="checkbox" name="check-cumulative" id="check-cumulative" disabled value="1"></td>
+                                            <td><input type="checkbox" name="check-cumulative-sent" id="check-cumulative-sent" value="1"></td>
+                                            <td><span id="status-cumulative-requester" name="status-cumulative-requester"></span></td>
                                         </tr>
                                         <tr>
                                             <td>
                                                 Discipline Record
                                             </td>
-                                            <td><input type="checkbox" name="" checked disabled value="1"></td>
-                                            <td><input type="checkbox" name="" value="1"></td>
-                                            <td>User Name</td>
+                                            <td><input type="checkbox" name="check-discipline" id="check-discipline" disabled value="1"></td>
+                                            <td><input type="checkbox" name="check-discipline-sent" id="check-discipline-sent" value="1"></td>
+                                            <td><span id="status-discipline-requester" name="status-discipline-requester"></span></td>
                                         </tr>
                                         <tr>
                                             <td>
                                                 IEP
                                             </td>
-                                            <td><input type="checkbox" name="" disabled value="1"></td>
-                                            <td></td>
-                                            <td></td>
+                                            <td><input type="checkbox" name="check-iep" id="check-iep" disabled value="1"></td>
+                                            <td><input type="checkbox" name="check-iep-sent" id="check-iep-sent" value="1"></td>
+                                            <td><span id="status-iep-requester" name="status-iep-requester"></span></td>
                                         </tr>
                                         <tr>
                                             <td>
                                                 Evaluation Summary Report
                                             </td>
-                                            <td><input type="checkbox" name="" checked disabled value="1"></td>
-                                            <td><input type="checkbox" name="" value="1"></td>
-                                            <td>User Name</td>
+                                            <td><input type="checkbox" name="check-evaluation" id="check-evaluation" disabled value="1"></td>
+                                            <td><input type="checkbox" name="check-evaluation-sent" id="check-evaluation-sent" value="1"></td>
+                                            <td><span id="status-evaluation-requester" name="status-evaluation-requester"></span></td>
                                         </tr>
                                         <tr>
                                             <td>
                                                 Immunizations
                                             </td>
-                                            <td><input type="checkbox" name="" checked disabled value="1"></td>
-                                            <td><input type="checkbox" name="" value="1"></td>
-                                            <td>User Name</td>
+                                            <td><input type="checkbox" name="check-immunization" id="check-immunization" disabled value="1"></td>
+                                            <td><input type="checkbox" name="check-immunization-sent" id="check-immunization-sent" value="1"></td>
+                                            <td><span id="status-immunization-requester" name="status-immunization-requester"></span></td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                         <div class="form-row">
-                            <div class="col-md-8 offset-md-2">
-                                Fax all records to: <br/>
-                                555-123-4444<br/>
-                                attn: Jackie Williams
+                            <div class="col-md-8 offset-md-2" id="transmittal-instructions" name="transmittal-instructions">
+                                
                             </div>
                             <div class="col-md-2"></div>
                         </div>

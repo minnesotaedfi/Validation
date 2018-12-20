@@ -171,7 +171,7 @@
                         title: 'Prior Entry Date',
                         name: 'pastEdOrgEnrollmentDate',
                         data: 'pastEdOrgEnrollmentDate',
-                        render: function (data, type, row, meta) {
+                        render: function(data, type, row, meta) {
                             if (type === 'display') {
                                 return data == null ? "Unknown" : new Date(data).toLocaleDateString("en-US");
                             } else {
@@ -183,7 +183,7 @@
                         title: 'Prior Exit Date',
                         name: 'pastEdOrgExitDate',
                         data: 'pastEdOrgExitDate',
-                        render: function (data, type, row, meta) {
+                        render: function(data, type, row, meta) {
                             if (type === 'display') {
                                 return data == null ? "Unknown" : new Date(data).toLocaleDateString("en-US");
                             } else {
@@ -196,7 +196,7 @@
                         orderable: false,
                         data: 'null',
                         render: function(data, type, row) {
-                            return '<a href="#" data-toggle="modal" data-target="#request-records-modal">Request Records</button>';
+                            return '<a href="#" data-toggle="modal" data-target="#request-records-modal">Request&nbsp;Records</button>';
                         }
 
 
@@ -204,38 +204,113 @@
                 ]
             });
 
-            $('#request-records-modal').on('show.bs.modal', function (event) {
-                debugger;
-                var row = $(event.relatedTarget).closest('tr');
-                var data = enrollmentsTable.row(row).data();
+            $('#request-records-modal').on('show.bs.modal',
+                function(event) {
+                    debugger;
+                    var row = $(event.relatedTarget).closest('tr');
+                    var data = enrollmentsTable.row(row).data();
 
-                var studentName = data.studentLastName + ', ' + data.studentFirstName + ' ' + data.studentMiddleName;
-                $('#request-records-studentName').text(studentName);
+                    var studentName = data.studentLastName +
+                        ', ' +
+                        data.studentFirstName +
+                        ' ' +
+                        data.studentMiddleName;
+                    $('#request-records-studentName').text(studentName);
 
-                // holy cow! go get the data 
-                $.ajax({
-                    type: 'GET',
-                    url: '@Url.Action("GetRecordsRequestData", "Ods")',
-                    contentType: 'application/json; charset=utf-8',
-                    data: {
-                        edOrgId: data.currentDistEdOrgId, 
-                        studentId: data.studentID
-                    },
-                    datatype: "json",
-                    success: function (data) {
-                        debugger;
-                        // fill out dialog... here... 
+                    $.ajax({
+                        type: 'GET',
+                        url: '@Url.Action("GetRecordsRequestData", "Ods")',
+                        contentType: 'application/json; charset=utf-8',
+                        data: {
+                            edOrgId: data.currentDistEdOrgId,
+                            studentId: data.studentID
+                        },
+                        datatype: "json",
+                        success: function(data) {
+                            debugger;
 
-                        // $(modelModalContent).html(data);
-                        // $(modelModal).modal(options);
-                        // $(modelModal).modal('show');
-                    },
-                    error: function () {
-                        alert('Could not retrieve record request data');
-                    }
+                            $('#requestId').val(data.Id);
+                            $('#studentId').val(data.StudentId);
+                            $('#requesting-district-id').val(data.RequestingDistrict);
+                            $('#requesting-user-id').val(data.RequestingUser);
+                            $('#transmittal-instructions').text(data.TransmittalInstructions);
+
+                            // todo: turn all this into a function 
+                            $('#check-assessment').prop('checked', data.AssessmentResults.Requested);
+                            $('#check-assessment').prop('disabled', data.AssessmentResults.Requested);
+                            $('#status-assessment-requested').text(data.AssessmentResults.Requested ? 'Requested' : '');
+                            //$('#status-assessment-requested').text(data.AssessmentResults.Sent ? 'Sent' : '');
+                            $('#status-assessment-responder').text(data.AssessmentResults.RespondingUserId);
+
+                            $('#check-cumulative').prop('checked', data.CumulativeFiles.Requested);
+                            $('#check-cumulative').prop('disabled', data.CumulativeFiles.Requested);
+                            $('#status-cumulative-requested').text(data.CumulativeFiles.Requested ? 'Requested' : '');
+                            //$('#status-cumulative-requested').text(data.CumulativeFiles.Sent ? 'Sent' : '');
+                            $('#status-cumulative-responder').text(data.CumulativeFiles.RespondingUserId);
+
+                            $('#check-discipline').prop('checked', data.DisciplineRecords.Requested);
+                            $('#check-discipline').prop('disabled', data.DisciplineRecords.Requested);
+                            $('#status-discipline-requested').text(data.DisciplineRecords.Requested ? 'Requested' : '');
+                            //$('#status-discipline-requested').text(data.DisciplineRecords.Sent ? 'Sent' : '');
+                            $('#status-discipline-responder').text(data.DisciplineRecords.RespondingUserId);
+
+                            $('#check-iep').prop('checked', data.IEP.Requested);
+                            $('#check-iep').prop('disabled', data.IEP.Requested);
+                            $('#status-iep-requested').text(data.IEP.Requested ? 'Requested' : '');
+                            //$('#status-iep-requested').text(data.IEP.Sent ? 'Sent' : '');
+                            $('#status-iep-responder').text(data.IEP.RespondingUserId);
+
+                            $('#check-evaluation').prop('checked', data.EvaluationSummary.Requested);
+                            $('#check-evaluation').prop('disabled', data.EvaluationSummary.Requested);
+                            $('#status-evaluation-requested').text(data.EvaluationSummary.Requested ? 'Requested' : '');
+                            //$('#status-evaluation-requested').text(data.EvaluationSummary.Sent ? 'Sent' : '');
+                            $('#status-evaluation-responder').text(data.EvaluationSummary.RespondingUserId);
+
+                            $('#check-immunization').prop('checked', data.Immunizations.Requested);
+                            $('#check-immunization').prop('disabled', data.Immunizations.Requested);
+                            $('#status-immunization-requested').text(data.Immunizations.Requested ? 'Requested' : '');
+                            //$('#status-immunization-requested').text(data.Immunizations.Sent ? 'Sent' : '');
+                            $('#status-immunization-responder').text(data.Immunizations.RespondingUserId);
+                        },
+                        error: function() {
+                            alert('Could not retrieve record request data');
+                        }
+                    });
                 });
-            });
-            
+
+            function serializeFormToJson(array) {
+                var jsonObj = {};
+                jQuery.map(array, function( n, i ) {
+                    jsonObj[n.name] = n.value;
+                });
+
+                return jsonObj;
+            }
+
+            $("#request-records-form").on("submit",
+                function(event) {
+                    debugger;
+
+                    var $this = $(this);
+                    var formValues = JSON.stringify(serializeFormToJson($this.serializeArray()));
+                    $.ajax({
+                            type: $this.attr('method'),
+                            url: $this.attr('action'),
+                            contentType: 'application/json; charset=utf-8',
+                            dataType: "json",
+                            data: formValues
+                        })
+                        .done(function() {
+                            $('#request-records-modal').modal('hide');
+                        })
+                        .fail(function () {
+                            alert('An error occurred while saving records request data');
+                            debugger;
+                        });
+
+                    event.preventDefault();
+                });
+
             $(enrollmentsTable.table().header()).addClass('table-primary');
 
             var withdrawalsTable = $('#reportsTable2').DataTable({
@@ -361,7 +436,7 @@
                         data: 'null',
                         render: function(data, type, row) {
                             if (row.studentID % 4 == 0) {
-                                return '<button class="btn btn-sm prime-blue white-heavy-text" data-toggle="modal" data-target="#view-request-modal">View Request</button>';
+                                return '<a href="#" data-toggle="modal" data-target="#view-request-modal">View&nbsp;Request</button>';
                             } else {
                                 return '&nbsp;';
                             }
@@ -369,6 +444,71 @@
                     }
                 ]
             });
+
+            $('#view-request-modal').on('show.bs.modal',
+                function(event) {
+                    debugger;
+                    var row = $(event.relatedTarget).closest('tr');
+                    var data = enrollmentsTable.row(row).data();
+
+                    var studentName = data.studentLastName +
+                        ', ' +
+                        data.studentFirstName +
+                        ' ' +
+                        data.studentMiddleName;
+                    $('#request-records-studentName').text(studentName);
+
+                    $.ajax({
+                        type: 'GET',
+                        url: '@Url.Action("GetRecordsRequestData", "Ods")',
+                        contentType: 'application/json; charset=utf-8',
+                        data: {
+                            edOrgId: data.currentDistEdOrgId,
+                            studentId: data.studentID
+                        },
+                        datatype: "json",
+                        success: function(data) {
+                            debugger;
+
+                            $('#requestId').val(data.Id);
+                            $('#transmittal-instructions').text(data.TransmittalInstructions);
+
+                            // todo: turn all this into a function 
+                            $('#check-assessment').prop('checked', data.AssessmentResults.Requested);
+                            $('#check-assessment-sent').prop('checked', data.AssessmentResults.Sent ? true : false);
+                            $('#check-assessment-sent').prop('disabled', data.AssessmentResults.Sent ? true : false);
+                            $('#status-assessment-requester').text(data.AssessmentResults.RespondingUserId);
+
+                            $('#check-cumulative').prop('checked', data.CumulativeFiles.Requested);
+                            $('#check-cumulative-sent').prop('checked', data.CumulativeFiles.Sent ? true : false);
+                            $('#check-cumulative-sent').prop('disabled', data.CumulativeFiles.Sent ? true : false);
+                            $('#status-cumulative-requester').text(data.CumulativeFiles.RespondingUserId);
+
+                            $('#check-discipline').prop('checked', data.DisciplineRecords.Requested);
+                            $('#check-discipline-sent').prop('checked', data.DisciplineRecords.Sent ? true : false);
+                            $('#check-discipline-sent').prop('disabled', data.DisciplineRecords.Sent ? true : false);
+                            $('#status-discipline-requester').text(data.DisciplineRecords.RespondingUserId);
+
+                            $('#check-iep').prop('checked', data.IEP.Requested);
+                            $('#check-iep-sent').prop('checked', data.IEP.Sent ? true : false);
+                            $('#check-iep-sent').prop('disabled', data.IEP.Sent ? true : false);
+                            $('#status-iep-requester').text(data.IEP.RespondingUserId);
+
+                            $('#check-evaluation').prop('checked', data.EvaluationSummary.Requested);
+                            $('#check-evaluation-sent').prop('checked', data.EvaluationSummary.Sent ? true : false);
+                            $('#check-evaluation-sent').prop('disabled', data.EvaluationSummary.Sent ? true : false);
+                            $('#status-evaluation-requester').text(data.EvaluationSummary.RespondingUserId);
+
+                            $('#check-immunization').prop('checked', data.Immunizations.Requested);
+                            $('#check-immunization-sent').prop('checked', data.Immunizations.Sent ? true : false);
+                            $('#check-immunization-sent').prop('disabled', data.Immunizations.Sent ? true : false);
+                            $('#status-immunization-requester').text(data.Immunizations.RespondingUserId);
+                        },
+                        error: function() {
+                            alert('Could not retrieve record request data');
+                        }
+                    });
+                });
 
             $(withdrawalsTable.table().header()).addClass('table-primary');
 

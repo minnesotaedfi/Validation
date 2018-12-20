@@ -25,8 +25,12 @@
 
         public int RequestingDistrict { get; set; }
 
+        public string RequestingUser { get; set; }
+
         public int RespondingDistrict { get; set; }
         
+        public string RespondingUser { get; set; }
+
         public virtual RecordsRequestDetail AssessmentResults { get; set; }
 
         public virtual RecordsRequestDetail CumulativeFiles { get; set; }

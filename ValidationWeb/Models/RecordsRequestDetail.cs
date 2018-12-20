@@ -15,11 +15,23 @@
 
         public string RequestingUserId { get; set; }
 
+        [NotMapped]
+        public string RequestingUserName { get; set; }
+
         public int RequestingDistrictId { get; set; }
+
+        [NotMapped]
+        public string RequestingDistrictName { get; set; }
 
         public string RespondingUserId { get; set; }
 
+        [NotMapped]
+        public string RespondingUserName { get; set; }
+
         public int RespondingDistrictId { get; set; }
+
+        [NotMapped]
+        public string RespondingDistrictName { get; set; }
     }
 }
 

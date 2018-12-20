@@ -19,5 +19,7 @@ namespace ValidationWeb.Services
         List<StudentDrillDownQuery> GetResidentsEnrolledElsewhereStudentDrillDown(int? districtEdOrgId, string fourDigitOdsDbYear);
 
         RecordsRequest GetRecordsRequestData(int edOrgId, int studentId);
+
+        void SaveRecordsRequest(RecordsRequestFormData recordsRequest);
     }
 }

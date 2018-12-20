@@ -505,7 +505,11 @@
                 try
                 {
                     var studentRecord = dbContext.RecordsRequests.FirstOrDefault(x => x.StudentId == studentId) 
-                                        ?? new RecordsRequest { StudentId = studentId, RequestingDistrict = edOrgId };
+                                        ?? new RecordsRequest
+                                           {
+                                               StudentId = studentId,
+                                               RequestingDistrict = edOrgId
+                                           };
                     return studentRecord;
                 }
                 catch (Exception ex)
@@ -516,21 +520,73 @@
             }
         }
 
-        public void SaveRecordsRequest(RecordsRequest recordsRequest)
+        public void SaveRecordsRequest(RecordsRequestFormData formData)
         {
             using (var dbContext = new ValidationPortalDbContext())
             {
                 try
                 {
-                    var studentRecord = dbContext.RecordsRequests.FirstOrDefault(x => x.StudentId == recordsRequest.StudentId);
+                    RecordsRequest studentRecord = dbContext.RecordsRequests.FirstOrDefault(x => x.StudentId == formData.StudentId);
 
-                    if (studentRecord != null)
+                    if (studentRecord == null)
                     {
-                        dbContext.Entry(studentRecord).CurrentValues.SetValues(recordsRequest);
+                        studentRecord = new RecordsRequest();
+                    }
+
+                    studentRecord.StudentId = formData.StudentId;
+                    studentRecord.RequestingDistrict = formData.RequestingDistrictId;
+                    studentRecord.RequestingUser = formData.RequestingUserId.ToString();
+                    studentRecord.TransmittalInstructions = formData.TransmittalInstructions;
+
+                    if (formData.CheckAssessment)
+                    {
+                        studentRecord.AssessmentResults.Requested = true;
+                        studentRecord.AssessmentResults.RequestingUserId = studentRecord.RequestingUser;
+                        studentRecord.AssessmentResults.RequestingDistrictId = studentRecord.RequestingDistrict;
+                    }
+
+                    if (formData.CheckCumulative)
+                    {
+                        studentRecord.CumulativeFiles.Requested = true;
+                        studentRecord.CumulativeFiles.RequestingUserId = studentRecord.RequestingUser;
+                        studentRecord.CumulativeFiles.RequestingDistrictId = studentRecord.RequestingDistrict;
+                    }
+
+                    if (formData.CheckDiscipline)
+                    {
+                        studentRecord.DisciplineRecords.Requested = true;
+                        studentRecord.DisciplineRecords.RequestingUserId = studentRecord.RequestingUser;
+                        studentRecord.DisciplineRecords.RequestingDistrictId = studentRecord.RequestingDistrict;
+                    }
+
+                    if (formData.CheckEvaluation)
+                    {
+                        studentRecord.EvaluationSummary.Requested = true;
+                        studentRecord.EvaluationSummary.RequestingUserId = studentRecord.RequestingUser;
+                        studentRecord.EvaluationSummary.RequestingDistrictId = studentRecord.RequestingDistrict;
+                    }
+
+                    if (formData.CheckIEP)
+                    {
+                        studentRecord.IEP.Requested = true;
+                        studentRecord.IEP.RequestingUserId = studentRecord.RequestingUser;
+                        studentRecord.IEP.RequestingDistrictId = studentRecord.RequestingDistrict;
+                    }
+
+                    if (formData.CheckImmunization)
+                    {
+                        studentRecord.Immunizations.Requested = true;
+                        studentRecord.Immunizations.RequestingUserId = studentRecord.RequestingUser;
+                        studentRecord.Immunizations.RequestingDistrictId = studentRecord.RequestingDistrict;
+                    }
+
+                    if (studentRecord.Id == 0)
+                    {
+                        dbContext.RecordsRequests.Add(studentRecord); 
                     }
                     else
                     {
-                        dbContext.RecordsRequests.Add(recordsRequest);
+                        dbContext.Entry(studentRecord).CurrentValues.SetValues(studentRecord);
                     }
 
                     dbContext.SaveChanges();

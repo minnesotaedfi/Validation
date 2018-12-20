@@ -595,6 +595,7 @@
     <Content Include="Views\Home\Announcements.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApiControllers\ModelBinders\JsonNetModelBinder.cs" />
     <Compile Include="ApiControllers\ModelBinders\ValidationErrorFilterModelBinder.cs" />
     <Compile Include="ApiControllers\UserSessionController.cs" />
     <Compile Include="ApiControllers\ValidationController.cs" />

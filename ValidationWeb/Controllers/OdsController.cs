@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net;
     using System.Web.Mvc;
 
     using DataTables.AspNet.Core;
@@ -12,6 +13,9 @@
 
     using MoreLinq;
 
+    using Newtonsoft.Json;
+
+    using ValidationWeb.ApiControllers.ModelBinders;
     using ValidationWeb.DataCache;
     using ValidationWeb.Services;
     using ValidationWeb.Utility;
@@ -771,7 +775,7 @@
             IDataTablesRequest request)
         {
 #if DEBUG
-            var startTime = DateTime.Now;            
+            var startTime = DateTime.Now;
 #endif
             var results = CacheManager.GetChangeOfEnrollmentReport(
                 OdsDataService,
@@ -1093,7 +1097,84 @@
         public JsonResult GetRecordsRequestData(int edOrgId, int studentId)
         {
             var result = OdsDataService.GetRecordsRequestData(edOrgId, studentId);
+            var session = AppUserService.GetSession();
+            result.RequestingUser = session.UserIdentity.UserId; 
             return Json(result, JsonRequestBehavior.AllowGet);
         }
+
+        [HttpPost]
+        public JsonResult SendRecordsRequest([ModelBinder(typeof(JsonNetModelBinder))]RecordsRequestFormData request)
+        {
+            OdsDataService.SaveRecordsRequest(request);
+            return Json(new {}, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public HttpStatusCodeResult SendRecordsResponse(dynamic formData)
+        {
+            return new HttpStatusCodeResult(HttpStatusCode.OK);
+        }
+    }
+
+    public class BoolConverter : JsonConverter
+    {
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            writer.WriteValue(((bool)value) ? 1 : 0);
+        }
+
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            return reader.Value.ToString() == "1";
+        }
+
+        public override bool CanConvert(Type objectType)
+        {
+            return objectType == typeof(bool);
+        }
+    }
+
+
+    [JsonObject]
+    public class RecordsRequestFormData
+    {
+        [JsonProperty("requestId")]
+        public int RequestId { get; set; }
+
+        [JsonProperty("studentId")]
+        public int StudentId { get; set; }
+
+        [JsonProperty("requesting-user-id")]
+        public string RequestingUserId { get; set; }
+
+        [JsonProperty("requesting-district-id")]
+        public int RequestingDistrictId { get; set; }
+
+        [JsonProperty("check-assessment")]
+        [JsonConverter(typeof(BoolConverter))]
+        public bool CheckAssessment { get; set; }
+
+        [JsonProperty("check-cumulative")]
+        [JsonConverter(typeof(BoolConverter))]
+        public bool CheckCumulative { get; set; }
+
+        [JsonProperty("check-discipline")]
+        [JsonConverter(typeof(BoolConverter))]
+        public bool CheckDiscipline { get; set; }
+
+        [JsonProperty("check-iep")]
+        [JsonConverter(typeof(BoolConverter))]
+        public bool CheckIEP { get; set; }
+
+        [JsonProperty("check-evaluation")]
+        [JsonConverter(typeof(BoolConverter))]
+        public bool CheckEvaluation { get; set; }
+
+        [JsonProperty("check-immunization")]
+        [JsonConverter(typeof(BoolConverter))]
+        public bool CheckImmunization { get; set; }
+
+        [JsonProperty("transmittal-instructions")]
+        public string TransmittalInstructions { get; set; }
     }
 }

@@ -214,10 +214,13 @@
 
             var announcementDbSetMock = GetQueryableMockDbSet(new List<Announcement>(new[] { announcement }));
             announcementDbSetMock.Setup(x => x.Add(It.Is<Announcement>(y => y.Message == announcement.Message))).Returns(announcement);
+            announcementDbSetMock.Setup(x => x.ToString()).Returns("bobby tables");
 
             ValidationPortalDbContextMock
                 .Setup(x => x.Announcements)
                 .Returns(announcementDbSetMock.Object);
+
+            ValidationPortalDbContextMock.Setup(x => x.Set<Announcement>()).Returns(() => announcementDbSetMock.Object);
 
             ValidationPortalDbContextMock.Setup(x => x.SaveChanges()).Returns(1);
 
