@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Data.Common;
     using System.Data.SqlClient;
+    using System.Linq;
 
     public class OdsDataService : IOdsDataService
     {
@@ -16,6 +17,7 @@
 
         public List<DemographicsCountReportQuery> GetDistrictAncestryRaceCounts(int? districtEdOrgId, string fourDigitOdsDbYear)
         {
+            // todo: dependency-inject these data contexts
             using (var rawOdsContext = new RawOdsDbContext(fourDigitOdsDbYear))
             {
                 var conn = rawOdsContext.Database.Connection;
@@ -494,6 +496,52 @@
                     }
                 }
             }
+        }
+        
+        public RecordsRequest GetRecordsRequestData(int edOrgId, int studentId)
+        {
+            using (var dbContext = new ValidationPortalDbContext())
+            {
+                try
+                {
+                    var studentRecord = dbContext.RecordsRequests.FirstOrDefault(x => x.StudentId == studentId) 
+                                        ?? new RecordsRequest { StudentId = studentId, RequestingDistrict = edOrgId };
+                    return studentRecord;
+                }
+                catch (Exception ex)
+                {
+                    LoggingService.LogErrorMessage($"Unable to retrieve Records Request data: {ex.ChainInnerExceptionMessages()}");
+                    throw;
+                }
+            }
+        }
+
+        public void SaveRecordsRequest(RecordsRequest recordsRequest)
+        {
+            using (var dbContext = new ValidationPortalDbContext())
+            {
+                try
+                {
+                    var studentRecord = dbContext.RecordsRequests.FirstOrDefault(x => x.StudentId == recordsRequest.StudentId);
+
+                    if (studentRecord != null)
+                    {
+                        dbContext.Entry(studentRecord).CurrentValues.SetValues(recordsRequest);
+                    }
+                    else
+                    {
+                        dbContext.RecordsRequests.Add(recordsRequest);
+                    }
+
+                    dbContext.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    LoggingService.LogErrorMessage($"Unable to retrieve Records Request data: {ex.ChainInnerExceptionMessages()}");
+                    throw;
+                }
+            }
+
         }
 
         protected List<StudentDrillDownQuery> ReadStudentDrillDownDataReader(DbDataReader reader)

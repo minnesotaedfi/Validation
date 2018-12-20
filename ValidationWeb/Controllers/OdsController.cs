@@ -754,7 +754,6 @@
             var edOrgId = edOrg.Id;
             var fourDigitSchoolYear = SchoolYearService.GetSchoolYearById(session.FocusedSchoolYearId).EndYear;
             var theUser = AppUserService.GetUser();
-            var results = OdsDataService.GetChangeOfEnrollmentReport(edOrgId, fourDigitSchoolYear);
             var model = new OdsChangeOfEnrollmentReportViewModel
             {
                 EdOrgId = edOrgId,
@@ -772,7 +771,7 @@
             IDataTablesRequest request)
         {
 #if DEBUG
-            var startTime = DateTime.Now;
+            var startTime = DateTime.Now;            
 #endif
             var results = CacheManager.GetChangeOfEnrollmentReport(
                 OdsDataService,
@@ -1089,6 +1088,12 @@
 
             };
             return View(model);
+        }
+
+        public JsonResult GetRecordsRequestData(int edOrgId, int studentId)
+        {
+            var result = OdsDataService.GetRecordsRequestData(edOrgId, studentId);
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
     }
 }

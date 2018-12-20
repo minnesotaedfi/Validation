@@ -207,9 +207,33 @@
             $('#request-records-modal').on('show.bs.modal', function (event) {
                 debugger;
                 var row = $(event.relatedTarget).closest('tr');
-                var data = enrollmentsTable.row(row).data(); 
-                //var myVal = $(event.relatedTarget).data('val');
-                //$(this).find(".modal-body").text();
+                var data = enrollmentsTable.row(row).data();
+
+                var studentName = data.studentLastName + ', ' + data.studentFirstName + ' ' + data.studentMiddleName;
+                $('#request-records-studentName').text(studentName);
+
+                // holy cow! go get the data 
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Action("GetRecordsRequestData", "Ods")',
+                    contentType: 'application/json; charset=utf-8',
+                    data: {
+                        edOrgId: data.currentDistEdOrgId, 
+                        studentId: data.studentID
+                    },
+                    datatype: "json",
+                    success: function (data) {
+                        debugger;
+                        // fill out dialog... here... 
+
+                        // $(modelModalContent).html(data);
+                        // $(modelModal).modal(options);
+                        // $(modelModal).modal('show');
+                    },
+                    error: function () {
+                        alert('Could not retrieve record request data');
+                    }
+                });
             });
             
             $(enrollmentsTable.table().header()).addClass('table-primary');
