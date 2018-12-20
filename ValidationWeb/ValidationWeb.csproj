@@ -595,6 +595,7 @@
     <Content Include="Views\Home\Announcements.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApiControllers\ModelBinders\JsonNetModelBinder.cs" />
     <Compile Include="ApiControllers\ModelBinders\ValidationErrorFilterModelBinder.cs" />
     <Compile Include="ApiControllers\UserSessionController.cs" />
     <Compile Include="ApiControllers\ValidationController.cs" />
@@ -619,6 +620,9 @@
     <Compile Include="Database\Queries\StudentDrillDownQuery.cs" />
     <Compile Include="Database\Queries\StudentProgramsCountReportQuery.cs" />
     <Compile Include="Database\RawOdsDbContext.cs" />
+    <Compile Include="Models\RecordsRequestType.cs" />
+    <Compile Include="Models\RecordsRequest.cs" />
+    <Compile Include="Models\RecordsRequestDetail.cs" />
     <Compile Include="Utility\GradeLevelComparer.cs" />
     <Compile Include="ViewModels\StudentDrillDownReportType.cs" />
     <Compile Include="Database\ValidatedOdsDbContext.cs" />

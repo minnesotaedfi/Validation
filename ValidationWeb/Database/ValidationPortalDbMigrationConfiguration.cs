@@ -30,6 +30,16 @@ namespace ValidationWeb
             new ErrorSeverityLookup { Id = (int)ErrorSeverity.Warning, CodeValue = "Warning", Description = "Warning" }
         };
 
+        public static RecordsRequestTypeLookup[] RecordsRequestTypeLookups = new RecordsRequestTypeLookup[]
+        {
+            new RecordsRequestTypeLookup { Id = (int)RecordsRequestType.Assessment, CodeValue = "Assessment", Description = "Assessment"},
+            new RecordsRequestTypeLookup { Id = (int)RecordsRequestType.Cumulative, CodeValue = "Cumulative", Description = "Cumulative"},
+            new RecordsRequestTypeLookup { Id = (int)RecordsRequestType.Discipline, CodeValue = "Discipline", Description = "Discipline"},
+            new RecordsRequestTypeLookup { Id = (int)RecordsRequestType.IEP, CodeValue = "IEP", Description = "IEP"},
+            new RecordsRequestTypeLookup { Id = (int)RecordsRequestType.Evaluation, CodeValue = "Evaluation", Description = "Evaluation"},
+            new RecordsRequestTypeLookup { Id = (int)RecordsRequestType.Immunizations, CodeValue = "Immunizations", Description = "Immunizations"}
+        };
+
         /// <summary>
         /// Called after migration.
         /// </summary>
@@ -38,6 +48,7 @@ namespace ValidationWeb
         {
             context.EdOrgTypeLookup.AddOrUpdate(EdOrgTypeLookups);
             context.ErrorSeverityLookup.AddOrUpdate(ErrorSeverityLookups);
+            // context.RecordsRequestTypeLookup.AddOrUpdate(RecordsRequestTypeLookups);
 
             if (_config.SeedSchoolYears != null && context.SchoolYears.Count() <= 0)
             {

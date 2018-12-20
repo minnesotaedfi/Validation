@@ -1,14 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Web;
-
-namespace ValidationWeb
+﻿namespace ValidationWeb
 {
+    using System.Data.Entity;
+
     public partial class ValidationPortalDbContext : DbContext
     {
+        static ValidationPortalDbContext()
+        {
+            // Fixes a known bug in which EntityFramework.SqlServer.dll is not copied into consumer even when CopyLocal is True.
+            var includeSqlServerDLLInConsumer = System.Data.Entity.SqlServer.SqlProviderServices.Instance;
+        }
+
         // Use of "name=" ensures that a new database won't be created by default.
         public ValidationPortalDbContext()
             : base("name=ValidationPortalDbContext")
@@ -17,27 +18,29 @@ namespace ValidationWeb
             Configuration.LazyLoadingEnabled = false;
         }
 
-        static ValidationPortalDbContext()
-        {
-            // Fixes a known bug in which EntityFramework.SqlServer.dll is not copied into consumer even when CopyLocal is True.
-            var includeSqlServerDLLInConsumer = System.Data.Entity.SqlServer.SqlProviderServices.Instance;
-        }
         public virtual DbSet<Announcement> Announcements { get; set; }
-        public virtual DbSet<AppUserSession> AppUserSessions { get; set; }
-        public virtual DbSet<DismissedAnnouncement> DismissedAnnouncements { get; set; }
-        public virtual DbSet<EdOrg> EdOrgs { get; set; }
-        public virtual DbSet<EdOrgTypeLookup> EdOrgTypeLookup { get; set; }
-        public virtual DbSet<ErrorSeverityLookup> ErrorSeverityLookup { get; set; }
-        public virtual DbSet<SchoolYear> SchoolYears { get; set; }
-        public virtual DbSet<SubmissionCycle> SubmissionCycles { get; set; }
-        public virtual DbSet<ValidationErrorSummary> ValidationErrorSummaries { get; set; }
-        public virtual DbSet<ValidationReportDetails> ValidationReportDetails { get; set; }
-        public virtual DbSet<ValidationReportSummary> ValidationReportSummaries { get; set; }
 
-        //public override int SaveChanges()
-        //{
-        //    return ((DbContext)this).SaveChanges();
-        //}
+        public virtual DbSet<AppUserSession> AppUserSessions { get; set; }
+
+        public virtual DbSet<DismissedAnnouncement> DismissedAnnouncements { get; set; }
+
+        public virtual DbSet<EdOrg> EdOrgs { get; set; }
+
+        public virtual DbSet<EdOrgTypeLookup> EdOrgTypeLookup { get; set; }
+
+        public virtual DbSet<ErrorSeverityLookup> ErrorSeverityLookup { get; set; }
+
+        public virtual DbSet<RecordsRequest> RecordsRequests { get; set; }
+
+        public virtual DbSet<SchoolYear> SchoolYears { get; set; }
+
+        public virtual DbSet<SubmissionCycle> SubmissionCycles { get; set; }
+
+        public virtual DbSet<ValidationErrorSummary> ValidationErrorSummaries { get; set; }
+
+        public virtual DbSet<ValidationReportDetails> ValidationReportDetails { get; set; }
+
+        public virtual DbSet<ValidationReportSummary> ValidationReportSummaries { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -58,6 +61,24 @@ namespace ValidationWeb
                 .WithRequired(dann => dann.AppUserSession)
                 .HasForeignKey(aus => aus.AppUserSessionId)
                 .WillCascadeOnDelete();
+
+            //modelBuilder.Entity<RecordsRequest>()
+            //    .HasRequired(f => f.AssessmentResults);
+
+            //modelBuilder.Entity<RecordsRequest>()
+            //    .HasRequired(f => f.CumulativeFiles);
+
+            //modelBuilder.Entity<RecordsRequest>()
+            //    .HasRequired(f => f.DisciplineRecords);
+
+            //modelBuilder.Entity<RecordsRequest>()
+            //    .HasRequired(f => f.EvaluationSummary);
+
+            //modelBuilder.Entity<RecordsRequest>()
+            //    .HasRequired(f => f.IEP);
+
+            //modelBuilder.Entity<RecordsRequest>()
+            //    .HasRequired(f => f.Immunizations);
         }
     }
 }

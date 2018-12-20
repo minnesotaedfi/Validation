@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Data.Common;
     using System.Data.SqlClient;
+    using System.Linq;
 
     public class OdsDataService : IOdsDataService
     {
@@ -16,6 +17,7 @@
 
         public List<DemographicsCountReportQuery> GetDistrictAncestryRaceCounts(int? districtEdOrgId, string fourDigitOdsDbYear)
         {
+            // todo: dependency-inject these data contexts
             using (var rawOdsContext = new RawOdsDbContext(fourDigitOdsDbYear))
             {
                 var conn = rawOdsContext.Database.Connection;
@@ -495,6 +497,194 @@
                 }
             }
         }
+        
+        public RecordsRequest GetRecordsRequestData(int edOrgId, string studentId)
+        {
+            using (var dbContext = new ValidationPortalDbContext())
+            {
+                try
+                {
+                    var studentRecord = dbContext.RecordsRequests.FirstOrDefault(x => x.StudentId == studentId) 
+                                        ?? new RecordsRequest
+                                           {
+                                               StudentId = studentId,
+                                               RequestingDistrict = edOrgId
+                                           };
+                    return studentRecord;
+                }
+                catch (Exception ex)
+                {
+                    LoggingService.LogErrorMessage($"Unable to retrieve Records Request data: {ex.ChainInnerExceptionMessages()}");
+                    throw;
+                }
+            }
+        }
+
+        public IEnumerable<RecordsRequest> GetAllRecordsRequests()
+        {
+            using (var dbContext = new ValidationPortalDbContext())
+            {
+                try
+                {
+                    return dbContext.RecordsRequests.ToList();
+                }
+                catch (Exception ex)
+                {
+                    LoggingService.LogErrorMessage($"Unable to retrieve Records Request data: {ex.ChainInnerExceptionMessages()}");
+                    throw;
+                }
+            }
+        }
+
+        public void SaveRecordsRequest(RecordsRequestFormData formData)
+        {
+            using (var dbContext = new ValidationPortalDbContext())
+            {
+                try
+                {
+                    RecordsRequest studentRecord = dbContext.RecordsRequests.FirstOrDefault(x => x.StudentId == formData.StudentId);
+
+                    if (studentRecord == null)
+                    {
+                        studentRecord = new RecordsRequest();
+                    }
+
+                    studentRecord.StudentId = formData.StudentId;
+                    studentRecord.RequestingDistrict = formData.RequestingDistrictId;
+                    studentRecord.RequestingUser = formData.RequestingUserId.ToString();
+                    studentRecord.TransmittalInstructions = formData.TransmittalInstructions;
+
+                    if (formData.CheckAssessment)
+                    {
+                        studentRecord.AssessmentResults.Requested = true;
+                        studentRecord.AssessmentResults.RequestingUserId = studentRecord.RequestingUser;
+                        studentRecord.AssessmentResults.RequestingDistrictId = studentRecord.RequestingDistrict;
+                    }
+
+                    if (formData.CheckCumulative)
+                    {
+                        studentRecord.CumulativeFiles.Requested = true;
+                        studentRecord.CumulativeFiles.RequestingUserId = studentRecord.RequestingUser;
+                        studentRecord.CumulativeFiles.RequestingDistrictId = studentRecord.RequestingDistrict;
+                    }
+
+                    if (formData.CheckDiscipline)
+                    {
+                        studentRecord.DisciplineRecords.Requested = true;
+                        studentRecord.DisciplineRecords.RequestingUserId = studentRecord.RequestingUser;
+                        studentRecord.DisciplineRecords.RequestingDistrictId = studentRecord.RequestingDistrict;
+                    }
+
+                    if (formData.CheckEvaluation)
+                    {
+                        studentRecord.EvaluationSummary.Requested = true;
+                        studentRecord.EvaluationSummary.RequestingUserId = studentRecord.RequestingUser;
+                        studentRecord.EvaluationSummary.RequestingDistrictId = studentRecord.RequestingDistrict;
+                    }
+
+                    if (formData.CheckIEP)
+                    {
+                        studentRecord.IEP.Requested = true;
+                        studentRecord.IEP.RequestingUserId = studentRecord.RequestingUser;
+                        studentRecord.IEP.RequestingDistrictId = studentRecord.RequestingDistrict;
+                    }
+
+                    if (formData.CheckImmunization)
+                    {
+                        studentRecord.Immunizations.Requested = true;
+                        studentRecord.Immunizations.RequestingUserId = studentRecord.RequestingUser;
+                        studentRecord.Immunizations.RequestingDistrictId = studentRecord.RequestingDistrict;
+                    }
+
+                    if (studentRecord.Id == 0)
+                    {
+                        dbContext.RecordsRequests.Add(studentRecord); 
+                    }
+                    else
+                    {
+                        dbContext.Entry(studentRecord).CurrentValues.SetValues(studentRecord);
+                    }
+
+                    dbContext.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    LoggingService.LogErrorMessage($"Unable to retrieve Records Request data: {ex.ChainInnerExceptionMessages()}");
+                    throw;
+                }
+            }
+        }
+
+        public void SaveRecordsResponse(RecordsResponseFormData formData)
+        {
+            using (var dbContext = new ValidationPortalDbContext())
+            {
+                try
+                {
+                    RecordsRequest studentRecord = dbContext.RecordsRequests.FirstOrDefault(x => x.StudentId == formData.StudentId);
+
+                    if (studentRecord == null)
+                    {
+                        throw new InvalidOperationException($"Unable to find record request for student ID {formData.StudentId}");
+                    }
+
+                    studentRecord.StudentId = formData.StudentId;
+                    studentRecord.RespondingDistrict = formData.RespondingDistrictId;
+                    studentRecord.RespondingUser = formData.RespondingUserId;
+
+                    if (formData.CheckAssessment)
+                    {
+                        studentRecord.AssessmentResults.Sent = true;
+                        studentRecord.AssessmentResults.RespondingUserId = studentRecord.RespondingUser;
+                        studentRecord.AssessmentResults.RespondingDistrictId = studentRecord.RespondingDistrict;
+                    }
+
+                    if (formData.CheckCumulative)
+                    {
+                        studentRecord.CumulativeFiles.Sent = true;
+                        studentRecord.CumulativeFiles.RespondingUserId = studentRecord.RespondingUser;
+                        studentRecord.CumulativeFiles.RespondingDistrictId = studentRecord.RespondingDistrict;
+                    }
+
+                    if (formData.CheckDiscipline)
+                    {
+                        studentRecord.DisciplineRecords.Sent = true;
+                        studentRecord.DisciplineRecords.RespondingUserId = studentRecord.RespondingUser;
+                        studentRecord.DisciplineRecords.RespondingDistrictId = studentRecord.RespondingDistrict;
+                    }
+
+                    if (formData.CheckEvaluation)
+                    {
+                        studentRecord.EvaluationSummary.Sent = true;
+                        studentRecord.EvaluationSummary.RespondingUserId = studentRecord.RespondingUser;
+                        studentRecord.EvaluationSummary.RespondingDistrictId = studentRecord.RespondingDistrict;
+                    }
+
+                    if (formData.CheckIEP)
+                    {
+                        studentRecord.IEP.Sent = true;
+                        studentRecord.IEP.RespondingUserId = studentRecord.RespondingUser;
+                        studentRecord.IEP.RespondingDistrictId = studentRecord.RespondingDistrict;
+                    }
+
+                    if (formData.CheckImmunization)
+                    {
+                        studentRecord.Immunizations.Sent = true;
+                        studentRecord.Immunizations.RespondingUserId = studentRecord.RespondingUser;
+                        studentRecord.Immunizations.RespondingDistrictId = studentRecord.RespondingDistrict;
+                    }
+
+                    dbContext.Entry(studentRecord).CurrentValues.SetValues(studentRecord);
+                    dbContext.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    LoggingService.LogErrorMessage($"Unable to retrieve Records Request data: {ex.ChainInnerExceptionMessages()}");
+                    throw;
+                }
+            }
+        }
+
 
         protected List<StudentDrillDownQuery> ReadStudentDrillDownDataReader(DbDataReader reader)
         {

@@ -40,14 +40,14 @@
     <div class="tab-pane row fade show active" id="enrollmentsPane">
         <div id="requestedReportContent">
             <div class="row">
-                <table class="table table-bordered" id="reportsTable1" ></table>
+                <table class="table table-bordered" id="reportsTable1"></table>
             </div>
         </div>
     </div>
     <div class="tab-pane row fade" id="withdrawalsPane">
         <div id="requestedReportContent2">
             <div class="row">
-                    <table class="table table-bordered" id="reportsTable2"></table>
+                <table class="table table-bordered" id="reportsTable2"></table>
             </div>
         </div>
     </div>
@@ -171,7 +171,7 @@
                         title: 'Prior Entry Date',
                         name: 'pastEdOrgEnrollmentDate',
                         data: 'pastEdOrgEnrollmentDate',
-                        render: function (data, type, row, meta) {
+                        render: function(data, type, row, meta) {
                             if (type === 'display') {
                                 return data == null ? "Unknown" : new Date(data).toLocaleDateString("en-US");
                             } else {
@@ -183,7 +183,7 @@
                         title: 'Prior Exit Date',
                         name: 'pastEdOrgExitDate',
                         data: 'pastEdOrgExitDate',
-                        render: function (data, type, row, meta) {
+                        render: function(data, type, row, meta) {
                             if (type === 'display') {
                                 return data == null ? "Unknown" : new Date(data).toLocaleDateString("en-US");
                             } else {
@@ -196,7 +196,7 @@
                         orderable: false,
                         data: 'null',
                         render: function(data, type, row) {
-                            return '<a href="#" data-toggle="modal" data-target="#request-records-modal">Request Records</button>';
+                            return '<a href="#" data-toggle="modal" data-target="#request-records-modal">Request&nbsp;Records</button>';
                         }
 
 
@@ -204,14 +204,131 @@
                 ]
             });
 
-            $('#request-records-modal').on('show.bs.modal', function (event) {
-                debugger;
-                var row = $(event.relatedTarget).closest('tr');
-                var data = enrollmentsTable.row(row).data(); 
-                //var myVal = $(event.relatedTarget).data('val');
-                //$(this).find(".modal-body").text();
-            });
-            
+            $('#request-records-modal').on('show.bs.modal',
+                function(event) {
+                    debugger;
+                    var row = $(event.relatedTarget).closest('tr');
+                    var data = enrollmentsTable.row(row).data();
+
+                    var studentName = data.studentLastName +
+                        ', ' +
+                        data.studentFirstName +
+                        ' ' +
+                        data.studentMiddleName;
+                    $('#request-records-studentName').text(studentName);
+
+                    $.ajax({
+                        type: 'GET',
+                        url: '@Url.Action("GetRecordsRequestData", "Ods")',
+                        contentType: 'application/json; charset=utf-8',
+                        data: {
+                            edOrgId: data.currentDistEdOrgId,
+                            studentId: data.studentID
+                        },
+                        datatype: "json",
+                        success: function(data) {
+                            debugger;
+
+                            $('#requestId').val(data.Id);
+                            $('#studentId').val(data.StudentId);
+                            $('#requesting-district-id').val(data.RequestingDistrict);
+                            $('#requesting-user-id').val(data.RequestingUser);
+                            $('#transmittal-instructions').text(data.TransmittalInstructions);
+
+                            // todo: turn all this into a function
+                            $('#check-assessment').prop('checked', data.AssessmentResults.Requested);
+                            $('#check-assessment').prop('disabled', data.AssessmentResults.Requested);
+                            if (data.AssessmentResults.Sent) {
+                                $('#status-assessment-requested').text('Sent');
+                            } else {
+                                $('#status-assessment-requested').text(data.AssessmentResults.Requested ? 'Requested' : '');
+                            }
+                            $('#status-assessment-responder').text(data.AssessmentResults.RespondingUserId);
+
+                            $('#check-cumulative').prop('checked', data.CumulativeFiles.Requested);
+                            $('#check-cumulative').prop('disabled', data.CumulativeFiles.Requested);
+                            if (data.CumulativeFiles.Sent) {
+                                $('#status-cumulative-requested').text('Sent');
+                            } else {
+                                $('#status-cumulative-requested').text(data.CumulativeFiles.Requested ? 'Requested' : '');
+                            }
+                            $('#status-cumulative-responder').text(data.CumulativeFiles.RespondingUserId);
+
+                            $('#check-discipline').prop('checked', data.DisciplineRecords.Requested);
+                            $('#check-discipline').prop('disabled', data.DisciplineRecords.Requested);
+                            if (data.DisciplineRecords.Sent) {
+                                $('#status-discipline-requested').text('Sent');
+                            } else {
+                                $('#status-discipline-requested').text(data.DisciplineRecords.Requested ? 'Requested' : '');
+                            }
+                            $('#status-discipline-responder').text(data.DisciplineRecords.RespondingUserId);
+
+                            $('#check-iep').prop('checked', data.IEP.Requested);
+                            $('#check-iep').prop('disabled', data.IEP.Requested);
+                            if (data.IEP.Sent) {
+                                $('#status-iep-requested').text('Sent');
+                            } else {
+                                $('#status-iep-requested').text(data.IEP.Requested ? 'Requested' : '');
+                            }
+                            $('#status-iep-responder').text(data.IEP.RespondingUserId);
+
+                            $('#check-evaluation').prop('checked', data.EvaluationSummary.Requested);
+                            $('#check-evaluation').prop('disabled', data.EvaluationSummary.Requested);
+                            if (data.EvaluationSummary.Sent) {
+                                $('#status-evaluation-requested').text('Sent');
+                            } else {
+                                $('#status-evaluation-requested').text(data.EvaluationSummary.Requested ? 'Requested' : '');
+                            }
+                            $('#status-evaluation-responder').text(data.EvaluationSummary.RespondingUserId);
+
+                            $('#check-immunization').prop('checked', data.Immunizations.Requested);
+                            $('#check-immunization').prop('disabled', data.Immunizations.Requested);
+                            if (data.Immunizations.Sent) {
+                                $('#status-immunization-requested').text('Sent');
+                            } else {
+                                $('#status-immunization-requested').text(data.Immunizations.Requested ? 'Requested' : '');
+                            }
+                            $('#status-immunization-responder').text(data.Immunizations.RespondingUserId);
+                        },
+                        error: function() {
+                            alert('Could not retrieve record request data');
+                        }
+                    });
+                });
+
+            function serializeFormToJson(array) {
+                var jsonObj = {};
+                jQuery.map(array, function( n, i ) {
+                    jsonObj[n.name] = n.value;
+                });
+
+                return jsonObj;
+            }
+
+            $("#request-records-form").on("submit",
+                function(event) {
+                    debugger;
+
+                    var $this = $(this);
+                    var formValues = JSON.stringify(serializeFormToJson($this.serializeArray()));
+                    $.ajax({
+                            type: $this.attr('method'),
+                            url: $this.attr('action'),
+                            contentType: 'application/json; charset=utf-8',
+                            dataType: "json",
+                            data: formValues
+                        })
+                        .done(function() {
+                            $('#request-records-modal').modal('hide');
+                        })
+                        .fail(function () {
+                            alert('An error occurred while saving records request data');
+                            debugger;
+                        });
+
+                    event.preventDefault();
+                });
+
             $(enrollmentsTable.table().header()).addClass('table-primary');
 
             var withdrawalsTable = $('#reportsTable2').DataTable({
@@ -333,11 +450,12 @@
                     },
                     {
                         title: 'Records Requested',
-                        orderable: false,
+                        orderable: true,
+                        name: 'recordsRequested',
                         data: 'null',
                         render: function(data, type, row) {
-                            if (row.studentID % 4 == 0) {
-                                return '<button class="btn btn-sm prime-blue white-heavy-text" data-toggle="modal" data-target="#view-request-modal">View Request</button>';
+                            if (row.hasRecordsRequest) {
+                                return '<a href="#" data-toggle="modal" data-target="#view-request-modal">View&nbsp;Request</button>';
                             } else {
                                 return '&nbsp;';
                             }
@@ -345,6 +463,98 @@
                     }
                 ]
             });
+
+            $('#view-request-modal').on('show.bs.modal',
+                function(event) {
+                    debugger;
+                    var row = $(event.relatedTarget).closest('tr');
+                    var data = enrollmentsTable.row(row).data();
+
+                    var studentName = data.studentLastName +
+                        ', ' +
+                        data.studentFirstName +
+                        ' ' +
+                        data.studentMiddleName;
+                    $('#view-request-studentName').text(studentName);
+
+                    $.ajax({
+                        type: 'GET',
+                        url: '@Url.Action("GetRecordsRequestData", "Ods")',
+                        contentType: 'application/json; charset=utf-8',
+                        data: {
+                            edOrgId: data.currentDistEdOrgId,
+                            studentId: data.studentID
+                        },
+                        datatype: "json",
+                        success: function(data) {
+                            debugger;
+
+                            $('#view-request-form #requestId').val(data.Id);
+                            $('#view-request-form #studentId').val(data.StudentId);
+                            $('#view-request-form #responding-district-id').val(data.RequestingDistrict);
+                            $('#view-request-form #responding-user-id').val(data.RequestingUser);
+                            $('#view-request-form #transmittal-instructions').text(data.TransmittalInstructions);
+
+                            // todo: turn all this into a function
+                            $('#view-request-form #check-assessment').prop('checked', data.AssessmentResults.Requested);
+                            $('#view-request-form #check-assessment-sent').prop('checked', data.AssessmentResults.Sent ? true : false);
+                            $('#view-request-form #check-assessment-sent').prop('disabled', data.AssessmentResults.Sent ? true : false);
+                            $('#view-request-form #status-assessment-requester').text(data.AssessmentResults.RequestingUserId);
+
+                            $('#view-request-form #check-cumulative').prop('checked', data.CumulativeFiles.Requested);
+                            $('#view-request-form #check-cumulative-sent').prop('checked', data.CumulativeFiles.Sent ? true : false);
+                            $('#view-request-form #check-cumulative-sent').prop('disabled', data.CumulativeFiles.Sent ? true : false);
+                            $('#view-request-form #status-cumulative-requester').text(data.CumulativeFiles.RequestingUserId);
+
+                            $('#view-request-form #check-discipline').prop('checked', data.DisciplineRecords.Requested);
+                            $('#view-request-form #check-discipline-sent').prop('checked', data.DisciplineRecords.Sent ? true : false);
+                            $('#view-request-form #check-discipline-sent').prop('disabled', data.DisciplineRecords.Sent ? true : false);
+                            $('#view-request-form #status-discipline-requester').text(data.DisciplineRecords.RequestingUserId);
+
+                            $('#view-request-form #check-iep').prop('checked', data.IEP.Requested);
+                            $('#view-request-form #check-iep-sent').prop('checked', data.IEP.Sent ? true : false);
+                            $('#view-request-form #check-iep-sent').prop('disabled', data.IEP.Sent ? true : false);
+                            $('#view-request-form #status-iep-requester').text(data.IEP.RequestingUserId);
+
+                            $('#view-request-form #check-evaluation').prop('checked', data.EvaluationSummary.Requested);
+                            $('#view-request-form #check-evaluation-sent').prop('checked', data.EvaluationSummary.Sent ? true : false);
+                            $('#view-request-form #check-evaluation-sent').prop('disabled', data.EvaluationSummary.Sent ? true : false);
+                            $('#view-request-form #status-evaluation-requester').text(data.EvaluationSummary.RequestingUserId);
+
+                            $('#view-request-form #check-immunization').prop('checked', data.Immunizations.Requested);
+                            $('#view-request-form #check-immunization-sent').prop('checked', data.Immunizations.Sent ? true : false);
+                            $('#view-request-form #check-immunization-sent').prop('disabled', data.Immunizations.Sent ? true : false);
+                            $('#view-request-form #status-immunization-requester').text(data.Immunizations.RequestingUserId);
+                        },
+                        error: function() {
+                            alert('Could not retrieve record request data');
+                        }
+                    });
+                });
+
+            $("#view-request-form").on("submit",
+                function (event) {
+                    debugger;
+
+                    var $this = $(this);
+                    var formValues = JSON.stringify(serializeFormToJson($this.serializeArray()));
+                    $.ajax({
+                        type: $this.attr('method'),
+                        url: $this.attr('action'),
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: "json",
+                        data: formValues
+                    })
+                        .done(function () {
+                            $('#view-request-modal').modal('hide');
+                        })
+                        .fail(function () {
+                            alert('An error occurred while saving records request data');
+                            debugger;
+                        });
+
+                    event.preventDefault();
+                });
 
             $(withdrawalsTable.table().header()).addClass('table-primary');
 

@@ -2,14 +2,19 @@
     <div class="modal-dialog modal-lg" style="width: 750px; margin: auto;">
         <div class="modal-content">
             <div class="modal-header prime-blue white-heavy-text">
-                <h4 class="modal-title">Request Records</h4>
+                <h4 class="modal-title">Request Records for <span id="request-records-studentName"></span></h4>
                 <button type="button" class="close white-heavy-text" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
-                <form id="request-records-form" method="post" @*action="@Url.Action("AddNewSchoolYear", "Admin")"*@>
+                <form id="request-records-form" method="post" action="@Url.Action("SendRecordsRequest", "Ods")">
+                    <input type="hidden" id="requestId" name="requestId" />
+                    <input type="hidden" id="studentId" name="studentId" />
+                    <input type="hidden" id="requesting-user-id" name="requesting-user-id" />
+                    <input type="hidden" id="requesting-district-id" name="requesting-district-id" />
+
                     <div>
                         <div id="form-row-0" class="form-row">
-                            <div class="table-sm col-sm-10 offset-1" style="width:90%">
+                            <div class="table-sm col-sm-10 offset-1" style="width: 90%">
                                 <table class="table table-condensed">
                                     <thead>
                                         <tr>
@@ -24,49 +29,49 @@
                                             <td>
                                                 Assessment Results
                                             </td>
-                                            <td><input type="checkbox" name="" checked disabled value="1"></td>
-                                            <td>Requested</td>
-                                            <td></td>
+                                            <td><input type="checkbox" id="check-assessment" name="check-assessment" value="1"></td>
+                                            <td><span id="status-assessment-requested" name="status-assessment-requested"></span></td>
+                                            <td><span id="status-assessment-responder" name="status-assessment-responder"></span></td>
                                         </tr>
                                         <tr>
                                             <td>
                                                 Cumulative Files
                                             </td>
-                                            <td><input type="checkbox" name="" value="1"></td>
-                                            <td></td>
-                                            <td></td>
+                                            <td><input type="checkbox" id="check-cumulative" name="check-cumulative" value="1"></td>
+                                            <td><span id="status-cumulative-requested" name="status-cumulative-requested"></span></td>
+                                            <td><span id="status-cumulative-responder" name="status-cumulative-responder"></span></td>
                                         </tr>
                                         <tr>
                                             <td>
                                                 Discipline Record
                                             </td>
-                                            <td><input type="checkbox" name="" checked disabled value="1"></td>
-                                            <td>Sent</td>
-                                            <td>John Johnson</td>
+                                            <td><input type="checkbox" id="check-discipline" name="check-discipline" value="1"></td>
+                                            <td><span id="status-discipline-requested" name="status-discipline-requested"></span></td>
+                                            <td><span id="status-discipline-responder" name="status-discipline-responder"></span></td>
                                         </tr>
                                         <tr>
                                             <td>
                                                 IEP
                                             </td>
-                                            <td><input type="checkbox" name="" value="1"></td>
-                                            <td></td>
-                                            <td></td>
+                                            <td><input type="checkbox" id="check-iep" name="check-iep" value="1"></td>
+                                            <td><span id="status-iep-requested" name="status-iep-requested"></span></td>
+                                            <td><span id="status-iep-responder" name="status-iep-responder"></span></td>
                                         </tr>
                                         <tr>
                                             <td>
                                                 Evaluation Summary Report
                                             </td>
-                                            <td><input type="checkbox" name="" checked disabled value="1"></td>
-                                            <td>Requested</td>
-                                            <td></td>
+                                            <td><input type="checkbox" id="check-evaluation" name="check-evaluation" value="1"></td>
+                                            <td><span id="status-evaluation-requested" name="status-evaluation-requested"></span></td>
+                                            <td><span id="status-evaluation-responder" name="status-evaluation-responder"></span></td>
                                         </tr>
                                         <tr>
                                             <td>
                                                 Immunizations
                                             </td>
-                                            <td><input type="checkbox" name="" value="1"></td>
-                                            <td></td>
-                                            <td></td>
+                                            <td><input type="checkbox" id="check-immunization" name="check-immunization" value="1"></td>
+                                            <td><span id="status-immunization-requested" name="status-immunization-requested"></span></td>
+                                            <td><span id="status-immunization-responder" name="status-immunization-responder"></span></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -79,7 +84,7 @@
                         </div>
                         <div class="form-row">
                             <div class="col-md-8 offset-md-2">
-                                <textarea class="form-control" rows="6" placeholder="Enter instructions here" required style="min-width:100%"></textarea>
+                                <textarea id="transmittal-instructions" name="transmittal-instructions" class="form-control" rows="6" placeholder="Enter instructions here" required style="min-width: 100%"></textarea>
                             </div>
                             <div class="col-md-2"></div>
                         </div>
