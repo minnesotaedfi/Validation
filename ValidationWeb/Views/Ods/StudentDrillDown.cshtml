@@ -49,7 +49,7 @@
 </div>
 
     @section scripts {
-        <script type="text/javascript">
+<script type="text/javascript">
         $(function() {
 
             $('div.dataTables_scrollBody').css('min-height', '350px');
@@ -109,7 +109,14 @@
                         <text>
                             ,
                             {
-                                title: 'School ID',
+                            @if (@Model.ReportType == StudentDrillDownReportType.EnrolledElsewhere)
+                            {
+                                @:title: 'District School ID',
+                            }
+                            else
+                            {
+                                @:title: 'School ID',
+                            }
                                 name: 'schoolId',
                                 data: 'schoolId',
                                 render: function(data, type, row, meta) {
@@ -142,19 +149,33 @@
                                 }
                             },
                             {
-                                title: 'Enrolled Date',
+                            @if (@Model.ReportType == StudentDrillDownReportType.EnrolledElsewhere)
+                            {
+                                @:title: 'Entry Date',
+                            }
+                            else
+                            {
+                                @:title: 'Enrolled Date',
+                            }
                                 name: 'enrolledDate',
                                 data: 'enrolledDate',
                                 render: function(data, type, row, meta) {
-                                    if (type === 'display') {
-                                        return data == null ? "Unknown" : new Date(data).toLocaleDateString("en-US");
-                                    } else {
-                                        return data;
-                                    }
+                                if (type === 'display') {
+                                    return data == null ? "Unknown" : new Date(data).toLocaleDateString("en-US");
+                                } else {
+                                    return data;
                                 }
+                            }
                             },
                             {
-                                title: 'Withdraw Date',
+                            @if (@Model.ReportType == StudentDrillDownReportType.EnrolledElsewhere)
+                            {
+                                @:title: 'Exit/Withdraw Date',
+                            }
+                            else
+                            {
+                                @:title: 'Withdraw Date',
+                            }
                                 name: 'withdrawDate',
                                 data: 'withdrawDate',
                                 render: function(data, type, row, meta) {
@@ -182,10 +203,18 @@
                                 }
                             }</text>
                     }
+                    @if (@Model.ReportType == StudentDrillDownReportType.EnrolledElsewhere)
+                    {
+                        <text>, {
+                        title: 'Special Ed Evaluation Status',
+                        name: 'specialEdStatus',
+                        data: 'specialEdStatus'
+                        }</text>
+                    }
                 ]
             });
 
             $(dataTable.table().header()).addClass('table-primary');
         });
-        </script>
+</script>
     }
