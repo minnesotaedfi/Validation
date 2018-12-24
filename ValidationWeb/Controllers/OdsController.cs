@@ -277,6 +277,14 @@
                                                 : sortedResults.OrderByDescending(orderingFunctionString, comparer);
                             break;
                         }
+                    case "specialEdStatus":
+                        {
+                            orderingFunctionString = x => x.SpecialEdStatus;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? sortedResults.OrderBy(orderingFunctionString)
+                                                : sortedResults.OrderByDescending(orderingFunctionString);
+                            break;
+                        }
                     default:
                         {
                             sortedResults = results;
