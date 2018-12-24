@@ -98,28 +98,6 @@
                 },
                 columns: [
                     {
-                        title: 'ID',
-                        data: 'edOrgId',
-                        width: '100px',
-                        @if (Model.IsStateMode)
-                        {
-                            <text>
-                        render: function(data, type, row, meta) {
-                            if (data != null && type === 'display' && row.orgType === 200) {
-                                return createStateLink(data);
-                            } else {
-                                return data;
-                            }
-                        }
-                            </text>
-                        }
-                    },
-                    {
-                        title: 'Resident District',
-                        data: 'edOrgName',
-                        width: '300px',
-                    },
-                    {
                         title: 'District of Enrollment ID',
                         data: 'districtOfEnrollmentId',
                     },
