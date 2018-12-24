@@ -20,7 +20,7 @@
     {
         protected MockRepository MockRepository { get; set; }
 
-        protected Mock<ValidationPortalDbContext> ValidationPortalDbContextMock { get; set; }
+        protected Mock<IValidationPortalDbContext> ValidationPortalDbContextMock { get; set; }
 
         protected Mock<IAppUserService> AppUserServiceMock { get; set; }
 
@@ -49,7 +49,8 @@
         {
             MockRepository = new MockRepository(MockBehavior.Strict);
 
-            ValidationPortalDbContextMock = MockRepository.Create<ValidationPortalDbContext>();
+            ValidationPortalDbContextMock = MockRepository.Create<IValidationPortalDbContext>();
+            ValidationPortalDbContextMock.CallBase = true;
             AppUserServiceMock = MockRepository.Create<IAppUserService>();
             LoggingServiceMock = MockRepository.Create<ILoggingService>();
             AnnouncementServiceMock = MockRepository.Create<IAnnouncementService>();
@@ -66,6 +67,15 @@
                 ExpiresUtc = DateTime.Now.AddMonths(1),
                 UserIdentity = new ValidationPortalIdentity {AuthorizedEdOrgs = new List<EdOrg>() },
             };
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            ValidationPortalDbContextMock.Reset();
+            AnnouncementServiceMock.Reset();
+            AppUserServiceMock.Reset();
+            LoggingServiceMock.Reset();
         }
 
         [Test]
@@ -214,13 +224,12 @@
 
             var announcementDbSetMock = GetQueryableMockDbSet(new List<Announcement>(new[] { announcement }));
             announcementDbSetMock.Setup(x => x.Add(It.Is<Announcement>(y => y.Message == announcement.Message))).Returns(announcement);
-            announcementDbSetMock.Setup(x => x.ToString()).Returns("bobby tables");
-
+           
             ValidationPortalDbContextMock
                 .Setup(x => x.Announcements)
                 .Returns(announcementDbSetMock.Object);
 
-            ValidationPortalDbContextMock.Setup(x => x.Set<Announcement>()).Returns(() => announcementDbSetMock.Object);
+            //ValidationPortalDbContextMock.Setup(x => x.Set<Announcement>()).Returns(() => announcementDbSetMock.Object);
 
             ValidationPortalDbContextMock.Setup(x => x.SaveChanges()).Returns(1);
 

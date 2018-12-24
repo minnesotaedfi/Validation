@@ -2,7 +2,7 @@
 {
     using System.Data.Entity;
 
-    public partial class ValidationPortalDbContext : DbContext
+    public class ValidationPortalDbContext : DbContext, IValidationPortalDbContext
     {
         static ValidationPortalDbContext()
         {
@@ -61,24 +61,6 @@
                 .WithRequired(dann => dann.AppUserSession)
                 .HasForeignKey(aus => aus.AppUserSessionId)
                 .WillCascadeOnDelete();
-
-            //modelBuilder.Entity<RecordsRequest>()
-            //    .HasRequired(f => f.AssessmentResults);
-
-            //modelBuilder.Entity<RecordsRequest>()
-            //    .HasRequired(f => f.CumulativeFiles);
-
-            //modelBuilder.Entity<RecordsRequest>()
-            //    .HasRequired(f => f.DisciplineRecords);
-
-            //modelBuilder.Entity<RecordsRequest>()
-            //    .HasRequired(f => f.EvaluationSummary);
-
-            //modelBuilder.Entity<RecordsRequest>()
-            //    .HasRequired(f => f.IEP);
-
-            //modelBuilder.Entity<RecordsRequest>()
-            //    .HasRequired(f => f.Immunizations);
         }
     }
 }

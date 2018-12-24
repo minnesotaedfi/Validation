@@ -624,6 +624,7 @@
     <Compile Include="Models\RecordsRequest.cs" />
     <Compile Include="Models\RecordsRequestDetail.cs" />
     <Compile Include="Utility\GradeLevelComparer.cs" />
+    <Compile Include="Utility\SimpleInjectorExtension.cs" />
     <Compile Include="ViewModels\StudentDrillDownReportType.cs" />
     <Compile Include="Database\ValidatedOdsDbContext.cs" />
     <Compile Include="Database\ValidationPortalDbContext.cs" />
