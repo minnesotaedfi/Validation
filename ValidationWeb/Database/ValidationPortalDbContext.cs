@@ -16,6 +16,10 @@
         {
             Database.SetInitializer(new MigrateDatabaseToLatestVersion<ValidationPortalDbContext, ValidationPortalDbMigrationConfiguration>(true));
             Configuration.LazyLoadingEnabled = false;
+          
+            #if DEBUG
+            Database.Log = x => System.Diagnostics.Debug.Write(x);
+            #endif
         }
 
         public virtual DbSet<Announcement> Announcements { get; set; }
