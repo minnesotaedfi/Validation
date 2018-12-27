@@ -231,6 +231,15 @@ table.dataTable tbody th, table.dataTable tbody td {
     word-break: break-all;
     overflow: hidden;
 }*/
+
+.page-link {
+    border: none;
+}
+
+    .page-link:hover {
+        text-decoration: underline;
+    }
+
 /***************************************************************************************/
 /***************************************************************************************/
 /* Header area */

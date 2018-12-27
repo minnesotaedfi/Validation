@@ -50,6 +50,7 @@
             MockRepository = new MockRepository(MockBehavior.Strict);
 
             ValidationPortalDbContextMock = MockRepository.Create<IValidationPortalDbContext>();
+            ValidationPortalDbContextMock.CallBase = true;
             AppUserServiceMock = MockRepository.Create<IAppUserService>();
             LoggingServiceMock = MockRepository.Create<ILoggingService>();
             AnnouncementServiceMock = MockRepository.Create<IAnnouncementService>();
@@ -72,9 +73,10 @@
         public void TearDown()
         {
             ValidationPortalDbContextMock.Reset();
+
+            AnnouncementServiceMock.Reset();
             AppUserServiceMock.Reset();
             LoggingServiceMock.Reset();
-            AnnouncementServiceMock.Reset();
         }
 
         [Test]
@@ -316,12 +318,12 @@
 
             var announcementDbSetMock = GetQueryableMockDbSet(new List<Announcement>(new[] { announcement }));
             announcementDbSetMock.Setup(x => x.Add(It.Is<Announcement>(y => y.Message == announcement.Message))).Returns(announcement);
-
+           
             ValidationPortalDbContextMock
                 .Setup(x => x.Announcements)
                 .Returns(announcementDbSetMock.Object);
 
-            var timesCalled = 0; 
+            ValidationPortalDbContextMock.Setup(x => x.SaveChanges()).Returns(1);
 
             ValidationPortalDbContextMock
                 .Setup(x => x.SaveChanges())

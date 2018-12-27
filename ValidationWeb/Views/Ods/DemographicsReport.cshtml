@@ -28,9 +28,6 @@
         <div class="col-md-2"><a href="@Url.Action("DemographicsReport", "Ods", new { isStateMode = true })" class="show-data-loading">View All Districts</a></div>
     }
 </div>
-<div class="row">
-    <div class="col-md-3 offset-9 text-right"><a href="#notes">View Report notes</a></div>
-</div>
 <div id="requestedReportContent" class="row">
     @Html.Partial("Partials/DemographicsReportTable", Model)
 </div>
@@ -57,23 +54,23 @@
             }
             
             $('div.dataTables_scrollBody').css('min-height', '350px');
-            
+
             var dataTable = $('#reportsTable').DataTable({
                 paging: true,
-                info: false,
-                scrollX: true,
-                scrollY: '350px',
+                pagingType: 'full_numbers',
+                info: true,
                 scrollCollapse: true,
-                deferRender: true, 
+                deferRender: true,
                 searching: false,
                 serverSide: true,
                 processing: true,
-                scroller: {
-                    loadingIndicator: true
+                language: {
+                    loadingRecords: 'Loading...',
+                    processing: "Loading..."
                 },
-                fnInitComplete: function(){
-                    $('div.dataTables_scrollBody').css('min-height', 0);         
-                },
+                dom: "<'row'<'col-md-3'l><'col-md-3 offset-6 text-right jumpToNotes'>>"+
+                    "<'row'<'col-sm-12'tr>>" +
+                    "<'row'<'col-md-3'i><'col-md-5 offset-4 pull-right'p>>",
                 ajax: {
                     url: "@Html.Raw(Url.Action(
                               "GetDemographicsReportData",
@@ -154,6 +151,7 @@
                 ]
             });
 
+            $('.jumpToNotes').html('<a href="#notes">View Report notes</a>');
             $(dataTable.table().header()).addClass('table-primary');
         });
     </script>

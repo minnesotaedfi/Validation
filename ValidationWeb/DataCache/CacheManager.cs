@@ -219,7 +219,7 @@
             int edOrgId, 
             string fourDigitSchoolYear)
         {
-            var cacheKey = $"GetResidentsEnrolledElsewhereReport_{edOrgId}_{fourDigitSchoolYear}";
+            var cacheKey = $"GetChangeOfEnrollmentReport_{edOrgId}_{fourDigitSchoolYear}";
 
             lock (LockObject)
             {
@@ -245,19 +245,20 @@
                                     CurrentDistEdOrgId = edOrgId,
                                     CurrentGrade = ((i % 12) + 1).ToString(),
                                     CurrentDistrictName = "incoming district",
-                                    CurrentEdOrgEnrollmentDate = DateTime.Now.Subtract(new TimeSpan(random.Next(1, 90), 0, 0, 0)),
+                                    CurrentEdOrgEnrollmentDate = DateTime.Now.Subtract(new TimeSpan(random.Next(1, 365), 0, 0, 0)),
                                     CurrentEdOrgExitDate = DateTime.Now.Subtract(new TimeSpan(random.Next(91, 180), 0, 0, 0)),
                                     IsCurrentDistrict = true,
                                     PastDistEdOrgId = oldDistrict,
                                     PastDistrictName = "Old District",
                                     PastSchoolEdOrgId = oldSchool,
                                     PastSchoolName = "Old School",
+                                    PastEdOrgEnrollmentDate = DateTime.Now.Subtract(new TimeSpan(random.Next(365, 600), 0, 0, 0)),
+                                    PastEdOrgExitDate = DateTime.Now.Subtract(new TimeSpan(random.Next(180, 364), 0, 0, 0)),
                                     StudentID = (1000 + i).ToString(),
-                                    StudentBirthDate = new DateTime( random.Next(1990, 2010), random.Next(1, 12), random.Next(1, 28)),
+                                    StudentBirthDate = new DateTime(random.Next(1990, 2010), random.Next(1, 12), random.Next(1, 28)),
                                     StudentFirstName = $"First_{i}",
                                     StudentMiddleName = "Q.",
                                     StudentLastName = $"Last_{i}",
-                                    
                                 });
 
                             fakeResults.Add(
@@ -268,17 +269,21 @@
                                     PastDistrictName = "Old District",
                                     CurrentDistrictName = "incoming district",                                                                                          
                                     CurrentSchoolName = "New School",
-                                    CurrentEdOrgEnrollmentDate = DateTime.Now.Subtract(new TimeSpan(random.Next(1, 90), 0, 0, 0)),
+                                    CurrentEdOrgEnrollmentDate = DateTime.Now.Subtract(new TimeSpan(random.Next(1, 365), 0, 0, 0)),
                                     PastEdOrgEnrollmentDate = DateTime.Now.Subtract(new TimeSpan(random.Next(180, 365), 0, 0, 0)),
-                                    PastEdOrgExitDate = DateTime.Now.Subtract(new TimeSpan(random.Next(180, 365), 0, 0, 0)),
+                                    PastEdOrgExitDate = random.Next(0, 100) % 10 != 0 ? (DateTime?)DateTime.Now.Subtract(new TimeSpan(random.Next(1, 180), 0, 0, 0)) : null,
                                     IsCurrentDistrict = false,
-                                    StudentID = (2000 + i).ToString(),
+                                    StudentID = (1000 + i).ToString(),
                                     StudentBirthDate = new DateTime(random.Next(1990, 2010), random.Next(1, 12), random.Next(1, 28)),
-                                    StudentFirstName = $"First_{i+2000}",
-                                    StudentMiddleName = "P.",
-                                    StudentLastName = $"Last_{i + 2000}"
+                                    StudentFirstName = $"First_{i}",
+                                    StudentMiddleName = "Q.",
+                                    StudentLastName = $"Last_{i}",
                                 });
                         }
+
+                        var blah = fakeResults
+                            .Where(x => !x.IsCurrentDistrict)
+                            .OrderByDescending(x => x.PastEdOrgExitDate);
 
                         results = fakeResults; 
                     }

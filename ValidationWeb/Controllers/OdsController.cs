@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net;
     using System.Web.Mvc;
 
     using DataTables.AspNet.Core;
@@ -10,11 +11,17 @@
 
     using Engine.Models;
 
+    using MoreLinq;
+
+    using Newtonsoft.Json;
+
+    using ValidationWeb.ApiControllers.ModelBinders;
     using ValidationWeb.DataCache;
     using ValidationWeb.Services;
+    using ValidationWeb.Utility;
     using ValidationWeb.ViewModels;
 
-    // TODO: refactor repeated code. move cache manager and serialization calls into a separate layer. 
+    // TODO: refactor repeated code. move cache manager and serialization calls into a separate layer. -pocky
     public class OdsController : Controller
     {
         public OdsController(
@@ -174,6 +181,28 @@
                 edOrgId,
                 drillDownColumnIndex,
                 fourDigitSchoolYear);
+
+            // the underlying sql query is returning for all schools even though we're trying to view for one school 
+            if (orgType == OrgType.School && schoolId.HasValue)
+            {
+                results = results.Where(x => x.SchoolId == schoolId);
+            }
+
+            // some drilldown reports show apparent dupes, but they're only distinct by undisplayed fields
+            // distinct them by basically everything but SpecialEdStatus
+            results = results.DistinctBy(x =>
+                new
+                {
+                    x.StudentId,
+                    StudentName = $"{x.StudentLastName}, {x.StudentFirstName} {x.StudentMiddleName}",
+                    x.DistrictName,
+                    x.SchoolName,
+                    x.Grade,
+                    x.DistrictId,
+                    x.EnrolledDate,
+                    x.WithdrawDate
+                });
+
 #if DEBUG
             System.Diagnostics.Debug.WriteLine($"GetStudentDrillDownData ({reportType}): {(DateTime.Now - startTime).Milliseconds}ms");
 #endif 
@@ -241,10 +270,19 @@
                         }
                     case "grade":
                         {
-                            orderingFunctionInt = x => int.Parse(x.Grade);
+                            orderingFunctionString = x => x.Grade;
+                            var comparer = new GradeLevelComparer();
                             sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
-                                                ? results.OrderBy(orderingFunctionInt)
-                                                : results.OrderByDescending(orderingFunctionInt);
+                                                ? sortedResults.OrderBy(orderingFunctionString, comparer)
+                                                : sortedResults.OrderByDescending(orderingFunctionString, comparer);
+                            break;
+                        }
+                    case "specialEdStatus":
+                        {
+                            orderingFunctionString = x => x.SpecialEdStatus;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? sortedResults.OrderBy(orderingFunctionString)
+                                                : sortedResults.OrderByDescending(orderingFunctionString);
                             break;
                         }
                     default:
@@ -564,9 +602,9 @@
             var sortColumn = request.Columns.FirstOrDefault(x => x.Sort != null);
             if (sortColumn != null)
             {
-                Func<StudentProgramsCountReportQuery, string> orderingFunctionString = null;
-                Func<StudentProgramsCountReportQuery, int?> orderingFunctionNullableInt = null;
-                Func<StudentProgramsCountReportQuery, int> orderingFunctionInt = null;
+                Func<StudentProgramsCountReportQuery, string> orderingFunctionString;
+                Func<StudentProgramsCountReportQuery, int?> orderingFunctionNullableInt;
+                Func<StudentProgramsCountReportQuery, int> orderingFunctionInt;
 
                 switch (sortColumn.Field)
                 {
@@ -728,7 +766,6 @@
             var edOrgId = edOrg.Id;
             var fourDigitSchoolYear = SchoolYearService.GetSchoolYearById(session.FocusedSchoolYearId).EndYear;
             var theUser = AppUserService.GetUser();
-            var results = OdsDataService.GetChangeOfEnrollmentReport(edOrgId, fourDigitSchoolYear);
             var model = new OdsChangeOfEnrollmentReportViewModel
             {
                 EdOrgId = edOrgId,
@@ -752,18 +789,60 @@
                 OdsDataService,
                 edOrgId,
                 fourDigitSchoolYear);
+
+            var recordsRequestStudentIds = OdsDataService.GetAllRecordsRequests().Select(x => x.StudentId);
+            results.Where(x => recordsRequestStudentIds.Contains(x.StudentID)).ForEach(y => y.HasRecordsRequest = true);
+
 #if DEBUG
             System.Diagnostics.Debug.WriteLine($"GetChangeOfEnrollmentReport: {(DateTime.Now - startTime).Milliseconds}ms");
 #endif
             results = results.Where(x => x.IsCurrentDistrict == isCurrentDistrict);
 
-            IEnumerable<ChangeOfEnrollmentReportQuery> sortedResults = results;
+            var filteredResults = results;
+
+            var filterColumn = request.Columns.FirstOrDefault(x => x.Search != null && !string.IsNullOrWhiteSpace(x.Search.Value));
+            if (filterColumn != null)
+            {
+                DateTime minDate = DateTime.MinValue;
+
+                switch (filterColumn.Search.Value)
+                {
+                    case "30days":
+                        {
+                            minDate = DateTime.Now.AddDays(-30).Date;
+                            break;
+                        }
+                    case "90days":
+                        {
+                            minDate = DateTime.Now.AddDays(-90).Date;
+                            break;
+                        }
+                    case "1year":
+                        {
+                            minDate = DateTime.Now.AddYears(-1).Date;
+                            break;
+                        }
+                    default:
+                        throw new InvalidOperationException($"Unknown date option {filterColumn.Search.Value}");
+                }
+
+                switch (filterColumn.Name)
+                {
+                    case "currentEdOrgEnrollmentDate":
+                        filteredResults = filteredResults.Where(x => x.CurrentEdOrgEnrollmentDate != null && x.CurrentEdOrgEnrollmentDate >= minDate);
+                        break;
+                    default:
+                        throw new InvalidOperationException($"Unknown search field {filterColumn.Name}");
+                }
+            }
+
+            IEnumerable<ChangeOfEnrollmentReportQuery> sortedResults = filteredResults;
 
             var sortColumn = request.Columns.FirstOrDefault(x => x.Sort != null);
             if (sortColumn != null)
             {
                 Func<ChangeOfEnrollmentReportQuery, string> orderingFunctionString = null;
-                Func<ChangeOfEnrollmentReportQuery, int?> orderingFunctionNullableInt = null;
+                Func<ChangeOfEnrollmentReportQuery, bool> orderingFunctionBool = null;
                 Func<ChangeOfEnrollmentReportQuery, DateTime?> orderingFunctionNullableDateTime = null;
                 Func<ChangeOfEnrollmentReportQuery, int> orderingFunctionInt = null;
 
@@ -773,96 +852,114 @@
                         {
                             orderingFunctionInt = x => int.Parse(x.StudentID);
                             sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
-                                                ? results.OrderBy(orderingFunctionInt)
-                                                : results.OrderByDescending(orderingFunctionInt);
+                                                ? sortedResults.OrderBy(orderingFunctionInt)
+                                                : sortedResults.OrderByDescending(orderingFunctionInt);
                             break;
                         }
                     case "studentName":
                         {
                             orderingFunctionString = x => $"{x.StudentLastName}, {x.StudentFirstName} {x.StudentMiddleName}";
                             sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
-                                                ? results.OrderBy(orderingFunctionString)
-                                                : results.OrderByDescending(orderingFunctionString);
+                                                ? sortedResults.OrderBy(orderingFunctionString)
+                                                : sortedResults.OrderByDescending(orderingFunctionString);
                             break;
                         }
                     case "studentBirthDate":
                         {
                             orderingFunctionNullableDateTime = x => x.StudentBirthDate;
                             sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
-                                                ? results.OrderBy(orderingFunctionNullableDateTime)
-                                                : results.OrderByDescending(orderingFunctionNullableDateTime);
+                                                ? sortedResults.OrderBy(orderingFunctionNullableDateTime)
+                                                : sortedResults.OrderByDescending(orderingFunctionNullableDateTime);
                             break;
                         }
                     case "currentGrade":
                         {
-                            orderingFunctionInt = x => int.Parse(x.CurrentGrade);
+                            orderingFunctionString = x => x.CurrentGrade;
+                            var comparer = new GradeLevelComparer();
                             sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
-                                                ? results.OrderBy(orderingFunctionInt)
-                                                : results.OrderByDescending(orderingFunctionInt);
+                                                ? sortedResults.OrderBy(orderingFunctionString, comparer)
+                                                : sortedResults.OrderByDescending(orderingFunctionString, comparer);
                             break;
                         }
                     case "pastGrade":
                         {
-                            orderingFunctionInt = x => int.Parse(x.PastGrade);
+                            orderingFunctionString = x => x.PastGrade;
+                            var comparer = new GradeLevelComparer();
                             sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
-                                                ? results.OrderBy(orderingFunctionInt)
-                                                : results.OrderByDescending(orderingFunctionInt);
+                                                ? sortedResults.OrderBy(orderingFunctionString, comparer)
+                                                : sortedResults.OrderByDescending(orderingFunctionString, comparer);
                             break;
                         }
                     case "pastEdOrgEnrollmentDate":
                         {
                             orderingFunctionNullableDateTime = x => x.PastEdOrgEnrollmentDate;
                             sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
-                                                ? results.OrderBy(orderingFunctionNullableDateTime)
-                                                : results.OrderByDescending(orderingFunctionNullableDateTime);
+                                                ? sortedResults.OrderBy(orderingFunctionNullableDateTime)
+                                                : sortedResults.OrderByDescending(orderingFunctionNullableDateTime);
                             break;
                         }
                     case "pastEdOrgExitDate":
                         {
                             orderingFunctionNullableDateTime = x => x.PastEdOrgExitDate;
                             sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
-                                                ? results.OrderBy(orderingFunctionNullableDateTime)
-                                                : results.OrderByDescending(orderingFunctionNullableDateTime);
+                                                ? sortedResults.OrderBy(orderingFunctionNullableDateTime)
+                                                : sortedResults.OrderByDescending(orderingFunctionNullableDateTime);
                             break;
                         }
                     case "currentDistEdOrgId":
                         {
                             orderingFunctionInt = x => x.CurrentDistEdOrgId;
                             sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
-                                                ? results.OrderBy(orderingFunctionInt)
-                                                : results.OrderByDescending(orderingFunctionInt);
+                                                ? sortedResults.OrderBy(orderingFunctionInt)
+                                                : sortedResults.OrderByDescending(orderingFunctionInt);
                             break;
                         }
                     case "currentEdOrgEnrollmentDate":
                         {
                             orderingFunctionNullableDateTime = x => x.CurrentEdOrgEnrollmentDate;
                             sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
-                                                ? results.OrderBy(orderingFunctionNullableDateTime)
-                                                : results.OrderByDescending(orderingFunctionNullableDateTime);
+                                                ? sortedResults.OrderBy(orderingFunctionNullableDateTime)
+                                                : sortedResults.OrderByDescending(orderingFunctionNullableDateTime);
                             break;
                         }
                     case "currentEdOrgExitDate":
                         {
                             orderingFunctionNullableDateTime = x => x.CurrentEdOrgExitDate;
                             sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
-                                                ? results.OrderBy(orderingFunctionNullableDateTime)
-                                                : results.OrderByDescending(orderingFunctionNullableDateTime);
+                                                ? sortedResults.OrderBy(orderingFunctionNullableDateTime)
+                                                : sortedResults.OrderByDescending(orderingFunctionNullableDateTime);
                             break;
                         }
                     case "currentDistrictName":
                         {
                             orderingFunctionString = x => x.CurrentDistrictName;
                             sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
-                                                ? results.OrderBy(orderingFunctionString)
-                                                : results.OrderByDescending(orderingFunctionString);
+                                                ? sortedResults.OrderBy(orderingFunctionString)
+                                                : sortedResults.OrderByDescending(orderingFunctionString);
+                            break;
+                        }
+                    case "pastDistrictName":
+                        {
+                            orderingFunctionString = x => x.PastDistrictName;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? sortedResults.OrderBy(orderingFunctionString)
+                                                : sortedResults.OrderByDescending(orderingFunctionString);
                             break;
                         }
                     case "currentSchoolName":
                         {
                             orderingFunctionString = x => x.CurrentSchoolName;
                             sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
-                                                ? results.OrderBy(orderingFunctionString)
-                                                : results.OrderByDescending(orderingFunctionString);
+                                                ? sortedResults.OrderBy(orderingFunctionString)
+                                                : sortedResults.OrderByDescending(orderingFunctionString);
+                            break;
+                        }
+                    case "recordsRequested":
+                        {
+                            orderingFunctionBool = x => x.HasRecordsRequest;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? sortedResults.OrderBy(orderingFunctionBool)
+                                                : sortedResults.OrderByDescending(orderingFunctionBool);
                             break;
                         }
                     default:
@@ -873,7 +970,7 @@
             }
 
             var pagedResults = sortedResults.Skip(request.Start).Take(request.Length);
-            var response = DataTablesResponse.Create(request, results.Count(), results.Count(), pagedResults);
+            var response = DataTablesResponse.Create(request, results.Count(), filteredResults.Count(), pagedResults);
             var jsonResult = new DataTablesJsonResult(response, JsonRequestBehavior.AllowGet);
             return jsonResult;
         }
@@ -990,7 +1087,7 @@
                         }
                 }
             }
-            
+
             var pagedResults = sortedResults.Skip(request.Start).Take(request.Length);
             var response = DataTablesResponse.Create(request, results.Count(), results.Count(), pagedResults);
             var jsonResult = new DataTablesJsonResult(response, JsonRequestBehavior.AllowGet);
@@ -1017,5 +1114,130 @@
             };
             return View(model);
         }
+
+        public JsonResult GetRecordsRequestData(int edOrgId, string studentId)
+        {
+            var result = OdsDataService.GetRecordsRequestData(edOrgId, studentId);
+            var session = AppUserService.GetSession();
+            result.RequestingUser = session.UserIdentity.UserId; 
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult SendRecordsRequest([ModelBinder(typeof(JsonNetModelBinder))]RecordsRequestFormData request)
+        {
+            OdsDataService.SaveRecordsRequest(request);
+            return Json(new { }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult SendRecordsResponse([ModelBinder(typeof(JsonNetModelBinder))]RecordsResponseFormData response)
+        {
+            OdsDataService.SaveRecordsResponse(response);
+            return Json(new { }, JsonRequestBehavior.AllowGet);
+        }
+    }
+
+    public class BoolConverter : JsonConverter
+    {
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            writer.WriteValue(((bool)value) ? 1 : 0);
+        }
+
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            return reader.Value.ToString() == "1";
+        }
+
+        public override bool CanConvert(Type objectType)
+        {
+            return objectType == typeof(bool);
+        }
+    }
+
+
+    [JsonObject]
+    public class RecordsRequestFormData
+    {
+        [JsonProperty("requestId")]
+        public int RequestId { get; set; }
+
+        [JsonProperty("studentId")]
+        public string StudentId { get; set; }
+
+        [JsonProperty("requesting-user-id")]
+        public string RequestingUserId { get; set; }
+
+        [JsonProperty("requesting-district-id")]
+        public int RequestingDistrictId { get; set; }
+
+        [JsonProperty("check-assessment")]
+        [JsonConverter(typeof(BoolConverter))]
+        public bool CheckAssessment { get; set; }
+
+        [JsonProperty("check-cumulative")]
+        [JsonConverter(typeof(BoolConverter))]
+        public bool CheckCumulative { get; set; }
+
+        [JsonProperty("check-discipline")]
+        [JsonConverter(typeof(BoolConverter))]
+        public bool CheckDiscipline { get; set; }
+
+        [JsonProperty("check-iep")]
+        [JsonConverter(typeof(BoolConverter))]
+        public bool CheckIEP { get; set; }
+
+        [JsonProperty("check-evaluation")]
+        [JsonConverter(typeof(BoolConverter))]
+        public bool CheckEvaluation { get; set; }
+
+        [JsonProperty("check-immunization")]
+        [JsonConverter(typeof(BoolConverter))]
+        public bool CheckImmunization { get; set; }
+
+        [JsonProperty("transmittal-instructions")]
+        public string TransmittalInstructions { get; set; }
+    }
+
+
+    [JsonObject]
+    public class RecordsResponseFormData
+    {
+        [JsonProperty("requestId")]
+        public int RequestId { get; set; }
+
+        [JsonProperty("studentId")]
+        public string StudentId { get; set; }
+
+        [JsonProperty("responding-user-id")]
+        public string RespondingUserId { get; set; }
+
+        [JsonProperty("responding-district-id")]
+        public int RespondingDistrictId { get; set; }
+
+        [JsonProperty("check-assessment-sent")]
+        [JsonConverter(typeof(BoolConverter))]
+        public bool CheckAssessment { get; set; }
+
+        [JsonProperty("check-cumulative-sent")]
+        [JsonConverter(typeof(BoolConverter))]
+        public bool CheckCumulative { get; set; }
+
+        [JsonProperty("check-discipline-sent")]
+        [JsonConverter(typeof(BoolConverter))]
+        public bool CheckDiscipline { get; set; }
+
+        [JsonProperty("check-iep-sent")]
+        [JsonConverter(typeof(BoolConverter))]
+        public bool CheckIEP { get; set; }
+
+        [JsonProperty("check-evaluation-sent")]
+        [JsonConverter(typeof(BoolConverter))]
+        public bool CheckEvaluation { get; set; }
+
+        [JsonProperty("check-immunization-sent")]
+        [JsonConverter(typeof(BoolConverter))]
+        public bool CheckImmunization { get; set; }
     }
 }

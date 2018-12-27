@@ -1,4 +1,5 @@
-﻿@model StudentDrillDownViewModel
+﻿@using ValidationWeb.ViewModels
+@model StudentDrillDownViewModel
 
 <div class="row tbmargin10">
     @if (Model.IsStateMode)
@@ -18,34 +19,57 @@
     }
 </div>
 <div id="requestedReportContent" class="row">
+
+    @* this is a terrible hack *@
+    @if (@Model.ReportType == StudentDrillDownReportType.Demographics)
+    {
+        <!-- report type demo -->
+        @:<div class="col-md-2"></div>
+        @:<div class="col-md-8">
+    }
+    else
+    {
+        <!-- report type NON demo -->
+        @: <div class="col-md-12 nopadding">
+    }
     @Html.Partial("Partials/StudentDrillDownTable", Model)
-</div>
+
+    @if (@Model.ReportType == StudentDrillDownReportType.Demographics)
+    {
+        @:</div>
+        @:<div class="col-md-2"></div>
+    }
+    else
+    {
+        @: </div>
+    }
+        </div>
 <div id="notes" class="row">
     <div class="vp-body-header">&nbsp;</div>
 </div>
 
-@section scripts {
-    <script type="text/javascript">
+    @section scripts {
+<script type="text/javascript">
         $(function() {
 
             $('div.dataTables_scrollBody').css('min-height', '350px');
 
             var dataTable = $('#reportsTable').DataTable({
                 paging: true,
-                info: false,
-                scrollX: false,
-                scrollY: '350px',
+                pagingType: 'full_numbers',
+                info: true,
                 scrollCollapse: true,
                 deferRender: true,
                 searching: false,
                 serverSide: true,
                 processing: true,
-                scroller: {
-                    loadingIndicator: true
+                language: {
+                    loadingRecords: 'Loading...',
+                    processing: "Loading..."
                 },
-                fnInitComplete: function() {
-                    $('div.dataTables_scrollBody').css('min-height', 0);
-                },
+                dom:"<'row'<'col-md-2'l>>"+
+                    "<'row'<'col-sm-12'tr>>" +
+                    "<'row'<'col-md-3'i><'col-md-5 offset-4 pull-right'p>>",
                 ajax: {
                     url:
                         "@Html.Raw(Url.Action(
@@ -69,7 +93,6 @@
                     {
                         title: 'Student Name',
                         name: 'studentName',
-                        width: '200px',
                         data: function(row, type, set) {
                             return row.studentLastName + ", " + row.studentFirstName + " " + row.studentMiddleName;
                         },
@@ -80,84 +103,118 @@
                                 return data;
                             }
                         }
-                    },
+                    }
+                    @if (@Model.ReportType != StudentDrillDownReportType.Demographics)
                     {
-                        title: 'School ID',
-                        name: 'schoolId',
-                        data: 'schoolId',
-                        render: function(data, type, row, meta) {
-                            if (type === 'display') {
-                                if (data != null) {
-                                    return data;
-                                } else {
-                                    return "Unknown";
+                        <text>
+                            ,
+                            {
+                            @if (@Model.ReportType == StudentDrillDownReportType.EnrolledElsewhere)
+                            {
+                                @:title: 'District School ID',
+                            }
+                            else
+                            {
+                                @:title: 'School ID',
+                            }
+                                name: 'schoolId',
+                                data: 'schoolId',
+                                render: function(data, type, row, meta) {
+                                    if (type === 'display') {
+                                        if (data != null) {
+                                            return data;
+                                        } else {
+                                            return "Unknown";
+                                        }
+                                    } else {
+                                        return data;
+                                    }
                                 }
-                            } else {
-                                return data;
-                            }
-                        }
-                    },
-                    {
-                        title: 'School Name',
-                        name: 'schoolName',
-                        data: 'schoolName',
-                        width: '300px',
-                        render: function(data, type, row, meta) {
-                            if (type === 'display') {
-                                if (data != null && data.length > 0) {
-                                    return data;
-                                } else {
-                                    return "Unknown";
+                            },
+                            {
+                                title: 'School Name',
+                                name: 'schoolName',
+                                data: 'schoolName',
+                                width: '300px',
+                                render: function(data, type, row, meta) {
+                                    if (type === 'display') {
+                                        if (data != null && data.length > 0) {
+                                            return data;
+                                        } else {
+                                            return "Unknown";
+                                        }
+                                    } else {
+                                        return data;
+                                    }
                                 }
-                            } else {
-                                return data;
+                            },
+                            {
+                            @if (@Model.ReportType == StudentDrillDownReportType.EnrolledElsewhere)
+                            {
+                                @:title: 'Entry Date',
                             }
-                        }
-                    },
-                    {
-                        title: 'Enrolled Date',
-                        name: 'enrolledDate',
-                        data: 'enrolledDate',
-                        render: function (data, type, row, meta) {
-                            if (type === 'display') {
-                                return data == null ? "Unknown" : new Date(data).toLocaleDateString("en-US");
-                            } else {
-                                return data;
+                            else
+                            {
+                                @:title: 'Enrolled Date',
                             }
-                        }
-                    },
-                    {
-                        title: 'Withdraw Date',
-                        name: 'withdrawDate',
-                        data: 'withdrawDate',
-                        render: function(data, type, row, meta) {
-                            if (type === 'display') {
-                                return data == null ? "Unknown" : new Date(data).toLocaleDateString("en-US");
-                            } else {
-                                return data;
-                            }
-                        }
-                    },
-                    {
-                        title: 'Grade',
-                        name: 'grade',
-                        data: 'grade',
-                        render: function(data, type, row, meta) {
-                            if (type === 'display') {
-                                if (data != null) {
-                                    return data;
+                                name: 'enrolledDate',
+                                data: 'enrolledDate',
+                                render: function(data, type, row, meta) {
+                                if (type === 'display') {
+                                    return data == null ? "Unknown" : new Date(data).toLocaleDateString("en-US");
                                 } else {
-                                    return "Unknown";
+                                    return data;
                                 }
-                            } else {
-                                return data;
                             }
-                        }
+                            },
+                            {
+                            @if (@Model.ReportType == StudentDrillDownReportType.EnrolledElsewhere)
+                            {
+                                @:title: 'Exit/Withdraw Date',
+                            }
+                            else
+                            {
+                                @:title: 'Withdraw Date',
+                            }
+                                name: 'withdrawDate',
+                                data: 'withdrawDate',
+                                render: function(data, type, row, meta) {
+                                    if (type === 'display') {
+                                        return data == null ? "Unknown" : new Date(data).toLocaleDateString("en-US");
+                                    } else {
+                                        return data;
+                                    }
+                                }
+                            },
+                            {
+                                title: 'Grade',
+                                name: 'grade',
+                                data: 'grade',
+                                render: function(data, type, row, meta) {
+                                    if (type === 'display') {
+                                        if (data != null) {
+                                            return data;
+                                        } else {
+                                            return "Unknown";
+                                        }
+                                    } else {
+                                        return data;
+                                    }
+                                }
+                            }</text>
+                    }
+                    @if (@Model.ReportType == StudentDrillDownReportType.EnrolledElsewhere)
+                    {
+                        <text>, {
+                        title: 'Special Ed Evaluation Status',
+                        name: 'specialEdStatus',
+                        data: 'specialEdStatus'
+                        }</text>
                     }
                 ]
             });
 
             $(dataTable.table().header()).addClass('table-primary');
         });
-    </script>
-}
+</script>
+    }

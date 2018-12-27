@@ -17,5 +17,13 @@ namespace ValidationWeb.Services
         List<ChangeOfEnrollmentReportQuery> GetChangeOfEnrollmentReport(int districtEdOrgId, string fourDigitOdsDbYear);
         List<ResidentsEnrolledElsewhereReportQuery> GetResidentsEnrolledElsewhereReport(int? districtEdOrgId, string fourDigitOdsDbYear);
         List<StudentDrillDownQuery> GetResidentsEnrolledElsewhereStudentDrillDown(int? districtEdOrgId, string fourDigitOdsDbYear);
+
+        RecordsRequest GetRecordsRequestData(int edOrgId, string studentId);
+
+        IEnumerable<RecordsRequest> GetAllRecordsRequests();
+
+        void SaveRecordsRequest(RecordsRequestFormData recordsRequest);
+
+        void SaveRecordsResponse(RecordsResponseFormData recordsResponse);
     }
 }

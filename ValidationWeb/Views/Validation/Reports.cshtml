@@ -72,9 +72,12 @@
 
 
 <div class="row tbmargin10">
-@if (Model.ReportSummaries.Count() > 0)
-{
-    <table class="table table-sm table-responsive-md table-bordered" id="reportsTable">
+
+    <div id="requestedReportContent" class="col-md-12">
+        <table class="table table-bordered" id="reportsTable"></table>
+    </div>
+
+    @*<table class="table table-sm table-responsive-md table-bordered" id="reportsTable2">
         <tr class="table-primary">
             <th>Request Date/Time</th>
             <th>Collection</th>
@@ -83,82 +86,215 @@
             <th>Completion Date/Time</th>
             <th>Error Count</th>
             <th>Warning Count</th>
-        </tr>
-        @foreach (var summary in Model.ReportSummaries)
-            {
-            <tr>
-                <td>
-                    @summary.RequestedWhen.ToShortDateString()
-                    <br />@summary.RequestedWhen.ToShortTimeString()
-                </td>
-                <td>@Html.ActionLink(summary.Collection ?? "Unknown", "Report", "Validation", new { area = "", id = summary.Id, @class = "show-data-loading"}, null)</td>
-                <td>@summary.InitiatedBy</td>
-                <td>@summary.Status</td>
-                <td>
-                    @(summary.CompletedWhen.HasValue ? summary.CompletedWhen.Value.ToShortDateString() : string.Empty)
-                    <br />@(summary.CompletedWhen.HasValue ? summary.CompletedWhen.Value.ToShortTimeString() : string.Empty)
-                </td>
-                <td>@(summary.ErrorCount.HasValue ? summary.ErrorCount.Value.ToString() : string.Empty)</td>
-                <td>@(summary.WarningCount.HasValue ? summary.WarningCount.Value.ToString() : string.Empty)</td>
-            </tr>
-        }
-    </table>
-}
-else
-{
-    <div class="col-12 vp-body-header">No validations have been run for @(Model.DistrictName).</div>
-}
+        </tr>*@
+    @*@foreach (var summary in Model.ReportSummaries)
+                    {
+                    <tr>
+                        <td>
+                            @summary.RequestedWhen.ToShortDateString()
+                            <br />@summary.RequestedWhen.ToShortTimeString()
+                        </td>
+                        <td>@Html.ActionLink(summary.Collection ?? "Unknown", "Report", "Validation", new { area = "", id = summary.Id, @class = "show-data-loading"}, null)</td>
+                        <td>@summary.InitiatedBy</td>
+                        <td>@summary.Status</td>
+                        <td>
+                            @(summary.CompletedWhen.HasValue ? summary.CompletedWhen.Value.ToShortDateString() : string.Empty)
+                            <br />@(summary.CompletedWhen.HasValue ? summary.CompletedWhen.Value.ToShortTimeString() : string.Empty)
+                        </td>
+                        <td>@(summary.ErrorCount.HasValue ? summary.ErrorCount.Value.ToString() : string.Empty)</td>
+                        <td>@(summary.WarningCount.HasValue ? summary.WarningCount.Value.ToString() : string.Empty)</td>
+                    </tr>
+                }
+        </table>
+    *@
+    @*<div class="col-12 vp-body-header">No validations have been run for @(Model.DistrictName).</div>*@
+
 </div>
 
 @section scripts {
     <script>
-        // Once the user has clicked the Validate button and chosen a *year* and *collection*, 
+        // Once the user has clicked the Validate button and chosen a *year* and *collection*,
         // This callback records those choices on the second popup (a confirmation dialog/modal).
-        $('#NewValidationModal').on('hidden.bs.modal', function (e) {
-            let cycleId = $('#cycleIdSelect').val();
-            let cycleIdSelection = $('#cycleIdSelect').find("option:selected").text();
-            let schoolYearDisplayName, collectionId;
-            [schoolYearDisplayName, collectionId] = cycleIdSelection.split(" / ");
-            $('.schoolYearDisplayName').text(schoolYearDisplayName);
-            $('.collectionDisplayName').text(collectionId.replace(/_/g, ' '));
-            $('#confirm-validation').attr("data-id", cycleId);
+        $('#NewValidationModal').on('hidden.bs.modal',
+            function(e) {
+                let cycleId = $('#cycleIdSelect').val();
+                let cycleIdSelection = $('#cycleIdSelect').find("option:selected").text();
+                let schoolYearDisplayName, collectionId;
+                [schoolYearDisplayName, collectionId] = cycleIdSelection.split(" / ");
+                $('.schoolYearDisplayName').text(schoolYearDisplayName);
+                $('.collectionDisplayName').text(collectionId.replace(/_/g, ' '));
+                $('#confirm-validation').attr("data-id", cycleId);
 
-            $('.schoolYearCollectionSelection').text(cycleIdSelection.replace(/_/g, ' '));
-        });
+                $('.schoolYearCollectionSelection').text(cycleIdSelection.replace(/_/g, ' '));
+            });
 
         // Once the user has already clicked the Validate button and chosen a *year* and *collection*, there is a second, Yes/No confirmation.
-        // This registers a callback to run the validation engine if the user chose YES when dismissing the confirmation dialog. 
-        $('#ConfirmNewValidationModal').on('hidden.bs.modal', function (e) {
-            overlayOn();
-            setTimeout(function () { overlayOff(); }, 2000);
-            if (lastModalExitButton == 'launch') {
-                let cycleId = $('#confirm-validation').attr("data-id");
-                $.ajax({
-                    url: '@(Url.Action("RunEngine", "Validation"))',
-                    type: "POST",
-                    beforeSend: function (request) {
-                        request.setRequestHeader('Authorization', '@(Model.TheUser.UserId)');
-                    },
-                    async: true,
-                    data: { submissionCycleId: cycleId },
-                    success: function (result) {
-                        location.reload(true);
-                        overlayOff();
-                    },
-                    error: function (err) {
-                        // Perhaps in the future we might want to display to the user an error if the validation failed,
-                        // thus we might need the "err" variable.
-                        overlayOff();
-                    }
-                });
-            }
-        });
+        // This registers a callback to run the validation engine if the user chose YES when dismissing the confirmation dialog.
+        $('#ConfirmNewValidationModal').on('hidden.bs.modal',
+            function(e) {
+                if (lastModalExitButton == 'launch') {
+                    overlayOn();
+
+                    let cycleId = $('#confirm-validation').attr("data-id");
+                    $.ajax({
+                        url: '@(Url.Action("RunEngine", "Validation"))',
+                        type: "POST",
+                        beforeSend: function(request) {
+                            request.setRequestHeader('Authorization', '@(Model.TheUser.UserId)');
+                        },
+                        async: true,
+                        data: { submissionCycleId: cycleId },
+                        success: function(result) {
+                            $('#reportsTable').DataTable().ajax.reload();
+                        },
+                        error: function(err) {
+                            // Perhaps in the future we might want to display to the user an error if the validation failed,
+                            // thus we might need the "err" variable. TODO
+                            overlayOff();
+                        }
+                    });
+                }
+            });
 
         // TODO: Puts the table into a downloadable CSV - unfortunately, it doesn't support dates
-        $(document).ready(function () {
+        $(document).ready(function() {
             $("#export").click(function() {
                 //$('#reportsTable').table2csv({ filename: 'validationReports.csv' });
             });
+
+            var reportLinkTemplate =
+                '<a href="@Html.Raw(Url.Action(
+                              "Report",
+                              "Validation",
+                              new { id = "_id_" }))" class="show-data-loading">_collection_</a>';
+
+            function createReportLink(id, collection) {
+                return reportLinkTemplate
+                    .replace(/_id_/g, id)
+                    .replace(/_collection_/g, collection);
+            }
+
+            var dataTable = $('#reportsTable').DataTable({
+                paging: true,
+                pagingType: 'full_numbers',
+                info: true,
+                scrollCollapse: true,
+                deferRender: true,
+                searching: false,
+                serverSide: true,
+                processing: true,
+                language: {
+                    loadingRecords: 'Loading...',
+                    processing: "Loading..."
+                },
+                dom: "<'row'<'col-md-3'l><'col-md-3 offset-6 text-right jumpToNotes'>>" +
+                    "<'row'<'col-sm-12'tr>>" +
+                    "<'row'<'col-md-3'i><'col-md-5 offset-4 pull-right'p>>",
+                ajax: {
+                    url: "@Html.Raw(Url.Action(
+                              "ReportSummaries",
+                              new { edOrgId = Model.FocusedEdOrgId }))",
+                    complete: tableDataRefreshed
+                },
+                columns: [
+                    {
+                        title: 'Request Date/Time',
+                        data: 'requestedWhen',
+                        render: function(data, type, row, meta) {
+                            if (type === 'display') {
+                                return data == null ? "Unknown" : new Date(data).toLocaleString("en-US");
+                            } else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        title: 'Collection',
+                        data: 'collection',
+                        render: function(data, type, row, meta) {
+                            if (row.status.indexOf("In Progress") >= 0) {
+                                return data;
+                            } else {
+                                return createReportLink(row.id, data);
+                            }
+                        }
+                    },
+                    {
+                        title: 'Initiated By',
+                        data: 'initiatedBy',
+                    },
+                    {
+                        title: 'Status',
+                        data: 'status',
+                        // chop this off or just show the overview
+                    },
+                    {
+                        title: 'Completion Date/Time',
+                        data: 'completedWhen',
+                        render: function(data, type, row, meta) {
+                            if (type === 'display') {
+                                return data == null ? "-" : new Date(data).toLocaleString("en-US");
+                            } else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        title: 'Error Count',
+                        data: 'errorCount',
+                        render: function(data, type, row, meta) {
+                            if (type === 'display') {
+                                return data == null ? "-" : data;
+                            } else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        title: 'Warning Count',
+                        data: 'warningCount',
+                        render: function(data, type, row, meta) {
+                            if (type === 'display') {
+                                return data == null ? "-" : data;
+                            } else {
+                                return data;
+                            }
+                        }
+                    },
+                ]
+            });
+
+            $(dataTable.table().header()).addClass('table-primary');
+
+            function tableDataRefreshed() {
+                console.log('ajax completed');
+                var dataTable = $('#reportsTable').DataTable();
+                overlayOff();
+                console.log(dataTable.rows());
+                var foundInProgress = false;
+
+                dataTable.rows().every(function(rowIdx, tableLoop, rowLoop) {
+                    var data = this.data();
+                    console.log(`checking row ${rowIdx}`);
+                    if (data.status.indexOf('In Progress') >= 0) {
+                        foundInProgress = true;
+                        return false; // break out of this every() loop
+                    }
+                });
+
+                if (foundInProgress) {
+                    console.log('found "In Progress", checking back in 5s');
+                    setTimeout(dataTable.ajax.reload, 5000);
+                }
+
+                return true;
+            }
+
+            // hook up some reload event and polling
+            //$("input[name=date-filter]").change(function(e) {
+            //    $('#reportsTable1').DataTable().ajax.reload();
+            //    $('#reportsTable2').DataTable().ajax.reload();
+            //});
         });
     </script>
 }
