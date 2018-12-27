@@ -1,17 +1,18 @@
-﻿using Engine.Models;
-using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Web;
-
-namespace ValidationWeb.Services
+﻿namespace ValidationWeb.Services
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Data.Entity;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+
+    using Engine.Models;
+
     public class RulesEngineService : IRulesEngineService
     {
-        protected readonly ValidationPortalDbContext _dbContext;
+        // protected readonly ValidationPortalDbContext _dbContext;
         protected readonly IRulesEngineConfigurationValues _engineConfig;
         protected readonly Model _engineObjectModel;
         protected readonly IAppUserService _appUserService;
@@ -25,11 +26,10 @@ namespace ValidationWeb.Services
             ISchoolYearService schoolYearService,
             IRulesEngineConfigurationValues engineConfig,
             ILoggingService loggingService,
-            ValidationPortalDbContext dbContext,
-            Model engineObjectModel
-            )
+            // ValidationPortalDbContext dbContext,
+            Model engineObjectModel)
         {
-            _dbContext = dbContext;
+            // _dbContext = dbContext;
             _appUserService = appUserService;
             _edOrgService = edOrgService;
             _schoolYearService = schoolYearService;
@@ -38,148 +38,240 @@ namespace ValidationWeb.Services
             _engineObjectModel = engineObjectModel;
         }
 
-        public ValidationReportSummary RunEngine(string fourDigitOdsDbYear, string collectionId)
+        public ValidationReportSummary SetupValidationRun(string fourDigitOdsDbYear, string collectionId)
         {
             ValidationReportSummary newReportSummary = null;
-            using (var _odsRawDbContext = new RawOdsDbContext(fourDigitOdsDbYear))
+            using (var odsRawDbContext = new RawOdsDbContext(fourDigitOdsDbYear))
             {
-                _loggingService.LogDebugMessage($"Connecting to the Ed Fi ODS {fourDigitOdsDbYear} to run the Rules Engine. Submitting the RulesValidation run ID.");
-                // Run the rules - This code is adapted from an example in the Rule Engine project.
-                #region Add a new execution of the Validation Engine to the ODS database, (required by the Engine) and get an ID back representing this execution.
-                var newRuleValidationExecution = new RuleValidation { CollectionId = collectionId };
-                _odsRawDbContext.RuleValidations.Add(newRuleValidationExecution);
-                _odsRawDbContext.SaveChanges();
-                _loggingService.LogDebugMessage($"Successfully submitted RuleValidationId {newRuleValidationExecution.RuleValidationId.ToString()} to the Rules Engine database table.");
-                #endregion Add a new execution of the Validation Engine to the ODS database, (required by the Engine) and get an ID back representing this execution.
-
-                #region Add a new execution of the Validation Engine to the Validation database, (required by the Portal) and get an ID back representing this execution.
-                newReportSummary = new ValidationReportSummary
+                using (var validationDbContext = new ValidationPortalDbContext())
                 {
-                    Collection = collectionId,
-                    CompletedWhen = null,
-                    ErrorCount = null,
-                    WarningCount = null,
-                    TotalCount = 0,
-                    Id = newRuleValidationExecution.RuleValidationId,
-                    EdOrgId = _appUserService.GetSession().FocusedEdOrgId,
-                    SchoolYear = _schoolYearService.GetSubmittableSchoolYears().FirstOrDefault(sy => sy.EndYear == fourDigitOdsDbYear),
-                    InitiatedBy = _appUserService.GetUser().FullName,
-                    RequestedWhen = DateTime.UtcNow,
-                    Status = "In Progress"
-                };
-                _dbContext.ValidationReportSummaries.Add(newReportSummary);
-                _dbContext.SaveChanges();
-                _loggingService.LogDebugMessage($"Successfully submitted Validation Report Summary ID {newReportSummary.Id} to the Validation Portal database for Rules Validation Run {newRuleValidationExecution.RuleValidationId.ToString()}.");
-                #endregion Add a new execution of the Validation Engine to the Validation database, (required by the Portal) and get an ID back representing this execution.
+                    _loggingService.LogDebugMessage(
+                        $"Connecting to the Ed Fi ODS {fourDigitOdsDbYear} to run the Rules Engine. Submitting the RulesValidation run ID.");
 
-                #region Now, store each Ruleset ID and Rule ID that the engine will run. Save it in the Engine database.
-                _loggingService.LogDebugMessage($"Getting the rules to run for the chosen collection {collectionId}.");
-                var rules = _engineObjectModel.GetRules(collectionId).ToArray();
-                var ruleComponents = rules.SelectMany(r => r.Components.Distinct().Select(c => new { r.RulesetId, r.RuleId, Component = c }));
-                foreach (var singleRuleNeedingToBeValidated in ruleComponents)
+                    // Run the rules - This code is adapted from an example in the Rule Engine project.
+
+                    #region Add a new execution of the Validation Engine to the ODS database, (required by the Engine) and get an ID back representing this execution.
+
+                    var newRuleValidationExecution = new RuleValidation { CollectionId = collectionId };
+                    odsRawDbContext.RuleValidations.Add(newRuleValidationExecution);
+                    odsRawDbContext.SaveChanges();
+
+                    _loggingService.LogDebugMessage(
+                        $"Successfully submitted RuleValidationId {newRuleValidationExecution.RuleValidationId.ToString()} to the Rules Engine database table.");
+
+                    #endregion Add a new execution of the Validation Engine to the ODS database, (required by the Engine) and get an ID back representing this execution.
+
+                    #region Add a new execution of the Validation Engine to the Validation database, (required by the Portal) and get an ID back representing this execution.
+
+                    newReportSummary = new ValidationReportSummary
+                                       {
+                                           Collection = collectionId,
+                                           CompletedWhen = null,
+                                           ErrorCount = null,
+                                           WarningCount = null,
+                                           TotalCount = 0,
+                                           Id = newRuleValidationExecution.RuleValidationId,
+                                           EdOrgId = _appUserService.GetSession().FocusedEdOrgId,
+                                           SchoolYear =
+                                               _schoolYearService.GetSubmittableSchoolYears()
+                                                   .FirstOrDefault(sy => sy.EndYear == fourDigitOdsDbYear),
+                                           InitiatedBy = _appUserService.GetUser().FullName,
+                                           RequestedWhen = DateTime.UtcNow,
+                                           Status = "In Progress - Starting"
+                                       };
+                    validationDbContext.ValidationReportSummaries.Add(newReportSummary);
+                    validationDbContext.SaveChanges();
+                    _loggingService.LogDebugMessage(
+                        $"Successfully submitted Validation Report Summary ID {newReportSummary.Id} to the Validation Portal database for Rules Validation Run {newRuleValidationExecution.RuleValidationId.ToString()}.");
+
+                    #endregion Add a new execution of the Validation Engine to the Validation database, (required by the Portal) and get an ID back representing this execution.
+                }
+            }
+
+            return newReportSummary;
+        }
+
+        public Task RunValidationAsync(string fourDigitOdsDbYear, long ruleValidationId)
+        {
+            return Task.Factory.StartNew(() => RunValidation(fourDigitOdsDbYear, ruleValidationId));
+        }
+
+        public void RunValidation(string fourDigitOdsDbYear, long ruleValidationId)
+        {
+            // todo: dependency inject the initialization of RawOdsDbContext with a year. introduce a factory for most simple implementation
+            using (var odsRawDbContext = new RawOdsDbContext(fourDigitOdsDbYear))
+            {
+                using (var validationDbContext = new ValidationPortalDbContext())
                 {
-                    _odsRawDbContext.RuleValidationRuleComponents.Add(new RuleValidationRuleComponent
+                    var newRuleValidationExecution =
+                        odsRawDbContext.RuleValidations.FirstOrDefault(x => x.RuleValidationId == ruleValidationId);
+                    
+                    var newReportSummary = validationDbContext
+                        .ValidationReportSummaries
+                        .Include(x => x.SchoolYear)
+                        .FirstOrDefault(x => x.Id == newRuleValidationExecution.RuleValidationId);
+
+                    var collectionId = newRuleValidationExecution.CollectionId;
+
+                    #region Now, store each Ruleset ID and Rule ID that the engine will run. Save it in the Engine database.
+
+                    _loggingService.LogDebugMessage($"Getting the rules to run for the chosen collection {collectionId}.");
+                    var rules = _engineObjectModel.GetRules(collectionId).ToArray();
+                    var ruleComponents = rules.SelectMany(
+                        r => r.Components.Distinct().Select(
+                            c => new
+                            {
+                                r.RulesetId,
+                                r.RuleId,
+                                Component = c
+                            }));
+
+                    foreach (var singleRuleNeedingToBeValidated in ruleComponents)
                     {
-                        RuleValidationId = newRuleValidationExecution.RuleValidationId,
-                        RulesetId = singleRuleNeedingToBeValidated.RulesetId,
-                        RuleId = singleRuleNeedingToBeValidated.RuleId,
-                        Component = singleRuleNeedingToBeValidated.Component
-                    });
-                }
-                _odsRawDbContext.SaveChanges();
-                _loggingService.LogDebugMessage($"Saved the rules to run for the chosen collection {collectionId}.");
-                #endregion Now, store each Ruleset ID and Rule ID that the engine will run. Save it in the Engine database.
+                        odsRawDbContext.RuleValidationRuleComponents.Add(
+                            new RuleValidationRuleComponent
+                            {
+                                RuleValidationId = newRuleValidationExecution.RuleValidationId,
+                                RulesetId = singleRuleNeedingToBeValidated.RulesetId,
+                                RuleId = singleRuleNeedingToBeValidated.RuleId,
+                                Component = singleRuleNeedingToBeValidated.Component
+                            });
+                    }
 
-                #region The ValidationReportDetails is one-for-one with the ValidationReportSummary - it should be refactored away. It contains the error/warning details.
-                _loggingService.LogDebugMessage($"Adding additional Validation Report details to the Validation Portal database for EdOrgID {newReportSummary.EdOrgId}.");
-                var newReportDetails = new ValidationReportDetails
-                {
-                    CollectionName = collectionId,
-                    SchoolYearId = newReportSummary.SchoolYear.Id,
-                    DistrictName = $"{_edOrgService.GetEdOrgById(newReportSummary.EdOrgId, newReportSummary.SchoolYear.Id).OrganizationName} ({newReportSummary.EdOrgId.ToString()})",
-                    ValidationReportSummaryId = newReportSummary.Id
-                };
-                _dbContext.ValidationReportDetails.Add(newReportDetails);
-                try
-                {
-                    _dbContext.SaveChanges();
-                }
-                catch(Exception ex)
-                {
-                    _loggingService.LogErrorMessage(ex.ChainInnerExceptionMessages());
-                }
-                _loggingService.LogDebugMessage($"Successfully added additional Validation Report details to the Validation Portal database for EdOrgID {newReportSummary.EdOrgId}.");
-                #endregion The ValidationReportDetails is one-for-one with the ValidationReportSummary - it should be refactored away. It contains the error/warning details.
+                    odsRawDbContext.SaveChanges();
+                    _loggingService.LogDebugMessage($"Saved the rules to run for the chosen collection {collectionId}.");
 
-                #region Execute each individual rule.
-                List<RulesEngineExecutionException> rulesEngineExecutionExceptions = new List<RulesEngineExecutionException>();
-                foreach (var rule in rules)
-                {
+                    #endregion Now, store each Ruleset ID and Rule ID that the engine will run. Save it in the Engine database.
+
+                    #region The ValidationReportDetails is one-for-one with the ValidationReportSummary - it should be refactored away. It contains the error/warning details.
+
+                    _loggingService.LogDebugMessage(
+                        $"Adding additional Validation Report details to the Validation Portal database for EdOrgID {newReportSummary.EdOrgId}.");
+
+                    var newReportDetails = new ValidationReportDetails
+                    {
+                        CollectionName = collectionId,
+                        SchoolYearId = newReportSummary.SchoolYear.Id,
+                        DistrictName = $"{_edOrgService.GetEdOrgById(newReportSummary.EdOrgId, newReportSummary.SchoolYear.Id).OrganizationName} ({newReportSummary.EdOrgId.ToString()})",
+                        ValidationReportSummaryId = newReportSummary.Id
+                    };
+                    validationDbContext.ValidationReportDetails.Add(newReportDetails);
                     try
                     {
-                        // By default, rules are run against ALL districts in the Ed Fi ODS. This line filters for multi-district/multi-tenant ODS's.
-                        rule.AddDistrictWhereFilter(newReportSummary.EdOrgId);
-
-                        _loggingService.LogDebugMessage($"Executing Rule {rule.RuleId}.");
-                        _loggingService.LogDebugMessage($"Executing Rule SQL {rule.Sql}.");
-                        var detailParams = new List<SqlParameter> { new SqlParameter("@RuleValidationId", newRuleValidationExecution.RuleValidationId) };
-                        detailParams.AddRange(_engineObjectModel.GetParameters(collectionId).Select(x => new SqlParameter(x.ParameterName, x.Value)));
-                        _odsRawDbContext.Database.CommandTimeout = 60;
-                        var result = _odsRawDbContext.Database.ExecuteSqlCommand(rule.ExecSql, detailParams.ToArray());
-                        _loggingService.LogDebugMessage($"Executing Rule {rule.RuleId} rows affected = {result}.");
-
-                        #region Record the results of this rule in the Validation Portal database, accompanied by more detailed information.
-                        PopulateErrorDetailsFromViews(rule, _odsRawDbContext, newRuleValidationExecution.RuleValidationId, newReportDetails.Id);
-                        #endregion Record the results of this rule in the Validation Portal database, accompanied by more detailed information.
+                        validationDbContext.SaveChanges();
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
-                        rulesEngineExecutionExceptions.Add(new RulesEngineExecutionException
-                        {
-                            RuleId = rule.RuleId,
-                            Sql = rule.Sql,
-                            ExecSql = rule.ExecSql,
-                            DataSourceName = $"Database Server: {_odsRawDbContext.Database.Connection.DataSource}{Environment.NewLine} Database: {_odsRawDbContext.Database.Connection.Database}",
-                            ChainedErrorMessages = ex.ChainInnerExceptionMessages()
-                        });
+                        _loggingService.LogErrorMessage(ex.ChainInnerExceptionMessages());
                     }
+
+                    _loggingService.LogDebugMessage(
+                        $"Successfully added additional Validation Report details to the Validation Portal database for EdOrgID {newReportSummary.EdOrgId}.");
+
+                    #endregion The ValidationReportDetails is one-for-one with the ValidationReportSummary - it should be refactored away. It contains the error/warning details.
+
+                    #region Execute each individual rule.
+
+                    List<RulesEngineExecutionException> rulesEngineExecutionExceptions =
+                        new List<RulesEngineExecutionException>();
+
+                    for (var i = 0; i < rules.Length; i++)
+                    {
+                        var rule = rules[i];
+                        try
+                        {
+                            // By default, rules are run against ALL districts in the Ed Fi ODS. This line filters for multi-district/multi-tenant ODS's.
+                            rule.AddDistrictWhereFilter(newReportSummary.EdOrgId);
+
+                            _loggingService.LogDebugMessage($"Executing Rule {rule.RuleId}.");
+                            _loggingService.LogDebugMessage($"Executing Rule SQL {rule.Sql}.");
+                            var detailParams = new List<SqlParameter>
+                                           {
+                                               new SqlParameter(
+                                                   "@RuleValidationId",
+                                                   newRuleValidationExecution.RuleValidationId)
+                                           };
+                            detailParams.AddRange(
+                                _engineObjectModel.GetParameters(collectionId)
+                                    .Select(x => new SqlParameter(x.ParameterName, x.Value)));
+                            odsRawDbContext.Database.CommandTimeout = 60;
+                            var result = odsRawDbContext.Database.ExecuteSqlCommand(rule.ExecSql, detailParams.ToArray());
+                            _loggingService.LogDebugMessage($"Executing Rule {rule.RuleId} rows affected = {result}.");
+
+                            #region Record the results of this rule in the Validation Portal database, accompanied by more detailed information.
+
+                            PopulateErrorDetailsFromViews(
+                                rule,
+                                odsRawDbContext,
+                                newRuleValidationExecution.RuleValidationId,
+                                newReportDetails.Id);
+
+                            newReportSummary.Status = $"In Progress - {(int)((float)i / rules.Length * 100)}% complete";
+                            validationDbContext.SaveChanges();
+
+                            #endregion Record the results of this rule in the Validation Portal database, accompanied by more detailed information.
+                        }
+                        catch (Exception ex)
+                        {
+                            rulesEngineExecutionExceptions.Add(
+                                new RulesEngineExecutionException
+                                {
+                                    RuleId = rule.RuleId,
+                                    Sql = rule.Sql,
+                                    ExecSql = rule.ExecSql,
+                                    DataSourceName =
+                                        $"Database Server: {odsRawDbContext.Database.Connection.DataSource}{Environment.NewLine} Database: {odsRawDbContext.Database.Connection.Database}",
+                                    ChainedErrorMessages = ex.ChainInnerExceptionMessages()
+                                });
+                        }
+                    }
+
+                    #endregion Execute each individual rule.
+
+                    _loggingService.LogDebugMessage($"Counting errors and warnings.");
+                    newReportSummary.CompletedWhen = DateTime.UtcNow;
+
+                    newReportSummary.ErrorCount = odsRawDbContext.RuleValidationDetails.Count(
+                        rvd => rvd.RuleValidation.RuleValidationId == newRuleValidationExecution.RuleValidationId
+                               && rvd.IsError);
+
+                    newReportSummary.WarningCount = odsRawDbContext.RuleValidationDetails.Count(
+                        rvd => rvd.RuleValidation.RuleValidationId == newRuleValidationExecution.RuleValidationId
+                               && !rvd.IsError);
+
+                    var hasExecutionErrors = rulesEngineExecutionExceptions.Count > 0;
+                    newReportSummary.Status = hasExecutionErrors
+                                                  ? $"Completed - {rulesEngineExecutionExceptions.Count} rules did not execute, ask an administrator to check the log for errors, Report Summary Number {newReportSummary.Id.ToString()}"
+                                                  : "Completed";
+                    _loggingService.LogDebugMessage($"Saving status {newReportSummary.Status}.");
+
+                    // Log Execution Errors
+                    _loggingService.LogErrorMessage(
+                        GetLogExecutionErrorsMessage(rulesEngineExecutionExceptions, newReportSummary.Id));
+
+                    newReportDetails.CompletedWhen = newReportDetails.CompletedWhen ?? DateTime.UtcNow;
+                    validationDbContext.SaveChanges();
+                    _loggingService.LogDebugMessage($"Saved status.");
                 }
-                #endregion Execute each individual rule.
-
-                _loggingService.LogDebugMessage($"Counting errors and warnings.");
-                newReportSummary.CompletedWhen = DateTime.UtcNow;
-                newReportSummary.ErrorCount = _odsRawDbContext.RuleValidationDetails.Where(rvd => rvd.RuleValidation.RuleValidationId == newRuleValidationExecution.RuleValidationId && rvd.IsError).Count();
-                newReportSummary.WarningCount = _odsRawDbContext.RuleValidationDetails.Where(rvd => rvd.RuleValidation.RuleValidationId == newRuleValidationExecution.RuleValidationId && !rvd.IsError).Count();
-                var hasExecutionErrors = (rulesEngineExecutionExceptions.Count > 0);
-                newReportSummary.Status = hasExecutionErrors ? $"Completed - {rulesEngineExecutionExceptions.Count} rules did not execute, ask an administrator to check the log for errors, Report Summary Number {newReportSummary.Id.ToString()}" : "Completed";
-                _loggingService.LogDebugMessage($"Saving status {newReportSummary.Status}.");
-
-                // Log Execution Errors
-                _loggingService.LogErrorMessage(GetLogExecutionErrorsMessage(rulesEngineExecutionExceptions, newReportSummary.Id));
-
-                newReportDetails.CompletedWhen = newReportDetails.CompletedWhen ?? DateTime.UtcNow;
-                _dbContext.SaveChanges();
-                _loggingService.LogDebugMessage($"Saved status.");
             }
-            return newReportSummary;
         }
 
         protected string GetLogExecutionErrorsMessage(IList<RulesEngineExecutionException> rulesEngineExecutionExceptions, long reportId)
         {
-                var logMessageBuilder = new StringBuilder();
-                logMessageBuilder.AppendLine("=================================================");
-                logMessageBuilder.AppendLine($"Rules Engine Execution Errors Reported for Validation Report Summary # {reportId.ToString()}:");
-                foreach (var execError in rulesEngineExecutionExceptions)
-                {
-                    logMessageBuilder.AppendLine();
-                    logMessageBuilder.AppendLine($"Rule ID: {execError.RuleId ?? "null"}");
-                    logMessageBuilder.AppendLine($"Server and Database: {execError.DataSourceName ?? "null"}");
-                    logMessageBuilder.AppendLine($"SQL: {execError.Sql ?? "null"}");
-                    logMessageBuilder.AppendLine($"Executed SQL: {execError.ExecSql ?? "null"}");
-                    logMessageBuilder.AppendLine($"Chained Error Message and Stack Trace:");
-                    logMessageBuilder.AppendLine(execError.ChainedErrorMessages ?? "null");
-                }
-                logMessageBuilder.AppendLine("=================================================");
+            var logMessageBuilder = new StringBuilder();
+            logMessageBuilder.AppendLine("=================================================");
+            logMessageBuilder.AppendLine($"Rules Engine Execution Errors Reported for Validation Report Summary # {reportId.ToString()}:");
+            foreach (var execError in rulesEngineExecutionExceptions)
+            {
+                logMessageBuilder.AppendLine();
+                logMessageBuilder.AppendLine($"Rule ID: {execError.RuleId ?? "null"}");
+                logMessageBuilder.AppendLine($"Server and Database: {execError.DataSourceName ?? "null"}");
+                logMessageBuilder.AppendLine($"SQL: {execError.Sql ?? "null"}");
+                logMessageBuilder.AppendLine($"Executed SQL: {execError.ExecSql ?? "null"}");
+                logMessageBuilder.AppendLine($"Chained Error Message and Stack Trace:");
+                logMessageBuilder.AppendLine(execError.ChainedErrorMessages ?? "null");
+            }
+            logMessageBuilder.AppendLine("=================================================");
             return logMessageBuilder.ToString();
         }
 
@@ -287,9 +379,14 @@ namespace ValidationWeb.Services
                         catch (Exception) { }
                     }
                 }
-                _dbContext.ValidationErrorSummaries.AddRange(errorSummaries);
-                _dbContext.SaveChanges();
-                _loggingService.LogDebugMessage($"Successfully committed all additional error information for students found with issues referring to rule {rule.RuleId}.");
+
+                using (var validationDbContext = new ValidationPortalDbContext())
+                {
+                    validationDbContext.ValidationErrorSummaries.AddRange(errorSummaries);
+                    validationDbContext.SaveChanges();
+                    _loggingService.LogDebugMessage(
+                        $"Successfully committed all additional error information for students found with issues referring to rule {rule.RuleId}.");
+                }
             }
             catch (Exception ex)
             {
