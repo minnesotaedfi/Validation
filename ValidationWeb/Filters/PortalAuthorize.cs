@@ -9,6 +9,7 @@ namespace ValidationWeb.Filters
 {
     public class PortalAuthorize : System.Web.Mvc.AuthorizeAttribute
     {
+        #if TODO
         public override void OnAuthorization(AuthorizationContext filterContext)
         {
             // If they are authorized, handle accordingly
@@ -27,5 +28,15 @@ namespace ValidationWeb.Filters
                 }
             }
         }
+        #else 
+        public override void OnAuthorization(AuthorizationContext filterContext)
+        {
+            // If they are authorized, handle accordingly
+            if (this.AuthorizeCore(filterContext.HttpContext))
+            {
+                base.OnAuthorization(filterContext);
+            }
+        }
+        #endif 
     }
 }
