@@ -27,6 +27,12 @@
 				<mvcSiteMapNode title="Immigrant" controller="Ods" action="StudentProgramsReport" drillDownColumnIndex="6" key="programs-6"/>
 				<mvcSiteMapNode title="Recently Arrived English Learner" controller="Ods" action="StudentProgramsReport" drillDownColumnIndex="7" key="programs-7"/>
 				<mvcSiteMapNode title="SLIFE" controller="Ods" action="StudentProgramsReport" drillDownColumnIndex="8" key="programs-8"/>
+				<mvcSiteMapNode title="English Learner Identified" controller="Ods" action="StudentProgramsReport" drillDownColumnIndex="9" key="programs-9"/>
+				<mvcSiteMapNode title="English Learner Served" controller="Ods" action="StudentProgramsReport" drillDownColumnIndex="10" key="programs-10"/>
+				<mvcSiteMapNode title="Independent Study" controller="Ods" action="StudentProgramsReport" drillDownColumnIndex="11" key="programs-11"/>
+				<mvcSiteMapNode title="Section 504" controller="Ods" action="StudentProgramsReport" drillDownColumnIndex="12" key="programs-12"/>
+				<mvcSiteMapNode title="Title I Part A" controller="Ods" action="StudentProgramsReport" drillDownColumnIndex="13" key="programs-13"/>
+				<mvcSiteMapNode title="Free and Reduced Meals" controller="Ods" action="StudentProgramsReport" drillDownColumnIndex="14" key="programs-14"/>
 			</mvcSiteMapNode>
 			<mvcSiteMapNode title="Change Of Enrollment" controller="Ods" action="ChangeOfEnrollmentReport" drillDownColumnIndex="" key="change" />
 			<mvcSiteMapNode title="Residents Enrolled Elsewhere" controller="Ods" action="ResidentsEnrolledElsewhereReport"/>

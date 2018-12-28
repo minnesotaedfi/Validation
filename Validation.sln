@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.136
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ValidationWeb", "ValidationWeb\ValidationWeb.csproj", "{0748540C-3F9C-499A-A9C1-15CC5C9D9A30}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Engine", "Engine\Engine.csproj", "{7DD0BD93-1EE3-4C63-9D54-E8A9C9B1AD6B}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Rules", "Rules\Rules.shproj", "{DF6C51CA-8B4C-4AA2-8995-BA63224FB0C3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ValidationWeb.Tests", "ValidationWeb.Tests\ValidationWeb.Tests.csproj", "{CE3D5364-7316-40A7-AB01-A88B6AE4186F}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -26,8 +28,15 @@ Global
 		{7DD0BD93-1EE3-4C63-9D54-E8A9C9B1AD6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7DD0BD93-1EE3-4C63-9D54-E8A9C9B1AD6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7DD0BD93-1EE3-4C63-9D54-E8A9C9B1AD6B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE3D5364-7316-40A7-AB01-A88B6AE4186F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE3D5364-7316-40A7-AB01-A88B6AE4186F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE3D5364-7316-40A7-AB01-A88B6AE4186F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE3D5364-7316-40A7-AB01-A88B6AE4186F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B5E399C7-6166-47DB-9CB9-DE47D45A3865}
 	EndGlobalSection
 EndGlobal

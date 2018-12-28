@@ -2,7 +2,9 @@
 
     <div class="ml-auto justify-content-end">
         <li class="nav-item dropdown pull-right">
-            <a class="nav-link dropdown-toggle validation-dropdown-toggle" href="#" id="actionDropdownProfile" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="fas fa-user-circle white-heavy-text"></span> @Model.AppUserSession.UserIdentity.UserId</a>
+            <a class="nav-link dropdown-toggle validation-dropdown-toggle" href="#" id="actionDropdownProfile" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="fas fa-user-circle white-heavy-text"></span> @Model.AppUserSession.UserIdentity.UserId
+            </a>
             <div class="dropdown-menu validation-drowdown-menu" style="left: initial;" aria-labelledby="actionDropdown">
                 @*TODO - If admin only show admin page. ASK - Is this ok?*@
                 @if (Model.AppUserSession.UserIdentity.AppRole.Name == "Administrator")
@@ -13,14 +15,16 @@
             </div>
         </li>
         <li class="nav-item dropdown pull-right">
-            <span class="fas fa-landmark white-heavy-text"></span>&nbsp;<span id="selectedOrg" class="white-heavy-text">@Model.FocusedEdOrg.OrganizationName</span>
+            <span id="selectedOrg" class="white-heavy-text">@Model.FocusedEdOrg.OrganizationName</span>
             @if (Model.EdOrgs.Count() > 1)
             {
             <input id="edOrgNames" placeholder="District name">
             }
         </li>
         <li class="nav-item dropdown pull-right">
-            <a class="nav-link dropdown-toggle validation-dropdown-toggle" href="#" id="actionDropdownYear" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="fas fa-calendar-alt white-heavy-text"></span> @Model.FocusedSchoolYear</a>
+            <a class="nav-link dropdown-toggle validation-dropdown-toggle" href="#" id="actionDropdownYear" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                @Model.FocusedSchoolYear
+            </a>
             <div class="dropdown-menu validation-drowdown-menu" style="left: initial;" aria-labelledby="actionDropdown">
                 @foreach (var schoolYear in Model.SchoolYears)
                 {

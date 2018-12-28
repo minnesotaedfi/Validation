@@ -28,6 +28,11 @@ using System.Web.Http.ModelBinding;
 
 namespace ValidationWeb
 {
+    using SimpleInjector.Diagnostics;
+
+    using ValidationWeb.DataCache;
+    using ValidationWeb.Utility;
+
     public class Global : System.Web.HttpApplication
     {
         private AppSettingsFileConfigurationValues config = new AppSettingsFileConfigurationValues();
@@ -46,6 +51,9 @@ namespace ValidationWeb
             
             // Configure the Web API
             GlobalConfiguration.Configure(ConfigureWebApi);
+
+            // set up model binding for dataTable requests
+            DataTables.AspNet.Mvc5.Configuration.RegisterDataTables();
         }
 
         /// <summary>
@@ -61,6 +69,7 @@ namespace ValidationWeb
             // Create a Simple Injector container, and register concrete instances.
             var container = new Container();
             container.Options.DefaultScopedLifestyle = new WebRequestLifestyle();
+
             // This is an extension method from the MVC integration package.
             container.RegisterMvcControllers(Assembly.GetExecutingAssembly());
             AddAppServicesToContainer(container);
@@ -81,9 +90,16 @@ namespace ValidationWeb
             container.Register<IValidatedDataSubmissionService, ValidatedDataSubmissionService>(Lifestyle.Scoped);
             container.Register<IValidationResultsService, ValidationResultsService>(Lifestyle.Scoped);
             container.Register<ISubmissionCycleService, SubmissionCycleService>(Lifestyle.Scoped);
+            container.Register<ICacheManager, CacheManager>(Lifestyle.Singleton);
 
             // Entity Framework Database Contexts
-            container.Register<ValidationPortalDbContext>(Lifestyle.Scoped);
+            // container.RegisterDisposableTransient<IValidationPortalDbContext, ValidationPortalDbContext>();
+            var databaseContextRegistration = Lifestyle.Scoped.CreateRegistration(() => new ValidationPortalDbContext(), container);
+            container.AddRegistration<IValidationPortalDbContext>(databaseContextRegistration);
+
+            // todo: remove after injecting IValidationPortalDbContext instead of concrete type in all locations
+            container.Register<ValidationPortalDbContext>(Lifestyle.Singleton);
+
             container.Register<IOdsConfigurationValues, OdsConfigurationValues>(Lifestyle.Scoped);
 
             // Rules Engine
@@ -104,7 +120,7 @@ namespace ValidationWeb
             container.RegisterInstance<ILog>(loggerObj);
             container.Register<ILoggingService, LoggingService>(Lifestyle.Singleton);
         }
-
+                
         protected virtual void ConfigureWebApi(HttpConfiguration config)
         {
             #region Configure Dependency injection Container

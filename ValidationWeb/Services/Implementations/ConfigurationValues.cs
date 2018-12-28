@@ -16,6 +16,7 @@ namespace ValidationWeb.Services
         private static bool _useFakeViewModelData;
         private static bool _isSsoSimulated;
         private static string _ssoSimulatedUserName;
+        private static List<SchoolYear> _seedSchoolYears = new List<SchoolYear>();
 
         static AppSettingsFileConfigurationValues()
         {
@@ -29,6 +30,19 @@ namespace ValidationWeb.Services
             if (!int.TryParse(ConfigurationManager.AppSettings["SessionTimeoutInMinutes"], out _sessionTimeoutInMinutes))
             {
                 _sessionTimeoutInMinutes = 30; // Default to 30 minutes.
+            }
+            var seedSchoolYears = ConfigurationManager.AppSettings["SeedSchoolYears"];
+            if (! string.IsNullOrWhiteSpace(seedSchoolYears))
+            {
+                var seedSchoolYearsCandidates = seedSchoolYears.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach(var schoolYearCandidate in seedSchoolYearsCandidates)
+                {
+                    int schoolYearInteger;
+                    if (int.TryParse(schoolYearCandidate.Trim(), out schoolYearInteger) && schoolYearInteger > 1900 && schoolYearInteger < 2400)
+                    {
+                        _seedSchoolYears.Add(new SchoolYear((schoolYearInteger - 1).ToString(), schoolYearInteger.ToString()));
+                    }
+                }
             }
         }
 
@@ -96,6 +110,13 @@ namespace ValidationWeb.Services
             get
             {
                 return _ssoSimulatedUserName;
+            }
+        }
+        public List<SchoolYear> SeedSchoolYears
+        {
+            get
+            {
+                return _seedSchoolYears;
             }
         }
     }

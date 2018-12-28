@@ -1,0 +1,17 @@
+﻿@model OdsDemographicsReportViewModel
+
+
+<div class="col-md-12 nopadding">
+    <!-- style="table-layout: fixed; width: 98% !important;" -->
+    <table class="table table-bordered" id="reportsTable"></table>
+</div>
+
+@if (Model.Results != null && Model.Results.Count == 0)
+{
+    <!-- todo: this won't work anymore, results aren't in the VM -->
+    <div class="vp-body-header col-8 justify-content-start align-self-center">No records were found.</div>
+}
+
+<script type="text/javascript">
+   
+</script> 

@@ -54,14 +54,15 @@ namespace ValidationWeb
             var token = new CancellationToken();
             return WriteToStreamAsync(type, value, stream, content, transportContext, token);
         }
-        public override System.Threading.Tasks.Task WriteToStreamAsync(Type type, object value, Stream stream, HttpContent content, TransportContext transportContext, CancellationToken token)
+
+        public override Task WriteToStreamAsync(Type type, object value, Stream stream, HttpContent content, TransportContext transportContext, CancellationToken token)
         {
             var task = Task.Factory.StartNew(() =>
             {
                 var settings = new JsonSerializerSettings()
                 {
                     ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                    Converters = new List<JsonConverter> { new StringEnumConverter { CamelCaseText = true }, new IsoDateTimeConverter() },
+                    Converters = new List<JsonConverter> { new StringEnumConverter { NamingStrategy = new CamelCaseNamingStrategy() }, new IsoDateTimeConverter() },
                     NullValueHandling = NullValueHandling.Ignore,
                     Formatting = Formatting.Indented,
                     TypeNameHandling = TypeNameHandling.None,

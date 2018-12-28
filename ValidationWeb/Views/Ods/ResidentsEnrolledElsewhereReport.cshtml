@@ -1,87 +1,127 @@
 ﻿@model OdsResidentsEnrolledElsewhereReportViewModel
 
 <div id="pagetop" class="row tbmargin10">
-    <div><a href="#notes" class="vp-page-link"><i class="fas fa-arrow-alt-circle-down"></i> See notes</a></div>
     @if (Model.IsStateMode)
     {
-        <div><a href="@Url.Action("ResidentsEnrolledElsewhereReport", "Ods", new { isStateMode = false })" class="vp-page-link show-data-loading"><i class="fas fa-chalkboard-teacher"></i> View Single District</a></div>
+        <div class="vp-body-header col-md-6 justify-content-start align-self-center">Residents Enrolled Elsewhere for All Minnesota Districts</div>
     }
     else
     {
-        <div><a href="@Url.Action("ResidentsEnrolledElsewhereReport", "Ods", new { isStateMode = true })" class="vp-page-link show-data-loading"><i class="fas fa-sitemap"></i> View All Districts</a></div>
+        <div class="vp-body-header col-md-6 justify-content-start align-self-center">Residents Enrolled Elsewhere for District @Model.EdOrgName (@Model.EdOrgId.ToString())</div>
     }
-</div>
-<div class="row tbmargin10">
+
     @if (Model.IsStateMode)
     {
-        <div class="vp-body-header justify-content-start align-self-center">Residents Enrolled Elsewhere for All Minnesota Districts</div>
+        <div class="col-md-3"><a href="@Url.Action("ResidentsEnrolledElsewhereReport", "Ods", new { isStateMode = false })" class="show-data-loading">View Single District</a></div>
     }
     else
     {
-        <div class="vp-body-header justify-content-start align-self-center">Residents Enrolled Elsewhere for District @Model.EdOrgName (@Model.EdOrgId.ToString())</div>
+        <div class="col-md-3"><a href="@Url.Action("ResidentsEnrolledElsewhereReport", "Ods", new { isStateMode = true })" class="show-data-loading">View All Districts</a></div>
     }
 </div>
 <div id="requestedReportContent" class="row">
-    <table class="table table-sm table-responsive-md table-bordered" id="reportsTable">
-        <tr class="table-primary">
-            <th>ID</th>
-            <th>Resident District</th>
-            <th>District of Enrollment ID</th>
-            <th>District of Enrollment</th>
-            <th>Residents Enrolled</th>
-        </tr>
-        @foreach (var result in Model.Results)
-        {
-            <tr>
-                <td>
-                    @if (Model.IsStateMode)
-                    {
-                        if (result.EdOrgId.HasValue && result.OrgType == OrgType.District)
-                        {
-                            <a href="@Url.Action("ResidentsEnrolledElsewhereReport", "Ods", new { isStateMode = false, districtToDisplay = result.EdOrgId.Value})" class="show-data-loading">@(result.EdOrgId.Value.ToString())</a>
-                        }
-                        else
-                        {
-                            @(result.EdOrgId.HasValue ? result.EdOrgId.Value.ToString() : string.Empty)
-                        }
-                    }
-                    else
-                    {
-                        @(result.EdOrgId.HasValue ? result.EdOrgId.Value.ToString() : string.Empty)
-                    }
-                </td>
-                <td>@(result.EdOrgName)</td>
-                <td>@(result.DistrictOfEnrollmentId.ToString())</td>
-                <td>@(result.DistrictOfEnrollmentName)</td>
-                <td>
-                @if (Model.User.AppRole.Name != AppRole.DataOwner.Name)
-                {
-                <a href="@Url.Action("ResidentsEnrolledElsewhereReport", "Ods", new { isStateMode = false, districtToDisplay = result.EdOrgId.Value, isStudentDrillDown = true })" target="_blank">@(result.ResidentsEnrolled.ToString())</a>
-                }
-                else
-                {
-                    @(result.ResidentsEnrolled.ToString())
-                }
-                </td>
-
-            </tr>
-        }
-    </table>
-    @if (Model.Results.Count == 0)
-    {
-        <div class="vp-body-header col-8 justify-content-start align-self-center">No records were found.</div>
-    }
+    <table class="table table-bordered" id="reportsTable"></table>
 </div>
+
 <div id="notes" class="row">
     <div class="vp-body-header">Notes:</div>
 </div>
 <div class="row">The district where the student resides is determined from the student-school association extensions in the Ed Fi ODS database.</div>
 <div class="row tbmargin10">
-    <a href="#pagetop" class="vp-page-link"><i class="fas fa-arrow-alt-circle-up"></i> Back to Top</a>
+    <div  class="col-md-2">
+        <a href="#pagetop">Back to Top</a>
+    </div>
 </div>
 
 
 @section scripts {
     <script>
+        $(function() {
+            var drillDownLinkTemplate =
+                '<a href="@Html.Raw(Url.Action(
+                              "ResidentsEnrolledElsewhereReport",
+                              "Ods",
+                              new
+                                {
+                                    schoolId = "_EdOrgId_",
+                                    drillDownColumnIndex = "_DrillDownIndex_",
+                                    isStateMode = Model.IsStateMode,
+                                    districtToDisplay = "_EdOrgId_",
+                                    isStudentDrillDown = true,
+                                    orgType = "_OrgType_"
+                                }))" target="_blank">_LinkText_</a>';
+
+            function createDrillDownLink(edOrgId, drillDownIndex, orgType, linkText) {
+                return drillDownLinkTemplate
+                    .replace(/_EdOrgId_/g, edOrgId)
+                    .replace(/_DrillDownIndex_/g, drillDownIndex)
+                    .replace(/_OrgType_/g, orgType)
+                    .replace(/_LinkText_/g, linkText);
+            }
+
+            var stateLinkTemplate =
+                '<a href="@Html.Raw(Url.Action(
+                              "ResidentsEnrolledElsewhereReport", 
+                              "Ods", 
+                              new
+                                { isStateMode = false, districtToDisplay = "_EdOrgId_" }))" class="show-data-loading">_EdOrgId_</a>';
+
+            function createStateLink(edOrgId) {
+                return stateLinkTemplate.replace(/_EdOrgId_/g, edOrgId);
+            }
+
+            $('div.dataTables_scrollBody').css('min-height', '350px');
+
+            var dataTable = $('#reportsTable').DataTable({
+                paging: true,
+                pagingType: 'full_numbers',
+                info: true,
+                scrollCollapse: true,
+                deferRender: true,
+                searching: false,
+                serverSide: true,
+                processing: true,
+                language: {
+                    loadingRecords: 'Loading...',
+                    processing: "Loading..."
+                },
+                dom: "<'row'<'col-md-3'l><'col-md-3 offset-6 text-right jumpToNotes'>>" +
+                    "<'row'<'col-sm-12'tr>>" +
+                    "<'row'<'col-md-3'i><'col-md-5 offset-4 pull-right'p>>",
+                ajax: {
+                    url: "@Html.Raw(Url.Action("GetResidentsEnrolledElsewhereData", new
+                     {
+                         isStateMode = Model.IsStateMode,
+                         edOrgId = Model.EdOrgId,
+                         fourDigitSchoolYear = Model.FourDigitSchoolYear
+                     }))"
+                },
+                columns: [
+                    {
+                        title: 'District of Enrollment ID',
+                        data: 'districtOfEnrollmentId',
+                    },
+                    {
+                        title: 'District of Enrollment',
+                        data: 'districtOfEnrollmentName',
+                        width: '300px',
+                    },
+                    {
+                        title: 'Residents Enrolled',
+                        data: 'residentsEnrolled',
+                        render: function (data, type, row, meta) {
+                            if (type === 'display') {
+                                return (data === 0) ? "-" : createDrillDownLink(row.edOrgId, 0, row.orgType, data);
+                            } else {
+                                return data;
+                            }
+                        }
+                    },
+                ]
+            });
+
+            $(dataTable.table().header()).addClass('table-primary');
+            $('.jumpToNotes').html('<a href="#notes">View Report notes</a>');
+        });
     </script>
 }

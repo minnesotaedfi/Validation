@@ -2,11 +2,13 @@
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
+using ValidationWeb.Services;
 
 namespace ValidationWeb
 {
     internal sealed class ValidationPortalDbMigrationConfiguration : DbMigrationsConfiguration<ValidationPortalDbContext>
     {
+        private IConfigurationValues _config = new AppSettingsFileConfigurationValues();
         public ValidationPortalDbMigrationConfiguration()
         {
             AutomaticMigrationsEnabled = true;
@@ -28,6 +30,16 @@ namespace ValidationWeb
             new ErrorSeverityLookup { Id = (int)ErrorSeverity.Warning, CodeValue = "Warning", Description = "Warning" }
         };
 
+        public static RecordsRequestTypeLookup[] RecordsRequestTypeLookups = new RecordsRequestTypeLookup[]
+        {
+            new RecordsRequestTypeLookup { Id = (int)RecordsRequestType.Assessment, CodeValue = "Assessment", Description = "Assessment"},
+            new RecordsRequestTypeLookup { Id = (int)RecordsRequestType.Cumulative, CodeValue = "Cumulative", Description = "Cumulative"},
+            new RecordsRequestTypeLookup { Id = (int)RecordsRequestType.Discipline, CodeValue = "Discipline", Description = "Discipline"},
+            new RecordsRequestTypeLookup { Id = (int)RecordsRequestType.IEP, CodeValue = "IEP", Description = "IEP"},
+            new RecordsRequestTypeLookup { Id = (int)RecordsRequestType.Evaluation, CodeValue = "Evaluation", Description = "Evaluation"},
+            new RecordsRequestTypeLookup { Id = (int)RecordsRequestType.Immunizations, CodeValue = "Immunizations", Description = "Immunizations"}
+        };
+
         /// <summary>
         /// Called after migration.
         /// </summary>
@@ -36,12 +48,45 @@ namespace ValidationWeb
         {
             context.EdOrgTypeLookup.AddOrUpdate(EdOrgTypeLookups);
             context.ErrorSeverityLookup.AddOrUpdate(ErrorSeverityLookups);
-            if (context.SchoolYears != null && context.SchoolYears.Count() <= 0)
+            // context.RecordsRequestTypeLookup.AddOrUpdate(RecordsRequestTypeLookups);
+
+            if (_config.SeedSchoolYears != null && context.SchoolYears.Count() <= 0)
             {
-                context.SchoolYears.AddOrUpdate(new SchoolYear("2018", "2019"));
-                context.SchoolYears.AddOrUpdate(new SchoolYear("2019", "2020"));
-                context.SchoolYears.AddOrUpdate(new SchoolYear("2020", "2021"));
+                foreach (var schoolYearToSeedIfMissing in _config.SeedSchoolYears)
+                {
+                    if (context.SchoolYears.FirstOrDefault(sy =>
+                    sy.StartYear != schoolYearToSeedIfMissing.StartYear
+                    && sy.EndYear != schoolYearToSeedIfMissing.EndYear) == null)
+                    {
+                        context.SchoolYears.AddOrUpdate(schoolYearToSeedIfMissing);
+                    }
+                }
             }
+#if DEBUG
+            if (context.Announcements != null && context.Announcements.Count() <= 0)
+            {
+                context.Announcements.AddOrUpdate(
+                    new Announcement
+                    {
+                        Priority = 0,
+                        Message = "This message is stored in the application database.",
+                        ContactInfo = "info@education.mn.gov",
+                        IsEmergency = false,
+                        LinkUrl = "http://education.mn.gov/",
+                        Expiration = new DateTime(2019, 4, 1)
+                    },
+                    new Announcement
+                    {
+                        Priority = 0,
+                        Message = "Another message.",
+                        ContactInfo = "info@education.mn.gov",
+                        IsEmergency = false,
+                        LinkUrl = "http://education.mn.gov/",
+                        Expiration = new DateTime(2019, 4, 1)
+                    }
+                );
+            }
+#endif
         }
     }
 }
