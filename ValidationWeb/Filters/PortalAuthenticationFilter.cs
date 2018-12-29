@@ -11,6 +11,8 @@ using ValidationWeb.Services;
 
 namespace ValidationWeb
 {
+    using System.Web.Routing;
+
     /// <summary>
     /// Register this class using GlobalFilters.Add() in Global.asax.
     /// </summary>
@@ -66,12 +68,46 @@ namespace ValidationWeb
             _loggingService = container.GetInstance<ILoggingService>();
         }
 
+        //public override void OnActionExecuting(ActionExecutingContext filterContext)
+        //{
+        //    // quick and dirty login redirect for sso 
+        //    if (_config.UseSimulatedSSO)
+        //    {
+        //        Controller controller = filterContext.Controller as Controller;
+
+        //        if (controller != null)
+        //        {
+        //            if (controller.HttpContext.Request.Headers["Authorization"] == null)
+        //            {
+        //                //filterContext.Cancel = true;
+        //                controller.HttpContext.Response.Redirect("./Login");
+        //                //filterContext.Result = controller.RedirectToAction("Index", "Login");
+        //            }
+        //        }
+
+        //        base.OnActionExecuting(filterContext);
+        //    }
+        //}
+
+        protected bool IsAnonymousAction(ActionDescriptor descriptor)
+        {
+            return descriptor
+                .GetCustomAttributes(true)
+                .OfType<AllowAnonymousAttribute>() 
+                .Any();
+        }
+
         /// <summary>
         /// Goal: set the HttpContext.User with a System.Security.Principal.IPrincipal
         /// </summary>
         /// <param name="filterContext"></param>
         public void OnAuthentication(AuthenticationContext filterContext)
         {
+            if (IsAnonymousAction(filterContext.ActionDescriptor))
+            {
+                return;
+            }
+
             var httpContext = filterContext.RequestContext.HttpContext;
             var session = httpContext.Session;
             var request = httpContext.Request;
@@ -148,7 +184,16 @@ namespace ValidationWeb
             var authHeaderValue = request.Headers["Authorization"];
             if (_config.UseSimulatedSSO)
             {
-                authHeaderValue = _config.SimulatedUserName;
+                var cookie = filterContext.HttpContext.Request.Cookies["MockSSOAuth"];
+                
+                if (cookie == null)
+                {
+                    filterContext.Result = new HttpUnauthorizedResult();
+                    return;
+                }
+                
+                authHeaderValue = cookie.Value.ToString();
+                
                 _loggingService.LogInfoMessage($"Test mock for Single Sign On is activated - simulated user is {authHeaderValue}");
             }
             else
@@ -260,7 +305,7 @@ namespace ValidationWeb
                     {
                         // A school year is needed to identify which Ed Fi ODS database to pull organizational information from.
                         schoolYearId = previousSessionFocusedSchoolYearId.HasValue ? previousSessionFocusedSchoolYearId.Value : validYears.First().Id;
-                        _loggingService.LogDebugMessage($"User: {authHeaderValue}, Taking informationation from the ODS associated with school year ID number {schoolYearId.ToString()}.");
+                        _loggingService.LogDebugMessage($"User: {authHeaderValue}, Taking information from the ODS associated with school year ID number {schoolYearId.ToString()}.");
                         try
                         {
                             authorizedEdOrgs.Add(_edOrgService.GetEdOrgById(authorizedEdOrgId, schoolYearId));
@@ -336,6 +381,11 @@ namespace ValidationWeb
 
         public void OnAuthenticationChallenge(AuthenticationChallengeContext filterContext)
         {
+            if (IsAnonymousAction(filterContext.ActionDescriptor))
+            {
+                return; 
+            }
+
             var user = filterContext.HttpContext.User;
             if (user == null || !user.Identity.IsAuthenticated)
             {

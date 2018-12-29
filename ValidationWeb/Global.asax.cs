@@ -185,6 +185,10 @@ namespace ValidationWeb
             httpConfiguration.Services.Add(typeof(IExceptionLogger), new ValidationExceptionLogger(container.GetInstance<ILoggingService>(), container.GetInstance<IRequestMessageAccessor>()));
         }
 
+        protected void Session_Start()
+        {
+        }
+
         #region Require Session for Web API, for security and authentication checks.
         protected void Application_PostAuthorizeRequest()
         {
@@ -193,6 +197,7 @@ namespace ValidationWeb
                 HttpContext.Current.SetSessionStateBehavior(SessionStateBehavior.Required);
             }
         }
+
         private bool IsWebApiRequest()
         {
             return HttpContext.Current.Request.AppRelativeCurrentExecutionFilePath.StartsWith(ApiUrlPrefixRelative);

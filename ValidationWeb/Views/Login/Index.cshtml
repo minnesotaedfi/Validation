@@ -1,0 +1,78 @@
+﻿@model ValidationWeb.Controllers.LoginViewModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Ed-Fi Data Validation Portal Login</title>
+    <link rel="SHORTCUT ICON" href="~/favicon.ico" />
+    @Styles.Render("~/Content/Styles/css")
+    @Styles.Render("~/Content/jqueryUICSS")
+    @Styles.Render("~/Content/datePickerCSS")
+    @Styles.Render("~/Content/DataTables/css/DataTablesCSS")
+    @Styles.Render("~/Content/ValidationPortal")
+</head>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12 text-center h1">
+            Minnesota SSO Mock Login Page
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-10 offset-1 padded">
+            Please choose one of the following users to continue:
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-10 offset-1 padded" style="padding-top: 15px">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>
+                            Name
+                        </th>
+                        <th>
+                            Login
+                        </th>
+                        <th>
+                            Role
+                        </th>
+                        <th>
+                            Role Description
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model.LoginUsers)
+                    {
+                        <tr>
+                            <td>
+                                @Html.ActionLink(
+                                    user.UserId, 
+                                    "LoginAsUser", 
+                                    new
+                                    {
+                                        userId = user.UserId,
+                                        returnUrl = Model.ReturnUrl.ToString()
+                                    })
+                            </td>
+                            <td>@user.FullName</td>
+                            <td>@user.RoleId</td>
+                            <td>@user.RoleDescription</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/bootstrap")
+@Scripts.Render("~/bundles/jqueryUI")
+@Scripts.Render("~/bundles/datePickerJS")
+@Scripts.Render("~/bundles/DataTables")
