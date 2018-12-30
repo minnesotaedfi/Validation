@@ -17,6 +17,8 @@ namespace ValidationWeb
         private readonly ISchoolYearService _schoolYearService;
         private readonly IValidatedDataSubmissionService _validatedDataSubmissionService;
 
+        private readonly IConfigurationValues _configurationValues;
+
         static NavController()
         {
             _version = "1.0.0.0"; // new Version(FileVersionInfo.GetVersionInfo(Assembly.GetCallingAssembly().Location).ProductVersion).ToString();
@@ -26,12 +28,14 @@ namespace ValidationWeb
             IAppUserService appUserService,
             IEdOrgService edOrgService,
             ISchoolYearService schoolYearService,
-            IValidatedDataSubmissionService validatedDataSubmissionService)
+            IValidatedDataSubmissionService validatedDataSubmissionService,
+            IConfigurationValues configurationValues)
         {
             _appUserService = appUserService;
             _edOrgService = edOrgService;
             _schoolYearService = schoolYearService;
             _validatedDataSubmissionService = validatedDataSubmissionService;
+            _configurationValues = configurationValues;
         }
 
         public ActionResult NavDropDowns()
@@ -48,6 +52,8 @@ namespace ValidationWeb
             // If the user's School Year wasn't available any more, then select the first School Year whose data can be submitted.
             model.FocusedSchoolYear = model.SchoolYears.FirstOrDefault(sy => sy.Id == _appUserService.GetSession().FocusedSchoolYearId) ??
                                       _schoolYearService.GetSubmittableSchoolYears().First();
+
+            model.ShowLogoutLink = _configurationValues.UseSimulatedSSO;
 
             return PartialView("_NavDropDowns", model);
         }

@@ -63,6 +63,16 @@
         }
 
         [AllowAnonymous]
+        public ActionResult Logout()
+        {
+            Session.Clear();
+            return RedirectToAction(
+                "Index", 
+                "Login", 
+                new { returnUrl = Url.Action("Index", "Home", new { }, Request.Url.Scheme) });
+        }
+
+        [AllowAnonymous]
         public ActionResult LoginAsUser(string userId, string returnUrl)
         {
             if (string.IsNullOrWhiteSpace(userId))

@@ -6,12 +6,18 @@
                 <span class="fas fa-user-circle white-heavy-text"></span> @Model.AppUserSession.UserIdentity.UserId
             </a>
             <div class="dropdown-menu validation-drowdown-menu" style="left: initial;" aria-labelledby="actionDropdown">
-                @*TODO - If admin only show admin page. ASK - Is this ok?*@
+                @*TODO - If admin only show admin page. ASK - Is this ok? TODO *@
                 @if (Model.AppUserSession.UserIdentity.AppRole.Name == "Administrator")
                 {
                     @Html.ActionLink("Admin page", "Index", "Admin", new { area = "" }, new { @class = "nav-item nav-link" })
                 }
+
                 @Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "nav-item nav-link" })
+                
+                @if (Model.ShowLogoutLink)
+                {
+                    @Html.ActionLink("Sign Out", "Logout", "Login", new { area = string.Empty }, new { @class = "nav-item nav-link"})
+                }
             </div>
         </li>
         <li class="nav-item dropdown pull-right">
