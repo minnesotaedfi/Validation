@@ -5,15 +5,17 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
+using ValidationWeb.Filters;
 using ValidationWeb.Services;
 
 namespace ValidationWeb
 {
+   
     using System.Web.Hosting;
 
     using DataTables.AspNet.Core;
     using DataTables.AspNet.Mvc5;
-
+ [PortalAuthorize(Roles = "DistrictUser,HelpDesk")]
     public class ValidationController : Controller
     {
         protected readonly IAppUserService _appUserService;
@@ -51,6 +53,7 @@ namespace ValidationWeb
             var edOrg = _edOrgService.GetEdOrgById(_appUserService.GetSession().FocusedEdOrgId, _appUserService.GetSession().FocusedSchoolYearId);
             var rulesCollections = _engineObjectModel.Collections.OrderBy(x => x.CollectionId).ToList();
             var theUser = _appUserService.GetUser();
+            bool readOnly = (theUser.AppRole.Name == AppRole.HelpDesk.Name || theUser.AppRole.Name == AppRole.DataOwner.Name);
             var districtName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
 
             var model = new ValidationReportsViewModel
@@ -163,6 +166,7 @@ namespace ValidationWeb
             return View(model);
         }
 
+        [PortalAuthorize(Roles = "DistrictUser")]
         [HttpPost]
         public ActionResult RunEngine(int submissionCycleId)
         {

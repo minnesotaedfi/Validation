@@ -16,5 +16,6 @@ namespace ValidationWeb
         public IList<SubmissionCycle> SubmissionCycles { get; set; }
         public int FocusedEdOrgId { get; set; }
         public int FocusedSchoolYearId { get; set; }
+        public bool ReadOnly { get; set; }
     }
 }

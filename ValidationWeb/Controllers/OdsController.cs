@@ -1,4 +1,10 @@
-﻿namespace ValidationWeb
+﻿using ValidationWeb.ApiControllers.ModelBinders;
+using ValidationWeb.Filters;
+using ValidationWeb.Services;
+using ValidationWeb.Utility;
+using ValidationWeb.ViewModels;
+
+namespace ValidationWeb
 {
     using System;
     using System.Collections.Generic;
@@ -21,6 +27,7 @@
     using ValidationWeb.Utility;
     using ValidationWeb.ViewModels;
 
+    [PortalAuthorize(Roles = "DataOwner,DistrictUser,HelpDesk")]
     // TODO: refactor repeated code. move cache manager and serialization calls into a separate layer. -pocky
     public class OdsController : Controller
     {

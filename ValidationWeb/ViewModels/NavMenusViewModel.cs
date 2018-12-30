@@ -16,5 +16,6 @@ namespace ValidationWeb
         public SchoolYear FocusedSchoolYear { get; set; }
         public IEnumerable<SchoolYear> SchoolYears { get; set; }
         public IEnumerable<EdOrg> EdOrgs { get; set; }
+        public bool ShowLogoutLink { get; set; }
     }
 }

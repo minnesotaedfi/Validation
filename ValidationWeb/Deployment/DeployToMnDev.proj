@@ -21,7 +21,7 @@
       <ValidationPortalIisPathToRootParamName>ValidationPortalIisPathToRoot</ValidationPortalIisPathToRootParamName>
       <ValidationPortalIisPathToRootParamValue>D:\ValidationPortal</ValidationPortalIisPathToRootParamValue>
       <AuthenticationServerRedirectUrlParamName>AuthenticationServerRedirectUrl</AuthenticationServerRedirectUrlParamName>
-      <AuthenticationServerRedirectUrlParamValue>http://www.wearedoubleline.com/</AuthenticationServerRedirectUrlParamValue>
+      <AuthenticationServerRedirectUrlParamValue>~/Login</AuthenticationServerRedirectUrlParamValue>
       <AuthorizationStoredProcedureNameParamName>AuthorizationStoredProcedureName</AuthorizationStoredProcedureNameParamName>
       <AuthorizationStoredProcedureNameParamValue>apps.GetAuthorizations</AuthorizationStoredProcedureNameParamValue>
       <SsoAppIdParamName>SsoAppId</SsoAppIdParamName>

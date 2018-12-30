@@ -61,8 +61,12 @@
                     </div>
                 </div>
 
-                <button id="newValidationButton" type="button" class="btn prime-blue white-heavy-text margin10 justify-self-end" data-toggle="modal" data-target="#NewValidationModal">Validate</button>
-                <button id="export" data-export="export" class="btn prime-blue white-heavy-text margin10 justify-self-end">Export</button>
+                <button id="newValidationButton" type="button" class="btn prime-blue white-heavy-text margin10 justify-self-end" 
+                        data-toggle="modal" data-target="#NewValidationModal"
+                        @if (Model.ReadOnly) { <text> disabled </text> }>Validate</button>
+                <button id="export" data-export="export" class="btn prime-blue white-heavy-text margin10 justify-self-end"
+                        @if (Model.ReadOnly) { <text> disabled </text> }>Export</button>
+
             </div>
         </div>
     </div>
