@@ -7,6 +7,7 @@
     using System.Web;
     using System.Web.Mvc;
     using System.Web.Security;
+    using System.Web.UI;
 
     using ValidationWeb.Services;
 
@@ -63,9 +64,20 @@
         }
 
         [AllowAnonymous]
+        [OutputCache(Location = OutputCacheLocation.None, NoStore = true)]
         public ActionResult Logout()
         {
             Session.Clear();
+            Response.Cookies.Clear();
+
+            HttpCookie cookie = new HttpCookie("MockSSOAuth", string.Empty)
+                                {
+                                    HttpOnly = true,
+                                    Expires = DateTime.Now.AddDays(-1)
+                                };
+
+            HttpContext.Response.Cookies.Add(cookie);
+
             return RedirectToAction(
                 "Index", 
                 "Login", 
