@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Data.Entity;
+    using System.Data.Entity.Infrastructure;
     using System.Data.SqlClient;
     using System.Linq;
     using System.Text;
@@ -19,6 +20,7 @@
         protected readonly IEdOrgService _edOrgService;
         protected readonly ISchoolYearService _schoolYearService;
         protected readonly ILoggingService _loggingService;
+        public readonly IDbContextFactory<ValidationPortalDbContext> DbContextFactory;
 
         public RulesEngineService(
             IAppUserService appUserService,
@@ -26,7 +28,7 @@
             ISchoolYearService schoolYearService,
             IRulesEngineConfigurationValues engineConfig,
             ILoggingService loggingService,
-            // ValidationPortalDbContext dbContext,
+            IDbContextFactory<ValidationPortalDbContext> dbContextFactory,
             Model engineObjectModel)
         {
             // _dbContext = dbContext;
@@ -35,6 +37,7 @@
             _schoolYearService = schoolYearService;
             _loggingService = loggingService;
             _engineConfig = engineConfig;
+            DbContextFactory = dbContextFactory;
             _engineObjectModel = engineObjectModel;
         }
 
@@ -43,7 +46,7 @@
             ValidationReportSummary newReportSummary = null;
             using (var odsRawDbContext = new RawOdsDbContext(fourDigitOdsDbYear))
             {
-                using (var validationDbContext = new ValidationPortalDbContext())
+                using (var validationDbContext = DbContextFactory.Create())
                 {
                     _loggingService.LogDebugMessage(
                         $"Connecting to the Ed Fi ODS {fourDigitOdsDbYear} to run the Rules Engine. Submitting the RulesValidation run ID.");
@@ -101,7 +104,7 @@
             // todo: dependency inject the initialization of RawOdsDbContext with a year. introduce a factory for most simple implementation
             using (var odsRawDbContext = new RawOdsDbContext(fourDigitOdsDbYear))
             {
-                using (var validationDbContext = new ValidationPortalDbContext())
+                using (var validationDbContext = DbContextFactory.Create())
                 {
                     var newRuleValidationExecution =
                         odsRawDbContext.RuleValidations.FirstOrDefault(x => x.RuleValidationId == ruleValidationId);
@@ -380,7 +383,7 @@
                     }
                 }
 
-                using (var validationDbContext = new ValidationPortalDbContext())
+                using (var validationDbContext = DbContextFactory.Create())
                 {
                     validationDbContext.ValidationErrorSummaries.AddRange(errorSummaries);
                     validationDbContext.SaveChanges();

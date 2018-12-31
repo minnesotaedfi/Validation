@@ -3,8 +3,8 @@
     using System;
     using System.Collections.Generic;
     using System.Data.Entity;
+    using System.Data.Entity.Infrastructure;
     using System.Linq;
-    using System.Web;
 
     public class ValidationResultsService : IValidationResultsService
     {
@@ -12,15 +12,19 @@
         private ErrorSeverityLookup aWarning = ValidationPortalDbMigrationConfiguration.ErrorSeverityLookups.First(sev => sev.CodeValue == ErrorSeverity.Warning.ToString());
         
         protected readonly ILoggingService _loggingService;
-        
-        const int MaxPageSize = 10000;
-        const int AutocompleteSuggestionCount = 8;
 
-        // todo: DI a context factory
-        public ValidationResultsService(ILoggingService loggingService)
+        protected const int MaxPageSize = 10000;
+
+        protected const int AutocompleteSuggestionCount = 8;
+
+        protected IDbContextFactory<ValidationPortalDbContext> DbContextFactory;
+        
+        public ValidationResultsService(ILoggingService loggingService, IDbContextFactory<ValidationPortalDbContext> dbContextFactory)
         {
-            //_portalDbContext = portalDbContext;
+
             _loggingService = loggingService;
+            DbContextFactory = dbContextFactory;
+
 #if DEBUG
             // Log the SQL in DEBUG mode
             //_portalDbContext.Database.Log = s => _loggingService.LogDebugMessage(s);
@@ -30,7 +34,7 @@
         public ValidationReportDetails GetValidationReportDetails(int validationReportId)
         {
             _loggingService.LogDebugMessage($"Retrieving Validation Report Details for report with ID number: {validationReportId.ToString()}");
-            using (var portalDbContext = new ValidationPortalDbContext())
+            using (var portalDbContext = DbContextFactory.Create())
             {
                 var reportDetails = portalDbContext.ValidationReportDetails
                     .Include(vrds => vrds.ValidationReportSummary)
@@ -51,7 +55,7 @@
         public List<ValidationReportSummary> GetValidationReportSummaries(int edOrgId)
         {
             _loggingService.LogDebugMessage($"Retrieving a list of Validation Reports for the Ed Org ID number: {edOrgId.ToString()}");
-            using (var portalDbContext = new ValidationPortalDbContext())
+            using (var portalDbContext = DbContextFactory.Create())
             {
                 var reportSummaryList = portalDbContext.ValidationReportSummaries
                     .Where(vrs => vrs.EdOrgId == edOrgId)
@@ -72,7 +76,7 @@
 
         public List<string> AutocompleteErrorFilter(ValidationErrorFilter filterSpecification)
         {
-            using (var portalDbContext = new ValidationPortalDbContext())
+            using (var portalDbContext = DbContextFactory.Create())
             {
                 // First limit to errors/warnings of one execution of the rules engine.
                 var filteredErrorQuery = portalDbContext.ValidationErrorSummaries
@@ -119,7 +123,7 @@
 
         public FilteredValidationErrors GetFilteredValidationErrorTableData(ValidationErrorFilter filterSpecification)
         {
-            using (var portalDbContext = new ValidationPortalDbContext())
+            using (var portalDbContext = DbContextFactory.Create())
             {
                 // First limit to errors/warnings of one execution of the rules engine.
                 var filteredErrorQuery = portalDbContext.ValidationErrorSummaries

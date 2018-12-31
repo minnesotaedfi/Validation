@@ -11,6 +11,7 @@ using ValidationWeb.Services;
 
 namespace ValidationWeb
 {
+    using System.Data.Entity.Infrastructure;
     using System.Web.Routing;
 
     /// <summary>
@@ -19,34 +20,44 @@ namespace ValidationWeb
     public class PortalAuthenticationFilter : ActionFilterAttribute, IAuthenticationFilter
     {
         private static object StaticValuesLock = new object();
+        
         private static IConfigurationValues _config = null;
+        
         /// <summary>
         /// Used to call the stored procedure that obtains detailed information about the user represented by the single sign-on token/header-value.
         /// </summary>
         private static string _authorizationStoredProcedureName = null;
+        
         /// <summary>
         /// Used to call the stored procedure that obtains detailed information about the user represented by the single sign-on token/header-value.
         /// </summary>
         private static string _singleSignOnDatabaseConnectionString = null;
+        
         /// <summary>
         /// The ID of this web application as assigned/recognized by the authentication server.
         /// </summary>
         private static string _appId = null;
+        
         /// <summary>
         /// Name of the ASP.NET/OWIN-provided Session object within the HttpContext
         /// </summary>
         public const string SessionItemName = "Session";
+        
         /// <summary>
         /// Key property value of the ASP.NET/OWIN-provided HttpCpntext.Session object for the user's session, if it exists. 
         /// </summary>
         public const string SessionKey = "LoggedInUserSessionKey";
+
         /// <summary>
         /// Name of the cached object in the ASP.NET/OWIN-provided HttpCpntext.Session that contains user information that's not specific to the session.
         /// </summary>
         public const string SessionIdentityKey = "LoggedInUserIdentity";
+        
         private readonly IEdOrgService _edOrgService;
+        
         private readonly ILoggingService _loggingService;
-
+        
+        private readonly IDbContextFactory<ValidationPortalDbContext> DbContextFactory;
 
         public PortalAuthenticationFilter(Container container)
         {
@@ -64,31 +75,12 @@ namespace ValidationWeb
                     }
                 }
             }
+
             _edOrgService = container.GetInstance<IEdOrgService>();
             _loggingService = container.GetInstance<ILoggingService>();
+            DbContextFactory = container.GetInstance<IDbContextFactory<ValidationPortalDbContext>>();
         }
-
-        //public override void OnActionExecuting(ActionExecutingContext filterContext)
-        //{
-        //    // quick and dirty login redirect for sso 
-        //    if (_config.UseSimulatedSSO)
-        //    {
-        //        Controller controller = filterContext.Controller as Controller;
-
-        //        if (controller != null)
-        //        {
-        //            if (controller.HttpContext.Request.Headers["Authorization"] == null)
-        //            {
-        //                //filterContext.Cancel = true;
-        //                controller.HttpContext.Response.Redirect("./Login");
-        //                //filterContext.Result = controller.RedirectToAction("Index", "Login");
-        //            }
-        //        }
-
-        //        base.OnActionExecuting(filterContext);
-        //    }
-        //}
-
+        
         protected bool IsAnonymousAction(ActionDescriptor descriptor)
         {
             return descriptor
@@ -111,12 +103,13 @@ namespace ValidationWeb
             var httpContext = filterContext.RequestContext.HttpContext;
             var session = httpContext.Session;
             var request = httpContext.Request;
-            // We will try to set the user's Focused items to the same one's in their previous, expired session, if it is feasible. 
+
+            // We will try to set the user's Focused items to the same ones in their previous, expired session, if it is feasible. 
             int previousSessionFocusedEdOrgId = 0;
             int? previousSessionFocusedSchoolYearId = null;
 
             var validYears = new List<SchoolYear>();
-            using (var dbContext = new ValidationPortalDbContext())
+            using (var dbContext = DbContextFactory.Create())
             {
                 validYears.AddRange(dbContext.SchoolYears.Where(sy => sy.Enabled).ToList());
             }
@@ -139,7 +132,7 @@ namespace ValidationWeb
                     // IMPORTANT - tell ASP.NET we know who the user is - prevents from redirecting the user to login page in a subsequent handler.
                     httpContext.User = new ValidationPortalPrincipal(userIdentity);
                     _loggingService.LogInfoMessage($"MVC request authenticated for user {userIdentity.FullName}.");
-                    using (var dbContext = new ValidationPortalDbContext())
+                    using (var dbContext = DbContextFactory.Create())
                     {
                         // Get the user's session from the database.
                         var sessIdSought = session[SessionKey].ToString();
@@ -322,9 +315,9 @@ namespace ValidationWeb
                 }
             }
 
-            if (authorizedEdOrgs.Count() == 0)
+            if (!authorizedEdOrgs.Any())
             {
-                var unauthMessage = $"The user {theUserId} logged in succesfully, and accessed the Validation Portal application, but wasn't authorized any access to Eduational Organizations according to EDIDMS (single sign on authorizations), thus couldn't use the application ... or it is possible none of the authorized organizations have been loaded from the Ed Fi Operational Datastore to the Validation database.";
+                var unauthMessage = $"The user {theUserId} logged in successfully, and accessed the Validation Portal application, but wasn't authorized any access to Educational Organizations according to EDIDMS (single sign on authorizations), thus couldn't use the application ... or it is possible none of the authorized organizations have been loaded from the Ed Fi Operational Datastore to the Validation database.";
                 _loggingService.LogErrorMessage(unauthMessage);
                 throw new UnauthorizedAccessException(unauthMessage);
             }
@@ -370,7 +363,7 @@ namespace ValidationWeb
             session[SessionKey] = newCurrentSession.Id;
             session[SessionIdentityKey] = newUserIdentity;
             _loggingService.LogInfoMessage($"User {authHeaderValue}; session {newCurrentSession.Id} created.");
-            using (var dbContext = new ValidationPortalDbContext())
+            using (var dbContext = DbContextFactory.Create())
             {
                 dbContext.AppUserSessions.Add(newCurrentSession);
                 dbContext.SaveChanges();

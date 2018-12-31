@@ -1,43 +1,43 @@
-﻿using SimpleInjector;
-using SimpleInjector.Integration.Web;
-using SimpleInjector.Integration.Web.Mvc;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Web;
-using System.Web.Http;
-using System.Web.Routing;
-using System.Web.Mvc;
-using System.Web.Optimization;
-using System.Web.Security;
-using System.Web.SessionState;
-using Engine.Language;
-using Engine.Utility;
-using Engine.Models;
-using ValidationWeb.Services;
-using log4net.Config;
-using SimpleInjector.Lifestyles;
-using SimpleInjector.Integration.WebApi;
-using System.Web.Http.ExceptionHandling;
-using log4net;
-using System.Web.Http.ModelBinding.Binders;
-using ValidationWeb.ApiControllers;
-using System.Web.Http.ModelBinding;
-
-namespace ValidationWeb
+﻿namespace ValidationWeb
 {
-    using SimpleInjector.Diagnostics;
+    using System;
+    using System.Data.Entity.Infrastructure;
+    using System.Reflection;
+    using System.Web;
+    using System.Web.Http;
+    using System.Web.Http.ExceptionHandling;
+    using System.Web.Http.ModelBinding;
+    using System.Web.Http.ModelBinding.Binders;
+    using System.Web.Mvc;
+    using System.Web.Optimization;
+    using System.Web.Routing;
+    using System.Web.SessionState;
 
+    using Engine.Language;
+    using Engine.Models;
+    using Engine.Utility;
+
+    using log4net;
+    using log4net.Config;
+
+    using SimpleInjector;
+    using SimpleInjector.Integration.Web;
+    using SimpleInjector.Integration.Web.Mvc;
+    using SimpleInjector.Integration.WebApi;
+    using SimpleInjector.Lifestyles;
+
+    using ValidationWeb.ApiControllers;
+    using ValidationWeb.Database;
     using ValidationWeb.DataCache;
-    using ValidationWeb.Utility;
+    using ValidationWeb.Services;
 
     public class Global : System.Web.HttpApplication
     {
-        private AppSettingsFileConfigurationValues config = new AppSettingsFileConfigurationValues();
         private const string LoggerName = "ValidationPortalLogger";
-        public static string ApiUrlPrefixRelative { get { return "~/api"; } }
+
+        // private AppSettingsFileConfigurationValues config = new AppSettingsFileConfigurationValues();
+        
+        public static string ApiUrlPrefixRelative => "~/api";
 
         protected void Application_Start(object sender, EventArgs e)
         {
@@ -91,17 +91,24 @@ namespace ValidationWeb
             container.Register<IValidationResultsService, ValidationResultsService>(Lifestyle.Scoped);
             container.Register<ISubmissionCycleService, SubmissionCycleService>(Lifestyle.Scoped);
             container.Register<ICacheManager, CacheManager>(Lifestyle.Singleton);
+            container.Register<IOdsConfigurationValues, OdsConfigurationValues>(Lifestyle.Scoped);
 
             // Entity Framework Database Contexts
             // container.RegisterDisposableTransient<IValidationPortalDbContext, ValidationPortalDbContext>();
-            var databaseContextRegistration = Lifestyle.Scoped.CreateRegistration(() => new ValidationPortalDbContext(), container);
-            container.AddRegistration<IValidationPortalDbContext>(databaseContextRegistration);
+            
+            // replacing this with context factory
+            // var databaseContextRegistration = Lifestyle.Scoped.CreateRegistration(() => new ValidationPortalDbContext(), container);
+            //container.AddRegistration<IValidationPortalDbContext>(databaseContextRegistration);
+
+            var databaseContextFactoryRegistration = Lifestyle.Scoped.CreateRegistration(
+                () => new DbContextFactory<ValidationPortalDbContext>(),
+                container);
+
+            container.AddRegistration<IDbContextFactory<ValidationPortalDbContext>>(databaseContextFactoryRegistration);
 
             // todo: remove after injecting IValidationPortalDbContext instead of concrete type in all locations
-            container.Register<ValidationPortalDbContext>(Lifestyle.Singleton);
-
-            container.Register<IOdsConfigurationValues, OdsConfigurationValues>(Lifestyle.Scoped);
-
+            //container.Register<ValidationPortalDbContext>(Lifestyle.Singleton);
+            
             // Rules Engine
             container.Register<ISchemaProvider, EngineSchemaProvider>(Lifestyle.Scoped);
             container.Register<IRulesEngineService, RulesEngineService>(Lifestyle.Scoped);
@@ -177,11 +184,18 @@ namespace ValidationWeb
         {
             httpConfiguration.Filters.Add(new ProfilingFilter(container.GetInstance<ILoggingService>()));
             httpConfiguration.Filters.Add(new ValidationWebExceptionFilterAttribute(container.GetInstance<IRequestMessageAccessor>(), container.GetInstance<ILoggingService>()));
-            httpConfiguration.Filters.Add(new ValidationAuthenticationFilter(httpConfiguration, container.GetInstance<ILoggingService>(), container.GetInstance<IConfigurationValues>()));
+            
+            httpConfiguration.Filters.Add(
+                new ValidationAuthenticationFilter(
+                    container.GetInstance<ILoggingService>(), 
+                    container.GetInstance<IConfigurationValues>(),
+                    container.GetInstance<IDbContextFactory<ValidationPortalDbContext>>()));
+
             // Unless marked with AllowAnonymous, all actions require Authenication.
             httpConfiguration.Filters.Add(new System.Web.Http.AuthorizeAttribute());
             httpConfiguration.MessageHandlers.Add(new LoggingHandler(container.GetInstance<ILoggingService>()));
-            // httpConfiguration.Services.Replace(typeof(IExceptionHandler), new GlobalExceptionHandler());
+            
+            //httpConfiguration.Services.Replace(typeof(IExceptionHandler), new GlobalExceptionHandler());
             httpConfiguration.Services.Add(typeof(IExceptionLogger), new ValidationExceptionLogger(container.GetInstance<ILoggingService>(), container.GetInstance<IRequestMessageAccessor>()));
         }
 

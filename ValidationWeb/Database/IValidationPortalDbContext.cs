@@ -2,7 +2,7 @@
 
 namespace ValidationWeb
 {
-    public interface IValidationPortalDbContext
+    public interface __IValidationPortalDbContext
     {
         DbSet<Announcement> Announcements { get; set; }
         DbSet<AppUserSession> AppUserSessions { get; set; }

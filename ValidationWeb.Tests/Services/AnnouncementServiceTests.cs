@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Data.Entity;
+    using System.Data.Entity.Infrastructure;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
 
@@ -20,7 +21,9 @@
     {
         protected MockRepository MockRepository { get; set; }
 
-        protected Mock<IValidationPortalDbContext> ValidationPortalDbContextMock { get; set; }
+        protected Mock<ValidationPortalDbContext> ValidationPortalDbContextMock { get; set; }
+
+        protected Mock<IDbContextFactory<ValidationPortalDbContext>> DbContextFactoryMock { get; set; }
 
         protected Mock<IAppUserService> AppUserServiceMock { get; set; }
 
@@ -40,7 +43,6 @@
             dbSet.As<IQueryable<T>>().Setup(m => m.ElementType).Returns(queryable.ElementType);
             dbSet.As<IQueryable<T>>().Setup(m => m.GetEnumerator()).Returns(() => queryable.GetEnumerator());
             dbSet.Setup(d => d.Add(It.IsAny<T>())).Callback<T>(sourceList.Add);
-
             return dbSet;
         }
 
@@ -49,8 +51,8 @@
         {
             MockRepository = new MockRepository(MockBehavior.Strict);
 
-            ValidationPortalDbContextMock = MockRepository.Create<IValidationPortalDbContext>();
-            ValidationPortalDbContextMock.CallBase = true;
+            ValidationPortalDbContextMock = MockRepository.Create<ValidationPortalDbContext>();
+            DbContextFactoryMock = MockRepository.Create<IDbContextFactory<ValidationPortalDbContext>>();
             AppUserServiceMock = MockRepository.Create<IAppUserService>();
             LoggingServiceMock = MockRepository.Create<ILoggingService>();
             AnnouncementServiceMock = MockRepository.Create<IAnnouncementService>();
@@ -122,8 +124,10 @@
             DefaultTestAppUserSession.DismissedAnnouncements = dismissedAnnouncements;
             var announcementDbSetMock = GetQueryableMockDbSet<Announcement>(announcements);
             ValidationPortalDbContextMock.Setup(x => x.Announcements).Returns(announcementDbSetMock.Object);
+            ValidationPortalDbContextMock.Setup(x => x.Set<Announcement>()).Returns(announcementDbSetMock.Object);
+            DbContextFactoryMock.Setup(x => x.Create()).Returns(ValidationPortalDbContextMock.Object);
 
-            var announcementService = new AnnouncementService(ValidationPortalDbContextMock.Object, AppUserServiceMock.Object, LoggingServiceMock.Object);
+            var announcementService = new AnnouncementService(DbContextFactoryMock.Object, AppUserServiceMock.Object, LoggingServiceMock.Object);
 
             var result = announcementService.GetAnnouncements(true);
 
@@ -175,9 +179,17 @@
 
             DefaultTestAppUserSession.DismissedAnnouncements = dismissedAnnouncements;
             var announcementDbSetMock = GetQueryableMockDbSet<Announcement>(announcements);
+            announcementDbSetMock.Setup(x => x.ToString()).Returns(string.Join(", ", announcements));
+            
             ValidationPortalDbContextMock.Setup(x => x.Announcements).Returns(announcementDbSetMock.Object);
+            ValidationPortalDbContextMock.Setup(x => x.Set<Announcement>()).Returns(announcementDbSetMock.Object);
+            ValidationPortalDbContextMock.SetupSet(x => x.Set())
+            ValidationPortalDbContextMock.Setup(x => x.)
+            // http://hamidmosalla.com/2017/08/03/moq-working-with-setupget-verifyget-setupset-verifyset-setupproperty/
 
-            var announcementService = new AnnouncementService(ValidationPortalDbContextMock.Object, AppUserServiceMock.Object, LoggingServiceMock.Object);
+            DbContextFactoryMock.Setup(x => x.Create()).Returns(ValidationPortalDbContextMock.Object);
+
+            var announcementService = new AnnouncementService(DbContextFactoryMock.Object, AppUserServiceMock.Object, LoggingServiceMock.Object);
 
             var result = announcementService.GetAnnouncements(true);
 
@@ -192,7 +204,7 @@
         {
             AppUserServiceMock.Setup(x => x.GetSession()).Throws<InvalidOperationException>();
             LoggingServiceMock.Setup(x => x.LogErrorMessage(It.IsAny<string>()));
-            var announcementService = new AnnouncementService(ValidationPortalDbContextMock.Object, AppUserServiceMock.Object, LoggingServiceMock.Object);
+            var announcementService = new AnnouncementService(DbContextFactoryMock.Object, AppUserServiceMock.Object, LoggingServiceMock.Object);
 
             announcementService.GetAnnouncements();
 
@@ -231,7 +243,7 @@
             var announcementDbSetMock = GetQueryableMockDbSet<Announcement>(announcements);
             ValidationPortalDbContextMock.Setup(x => x.Announcements).Returns(announcementDbSetMock.Object);
 
-            var announcementService = new AnnouncementService(ValidationPortalDbContextMock.Object, AppUserServiceMock.Object, LoggingServiceMock.Object);
+            var announcementService = new AnnouncementService(DbContextFactoryMock.Object, AppUserServiceMock.Object, LoggingServiceMock.Object);
 
             var result = announcementService.GetAnnouncement(announcementIdToReturn);
 
@@ -273,7 +285,7 @@
             var announcementDbSetMock = GetQueryableMockDbSet<Announcement>(announcements);
             ValidationPortalDbContextMock.Setup(x => x.Announcements).Returns(announcementDbSetMock.Object);
 
-            var announcementService = new AnnouncementService(ValidationPortalDbContextMock.Object, AppUserServiceMock.Object, LoggingServiceMock.Object);
+            var announcementService = new AnnouncementService(DbContextFactoryMock.Object, AppUserServiceMock.Object, LoggingServiceMock.Object);
 
             Assert.Throws<Exception>(() => announcementService.GetAnnouncement(announcementIdThatsBogus));
 
@@ -294,7 +306,7 @@
 
             ValidationPortalDbContextMock.Setup(x => x.SaveChanges()).Returns(1);
 
-            var announcementService = new AnnouncementService(ValidationPortalDbContextMock.Object, AppUserServiceMock.Object, LoggingServiceMock.Object);
+            var announcementService = new AnnouncementService(DbContextFactoryMock.Object, AppUserServiceMock.Object, LoggingServiceMock.Object);
 
             announcementService.DeleteAnnouncement(announcement.Id);
 
@@ -330,7 +342,7 @@
                 .Returns(1);
 
             var announcementService = new AnnouncementService(
-                ValidationPortalDbContextMock.Object, 
+                DbContextFactoryMock.Object, 
                 AppUserServiceMock.Object, 
                 LoggingServiceMock.Object);
 
@@ -370,7 +382,7 @@
                 .Callback(() => { var y = 1; })
                 .Returns(1);
 
-            var announcementService = new AnnouncementService(ValidationPortalDbContextMock.Object, AppUserServiceMock.Object, LoggingServiceMock.Object);
+            var announcementService = new AnnouncementService(DbContextFactoryMock.Object, AppUserServiceMock.Object, LoggingServiceMock.Object);
 
             announcementService.SaveAnnouncement(
                 announcement.Id,
@@ -408,7 +420,7 @@
 
             LoggingServiceMock.Setup(x => x.LogErrorMessage(It.IsAny<string>()));
 
-            var announcementService = new AnnouncementService(ValidationPortalDbContextMock.Object, AppUserServiceMock.Object, LoggingServiceMock.Object);
+            var announcementService = new AnnouncementService(DbContextFactoryMock.Object, AppUserServiceMock.Object, LoggingServiceMock.Object);
 
             Assert.Throws<Exception>(() => 
                 announcementService.SaveAnnouncement(
@@ -427,6 +439,7 @@
 
             var announcementDbSetMock = GetQueryableMockDbSet(new List<Announcement>(new[] { announcement }));
             announcementDbSetMock.Setup(x => x.Remove(It.Is<Announcement>(y => y == announcement))).Returns(announcement);
+            ValidationPortalDbContextMock.Setup(x => x.Set<Announcement>()).Returns(announcementDbSetMock.Object);
 
             ValidationPortalDbContextMock
                 .Setup(x => x.Announcements)
@@ -434,7 +447,7 @@
 
             ValidationPortalDbContextMock.Setup(x => x.SaveChanges()).Returns(1);
 
-            var announcementService = new AnnouncementService(ValidationPortalDbContextMock.Object, AppUserServiceMock.Object, LoggingServiceMock.Object);
+            var announcementService = new AnnouncementService(DbContextFactoryMock.Object, AppUserServiceMock.Object, LoggingServiceMock.Object);
             var badAnnouncementId = announcement.Id + 1;
             Assert.Throws(
                 Is.TypeOf<Exception>().And.Message.EqualTo($"Could not delete an announcement because announcement with ID {badAnnouncementId} was not found"), 

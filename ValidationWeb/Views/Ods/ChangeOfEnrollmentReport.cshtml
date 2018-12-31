@@ -233,7 +233,13 @@
                             $('#studentId').val(data.StudentId);
                             $('#requesting-district-id').val(data.RequestingDistrict);
                             $('#requesting-user-id').val(data.RequestingUser);
-                            $('#transmittal-instructions').text(data.TransmittalInstructions);
+
+                            var transmittalInstructions = data.TransmittalInstructions;
+                            if (transmittalInstructions == null || transmittalInstructions.length == 0) {
+                                transmittalInstructions = "";
+                            }
+
+                            $('#transmittal-instructions').text(transmittalInstructions);
 
                             // todo: turn all this into a function
                             $('#check-assessment').prop('checked', data.AssessmentResults.Requested);

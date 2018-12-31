@@ -1,16 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Web;
-using System.Web.Http;
-using System.Web.Http.Filters;
-using ValidationWeb.Services;
-
-namespace ValidationWeb
+﻿namespace ValidationWeb
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Data.Entity.Infrastructure;
+    using System.Linq;
+    using System.Net.Http.Headers;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using System.Web;
+    using System.Web.Http.Filters;
+
+    using ValidationWeb.Services;
+
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public sealed class ValidationAuthenticationFilter : Attribute, IAuthenticationFilter
     {
@@ -18,10 +19,12 @@ namespace ValidationWeb
         /// Name of the ASP.NET/OWIN-provided Session object within the HttpContext
         /// </summary>
         public const string SessionItemName = "Session";
+
         /// <summary>
         /// Key property value of the ASP.NET/OWIN-provided HttpCpntext.Session object for the user's session, if it exists. 
         /// </summary>
         public const string SessionKey = "LoggedInUserSessionKey";
+
         /// <summary>
         /// Name of the cached object in the ASP.NET/OWIN-provided HttpCpntext.Session that contains user information that's not specific to the session.
         /// </summary>
@@ -29,13 +32,19 @@ namespace ValidationWeb
 
         private readonly ILoggingService _logger;
         private readonly IConfigurationValues _config;
+        public readonly IDbContextFactory<ValidationPortalDbContext> DbContextFactory;
 
-        public ValidationAuthenticationFilter(HttpConfiguration globalConfig, ILoggingService logger, IConfigurationValues config)
+        public ValidationAuthenticationFilter(
+            //HttpConfiguration globalConfig, 
+            ILoggingService logger, 
+            IConfigurationValues config,
+            IDbContextFactory<ValidationPortalDbContext> dbContextFactory)
         {
             _logger = logger;
             _config = config;
+            DbContextFactory = dbContextFactory;
         }
-
+        
         public bool AllowMultiple
         {
             get
@@ -66,7 +75,7 @@ namespace ValidationWeb
                         // IMPORTANT - tell ASP.NET we know who the user is - prevents from redirecting the user to login page in a subsequent handler.
                         httpContext.User = new ValidationPortalPrincipal(userIdentity);
                         context.Principal = httpContext.User;
-                        using (var dbContext = new ValidationPortalDbContext())
+                        using (var dbContext = DbContextFactory.Create())
                         {
                             // Get the user's session from the database.
                             var sessIdSought = session[SessionKey].ToString();

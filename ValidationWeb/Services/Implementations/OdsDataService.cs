@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Data.Common;
+    using System.Data.Entity.Infrastructure;
     using System.Data.SqlClient;
     using System.Linq;
 
@@ -10,9 +11,14 @@
     {
         public readonly ILoggingService LoggingService;
 
-        public OdsDataService(ILoggingService loggingService)
+        public readonly IDbContextFactory<ValidationPortalDbContext> DbContextFactory;
+
+        public OdsDataService(
+            ILoggingService loggingService, 
+            IDbContextFactory<ValidationPortalDbContext> dbContextFactory)
         {
             LoggingService = loggingService;
+            DbContextFactory = dbContextFactory;
         }
 
         public List<DemographicsCountReportQuery> GetDistrictAncestryRaceCounts(int? districtEdOrgId, string fourDigitOdsDbYear)
@@ -500,7 +506,7 @@
         
         public RecordsRequest GetRecordsRequestData(int edOrgId, string studentId)
         {
-            using (var dbContext = new ValidationPortalDbContext())
+            using (var dbContext = DbContextFactory.Create())
             {
                 try
                 {
@@ -522,7 +528,7 @@
 
         public IEnumerable<RecordsRequest> GetAllRecordsRequests()
         {
-            using (var dbContext = new ValidationPortalDbContext())
+            using (var dbContext = DbContextFactory.Create())
             {
                 try
                 {
@@ -538,7 +544,7 @@
 
         public void SaveRecordsRequest(RecordsRequestFormData formData)
         {
-            using (var dbContext = new ValidationPortalDbContext())
+            using (var dbContext = DbContextFactory.Create())
             {
                 try
                 {
@@ -617,7 +623,7 @@
 
         public void SaveRecordsResponse(RecordsResponseFormData formData)
         {
-            using (var dbContext = new ValidationPortalDbContext())
+            using (var dbContext = DbContextFactory.Create())
             {
                 try
                 {

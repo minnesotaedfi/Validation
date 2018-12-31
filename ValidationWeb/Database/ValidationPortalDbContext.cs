@@ -2,7 +2,7 @@
 {
     using System.Data.Entity;
 
-    public class ValidationPortalDbContext : DbContext, IValidationPortalDbContext
+    public class ValidationPortalDbContext : DbContext //, IValidationPortalDbContext
     {
         static ValidationPortalDbContext()
         {
@@ -14,7 +14,7 @@
         public ValidationPortalDbContext()
             : base("name=ValidationPortalDbContext")
         {
-            Database.SetInitializer(new MigrateDatabaseToLatestVersion<ValidationPortalDbContext, ValidationPortalDbMigrationConfiguration>(true));
+            System.Data.Entity.Database.SetInitializer(new MigrateDatabaseToLatestVersion<ValidationPortalDbContext, ValidationPortalDbMigrationConfiguration>(true));
             Configuration.LazyLoadingEnabled = false;
           
             #if DEBUG
