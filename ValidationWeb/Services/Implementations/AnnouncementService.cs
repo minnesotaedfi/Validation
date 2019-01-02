@@ -86,9 +86,13 @@
             try
             {
                 if (announcementId > 0)
+                {
                     SaveExistingAnnouncement(announcementId, priority, message, contactInfo, linkUrl, expirationDate);
+                }
                 else
+                {
                     SaveNewAnnouncement(priority, message, contactInfo, linkUrl, expirationDate);
+                }
             }
             catch (Exception ex)
             {

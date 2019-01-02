@@ -46,6 +46,16 @@
 
         public virtual DbSet<ValidationReportSummary> ValidationReportSummaries { get; set; }
 
+        public new void Dispose()
+        {
+            base.Dispose();
+        }
+
+        public new void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+        }
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
