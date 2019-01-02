@@ -14,6 +14,7 @@
     using Should;
 
     using ValidationWeb.Services;
+    using ValidationWeb.Tests.Mocks;
 
     [TestFixture]
     [ExcludeFromCodeCoverage]
@@ -33,35 +34,6 @@
         protected Mock<IAnnouncementService> AnnouncementServiceMock { get; set; }
 
         protected AppUserSession DefaultTestAppUserSession { get; set; }
-
-        public Mock<DbSet<T>> GetQueryableMockDbSet<T>(List<T> sourceList) where T : class
-        {
-            var queryable = sourceList.AsQueryable();
-
-            var dbSet = MockRepository.Create<DbSet<T>>();
-            dbSet.As<IQueryable<T>>().Setup(m => m.Provider).Returns(queryable.Provider);
-            dbSet.As<IQueryable<T>>().Setup(m => m.Expression).Returns(queryable.Expression);
-            dbSet.As<IQueryable<T>>().Setup(m => m.ElementType).Returns(queryable.ElementType);
-            dbSet.As<IQueryable<T>>().Setup(m => m.GetEnumerator()).Returns(() => queryable.GetEnumerator());
-            dbSet.Setup(d => d.Add(It.IsAny<T>())).Callback<T>(sourceList.Add);
-
-            return dbSet;
-        }
-
-        public void SetupMockDbSet<T, U>(
-            Mock<DbSet<U>> queryableMockDbSet,
-            Mock<T> dbContextMock,
-            Expression<Func<T, DbSet<U>>> setupExpression,
-            List<U> source)
-                where T : DbContext
-                where U : class
-        {
-            dbContextMock.Setup(x => x.Set<U>()).Returns(queryableMockDbSet.Object);
-            dbContextMock.Setup(setupExpression).Returns(() => queryableMockDbSet.Object);
-            dbContextMock.Setup(x => x.SaveChanges()).Returns(1);
-           
-            ValidationPortalDbContextMock.SetupSet(x => x.Announcements = It.IsAny<DbSet<Announcement>>());
-        }
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -92,7 +64,7 @@
         public void TearDown()
         {
             ValidationPortalDbContextMock.Reset();
-
+            DbContextFactoryMock.Reset();
             AnnouncementServiceMock.Reset();
             AppUserServiceMock.Reset();
             LoggingServiceMock.Reset();
@@ -140,13 +112,13 @@
 
             DefaultTestAppUserSession.DismissedAnnouncements = dismissedAnnouncements;
 
-            SetupMockDbSet<ValidationPortalDbContext, Announcement>(
-                GetQueryableMockDbSet(announcements),
+            EntityFrameworkMocks.SetupMockDbSet<ValidationPortalDbContext, Announcement>(
+                EntityFrameworkMocks.GetQueryableMockDbSet(announcements),
                 ValidationPortalDbContextMock,
                 x => x.Announcements,
+                x => x.Announcements = It.IsAny<DbSet<Announcement>>(),
                 announcements);
 
-            // create can only be Setup'd after the above db set creation
             DbContextFactoryMock.Setup(x => x.Create()).Returns(ValidationPortalDbContextMock.Object);
 
             var announcementService = new AnnouncementService(DbContextFactoryMock.Object, AppUserServiceMock.Object, LoggingServiceMock.Object);
@@ -201,12 +173,14 @@
 
             DefaultTestAppUserSession.DismissedAnnouncements = dismissedAnnouncements;
 
-            SetupMockDbSet(
-                GetQueryableMockDbSet(announcements),
+            EntityFrameworkMocks.SetupMockDbSet(
+                EntityFrameworkMocks.GetQueryableMockDbSet(announcements),
                 ValidationPortalDbContextMock,
                 x => x.Announcements,
+                x => x.Announcements = It.IsAny<DbSet<Announcement>>(),
                 announcements);
-
+            
+            DbContextFactoryMock.Setup(x => x.Create()).Returns(ValidationPortalDbContextMock.Object);
             var announcementService = new AnnouncementService(DbContextFactoryMock.Object, AppUserServiceMock.Object, LoggingServiceMock.Object);
 
             var result = announcementService.GetAnnouncements(true);
@@ -258,10 +232,11 @@
                     }
                 });
 
-            SetupMockDbSet(
-                GetQueryableMockDbSet(announcements),
+            EntityFrameworkMocks.SetupMockDbSet(
+                EntityFrameworkMocks.GetQueryableMockDbSet(announcements),
                 ValidationPortalDbContextMock,
                 x => x.Announcements,
+                x => x.Announcements = It.IsAny<DbSet<Announcement>>(),
                 announcements);
             
             DbContextFactoryMock.Setup(x => x.Create()).Returns(ValidationPortalDbContextMock.Object);
@@ -305,10 +280,11 @@
                     }
                 });
 
-            SetupMockDbSet(
-                GetQueryableMockDbSet(announcements),
+            EntityFrameworkMocks.SetupMockDbSet(
+                EntityFrameworkMocks.GetQueryableMockDbSet(announcements),
                 ValidationPortalDbContextMock,
                 x => x.Announcements,
+                x => x.Announcements = It.IsAny<DbSet<Announcement>>(),
                 announcements);
 
             DbContextFactoryMock.Setup(x => x.Create()).Returns(ValidationPortalDbContextMock.Object);
@@ -326,9 +302,16 @@
             var announcement = new Announcement { Id = 12345, Message = "test contact info" };
             var announcements = new List<Announcement>(new[] { announcement });
 
-            var announcementDbSetMock = GetQueryableMockDbSet(announcements);
+            var announcementDbSetMock = EntityFrameworkMocks.GetQueryableMockDbSet(announcements);
             announcementDbSetMock.Setup(x => x.Remove(It.Is<Announcement>(y => y == announcement))).Returns(announcement);
-            SetupMockDbSet(announcementDbSetMock, ValidationPortalDbContextMock, x => x.Announcements, announcements);
+
+            EntityFrameworkMocks.SetupMockDbSet(
+                announcementDbSetMock, 
+                ValidationPortalDbContextMock, 
+                x => x.Announcements, 
+                x => x.Announcements = It.IsAny<DbSet<Announcement>>(),
+                announcements);
+            
             DbContextFactoryMock.Setup(x => x.Create()).Returns(ValidationPortalDbContextMock.Object);
 
             var announcementService = new AnnouncementService(DbContextFactoryMock.Object, AppUserServiceMock.Object, LoggingServiceMock.Object);
@@ -355,19 +338,19 @@
 
             var announcements = new List<Announcement>(new[] { announcement });
 
-            var dbSetMock = GetQueryableMockDbSet(announcements);
+            var dbSetMock = EntityFrameworkMocks.GetQueryableMockDbSet(announcements);
 
-            SetupMockDbSet<ValidationPortalDbContext, Announcement>(
+            EntityFrameworkMocks.SetupMockDbSet<ValidationPortalDbContext, Announcement>(
                 dbSetMock,
                 ValidationPortalDbContextMock,
                 x => x.Announcements,
+                x => x.Announcements = It.IsAny<DbSet<Announcement>>(),
                 announcements);
 
             dbSetMock.Setup(x => x.Add(It.IsAny<Announcement>())).Returns<Announcement>(y => y);
 
-            // create can only be Setup'd after the above db set creation
             DbContextFactoryMock.Setup(x => x.Create()).Returns(ValidationPortalDbContextMock.Object);
-            
+
             var announcementService = new AnnouncementService(
                 DbContextFactoryMock.Object,
                 AppUserServiceMock.Object,
@@ -400,15 +383,14 @@
                 };
 
             var announcements = new List<Announcement>(new[] { announcement });
-            var announcementDbSetMock = GetQueryableMockDbSet(announcements);
 
-            SetupMockDbSet<ValidationPortalDbContext, Announcement>(
-                GetQueryableMockDbSet(announcements),
+            EntityFrameworkMocks.SetupMockDbSet<ValidationPortalDbContext, Announcement>(
+                EntityFrameworkMocks.GetQueryableMockDbSet(announcements),
                 ValidationPortalDbContextMock,
                 x => x.Announcements,
+                x => x.Announcements = It.IsAny<DbSet<Announcement>>(),
                 announcements);
 
-            // create can only be Setup'd after the above db set creation
             DbContextFactoryMock.Setup(x => x.Create()).Returns(ValidationPortalDbContextMock.Object);
 
             var announcementService = new AnnouncementService(DbContextFactoryMock.Object, AppUserServiceMock.Object, LoggingServiceMock.Object);
@@ -438,16 +420,17 @@
                     LinkUrl = "http://wearedoubleline.com",
                     Expiration = DateTime.Now.AddMonths(1)
                 };
+            
             var announcements = new List<Announcement>(new[] { announcement });
             
-            SetupMockDbSet<ValidationPortalDbContext, Announcement>(
-                GetQueryableMockDbSet(announcements),
+            DbContextFactoryMock.Setup(x => x.Create()).Returns(ValidationPortalDbContextMock.Object);
+
+            EntityFrameworkMocks.SetupMockDbSet<ValidationPortalDbContext, Announcement>(
+                EntityFrameworkMocks.GetQueryableMockDbSet(announcements),
                 ValidationPortalDbContextMock,
                 x => x.Announcements,
+                x => x.Announcements = It.IsAny<DbSet<Announcement>>(),
                 announcements);
-
-            // create can only be Setup'd after the above db set creation
-            DbContextFactoryMock.Setup(x => x.Create()).Returns(ValidationPortalDbContextMock.Object);
 
             LoggingServiceMock.Setup(x => x.LogErrorMessage(It.IsAny<string>()));
 
@@ -469,18 +452,18 @@
             var announcement = new Announcement { Id = 12345, Message = "test contact info" };
             var announcements = new List<Announcement>(new[] { announcement });
 
-            var announcementDbSetMock = GetQueryableMockDbSet(announcements);
+            var announcementDbSetMock = EntityFrameworkMocks.GetQueryableMockDbSet(announcements);
             announcementDbSetMock.Setup(x => x.Remove(It.Is<Announcement>(y => y == announcement))).Returns(announcement);
 
-            SetupMockDbSet<ValidationPortalDbContext, Announcement>(
-                GetQueryableMockDbSet(announcements),
+            EntityFrameworkMocks.SetupMockDbSet<ValidationPortalDbContext, Announcement>(
+                announcementDbSetMock,
                 ValidationPortalDbContextMock,
                 x => x.Announcements,
+                x => x.Announcements = It.IsAny<DbSet<Announcement>>(),
                 announcements);
-
-            // create can only be Setup'd after the above db set creation
+            
             DbContextFactoryMock.Setup(x => x.Create()).Returns(ValidationPortalDbContextMock.Object);
-
+            
             var announcementService = new AnnouncementService(DbContextFactoryMock.Object, AppUserServiceMock.Object, LoggingServiceMock.Object);
 
             var badAnnouncementId = announcement.Id + 1;
