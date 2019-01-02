@@ -303,7 +303,6 @@
             var announcements = new List<Announcement>(new[] { announcement });
 
             var announcementDbSetMock = EntityFrameworkMocks.GetQueryableMockDbSet(announcements);
-            announcementDbSetMock.Setup(x => x.Remove(It.Is<Announcement>(y => y == announcement))).Returns(announcement);
 
             EntityFrameworkMocks.SetupMockDbSet(
                 announcementDbSetMock, 
@@ -346,8 +345,6 @@
                 x => x.Announcements,
                 x => x.Announcements = It.IsAny<DbSet<Announcement>>(),
                 announcements);
-
-            dbSetMock.Setup(x => x.Add(It.IsAny<Announcement>())).Returns<Announcement>(y => y);
 
             DbContextFactoryMock.Setup(x => x.Create()).Returns(ValidationPortalDbContextMock.Object);
 
@@ -453,8 +450,7 @@
             var announcements = new List<Announcement>(new[] { announcement });
 
             var announcementDbSetMock = EntityFrameworkMocks.GetQueryableMockDbSet(announcements);
-            announcementDbSetMock.Setup(x => x.Remove(It.Is<Announcement>(y => y == announcement))).Returns(announcement);
-
+            
             EntityFrameworkMocks.SetupMockDbSet<ValidationPortalDbContext, Announcement>(
                 announcementDbSetMock,
                 ValidationPortalDbContextMock,
