@@ -27,7 +27,7 @@
 
 #if DEBUG
             // Log the SQL in DEBUG mode
-            //_portalDbContext.Database.Log = s => _loggingService.LogDebugMessage(s);
+            //_portalDbContext.Database.Log = s => LoggingService.LogDebugMessage(s);
 #endif
         }
 

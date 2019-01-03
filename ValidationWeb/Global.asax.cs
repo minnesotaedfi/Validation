@@ -9,6 +9,7 @@
     using System.Web.Http.ModelBinding;
     using System.Web.Http.ModelBinding.Binders;
     using System.Web.Mvc;
+    using System.Web.Mvc.Filters;
     using System.Web.Optimization;
     using System.Web.Routing;
     using System.Web.SessionState;
@@ -30,6 +31,7 @@
     using ValidationWeb.Database;
     using ValidationWeb.DataCache;
     using ValidationWeb.Services;
+    using ValidationWeb.Utility;
 
     public class Global : System.Web.HttpApplication
     {
@@ -73,6 +75,7 @@
             // This is an extension method from the MVC integration package.
             container.RegisterMvcControllers(Assembly.GetExecutingAssembly());
             AddAppServicesToContainer(container);
+            
             container.Verify();
             DependencyResolver.SetResolver(new SimpleInjectorDependencyResolver(container));
             return container;
@@ -93,21 +96,7 @@
             container.Register<ICacheManager, CacheManager>(Lifestyle.Singleton);
             container.Register<IOdsConfigurationValues, OdsConfigurationValues>(Lifestyle.Scoped);
 
-            // Entity Framework Database Contexts
-            // container.RegisterDisposableTransient<IValidationPortalDbContext, ValidationPortalDbContext>();
-            
-            // replacing this with context factory
-            // var databaseContextRegistration = Lifestyle.Scoped.CreateRegistration(() => new ValidationPortalDbContext(), container);
-            //container.AddRegistration<IValidationPortalDbContext>(databaseContextRegistration);
-
-            var databaseContextFactoryRegistration = Lifestyle.Scoped.CreateRegistration(
-                () => new DbContextFactory<ValidationPortalDbContext>(),
-                container);
-
-            container.AddRegistration<IDbContextFactory<ValidationPortalDbContext>>(databaseContextFactoryRegistration);
-
-            // todo: remove after injecting IValidationPortalDbContext instead of concrete type in all locations
-            //container.Register<ValidationPortalDbContext>(Lifestyle.Singleton);
+            container.Register<IDbContextFactory<ValidationPortalDbContext>, DbContextFactory<ValidationPortalDbContext>>(Lifestyle.Singleton);
             
             // Rules Engine
             container.Register<ISchemaProvider, EngineSchemaProvider>(Lifestyle.Scoped);
@@ -130,52 +119,60 @@
                 
         protected virtual void ConfigureWebApi(HttpConfiguration config)
         {
-            #region Configure Dependency injection Container
             // Creates the Dependency Injection Container, registers implementations, 
             // and uses it for all Web API object factories (e.g. IControllerFactory.CreateController).
             // Registers an instance of SimpleInjector.Container to resolve dependencies for Web API, and returns the instance.
             var container = new Container();
+            
+            // enable property injection for filter attributes
+            // see https://simpleinjector.readthedocs.io/en/2.8/registermvcattributefilterprovider-is-deprecated.html
+            container.Options.PropertySelectionBehavior = new ImportPropertySelectionBehavior();
+
             // Make the objects per-incoming-Web-Request by default.
             container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
+            
             // Web API Controller instances will be created by dependency injection.
             container.RegisterWebApiControllers(config);
+            
             // Web API will use this DI container to create everything the framework knows how to inject.
             config.DependencyResolver = new SimpleInjectorWebApiDependencyResolver(container);
+            
             // Usually you'd get an HttpRequestMessage from the HttpContext class in System.Web, but Web API doesn't need System.Web.
             // So we'll let Simple Injector give us access when needed.
             container.EnableHttpRequestMessageTracking(config);
+            
             // Allow getting the Request from arbitrary code 
             container.RegisterInstance<IRequestMessageAccessor>(new RequestMessageAccessor(container));
+            
+            container.RegisterMvcIntegratedFilterProvider();
+
             AddAppServicesToContainer(container);
+
             // Register a Custom Model Binder.
             var provider = new SimpleModelBinderProvider(typeof(ValidationErrorFilter), new ValidationErrorFilterModelBinder());
             config.Services.Insert(typeof(ModelBinderProvider), 0, provider);
-
-            container.Verify();
+            
             // Web API will use this DI container to create everything the framework knows how to inject.
             config.DependencyResolver = new SimpleInjectorWebApiDependencyResolver(container);
-            #endregion Configure Dependency injection Container
-
+            
             AddWebApiRoutes(config);
             AddResponseFormatters(config);
             AddFilters(config, container);
             config.SuppressHostPrincipal();
+
+            container.Verify();
         }
 
         protected virtual void AddWebApiRoutes(HttpConfiguration httpConfiguration)
         {
             httpConfiguration.MapHttpAttributeRoutes();
-
-            //httpConfiguration.Routes.MapHttpRoute(
-            //    name: "DefaultApi",
-            //    routeTemplate: "{controller}/{id}"
-            //);
         }
 
         protected virtual void AddResponseFormatters(HttpConfiguration httpConfiguration)
         {
             // This formatter uses Newtonsoft JSON.Net and handles Camel Casing, returns Enums as Strings, and converts the date into the ISO format JavaScript loves.
             httpConfiguration.Formatters.Insert(0, new JsonNetFormatter());
+
             // Hardcode all responses to use JSON content type (format) by removing XML support
             httpConfiguration.Formatters.XmlFormatter.SupportedMediaTypes.Clear();
         }
@@ -184,19 +181,19 @@
         {
             httpConfiguration.Filters.Add(new ProfilingFilter(container.GetInstance<ILoggingService>()));
             httpConfiguration.Filters.Add(new ValidationWebExceptionFilterAttribute(container.GetInstance<IRequestMessageAccessor>(), container.GetInstance<ILoggingService>()));
-            
-            httpConfiguration.Filters.Add(
-                new ValidationAuthenticationFilter(
-                    container.GetInstance<ILoggingService>(), 
-                    container.GetInstance<IConfigurationValues>(),
-                    container.GetInstance<IDbContextFactory<ValidationPortalDbContext>>()));
 
-            // Unless marked with AllowAnonymous, all actions require Authenication.
+            // this got changed to use the service locator pattern
+            httpConfiguration.Filters.Add(new ValidationAuthenticationFilter());
+
+            // Unless marked with AllowAnonymous, all actions require Authentication.
             httpConfiguration.Filters.Add(new System.Web.Http.AuthorizeAttribute());
             httpConfiguration.MessageHandlers.Add(new LoggingHandler(container.GetInstance<ILoggingService>()));
             
-            //httpConfiguration.Services.Replace(typeof(IExceptionHandler), new GlobalExceptionHandler());
-            httpConfiguration.Services.Add(typeof(IExceptionLogger), new ValidationExceptionLogger(container.GetInstance<ILoggingService>(), container.GetInstance<IRequestMessageAccessor>()));
+            httpConfiguration.Services.Add(
+                typeof(IExceptionLogger), 
+                new ValidationExceptionLogger(
+                    container.GetInstance<ILoggingService>(), 
+                    container.GetInstance<IRequestMessageAccessor>()));
         }
 
         protected void Session_Start()

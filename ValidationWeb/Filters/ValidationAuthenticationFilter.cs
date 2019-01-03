@@ -2,12 +2,14 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel.Composition;
     using System.Data.Entity.Infrastructure;
     using System.Linq;
     using System.Net.Http.Headers;
     using System.Threading;
     using System.Threading.Tasks;
     using System.Web;
+    using System.Web.Http;
     using System.Web.Http.Filters;
 
     using ValidationWeb.Services;
@@ -30,28 +32,24 @@
         /// </summary>
         public const string SessionIdentityKey = "LoggedInUserIdentity";
 
-        private readonly ILoggingService _logger;
-        private readonly IConfigurationValues _config;
-        public readonly IDbContextFactory<ValidationPortalDbContext> DbContextFactory;
+        public ValidationAuthenticationFilter()
+        {
+            var resolver = GlobalConfiguration.Configuration.DependencyResolver;
 
-        public ValidationAuthenticationFilter(
-            //HttpConfiguration globalConfig, 
-            ILoggingService logger, 
-            IConfigurationValues config,
-            IDbContextFactory<ValidationPortalDbContext> dbContextFactory)
-        {
-            _logger = logger;
-            _config = config;
-            DbContextFactory = dbContextFactory;
+            Logger = resolver.GetService(typeof(ILoggingService)) as ILoggingService;
+            Config = resolver.GetService(typeof(IConfigurationValues)) as IConfigurationValues;
+            DbContextFactory =
+                resolver.GetService(typeof(IDbContextFactory<ValidationPortalDbContext>)) as
+                    IDbContextFactory<ValidationPortalDbContext>;
         }
+
+        public ILoggingService Logger { get; set; }
+
+        public IConfigurationValues Config { get; set; }
         
-        public bool AllowMultiple
-        {
-            get
-            {
-                return false;
-            }
-        }
+        public IDbContextFactory<ValidationPortalDbContext> DbContextFactory { get; set; }
+        
+        public bool AllowMultiple => false;
 
         /// <summary>
         /// Based on the content of the HTTP Authorization request header.
@@ -62,7 +60,7 @@
             var session = HttpContext.Current?.Session;
             if (session != null)
             {
-                if (! HttpContext.Current.Session.IsNewSession)
+                if (!HttpContext.Current.Session.IsNewSession)
                 {
                     context.Principal = new ValidationPortalPrincipal(new ValidationPortalIdentity());
 
@@ -82,11 +80,11 @@
                             var currentSession = dbContext.AppUserSessions.FirstOrDefault(sess => sess.Id == sessIdSought);
                             if (currentSession != null)
                             {
-                                _logger.LogInfoMessage($"User {userIdentity.FullName} making a request on an existing session.");
+                                Logger.LogInfoMessage($"User {userIdentity.FullName} making a request on an existing session.");
                                 if (currentSession.ExpiresUtc > DateTime.UtcNow)
                                 {
                                     // Extend the current session.
-                                    currentSession.ExpiresUtc = currentSession.ExpiresUtc.AddMinutes(_config.SessionTimeoutInMinutes);
+                                    currentSession.ExpiresUtc = currentSession.ExpiresUtc.AddMinutes(Config.SessionTimeoutInMinutes);
                                     dbContext.SaveChanges();
                                     // Fill in the user's Identity info on the session instance, which is not persisted in the database.
                                     currentSession.UserIdentity = userIdentity;
@@ -95,7 +93,7 @@
                                 }
                                 else
                                 {
-                                    _logger.LogInfoMessage($"User {userIdentity.FullName} last session was expired and removed from the database during an API call.");
+                                    Logger.LogInfoMessage($"User {userIdentity.FullName} last session was expired and removed from the database during an API call.");
                                     // The session has expired from our application's constraint.
                                     dbContext.AppUserSessions.Remove(currentSession);
                                     dbContext.SaveChanges();

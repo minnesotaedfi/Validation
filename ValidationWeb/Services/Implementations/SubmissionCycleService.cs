@@ -2,112 +2,145 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Data.Entity.Infrastructure;
     using System.Linq;
-    using System.Web;
     using System.Web.Mvc;
 
     public class SubmissionCycleService : ISubmissionCycleService
     {
-        protected readonly ValidationPortalDbContext ValidationPortalDataContext;
-        
-        protected readonly ISchoolYearService SchoolYearService;
-        
-        protected readonly ILoggingService LoggingService;
 
         public SubmissionCycleService(
-            ValidationPortalDbContext validationPortalDataContext,
+            IDbContextFactory<ValidationPortalDbContext> validationPortalDataContextFactory,
             ISchoolYearService schoolYearService,
             ILoggingService loggingService)
-        { 
-            ValidationPortalDataContext = validationPortalDataContext;
+        {
+            ValidationPortalDataContextFactory = validationPortalDataContextFactory;
             SchoolYearService = schoolYearService;
             LoggingService = loggingService;
         }
-        
+
+        protected IDbContextFactory<ValidationPortalDbContext> ValidationPortalDataContextFactory { get; set; }
+
+        protected ISchoolYearService SchoolYearService { get; set; }
+
+        protected ILoggingService LoggingService { get; set; }
+
         public IList<SubmissionCycle> GetSubmissionCycles()
         {
-            foreach (var submissionCycle in ValidationPortalDataContext.SubmissionCycles)
+            using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
             {
-                var schoolYear = ValidationPortalDataContext.SchoolYears.FirstOrDefault(x => x.Id == submissionCycle.SchoolYearId);
-                if (schoolYear != null)
+                foreach (var submissionCycle in validationPortalDataContext.SubmissionCycles)
                 {
-                    submissionCycle.SchoolYearDisplay = schoolYear.ToString();
+                    var schoolYear = validationPortalDataContext.SchoolYears.FirstOrDefault(x => x.Id == submissionCycle.SchoolYearId);
+                    if (schoolYear != null)
+                    {
+                        submissionCycle.SchoolYearDisplay = schoolYear.ToString();
+                    }
                 }
+
+                return validationPortalDataContext.SubmissionCycles.ToList();
             }
-            return ValidationPortalDataContext.SubmissionCycles.ToList();
         }
 
         public IList<SubmissionCycle> GetSubmissionCyclesOpenToday()
         {
-            var submissionCyclesOpenToday = ValidationPortalDataContext.SubmissionCycles
-                .Where(s => s.StartDate <= DateTime.Now && s.EndDate >= DateTime.Now);
-            foreach (var submissionCycle in submissionCyclesOpenToday)
+            using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
             {
-                var schoolYear = ValidationPortalDataContext.SchoolYears.FirstOrDefault(x => x.Id == submissionCycle.SchoolYearId);
-                if (schoolYear != null)
+                var submissionCyclesOpenToday =
+                    validationPortalDataContext.SubmissionCycles.Where(
+                        s => s.StartDate <= DateTime.Now && s.EndDate >= DateTime.Now);
+
+                foreach (var submissionCycle in submissionCyclesOpenToday)
                 {
-                    submissionCycle.SchoolYearDisplay = schoolYear.ToString();
+                    var schoolYear =
+                        validationPortalDataContext.SchoolYears.FirstOrDefault(
+                            x => x.Id == submissionCycle.SchoolYearId);
+
+                    if (schoolYear != null)
+                    {
+                        submissionCycle.SchoolYearDisplay = schoolYear.ToString();
+                    }
                 }
+
+                return submissionCyclesOpenToday.ToList();
             }
-            return submissionCyclesOpenToday.ToList();
         }
 
         public SubmissionCycle GetSubmissionCycle(int id)
         {
-            return ValidationPortalDataContext.SubmissionCycles.FirstOrDefault(submissionCycle => submissionCycle.Id == id);
+            using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
+            {
+                return validationPortalDataContext.SubmissionCycles
+                    .FirstOrDefault(submissionCycle => submissionCycle.Id == id);
+            }
         }
 
         public bool AddSubmissionCycle(SubmissionCycle submissionCycle)
         {
-            ValidationPortalDataContext.SubmissionCycles.Add(submissionCycle);
-            ValidationPortalDataContext.SaveChanges();
+            using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
+            {
+                validationPortalDataContext.SubmissionCycles.Add(submissionCycle);
+                validationPortalDataContext.SaveChanges();
 
-            return true;
+                return true; // why have a return type at all? todo
+            }
         }
 
         public bool AddSubmissionCycle(string collectionId, DateTime startDate, DateTime endDate)
         {
             if (collectionId == null)
+            {
+                // todo: better null/invalid argument handling 
                 return false;
+            }
 
-            var newSubmissionCycle = new SubmissionCycle(collectionId, startDate, endDate);
-            ValidationPortalDataContext.SubmissionCycles.Add(newSubmissionCycle);
-            ValidationPortalDataContext.SaveChanges();
+            using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
+            {
+                var newSubmissionCycle = new SubmissionCycle(collectionId, startDate, endDate);
+                validationPortalDataContext.SubmissionCycles.Add(newSubmissionCycle);
+                validationPortalDataContext.SaveChanges();
 
-            return true;
+                return true;
+            }
         }
 
         public void SaveSubmissionCycle(SubmissionCycle submissionCycle)
         {
             try
             {
-                if (submissionCycle == null)
+                using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
                 {
-                    throw new Exception($"Attempted to save a null SubmissionCycle.");
-                }
-                if (submissionCycle.Id == 0)
-                {
-                    ValidationPortalDataContext.SubmissionCycles.Add(submissionCycle);
-                    ValidationPortalDataContext.SaveChanges();
-                }
-                else
-                {
-                    var existingSubmissionCycle = ValidationPortalDataContext.SubmissionCycles.FirstOrDefault(s => s.Id == submissionCycle.Id);
-                    if (existingSubmissionCycle == null)
+                    if (submissionCycle == null)
                     {
-                        throw new Exception($"SubmissionCycle with id {submissionCycle.Id} does not exist.");
+                        throw new Exception($"Attempted to save a null SubmissionCycle.");
                     }
-                    //existingSubmissionCycle = submissionCycle;
-                    existingSubmissionCycle.CollectionId = submissionCycle.CollectionId;
-                    existingSubmissionCycle.StartDate = submissionCycle.StartDate;
-                    existingSubmissionCycle.EndDate = submissionCycle.EndDate;
-                    existingSubmissionCycle.SchoolYearId = submissionCycle.SchoolYearId;
-                    ValidationPortalDataContext.SaveChanges();
+
+                    if (submissionCycle.Id == 0)
+                    {
+                        validationPortalDataContext.SubmissionCycles.Add(submissionCycle);
+                        validationPortalDataContext.SaveChanges();
+                    }
+                    else
+                    {
+                        var existingSubmissionCycle = validationPortalDataContext.SubmissionCycles
+                            .FirstOrDefault(s => s.Id == submissionCycle.Id);
+
+                        if (existingSubmissionCycle == null)
+                        {
+                            throw new Exception($"SubmissionCycle with id {submissionCycle.Id} does not exist.");
+                        }
+
+                        existingSubmissionCycle.CollectionId = submissionCycle.CollectionId;
+                        existingSubmissionCycle.StartDate = submissionCycle.StartDate;
+                        existingSubmissionCycle.EndDate = submissionCycle.EndDate;
+                        existingSubmissionCycle.SchoolYearId = submissionCycle.SchoolYearId;
+                        validationPortalDataContext.SaveChanges();
+                    }
                 }
             }
             catch (Exception ex)
             {
-                string strMessage = "";
+                string strMessage = string.Empty;
                 if (submissionCycle != null)
                 {
                     strMessage = $" with id = { submissionCycle.Id }, StartDate = { submissionCycle.StartDate }, EndDate = { submissionCycle.EndDate}, SchoolYearID = { submissionCycle.SchoolYearId }";
@@ -121,9 +154,16 @@
         public IList<SubmissionCycle> GetSubmissionCyclesByCollectionId(string collectionId)
         {
             if (collectionId == null)
+            {
                 return null;
+            }
 
-            return ValidationPortalDataContext.SubmissionCycles.Where(submissionCycle => submissionCycle.CollectionId == collectionId).ToList();
+            using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
+            {
+                return validationPortalDataContext.SubmissionCycles
+                    .Where(submissionCycle => submissionCycle.CollectionId == collectionId)
+                    .ToList();
+            }
         }
 
         public List<SelectListItem> GetSchoolYearsSelectList(SubmissionCycle submissionCycle = null)
@@ -134,7 +174,7 @@
             {
                 Value = kvPair.Key.ToString(),
                 Text = kvPair.Value,
-                Selected = (submissionCycle != null) && (kvPair.Key == submissionCycle.SchoolYearId) ? true : false
+                Selected = (submissionCycle != null) && (kvPair.Key == submissionCycle.SchoolYearId)
             }).ToList();
 
             if (submissionCycle != null)
@@ -146,21 +186,29 @@
 
         public SubmissionCycle SchoolYearCollectionAlreadyExists(SubmissionCycle submissionCycle)
         {
-            var duplicateCycle = ValidationPortalDataContext.SubmissionCycles
-                .FirstOrDefault(x => x.SchoolYearId == submissionCycle.SchoolYearId && x.CollectionId == submissionCycle.CollectionId);
-            return duplicateCycle;
-        }
+            using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
+            {
+                var duplicateCycle = validationPortalDataContext.SubmissionCycles
+                    .FirstOrDefault(x => x.SchoolYearId == submissionCycle.SchoolYearId && x.CollectionId == submissionCycle.CollectionId);
 
+                return duplicateCycle;
+            }
+        }
         public void DeleteSubmissionCycle(int Id)
         {
-            var submissionCycle = ValidationPortalDataContext.SubmissionCycles.FirstOrDefault(a => a.Id == Id);
-            if (submissionCycle == null)
+            using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
             {
-                throw new Exception($"Could not delete a submission cycle because submission cycle with ID {Id} was not found");
-            }
-            ValidationPortalDataContext.SubmissionCycles.Remove(submissionCycle);
-            ValidationPortalDataContext.SaveChanges();
-        }
+                var submissionCycle = validationPortalDataContext.SubmissionCycles.FirstOrDefault(a => a.Id == Id);
 
+                if (submissionCycle == null)
+                {
+                    throw new Exception(
+                        $"Could not delete a submission cycle because submission cycle with ID {Id} was not found");
+                }
+
+                validationPortalDataContext.SubmissionCycles.Remove(submissionCycle);
+                validationPortalDataContext.SaveChanges();
+            }
+        }
     }
 }

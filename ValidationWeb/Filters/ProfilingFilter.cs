@@ -15,12 +15,12 @@ namespace ValidationWeb
 
         public override void OnActionExecuting(HttpActionContext actionContext)
         {
-            _logger.LogInfoMessage(string.Format("Controller model bound. Controller action starting."));
+            _logger.LogInfoMessage("Controller model bound. Controller action starting.");
         }
 
         public override void OnActionExecuted(HttpActionExecutedContext actionExecutedContext)
         {
-            _logger.LogInfoMessage(string.Format("RESPONSE COMPLETED."));
+            _logger.LogInfoMessage("RESPONSE COMPLETED.");
         }
     }
 }

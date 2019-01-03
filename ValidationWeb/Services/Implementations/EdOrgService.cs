@@ -1,81 +1,95 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Data.SqlClient;
-using System.Data.Entity;
-using System.Data.Entity.Migrations;
-using System.Linq;
-using System.Web;
-
-namespace ValidationWeb.Services
+﻿namespace ValidationWeb.Services
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Data.Common;
+    using System.Data.Entity.Infrastructure;
+    using System.Data.Entity.Migrations;
+    using System.Data.SqlClient;
+    using System.Linq;
+
     public class EdOrgService : IEdOrgService
     {
-        protected readonly ValidationPortalDbContext _validationPortalDataContext;
-        protected readonly IAppUserService _appUserService;
-        protected readonly ILoggingService _loggingService;
-        protected readonly ISchoolYearService _schoolYearService;
-
-        public EdOrgService(ValidationPortalDbContext validationPortalDataContext, 
+        public EdOrgService(
+            IDbContextFactory<ValidationPortalDbContext> validationPortalDataContextFactory,
             IAppUserService appUserService,
             ISchoolYearService schoolYearService,
             ILoggingService loggingService)
         {
-            _validationPortalDataContext = validationPortalDataContext;
-            _appUserService = appUserService;
-            _schoolYearService = schoolYearService;
-            _loggingService = loggingService;
+            ValidationPortalDataContextFactory = validationPortalDataContextFactory;
+            AppUserService = appUserService;
+            SchoolYearService = schoolYearService;
+            LoggingService = loggingService;
         }
+
+        protected IDbContextFactory<ValidationPortalDbContext> ValidationPortalDataContextFactory { get; set; }
+
+        protected IAppUserService AppUserService { get; set; }
+
+        protected ILoggingService LoggingService { get; set; }
+
+        protected ISchoolYearService SchoolYearService { get; set; }
 
         public List<EdOrg> GetEdOrgs()
         {
-            return _appUserService.GetSession().UserIdentity.AuthorizedEdOrgs.OrderBy(eo => eo.OrganizationName).ToList();
+            return AppUserService.GetSession().UserIdentity.AuthorizedEdOrgs.OrderBy(eo => eo.OrganizationName).ToList();
         }
 
         public EdOrg GetEdOrgById(int edOrgId, int schoolYearId)
         {
-            var result = _validationPortalDataContext.EdOrgs.FirstOrDefault(eo => eo.Id == edOrgId);
-            if (result != null)
+            using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
             {
-                return result;
-            }
-            var schoolYear = _schoolYearService.GetSchoolYearById(schoolYearId);
-            using (var _odsRawDbContext = new RawOdsDbContext(schoolYear.EndYear))
-            {
-                var conn = _odsRawDbContext.Database.Connection;
-                try
+                var result = validationPortalDataContext.EdOrgs.FirstOrDefault(eo => eo.Id == edOrgId);
+                if (result != null)
                 {
-                    conn.Open();
-                    var edOrgQueryCmd = conn.CreateCommand();
-                    edOrgQueryCmd.CommandType = System.Data.CommandType.Text;
-                    edOrgQueryCmd.CommandText = EdOrgQuery.SingleEdOrgsQuery;
-                    edOrgQueryCmd.Parameters.Add(new SqlParameter("@lea_id", System.Data.SqlDbType.Int));
-                    edOrgQueryCmd.Parameters["@lea_id"].Value = edOrgId;
-                    result = ReadEdOrgs(edOrgQueryCmd, schoolYearId).FirstOrDefault();
+                    return result;
                 }
-                catch (Exception ex)
+
+                var schoolYear = SchoolYearService.GetSchoolYearById(schoolYearId);
+
+                using (var _odsRawDbContext = new RawOdsDbContext(schoolYear.EndYear))
                 {
-                    _loggingService.LogErrorMessage($"While reading Ed Org description (ID# {edOrgId}, school year {schoolYear.ToString()}): {ex.ChainInnerExceptionMessages()}");
-                }
-                finally
-                {
-                    if (conn != null && conn.State != System.Data.ConnectionState.Closed)
+                    var conn = _odsRawDbContext.Database.Connection;
+                    try
                     {
-                        try
+                        conn.Open();
+                        var edOrgQueryCmd = conn.CreateCommand();
+                        edOrgQueryCmd.CommandType = System.Data.CommandType.Text;
+                        edOrgQueryCmd.CommandText = EdOrgQuery.SingleEdOrgsQuery;
+                        edOrgQueryCmd.Parameters.Add(new SqlParameter("@lea_id", System.Data.SqlDbType.Int));
+                        edOrgQueryCmd.Parameters["@lea_id"].Value = edOrgId;
+                        result = ReadEdOrgs(edOrgQueryCmd, schoolYearId).FirstOrDefault();
+                    }
+                    catch (Exception ex)
+                    {
+                        LoggingService.LogErrorMessage(
+                            $"While reading Ed Org description (ID# {edOrgId}, school year {schoolYear.ToString()}): {ex.ChainInnerExceptionMessages()}");
+                    }
+                    finally
+                    {
+                        if (conn != null && conn.State != System.Data.ConnectionState.Closed)
                         {
-                            conn.Close();
+                            try
+                            {
+                                conn.Close();
+                            }
+                            catch (Exception)
+                            {
+                            }
                         }
-                        catch (Exception) { }
                     }
                 }
+
+                if (result != null)
+                {
+                    validationPortalDataContext.EdOrgs.AddOrUpdate(result);
+                    validationPortalDataContext.SaveChanges();
+                    return result;
+                }
+                
+                throw new ApplicationException(
+                    $"The Ed Org with ID# {edOrgId}, school year {schoolYear.ToString()}, was not found.");
             }
-            if (result != null)
-            {
-                _validationPortalDataContext.EdOrgs.AddOrUpdate(result);
-                _validationPortalDataContext.SaveChanges();
-                return result;
-            }
-            throw new ApplicationException($"The Ed Org with ID# {edOrgId}, school year {schoolYear.ToString()}, was not found.");
         }
 
         public void RefreshEdOrgCache(int fourDigitOdsDbYear)
@@ -95,7 +109,7 @@ namespace ValidationWeb.Services
                 }
                 catch (Exception ex)
                 {
-                    _loggingService.LogErrorMessage($"While trying to add all ODS Ed Org descriptions to the Validation Portal Database Cache: school year {fourDigitOdsDbYear}, error: {ex.ChainInnerExceptionMessages()}");
+                    LoggingService.LogErrorMessage($"While trying to add all ODS Ed Org descriptions to the Validation Portal Database Cache: school year {fourDigitOdsDbYear}, error: {ex.ChainInnerExceptionMessages()}");
                 }
                 finally
                 {
@@ -105,22 +119,27 @@ namespace ValidationWeb.Services
                         {
                             conn.Close();
                         }
-                        catch (Exception) { }
+                        catch (Exception) { }   // todo: never this
                     }
                 }
             }
-            foreach (var singleEdOrg in edOrgsExtractedFromODS)
+
+            using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
             {
-                _validationPortalDataContext.EdOrgs.AddOrUpdate();
+                foreach (var singleEdOrg in edOrgsExtractedFromODS)
+                {
+                    validationPortalDataContext.EdOrgs.AddOrUpdate();
+                }
+
+                validationPortalDataContext.SaveChanges();
             }
-            _validationPortalDataContext.SaveChanges();
         }
 
         public SingleEdOrgByIdQuery GetSingleEdOrg(int edOrgId, int schoolYearId)
         {
-            SingleEdOrgByIdQuery result = null; 
+            SingleEdOrgByIdQuery result = null;
 
-            var schoolYear = _schoolYearService.GetSchoolYearById(schoolYearId);
+            var schoolYear = SchoolYearService.GetSchoolYearById(schoolYearId);
             using (var odsRawDbContext = new RawOdsDbContext(schoolYear.EndYear))
             {
                 var conn = odsRawDbContext.Database.Connection;
@@ -149,7 +168,7 @@ namespace ValidationWeb.Services
                 }
                 catch (Exception ex)
                 {
-                    _loggingService.LogErrorMessage(
+                    LoggingService.LogErrorMessage(
                         $"While reading Ed Org description (ID# {edOrgId}, school year {schoolYear.ToString()}): {ex.ChainInnerExceptionMessages()}");
                 }
                 finally
@@ -199,9 +218,9 @@ namespace ValidationWeb.Services
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                _loggingService.LogErrorMessage($"An error occurred while trying to read the Ed Org information from the Ed Fi ODS referring to the school year with ID {schoolYearId}: {ex.ChainInnerExceptionMessages()}");
+                LoggingService.LogErrorMessage($"An error occurred while trying to read the Ed Org information from the Ed Fi ODS referring to the school year with ID {schoolYearId}: {ex.ChainInnerExceptionMessages()}");
             }
             return result;
         }

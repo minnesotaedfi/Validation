@@ -1,39 +1,49 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace ValidationWeb.Services
+﻿namespace ValidationWeb.Services
 {
+    using System;
+    using System.Data.Entity.Infrastructure;
+    using System.Linq;
+
     public class AppUserService : IAppUserService
     {
         public const string SessionItemName = "Session";
-        protected readonly ValidationPortalDbContext _validationPortalDataContext;
-        protected readonly IHttpContextProvider _httpContextProvider;
-        protected readonly ILoggingService _loggingService;
 
-
+        protected IDbContextFactory<ValidationPortalDbContext> ValidationPortalDataContextFactory { get; set; }
+        
+        protected IHttpContextProvider HttpContextProvider { get; set; }
+        
+        protected ILoggingService LoggingService { get; set; }
+        
         public AppUserService(
-            ValidationPortalDbContext validationPortalDataContext, 
+            IDbContextFactory<ValidationPortalDbContext> validationPortalDataContextFactory, 
             IHttpContextProvider httpContextProvider,
             ILoggingService loggingService)
         {
-            _validationPortalDataContext = validationPortalDataContext;
-            _httpContextProvider = httpContextProvider;
-            _loggingService = loggingService;
+            ValidationPortalDataContextFactory = validationPortalDataContextFactory;
+            HttpContextProvider = httpContextProvider;
+            LoggingService = loggingService;
         }
 
         public void DismissAnnouncement(int announcementId)
         {
-            var session = GetSession();
-            session.DismissedAnnouncements.Add(new DismissedAnnouncement { AnnouncementId = announcementId, AppUserSessionId = session.Id });
-            _validationPortalDataContext.SaveChanges();
-            UpdateUserSession(session);
+            using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
+            {
+                var session = GetSession();
+                session.DismissedAnnouncements.Add(
+                    new DismissedAnnouncement
+                    {
+                        AnnouncementId = announcementId,
+                        AppUserSessionId = session.Id
+                    });
+
+                validationPortalDataContext.SaveChanges();
+                UpdateUserSession(session);
+            }
         }
 
         public AppUserSession GetSession()
         {
-            return _httpContextProvider.CurrentHttpContext.Items[SessionItemName] as AppUserSession;
+            return HttpContextProvider.CurrentHttpContext.Items[SessionItemName] as AppUserSession;
         }
 
         public ValidationPortalIdentity GetUser()
@@ -43,48 +53,67 @@ namespace ValidationWeb.Services
 
         public void UpdateFocusedEdOrg(string newFocusedEdOrgId)
         {
-            _loggingService.LogDebugMessage($"Attempting to update focused Ed Org ID to {newFocusedEdOrgId}.");
+            LoggingService.LogDebugMessage($"Attempting to update focused Ed Org ID to {newFocusedEdOrgId}.");
             try
             {
-                var desiredEdOrgId = int.Parse(newFocusedEdOrgId);
-                var sessionObj = GetSession();
-                if (sessionObj == null || sessionObj.UserIdentity.AuthorizedEdOrgs.FirstOrDefault(eo => eo.Id == desiredEdOrgId) == null)
+                using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
                 {
-                    return;
+                    var desiredEdOrgId = int.Parse(newFocusedEdOrgId);
+                    var sessionObj = GetSession();
+                    if (sessionObj == null
+                        || sessionObj.UserIdentity.AuthorizedEdOrgs.FirstOrDefault(eo => eo.Id == desiredEdOrgId)
+                        == null)
+                    {
+                        return;
+                    }
+
+                    validationPortalDataContext.AppUserSessions
+                        .First(x => x.Id == sessionObj.Id)
+                        .FocusedEdOrgId = desiredEdOrgId;
+
+                    validationPortalDataContext.SaveChanges();
                 }
-                _validationPortalDataContext.AppUserSessions.Where(sess => sess.Id == sessionObj.Id).First().FocusedEdOrgId = desiredEdOrgId;
-                _validationPortalDataContext.SaveChanges();
             }
             catch(Exception ex)
             {
-                _loggingService.LogErrorMessage($"An error occurred when updating focused Ed Org ID to {newFocusedEdOrgId}: {ex.ChainInnerExceptionMessages()}");
+                LoggingService.LogErrorMessage($"An error occurred when updating focused Ed Org ID to {newFocusedEdOrgId}: {ex.ChainInnerExceptionMessages()}");
             }
         }
 
         public void UpdateFocusedSchoolYear(int newFocusedSchoolYearId)
         {
-            _loggingService.LogDebugMessage($"Attempting to update focused School Year ID to {newFocusedSchoolYearId.ToString()}.");
+            LoggingService.LogDebugMessage($"Attempting to update focused School Year ID to {newFocusedSchoolYearId.ToString()}.");
             try
             {
-                var sessionObj = GetSession();
-                int? validSchoolYearId = _validationPortalDataContext.SchoolYears.FirstOrDefault(sy => sy.Enabled && sy.Id == newFocusedSchoolYearId).Id;
-                if (sessionObj == null || !(validSchoolYearId.HasValue))
+                using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
                 {
-                    return;
+                    var sessionObj = GetSession();
+
+                    // todo: null ref
+                    int? validSchoolYearId = validationPortalDataContext.SchoolYears
+                        .FirstOrDefault(sy => sy.Enabled && sy.Id == newFocusedSchoolYearId).Id;
+
+                    if (sessionObj == null || !validSchoolYearId.HasValue)
+                    {
+                        return;
+                    }
+
+                    validationPortalDataContext.AppUserSessions
+                        .First(x => x.Id == sessionObj.Id)
+                        .FocusedSchoolYearId = validSchoolYearId.Value;
+                    
+                    validationPortalDataContext.SaveChanges();
                 }
-                _validationPortalDataContext.AppUserSessions.Where(sess => sess.Id == sessionObj.Id).First().FocusedSchoolYearId = validSchoolYearId.Value;
-                _validationPortalDataContext.SaveChanges();
             }
             catch (Exception ex)
             {
-                _loggingService.LogErrorMessage($"An error occurred when updating focused School Year ID to {newFocusedSchoolYearId.ToString()}: {ex.ChainInnerExceptionMessages()}");
+                LoggingService.LogErrorMessage($"An error occurred when updating focused School Year ID to {newFocusedSchoolYearId.ToString()}: {ex.ChainInnerExceptionMessages()}");
             }
         }
 
-        
         private void UpdateUserSession(AppUserSession session)
         {
-            _httpContextProvider.CurrentHttpContext.Items[SessionItemName] = session;
+            HttpContextProvider.CurrentHttpContext.Items[SessionItemName] = session;
         }
     }
 }

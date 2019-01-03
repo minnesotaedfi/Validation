@@ -6,54 +6,83 @@ using static System.Int32;
 
 namespace ValidationWeb.Services
 {
+    using System.Data.Entity.Infrastructure;
+
     public class SchoolYearService : ISchoolYearService
     {
-        protected readonly ValidationPortalDbContext _validationPortalDataContext;
 
-        public SchoolYearService(ValidationPortalDbContext validationPortalDataContext)
+        public SchoolYearService(IDbContextFactory<ValidationPortalDbContext> validationPortalDataContextFactory)
         {
-            _validationPortalDataContext = validationPortalDataContext;
+            ValidationPortalDataContextFactory = validationPortalDataContextFactory;
         }
+
+        protected IDbContextFactory<ValidationPortalDbContext> ValidationPortalDataContextFactory { get; set; }
+
         public IList<SchoolYear> GetSubmittableSchoolYears()
         {
-            return _validationPortalDataContext.SchoolYears.ToList();
+            using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create()) 
+            {
+                return validationPortalDataContext.SchoolYears.ToList();
+            }
         }
+
         public Dictionary<int, string> GetSubmittableSchoolYearsDictionary()
         {
-            return _validationPortalDataContext.SchoolYears.ToDictionary(x => x.Id, x => x.ToString());
+            using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
+            {
+                return validationPortalDataContext.SchoolYears.ToDictionary(x => x.Id, x => x.ToString());
+            }
         }
 
         public void SetSubmittableSchoolYears(IEnumerable<SchoolYear> years)
         {
-            _validationPortalDataContext.SchoolYears.RemoveRange(_validationPortalDataContext.SchoolYears.ToArray());
-            _validationPortalDataContext.SaveChanges();
-            _validationPortalDataContext.SchoolYears.AddRange(years);
-            _validationPortalDataContext.SaveChanges();
+            using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
+            {
+                validationPortalDataContext.SchoolYears.RemoveRange(validationPortalDataContext.SchoolYears.ToArray());
+                validationPortalDataContext.SaveChanges();
+
+                validationPortalDataContext.SchoolYears.AddRange(years);
+                validationPortalDataContext.SaveChanges();
+            }
         }
 
         public bool UpdateErrorThresholdValue(int id, decimal thresholdValue)
         {
-            var schoolYearRecord = _validationPortalDataContext.SchoolYears.FirstOrDefault(schoolYear => schoolYear.Id == id);
-            if (schoolYearRecord == null)
-                return false;
+            using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
+            {
+                var schoolYearRecord = validationPortalDataContext.SchoolYears.FirstOrDefault(schoolYear => schoolYear.Id == id);
 
-            schoolYearRecord.ErrorThreshold = thresholdValue;
-            _validationPortalDataContext.SaveChanges();
+                if (schoolYearRecord == null)
+                {
+                    return false;
+                }
 
-            return true;
+                schoolYearRecord.ErrorThreshold = thresholdValue;
+                validationPortalDataContext.SaveChanges();
+
+                return true;
+            }
         }
 
         public bool AddNewSchoolYear(string startDate, string endDate)
         {
             if (string.IsNullOrEmpty(startDate) || string.IsNullOrEmpty(endDate))
+            {
                 return false;
+            }
 
             if (!ValidateYears(startDate, endDate))
+            {
                 return false;
+            }
 
             var newSchoolYear = new SchoolYear(startDate, endDate);
-            _validationPortalDataContext.SchoolYears.Add(newSchoolYear);
-            _validationPortalDataContext.SaveChanges();
+
+            using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
+            {
+                validationPortalDataContext.SchoolYears.Add(newSchoolYear);
+                validationPortalDataContext.SaveChanges();
+            }
 
             return true;
         }
@@ -65,27 +94,37 @@ namespace ValidationWeb.Services
             var didParse = TryParse(startDate, out startDateCheck);
 
             if (!didParse)
+            {
                 return false;
+            }
 
-            startDateCheck = startDateCheck + 1;
+            startDateCheck = startDateCheck + 1; 
             return startDateCheck.ToString() == endDate;
         }
 
         public bool RemoveSchoolYear(int id)
         {
-            var schoolYearRecord = _validationPortalDataContext.SchoolYears.FirstOrDefault(schoolYear => schoolYear.Id == id);
+            using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
+            {
+                var schoolYearRecord = validationPortalDataContext.SchoolYears.FirstOrDefault(schoolYear => schoolYear.Id == id);
 
-            if (schoolYearRecord == null)
-                return false;
+                if (schoolYearRecord == null)
+                {
+                    return false;
+                }
 
-            _validationPortalDataContext.SchoolYears.Remove(schoolYearRecord);
-            _validationPortalDataContext.SaveChanges();
-            return true;
+                validationPortalDataContext.SchoolYears.Remove(schoolYearRecord);
+                validationPortalDataContext.SaveChanges();
+                return true;
+            }
         }
 
         public SchoolYear GetSchoolYearById(int id)
         {
-            return _validationPortalDataContext.SchoolYears.FirstOrDefault(schoolYear => schoolYear.Id == id);
+            using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
+            {
+                return validationPortalDataContext.SchoolYears.FirstOrDefault(schoolYear => schoolYear.Id == id);
+            }
         }
     }
 }
