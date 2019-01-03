@@ -6,6 +6,7 @@
     using System.Data.Entity.Infrastructure;
     using System.Data.SqlClient;
     using System.Linq;
+    using System.Runtime.InteropServices;
     using System.Text;
     using System.Threading.Tasks;
 
@@ -66,6 +67,14 @@
 
                     #region Add a new execution of the Validation Engine to the Validation database, (required by the Portal) and get an ID back representing this execution.
 
+                    var schoolYear = _schoolYearService.GetSubmittableSchoolYears()
+                        .FirstOrDefault(sy => sy.EndYear == fourDigitOdsDbYear);
+
+                    if (schoolYear == null)
+                    {
+                        throw new InvalidOperationException($"Unable to find submittable school year {fourDigitOdsDbYear}");
+                    }
+
                     newReportSummary = new ValidationReportSummary
                                        {
                                            Collection = collectionId,
@@ -75,9 +84,8 @@
                                            TotalCount = 0,
                                            Id = newRuleValidationExecution.RuleValidationId,
                                            EdOrgId = _appUserService.GetSession().FocusedEdOrgId,
-                                           SchoolYear =
-                                               _schoolYearService.GetSubmittableSchoolYears()
-                                                   .FirstOrDefault(sy => sy.EndYear == fourDigitOdsDbYear),
+                                           // SchoolYear = schoolYear,
+                                           SchoolYearId = schoolYear.Id,
                                            InitiatedBy = _appUserService.GetUser().FullName,
                                            RequestedWhen = DateTime.UtcNow,
                                            Status = "In Progress - Starting"

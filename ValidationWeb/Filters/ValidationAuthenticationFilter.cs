@@ -28,7 +28,7 @@
         public const string SessionKey = "LoggedInUserSessionKey";
 
         /// <summary>
-        /// Name of the cached object in the ASP.NET/OWIN-provided HttpCpntext.Session that contains user information that's not specific to the session.
+        /// Name of the cached object in the ASP.NET/OWIN-provided HttpContext.Session that contains user information that's not specific to the session.
         /// </summary>
         public const string SessionIdentityKey = "LoggedInUserIdentity";
 

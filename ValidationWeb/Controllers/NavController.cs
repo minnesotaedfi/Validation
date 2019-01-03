@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
-using System.Web;
+﻿using System.Linq;
 using System.Web.Mvc;
 using ValidationWeb.Services;
 
@@ -46,12 +41,14 @@ namespace ValidationWeb
                 EdOrgs = _edOrgService.GetEdOrgs(),
                 SchoolYears = _schoolYearService.GetSubmittableSchoolYears().OrderByDescending(x => x.EndYear)
             };
-            
-            // Set focused information after using the service to initailize the model.
+
+            // Set focused information after using the service to initialize the model.
             model.FocusedEdOrg = model.EdOrgs.FirstOrDefault(edOrg => edOrg.Id == _appUserService.GetSession().FocusedEdOrgId);
+
             // If the user's School Year wasn't available any more, then select the first School Year whose data can be submitted.
-            model.FocusedSchoolYear = model.SchoolYears.FirstOrDefault(sy => sy.Id == _appUserService.GetSession().FocusedSchoolYearId) ??
-                                      _schoolYearService.GetSubmittableSchoolYears().First();
+            model.FocusedSchoolYear = model.SchoolYears
+                                        .FirstOrDefault(sy => sy.Id == _appUserService.GetSession().FocusedSchoolYearId) ??
+                                        _schoolYearService.GetSubmittableSchoolYears().First();
 
             model.ShowLogoutLink = _configurationValues.UseSimulatedSSO;
 

@@ -48,22 +48,22 @@ namespace ValidationWeb
         {
             context.EdOrgTypeLookup.AddOrUpdate(EdOrgTypeLookups);
             context.ErrorSeverityLookup.AddOrUpdate(ErrorSeverityLookups);
-            // context.RecordsRequestTypeLookup.AddOrUpdate(RecordsRequestTypeLookups);
-
-            if (_config.SeedSchoolYears != null && context.SchoolYears.Count() <= 0)
+            
+            // why would it be < 0 ? todo 
+            if (_config.SeedSchoolYears != null && !context.SchoolYears.Any()) 
             {
                 foreach (var schoolYearToSeedIfMissing in _config.SeedSchoolYears)
                 {
                     if (context.SchoolYears.FirstOrDefault(sy =>
-                    sy.StartYear != schoolYearToSeedIfMissing.StartYear
-                    && sy.EndYear != schoolYearToSeedIfMissing.EndYear) == null)
+                        sy.StartYear != schoolYearToSeedIfMissing.StartYear && 
+                        sy.EndYear != schoolYearToSeedIfMissing.EndYear) == null)
                     {
                         context.SchoolYears.AddOrUpdate(schoolYearToSeedIfMissing);
                     }
                 }
             }
 #if DEBUG
-            if (context.Announcements != null && context.Announcements.Count() <= 0)
+            if (context.Announcements != null && !context.Announcements.Any())
             {
                 context.Announcements.AddOrUpdate(
                     new Announcement
@@ -83,8 +83,7 @@ namespace ValidationWeb
                         IsEmergency = false,
                         LinkUrl = "http://education.mn.gov/",
                         Expiration = new DateTime(2019, 4, 1)
-                    }
-                );
+                    });
             }
 #endif
         }
