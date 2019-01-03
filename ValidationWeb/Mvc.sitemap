@@ -43,5 +43,10 @@
 			<mvcSiteMapNode title="Report" controller="Validation" action="Report" />
 			<mvcSiteMapNode title="Submissions" controller="Validation" action="Submissions" />
 		</mvcSiteMapNode>
+		<mvcSiteMapNode title="Admin" controller="Admin" action="Index" tab="" key="admin">
+			<mvcSiteMapNode title="School Years" controller="Admin" action="Index" tab="" key="admin-0" />
+			<mvcSiteMapNode title="Collection Cycles" controller="Admin" action="Index" tab="submissioncycles" key="admin-1" />
+			<mvcSiteMapNode title="Announcements" controller="Admin" action="Index" tab="announcements" key="admin-2" />
+		</mvcSiteMapNode>
 	</mvcSiteMapNode>
 </mvcSiteMap>

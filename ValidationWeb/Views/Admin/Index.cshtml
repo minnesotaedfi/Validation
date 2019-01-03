@@ -6,8 +6,7 @@
             <a class="list-group-item list-group-item-action" id="list-error-threshold-list" data-toggle="list" href="#list-error-threshold" role="tab"
                onclick="loadDefaultTab()">School Years</a>
             <a class="list-group-item list-group-item-action" id="list-submissioncycles-list" data-toggle="list" href="#list-submissioncycles" role="tab"
-               onclick="loadNonDefaultTab('submissioncycles')">Submission Cycles</a>
-            <a class="list-group-item list-group-item-action" id="list-messages-list" data-toggle="list" href="#list-messages" role="tab" aria-controls="messages">Rule Management</a>
+               onclick="loadNonDefaultTab('submissioncycles')">Collection Cycles</a>
             <a class="list-group-item list-group-item-action" id="list-announcements-list" data-toggle="list" href="#list-announcements" role="tab" aria-controls="settings"
                onclick="loadNonDefaultTab('announcements')">Announcements</a>            
         </div>
@@ -20,7 +19,6 @@
             <div class="tab-pane fade" id="list-submissioncycles" role="tabpanel" aria-labelledby="list-submissioncycles-list">
                 @Html.Partial("Partials/SubmissionCycleList", @Model.SubmissionCycles)
             </div>
-            <div class="tab-pane fade" id="list-messages" role="tabpanel" aria-labelledby="list-messages-list">...</div>
             <div class="tab-pane fade" id="list-announcements" role="tabpanel" aria-labelledby="list-announcements-list">
                 @Html.Partial("Partials/Announcements", @Model.Announcements)
             </div>

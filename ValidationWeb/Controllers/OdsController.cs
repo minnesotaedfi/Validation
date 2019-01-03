@@ -1,15 +1,10 @@
-﻿using ValidationWeb.ApiControllers.ModelBinders;
-using ValidationWeb.Filters;
-using ValidationWeb.Services;
-using ValidationWeb.Utility;
-using ValidationWeb.ViewModels;
+﻿using ValidationWeb.Filters;
 
 namespace ValidationWeb
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Net;
     using System.Web.Mvc;
 
     using DataTables.AspNet.Core;
@@ -197,18 +192,30 @@ namespace ValidationWeb
 
             // some drilldown reports show apparent dupes, but they're only distinct by undisplayed fields
             // distinct them by basically everything but SpecialEdStatus
-            results = results.DistinctBy(x =>
-                new
-                {
-                    x.StudentId,
-                    StudentName = $"{x.StudentLastName}, {x.StudentFirstName} {x.StudentMiddleName}",
-                    x.DistrictName,
-                    x.SchoolName,
-                    x.Grade,
-                    x.DistrictId,
-                    x.EnrolledDate,
-                    x.WithdrawDate
-                });
+            if (reportType == StudentDrillDownReportType.Demographics || reportType == StudentDrillDownReportType.Programs)
+            {
+                results = results.DistinctBy(x =>
+                    new
+                    {
+                        x.StudentId,
+                        StudentName = $"{x.StudentLastName}, {x.StudentFirstName} {x.StudentMiddleName}",
+                    });
+            }
+            else
+            {
+                results = results.DistinctBy(x =>
+                    new
+                    {
+                        x.StudentId,
+                        StudentName = $"{x.StudentLastName}, {x.StudentFirstName} {x.StudentMiddleName}",
+                        x.DistrictName,
+                        x.SchoolName,
+                        x.Grade,
+                        x.DistrictId,
+                        x.EnrolledDate,
+                        x.WithdrawDate
+                    });
+            }
 
 #if DEBUG
             System.Diagnostics.Debug.WriteLine($"GetStudentDrillDownData ({reportType}): {(DateTime.Now - startTime).Milliseconds}ms");
@@ -1126,7 +1133,7 @@ namespace ValidationWeb
         {
             var result = OdsDataService.GetRecordsRequestData(edOrgId, studentId);
             var session = AppUserService.GetSession();
-            result.RequestingUser = session.UserIdentity.UserId; 
+            result.RequestingUser = session.UserIdentity.UserId;
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 

@@ -21,7 +21,7 @@
 <div id="requestedReportContent" class="row">
 
     @* this is a terrible hack *@
-    @if (@Model.ReportType == StudentDrillDownReportType.Demographics)
+    @if (@Model.ReportType == StudentDrillDownReportType.Demographics || Model.ReportType == StudentDrillDownReportType.Programs)
     {
         <!-- report type demo -->
         @:<div class="col-md-2"></div>
@@ -34,7 +34,7 @@
     }
     @Html.Partial("Partials/StudentDrillDownTable", Model)
 
-    @if (@Model.ReportType == StudentDrillDownReportType.Demographics)
+    @if (@Model.ReportType == StudentDrillDownReportType.Demographics || Model.ReportType == StudentDrillDownReportType.Programs)
     {
         @:</div>
         @:<div class="col-md-2"></div>
@@ -104,7 +104,7 @@
                             }
                         }
                     }
-                    @if (@Model.ReportType != StudentDrillDownReportType.Demographics)
+                    @if (Model.ReportType != StudentDrillDownReportType.Demographics && Model.ReportType != StudentDrillDownReportType.Programs)
                     {
                         <text>
                             ,
