@@ -305,8 +305,8 @@ rule 10.10.6431
 	else '310. Students with multiple-part last, first or middle names should not have double spaces between the name parts. Confirm that the name is a multiple-part name and if so, correct the name by only having a single space between the multiple parts.'
 	
 rule 10.10.6432
-	when {StudentDemographic}.[MiddleNameName] exists then
-	require ContainsDoubleSpace({StudentDemographic}.[MiddleNameName]) = 0
+	when {StudentDemographic}.[MiddleName] exists then
+	require ContainsDoubleSpace({StudentDemographic}.[MiddleName]) = 0
 	else '310. Students with multiple-part last, first or middle names should not have double spaces between the name parts. Confirm that the name is a multiple-part name and if so, correct the name by only having a single space between the multiple parts.'
 	
 rule 10.10.6596
