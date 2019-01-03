@@ -1,60 +1,117 @@
 ruleset StudentEnrollment
-rule 10.10.6139 	require {StudentEnrollment}.[StatusBeginDate] exists	else '6. The field given contains an invalid value as defined in the MARSS Manual. Note: Fields are edited only if they are required in that reporting cycle (fall or end-of-year).'
-rule 10.10.6142 	require {StudentEnrollment}.[DistrictType] is in ['1','2','3','5','6','7','8','34','35','50','51','52','53','60','61','62','70','83']	else '6. The field given contains an invalid value as defined in the MARSS Manual. Note: Fields are edited only if they are required in that reporting cycle (fall or end-of-year).'
-rule 10.10.6211 	when {StudentEnrollment}.[StudentGradeLevel] = 'PS' then
+
+rule 10.10.6139 
+	require {StudentEnrollment}.[StatusBeginDate] exists
+	else '6. The field given contains an invalid value as defined in the MARSS Manual. Note: Fields are edited only if they are required in that reporting cycle (fall or end-of-year).'
+
+rule 10.10.6142 
+	require {StudentEnrollment}.[DistrictType] is in ['1','2','3','5','6','7','8','34','35','50','51','52','53','60','61','62','70','83']
+	else '6. The field given contains an invalid value as defined in the MARSS Manual. Note: Fields are edited only if they are required in that reporting cycle (fall or end-of-year).'
+
+rule 10.10.6211 
+	when {StudentEnrollment}.[StudentGradeLevel] = 'PS' then
 	require days since {StudentEnrollment}.[StatusBeginDate] as of {StudentEnrollment}.[StatusEndDate] <= 10 
-	or {StudentEnrollment}.[StatusEndDate] does not exist	else '260. For grade PS, there should not be more than 10 elapsed days between status start and status end dates.'
-rule 10.10.6212 	require {StudentEnrollment}.[StatusBeginDate] <= 30-June	else '27. Status Start Date must be within the school year. A school year must end by June 30. However, most school\'s calendars end in early June. The Status Start Date must be prior to the last day of school. This edit applies to regular schools, Area Learning Centers and other alternative schools.'
-rule 10.10.6213 
-	when {StudentEnrollment}.[StudentGradeLevel] is in ['EC','PS'] then	require that {StudentEnrollment}.[StatusBeginDate] >= 1-July	else '29. By statute the school year for early childhood special education and kindergarten disabled students may start July 1 and continue through June 30. However, any membership that occurs before July 1 is part of the prior school year. Schools with classifications of 02 and District Types 07 and 34 are also held to this start date.'
-rule 10.10.6214 
+	or {StudentEnrollment}.[StatusEndDate] does not exist
+	else '260. For grade PS, there should not be more than 10 elapsed days between status start and status end dates.'
+
+rule 10.10.6212 
+	require {StudentEnrollment}.[StatusBeginDate] <= 30-June
+	else '27. Status Start Date must be within the school year. A school year must end by June 30. However, most school\'s calendars end in early June. The Status Start Date must be prior to the last day of school. This edit applies to regular schools, Area Learning Centers and other alternative schools.'
+
+rule 10.10.6213 
+	when {StudentEnrollment}.[StudentGradeLevel] is in ['EC','PS'] then
+	require that {StudentEnrollment}.[StatusBeginDate] >= 1-July
+	else '29. By statute the school year for early childhood special education and kindergarten disabled students may start July 1 and continue through June 30. However, any membership that occurs before July 1 is part of the prior school year. Schools with classifications of 02 and District Types 07 and 34 are also held to this start date.'
+
+rule 10.10.6214 
 	when {StudentEnrollment}.[StudentGradeLevel] = 'HK'
-	and {StudentEnrollment}.[SchoolClassification] is not in ['41','42','43','44','45'] then	require that {StudentEnrollment}.[StatusBeginDate] >= 1-July	else '29. By statute the school year for early childhood special education and kindergarten disabled students may start July 1 and continue through June 30. However, any membership that occurs before July 1 is part of the prior school year. Schools with classifications of 02 and District Types 07 and 34 are also held to this start date.'
-rule 10.10.6221
-	when {StudentEnrollment}.[StudentGradeLevel] = 'HK' then	require that {StudentEnrollment}.[SpecialEducationEvaluationStatus] exists and {StudentEnrollment}.[SpecialEducationEvaluationStatus] is in ['4','6','9']	else '101. Students who have an IEP (Special Education Evaluation Status 4 or 6) must have a Primary Disability and Instructional Setting of other than zero. Also check Primary Disability and Instructional Setting.'
+	and {StudentEnrollment}.[SchoolClassification] is not in ['41','42','43','44','45'] then
+	require that {StudentEnrollment}.[StatusBeginDate] >= 1-July
+	else '29. By statute the school year for early childhood special education and kindergarten disabled students may start July 1 and continue through June 30. However, any membership that occurs before July 1 is part of the prior school year. Schools with classifications of 02 and District Types 07 and 34 are also held to this start date.'
+
+rule 10.10.6221
+	when {StudentEnrollment}.[StudentGradeLevel] = 'HK' then
+	require that {StudentEnrollment}.[SpecialEducationEvaluationStatus] exists and {StudentEnrollment}.[SpecialEducationEvaluationStatus] is in ['4','6','9']
+	else '101. Students who have an IEP (Special Education Evaluation Status 4 or 6) must have a Primary Disability and Instructional Setting of other than zero. Also check Primary Disability and Instructional Setting.'
 
 rule 10.10.6226
 	when {StudentEnrollment}.[SpecialEducationEvaluationStatus] = '7'
-	and {StudentEnrollment}.[StudentGradeLevel] <> 'PS' then	require {StudentEnrollment}.[EnrollmentSequence] <> 1	else '129. Students whose IEP is terminated mid-year must have a prior enrollment record showing the IEP, i.e., the earlier enrollment record must have a Special Education Evaluation Status of 4 or 6. There is no need to report a second enrollment record for an early childhood student whose IEP/IFSP is terminated.'
-	rule 10.10.6227 
-	when {StudentEnrollment}.[SpecialEducationEvaluationStatus] is in ['4','6','9'] then	require that {StudentEnrollment}.[StudentGradeLevel] is not in 
-	['KA','KB','KC','KD','KE','KF','KG','KH','KI','KJ','KK','KL','KM','KN','KO','KP','KQ','KR','KS','KT','KU','KV','KW','KX','KY','KZ']	else '9. This message appears when a kindergarten student who has an IEP (Special Education Evaluation Status) is 4 or 6 is reported in grade KA, KB, etc., rather than grade HK.'
-rule 10.10.6228 
-	when {StudentEnrollment}.[StudentGradeLevel] = 'EC' then	require that years since {StudentDemographic}.[BirthDate] as of 1-September < 7
+	and {StudentEnrollment}.[StudentGradeLevel] <> 'PS' then
+	require {StudentEnrollment}.[EnrollmentSequence] <> 1
+	else '129. Students whose IEP is terminated mid-year must have a prior enrollment record showing the IEP, i.e., the earlier enrollment record must have a Special Education Evaluation Status of 4 or 6. There is no need to report a second enrollment record for an early childhood student whose IEP/IFSP is terminated.'
+	
+rule 10.10.6227 
+	when {StudentEnrollment}.[SpecialEducationEvaluationStatus] is in ['4','6','9'] then
+	require that {StudentEnrollment}.[StudentGradeLevel] is not in 
+	['KA','KB','KC','KD','KE','KF','KG','KH','KI','KJ','KK','KL','KM','KN','KO','KP','KQ','KR','KS','KT','KU','KV','KW','KX','KY','KZ']
+	else '9. This message appears when a kindergarten student who has an IEP (Special Education Evaluation Status) is 4 or 6 is reported in grade KA, KB, etc., rather than grade HK.'
+
+rule 10.10.6228 
+	when {StudentEnrollment}.[StudentGradeLevel] = 'EC' then
+	require that years since {StudentDemographic}.[BirthDate] as of 1-September < 7
 	and years since {StudentDemographic}.[BirthDate] as of {StudentEnrollment}.[StatusBeginDate] < 7
-	and years since {StudentDemographic}.[BirthDate] as of {StudentEnrollment}.[StatusEndDate] < 7	else '45. Students in grade \'EC\' (early childhood special education) must be younger than age 7 as of September 1. Also check the students\' birth date.'
-rule 10.10.6229 
-	when {StudentEnrollment}.[StudentGradeLevel] = 'EC' then	require {StudentEnrollment}.[SpecialEducationEvaluationStatus] exists and {StudentEnrollment}.[SpecialEducationEvaluationStatus] is in ['2','3','4','5','6','9']	else '125. Students reported in grade \'EC\' (early childhood special education) must have a Special Education Evaluation Status of either 2, 4, 5 or 6 to generate any ADM. There is no need to report a second enrollment record for an early childhood student whose IEP/IFSP is terminated. Check the student\'s grade level and/or Special Education Evaluation Status.'
-rule 10.10.62381
-	when {StudentEnrollment}.[StatusEnd] is in ['21','25','27','28','29','30'] then	require that {StudentEnrollment}.[StudentGradeLevel] = 'EC'	else '230. Status End Codes 21, 25, 27, 28, 29, 30 (Early Childhood withdrawals) require that the grade level of the student be EC. Check the grade level or the Status End code.'
+	and years since {StudentDemographic}.[BirthDate] as of {StudentEnrollment}.[StatusEndDate] < 7
+	else '45. Students in grade \'EC\' (early childhood special education) must be younger than age 7 as of September 1. Also check the students\' birth date.'
+
+rule 10.10.6229 
+	when {StudentEnrollment}.[StudentGradeLevel] = 'EC' then
+	require {StudentEnrollment}.[SpecialEducationEvaluationStatus] exists and {StudentEnrollment}.[SpecialEducationEvaluationStatus] is in ['2','3','4','5','6','9']
+	else '125. Students reported in grade \'EC\' (early childhood special education) must have a Special Education Evaluation Status of either 2, 4, 5 or 6 to generate any ADM. There is no need to report a second enrollment record for an early childhood student whose IEP/IFSP is terminated. Check the student\'s grade level and/or Special Education Evaluation Status.'
+
+rule 10.10.62381
+	when {StudentEnrollment}.[StatusEnd] is in ['21','25','27','28','29','30'] then
+	require that {StudentEnrollment}.[StudentGradeLevel] = 'EC'
+	else '230. Status End Codes 21, 25, 27, 28, 29, 30 (Early Childhood withdrawals) require that the grade level of the student be EC. Check the grade level or the Status End code.'
 	
 rule 10.10.62382
 	when {StudentEnrollment}.[StatusEnd] = '26' then
 	require that {StudentEnrollment}.[StudentGradeLevel] is in ['EC','PA','PB','PC','PD','PE','PF','PG','PH','PI','PJ','RA','RB','RC','RD','RE','RF','RG','RH','RI','RJ']
 	else '230. Status End Codes 21, 25, 26, 27, 28, 29, 30 (Early Childhood withdrawals) require that the grade level of the student be EC. Status End Code 26 can also be used for Voluntary Prekindergarten or School Readiness Plus. Check the grade level or the Status End code.'
-rule 10.10.6239 
-	when {StudentEnrollment}.[StatusEnd] = '23' then	require that {StudentEnrollment}.[StudentGradeLevel] is in ['EC','KA','KB','KC','KD','KE','KF','KG','KI','KJ','KK','KL','KM','KN','KO','KP','KQ','KR','KS','KT','KU','KV','KW','KX','KY','KZ','HK']	else '230. Status End Code 23 (Kindergarten Withdrawal) requires that the grade level be Kindergarten or EC. Check the grade level or the Status End code.'
-rule 10.10.6246 	require ValidMARSSNumberFormat({StudentEnrollment}.[MARSSNumber]) = 1	else '88. The MARSS Number format is invalid. It must be 13 digits and cannot contain character or spaces and cannot begin with 0000 or 5555.'
-rule 10.10.6386
+
+rule 10.10.6239 
+	when {StudentEnrollment}.[StatusEnd] = '23' then
+	require that {StudentEnrollment}.[StudentGradeLevel] is in ['EC','KA','KB','KC','KD','KE','KF','KG','KI','KJ','KK','KL','KM','KN','KO','KP','KQ','KR','KS','KT','KU','KV','KW','KX','KY','KZ','HK']
+	else '230. Status End Code 23 (Kindergarten Withdrawal) requires that the grade level be Kindergarten or EC. Check the grade level or the Status End code.'
+
+rule 10.10.6386
 	when {StudentEnrollment}.[DistrictType] = '7' 
 	and {StudentEnrollment}.[DistrictNumber] is not in ['4150','4177','4082','4012','4198'] 
-	and {StudentEnrollment}.[SchoolClassification] <> '46' then	require that {StudentEnrollment}.[StudentResidentDistrictType] <> '1'
-	and {StudentEnrollment}.[StudentResidentDistrictNumber] <> '0001'	else '288. Student has resident district number 0001 and type of 01 (Aitkin) which is an invalid resident district number and type for charter school.'
-	rule 10.10.6428 
-	when {StudentEnrollment}.[StudentGradeLevel] is not in ['5','6','7','8','9','10','11','12','PS'] then	require {StudentEnrollment}.[SchoolClassification] is not in ['41','42']	else '307. School classified as ALC or ALP and student grade level is less than 5 - student is ineligible to enroll into ALC or ALP.'
-rule 10.10.6436 	when {StudentEnrollment}.[StudentGradeLevel] is in ['PA','PB','PC','PD','PE','PF','PG','PH','PI','PJ','RA','RB','RC','RD','RE','RF','RG','RH','RI','RJ'] then
-	require that {StudentEnrollment}.[SchoolClassification] is not in ['41','42','43','45','50','51']	else '395. Grades PA - PJ and RA - RJ cannot be reported in school classifcations 41, 42, 43, 45, 50 or 51. Check student grade level and school'
-rule 10.10.6437 
+	and {StudentEnrollment}.[SchoolClassification] <> '46' then
+	require that {StudentEnrollment}.[StudentResidentDistrictType] <> '1'
+	and {StudentEnrollment}.[StudentResidentDistrictNumber] <> '0001'
+	else '288. Student has resident district number 0001 and type of 01 (Aitkin) which is an invalid resident district number and type for charter school.'
+	
+rule 10.10.6428 
+	when {StudentEnrollment}.[StudentGradeLevel] is not in ['5','6','7','8','9','10','11','12','PS'] then
+	require {StudentEnrollment}.[SchoolClassification] is not in ['41','42']
+	else '307. School classified as ALC or ALP and student grade level is less than 5 - student is ineligible to enroll into ALC or ALP.'
+
+rule 10.10.6436 
 	when {StudentEnrollment}.[StudentGradeLevel] is in ['PA','PB','PC','PD','PE','PF','PG','PH','PI','PJ','RA','RB','RC','RD','RE','RF','RG','RH','RI','RJ'] then
-	require that {StudentEnrollment}.[SpecialEducationEvaluationStatus] is not in ['3','4','5','6','8','9']	else '396. Grades PA - PJ and RA - RJ cannot be reported with special education status 3, 4, 5, 6, 8 or 9. Check student grade level and Special Education Evaluation Status.'
-rule 10.10.6444 
-	when {StudentEnrollment}.[StudentGradeLevel] is in ['PA','PB','PC','PD','PE','PF','PG','PH','PI','PJ','RA','RB','RC','RD','RE','RF','RG','RH','RI','RJ'] then	require that {StudentEnrollment}.[DistrictType] is in ['1','3','7']	else '403. Grades PA-PJ and RA-RJ can only be reported with District Type 01, 03, 07. Check student grade level.'
-	rule 10.10.6463 
+	require that {StudentEnrollment}.[SchoolClassification] is not in ['41','42','43','45','50','51']
+	else '395. Grades PA - PJ and RA - RJ cannot be reported in school classifcations 41, 42, 43, 45, 50 or 51. Check student grade level and school'
+
+rule 10.10.6437 
+	when {StudentEnrollment}.[StudentGradeLevel] is in ['PA','PB','PC','PD','PE','PF','PG','PH','PI','PJ','RA','RB','RC','RD','RE','RF','RG','RH','RI','RJ'] then
+	require that {StudentEnrollment}.[SpecialEducationEvaluationStatus] is not in ['3','4','5','6','8','9']
+	else '396. Grades PA - PJ and RA - RJ cannot be reported with special education status 3, 4, 5, 6, 8 or 9. Check student grade level and Special Education Evaluation Status.'
+
+rule 10.10.6444 
+	when {StudentEnrollment}.[StudentGradeLevel] is in ['PA','PB','PC','PD','PE','PF','PG','PH','PI','PJ','RA','RB','RC','RD','RE','RF','RG','RH','RI','RJ'] then
+	require that {StudentEnrollment}.[DistrictType] is in ['1','3','7']
+	else '403. Grades PA-PJ and RA-RJ can only be reported with District Type 01, 03, 07. Check student grade level.'
+	
+rule 10.10.6463 
 	when {StudentEnrollment}.[DistrictNumber] = '0347'
 	and {StudentEnrollment}.[SchoolNumber] is in ['931','941'] 
-	and {StudentEnrollment}.[StatusBeginDate] <= first Monday in September then	require {StudentEnrollment}.[StatusEndDate] <= first Monday in September	else '418. For this school, enrollment records beginning before Labor Day must also end before Labor Day.'
-rule 10.10.64761
-	when {StudentEnrollment}.[StudentGradeLevel] is in ['10','11','12'] then	require that {StudentEnrollment}.[SchoolClassification] <> '45'	else '223. This error occurs when grade 10-12 students are reported in a Targeted Services ALC (school classification 45). This error may also occur when a early childhood student (grade EC or PS) is reporting in an SAAP (school classification 41, 42, 43 or 45). It can also occur when grade level other than PS is reported in Early Childhood Screening School (school classification 83).'
+	and {StudentEnrollment}.[StatusBeginDate] <= first Monday in September then
+	require {StudentEnrollment}.[StatusEndDate] <= first Monday in September
+	else '418. For this school, enrollment records beginning before Labor Day must also end before Labor Day.'
+
+rule 10.10.64761
+	when {StudentEnrollment}.[StudentGradeLevel] is in ['10','11','12'] then
+	require that {StudentEnrollment}.[SchoolClassification] <> '45'
+	else '223. This error occurs when grade 10-12 students are reported in a Targeted Services ALC (school classification 45). This error may also occur when a early childhood student (grade EC or PS) is reporting in an SAAP (school classification 41, 42, 43 or 45). It can also occur when grade level other than PS is reported in Early Childhood Screening School (school classification 83).'
 	
 rule 10.10.64762
 	when {StudentEnrollment}.[StudentGradeLevel] is in ['EC','PS'] then
@@ -65,23 +122,48 @@ rule 10.10.64763
 	when {StudentEnrollment}.[StudentGradeLevel] <> 'PS' then
 	require that {StudentEnrollment}.[SchoolClassification] <> '83'
 	else '223. This error occurs when grade 10-12 students are reported in a Targeted Services ALC (school classification 45). This error may also occur when a early childhood student (grade EC or PS) is reporting in an SAAP (school classification 41, 42, 43 or 45). It can also occur when grade level other than PS is reported in Early Childhood Screening School (school classification 83).'	
-	rule 10.10.6515 
-	when {StudentEnrollment}.[StudentResidentDistrictNumber] exists and {StudentEnrollment}.[StudentResidentDistrictNumber] <> '9998' then	require that {StudentEnrollment}.[DistrictNumber] exists	else '24. The resident district number and/or type reported in the student\'s enrollment record is not a valid district number and/or type. Only district types 1, 2, 3 and 38 are valid resident district types.'
-rule 10.10.6516 
-	when {StudentEnrollment}.[StudentResidentDistrictNumber] exists and {StudentEnrollment}.[StudentResidentDistrictNumber] <> '9998' then	require that {StudentEnrollment}.[DistrictType] is in ['1','2','3','38']	else '24. The resident district number and/or type reported in the student\'s enrollment record is not a valid district number and/or type. Only district types 1, 2, 3 and 38 are valid resident district types.'
-rule 10.10.6521 
-	when {StudentEnrollment}.[StatusEndDate] exists then	require that {StudentEnrollment}.[StatusEndDate] >= {StudentEnrollment}.[StatusBeginDate]	else '55. For any given enrollment record, Status End Date must be on or after the Status Start Date. Also check Status Start Date. Status End Date is zero only in the fall submission if the student is still enrolled as of the submission date; all other student enrollment records, for both fall and end-of-year, must contain a Status End Date. Also check Status End code.'
-rule 10.10.6524 
-	when {StudentEnrollment}.[StatusEndDate] exists then	require that {StudentEnrollment}.[StatusEndDate] <= 30-June	else '40. Status End Date cannot be after June 30, except for summer graduates and dropouts which are ignored by this edit. In a regular school, membership that occurs after June 30 is considered summer school, which is not reported on MARSS. Membership that occurs in June after the graduation date of the just completed school year in an ALC or other state-approved alternative school is part of the following school year. Most school calendars have ending dates by early June; that ending date is the last possible Status End Date for students enrolled in those schools during the current school year.'
-	rule 10.10.6617 
-	when {StudentEnrollment}.[HomeboundServiceIndicator] = 1 then	require that {StudentEnrollment}.[StudentGradeLevel] <> 'EC'	else '6. The field given contains an invalid value as defined in the MARSS Manual. Note: Fields are edited only if they are required in that reporting cycle (fall or end-of-year).'
-rule 20.10.6525 
-	when collection is Fall then	expect that {StudentEnrollment}.[StatusEndDate] <= 30-June	else '112. This message indicates that the student\'s Status End Date falls after June 30. In a regular school, any membership that occurs after June 30 is considered summer school which is not reported on MARSS. This edit ignores ALCs, other Learning Year Programs, public alternative schools and extended school year (ESY) records.'
-rule 30.10.6170 
-	when collection is EOY then	require that {StudentEnrollment}.[StatusEndDate] exists	else '6. The field given contains an invalid value as defined in the MARSS Manual. Note: Fields are edited only if they are required in that reporting cycle (fall or end-of-year).'
-rule 30.10.6429 
+	
+rule 10.10.6515 
+	when {StudentEnrollment}.[StudentResidentDistrictNumber] exists and {StudentEnrollment}.[StudentResidentDistrictNumber] <> '9998' then
+	require that {StudentEnrollment}.[DistrictNumber] exists
+	else '24. The resident district number and/or type reported in the student\'s enrollment record is not a valid district number and/or type. Only district types 1, 2, 3 and 38 are valid resident district types.'
+
+rule 10.10.6516 
+	when {StudentEnrollment}.[StudentResidentDistrictNumber] exists and {StudentEnrollment}.[StudentResidentDistrictNumber] <> '9998' then
+	require that {StudentEnrollment}.[DistrictType] is in ['1','2','3','38']
+	else '24. The resident district number and/or type reported in the student\'s enrollment record is not a valid district number and/or type. Only district types 1, 2, 3 and 38 are valid resident district types.'
+
+rule 10.10.6521 
+	when {StudentEnrollment}.[StatusEndDate] exists then
+	require that {StudentEnrollment}.[StatusEndDate] >= {StudentEnrollment}.[StatusBeginDate]
+	else '55. For any given enrollment record, Status End Date must be on or after the Status Start Date. Also check Status Start Date. Status End Date is zero only in the fall submission if the student is still enrolled as of the submission date; all other student enrollment records, for both fall and end-of-year, must contain a Status End Date. Also check Status End code.'
+
+rule 10.10.6524 
+	when {StudentEnrollment}.[StatusEndDate] exists then
+	require that {StudentEnrollment}.[StatusEndDate] <= 30-June
+	else '40. Status End Date cannot be after June 30, except for summer graduates and dropouts which are ignored by this edit. In a regular school, membership that occurs after June 30 is considered summer school, which is not reported on MARSS. Membership that occurs in June after the graduation date of the just completed school year in an ALC or other state-approved alternative school is part of the following school year. Most school calendars have ending dates by early June; that ending date is the last possible Status End Date for students enrolled in those schools during the current school year.'
+	
+rule 10.10.6617 
+	when {StudentEnrollment}.[HomeboundServiceIndicator] = 1 then
+	require that {StudentEnrollment}.[StudentGradeLevel] <> 'EC'
+	else '6. The field given contains an invalid value as defined in the MARSS Manual. Note: Fields are edited only if they are required in that reporting cycle (fall or end-of-year).'
+
+rule 20.10.6525 
+	when collection is Fall then
+	expect that {StudentEnrollment}.[StatusEndDate] <= 30-June
+	else '112. This message indicates that the student\'s Status End Date falls after June 30. In a regular school, any membership that occurs after June 30 is considered summer school which is not reported on MARSS. This edit ignores ALCs, other Learning Year Programs, public alternative schools and extended school year (ESY) records.'
+
+rule 30.10.6170 
+	when collection is EOY then
+	require that {StudentEnrollment}.[StatusEndDate] exists
+	else '6. The field given contains an invalid value as defined in the MARSS Manual. Note: Fields are edited only if they are required in that reporting cycle (fall or end-of-year).'
+
+rule 30.10.6429 
 	when collection is EOY 
 	and {StudentEnrollment}.[StudentGradeLevel] = 'EC' 
 	and years since {StudentDemographic}.[BirthDate] as of 30-June >= 3
-	and years since {StudentDemographic}.[BirthDate] as of {StudentEnrollment}.[StatusEndDate] < 3 then	expect that {StudentEnrollment}.[StatusEnd] <> '40' 	else '309. EC student turns three before June 30 and has a status end code of 40 prior to June 30. Verify that special education services were not provided until the end of the fiscal school year of June 30.'
-
+	and years since {StudentDemographic}.[BirthDate] as of {StudentEnrollment}.[StatusEndDate] < 3 then
+	expect that {StudentEnrollment}.[StatusEnd] <> '40' 
+	else '309. EC student turns three before June 30 and has a status end code of 40 prior to June 30. Verify that special education services were not provided until the end of the fiscal school year of June 30.'
+
+
