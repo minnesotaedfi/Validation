@@ -196,10 +196,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\Styles\select2.css" />
+    <Content Include="Content\Styles\select2.min.css">
+      <DependentUpon>select2.css</DependentUpon>
+    </Content>
     <Content Include="Content\Scripts\bootstrap-combobox.js" />
     <Content Include="Content\Styles\bootstrap-combobox.css" />
     <Content Include="Content\Styles\bootstrap-select.css" />
-    <Content Include="Content\Styles\bootstrap-select.min.css" />
+    <Content Include="Content\Styles\bootstrap-select.min.css">
+      <DependentUpon>bootstrap-select.css</DependentUpon>
+    </Content>
     <Content Include="Content\DataTables\css\autoFill.bootstrap.css" />
     <Content Include="Content\DataTables\css\autoFill.bootstrap.min.css" />
     <Content Include="Content\DataTables\css\autoFill.bootstrap4.css" />
@@ -363,12 +369,18 @@
     </Content>
     <Content Include="Content\Scripts\bootstrap-datetimepicker.min.js" />
     <Content Include="Content\Scripts\jquery-3.3.1.js" />
-    <Content Include="Content\Scripts\jquery-3.3.1.min.js" />
+    <Content Include="Content\Scripts\jquery-3.3.1.min.js">
+      <DependentUpon>jquery-3.3.1.js</DependentUpon>
+    </Content>
     <Content Include="Content\Scripts\jquery-ui.js" />
-    <Content Include="Content\Scripts\jquery-ui.min.js" />
+    <Content Include="Content\Scripts\jquery-ui.min.js">
+      <DependentUpon>jquery-ui.js</DependentUpon>
+    </Content>
     <Content Include="Content\Scripts\moment.js" />
     <Content Include="Content\Scripts\tabulator.js" />
-    <Content Include="Content\Scripts\tabulator.min.js" />
+    <Content Include="Content\Scripts\tabulator.min.js">
+      <DependentUpon>tabulator.js</DependentUpon>
+    </Content>
     <Content Include="Content\Scripts\validationportal.js" />
     <Content Include="Content\Styles\bootstrap-datetimepicker.min.css" />
     <Content Include="Content\Styles\bootstrap\tabulator_bootstrap.css" />
@@ -379,11 +391,25 @@
     <Content Include="Content\Styles\fa-solid.css" />
     <Content Include="Content\Styles\fontawesome.css" />
     <Content Include="Content\Styles\jquery-ui.css" />
-    <Content Include="Content\Styles\jquery-ui.min.css" />
-    <Content Include="Content\Styles\jquery-ui.structure.css" />
-    <Content Include="Content\Styles\jquery-ui.structure.min.css" />
-    <Content Include="Content\Styles\jquery-ui.theme.css" />
-    <Content Include="Content\Styles\jquery-ui.theme.min.css" />
+    <Content Include="Content\Styles\jquery-ui.min.css">
+      <DependentUpon>jquery-ui.css</DependentUpon>
+    </Content>
+    <Content Include="Content\Styles\jquery-ui.structure.css">
+      <DependentUpon>jquery-ui.css</DependentUpon>
+    </Content>
+    <Content Include="Content\Styles\jquery-ui.structure.min.css">
+      <DependentUpon>jquery-ui.structure.css</DependentUpon>
+    </Content>
+    <Content Include="Content\Styles\jquery-ui.theme.css">
+      <DependentUpon>jquery-ui.css</DependentUpon>
+    </Content>
+    <Content Include="Content\Styles\jquery-ui.theme.min.css">
+      <DependentUpon>jquery-ui.theme.css</DependentUpon>
+    </Content>
+    <Content Include="Content\Styles\select2-bootstrap4.css" />
+    <Content Include="Content\Styles\select2-bootstrap4.min.css">
+      <DependentUpon>select2-bootstrap4.css</DependentUpon>
+    </Content>
     <Content Include="Content\Styles\semantic-ui\tabulator_semantic-ui.css" />
     <Content Include="Content\Styles\semantic-ui\tabulator_semantic-ui.min.css" />
     <Content Include="Deployment\SQLScripts\ODS\0000-Readme.txt" />
@@ -397,7 +423,9 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Scripts\bootstrap-select.js" />
-    <Content Include="Scripts\bootstrap-select.min.js" />
+    <Content Include="Scripts\bootstrap-select.min.js">
+      <DependentUpon>bootstrap-select.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\DataTables\autoFill.bootstrap.js" />
     <Content Include="Scripts\DataTables\autoFill.bootstrap.min.js" />
     <Content Include="Scripts\DataTables\autoFill.bootstrap4.js" />
@@ -482,17 +510,91 @@
     <Content Include="Scripts\esm\popper.js.map" />
     <Content Include="Scripts\esm\popper-utils.min.js.map" />
     <Content Include="Scripts\esm\popper-utils.js.map" />
-    <Content Include="Scripts\bootstrap-select.js.map" />
-    <Content Include="Content\Styles\bootstrap-select.css.map" />
-    <None Include="Scripts\jquery-3.3.1.intellisense.js" />
+    <Content Include="Scripts\bootstrap-select.js.map">
+      <DependentUpon>bootstrap-select.js</DependentUpon>
+    </Content>
+    <Content Include="Content\Styles\bootstrap-select.css.map">
+      <DependentUpon>bootstrap-select.css</DependentUpon>
+    </Content>
+    <None Include="Scripts\jquery-3.3.1.intellisense.js">
+      <DependentUpon>jquery-3.3.1.js</DependentUpon>
+    </None>
+    <Content Include="Scripts\i18n\af.js" />
+    <Content Include="Scripts\i18n\ar.js" />
+    <Content Include="Scripts\i18n\az.js" />
+    <Content Include="Scripts\i18n\bg.js" />
+    <Content Include="Scripts\i18n\bs.js" />
+    <Content Include="Scripts\i18n\ca.js" />
+    <Content Include="Scripts\i18n\cs.js" />
+    <Content Include="Scripts\i18n\da.js" />
+    <Content Include="Scripts\i18n\de.js" />
+    <Content Include="Scripts\i18n\dsb.js" />
+    <Content Include="Scripts\i18n\el.js" />
+    <Content Include="Scripts\i18n\en.js" />
+    <Content Include="Scripts\i18n\es.js" />
+    <Content Include="Scripts\i18n\et.js" />
+    <Content Include="Scripts\i18n\eu.js" />
+    <Content Include="Scripts\i18n\fa.js" />
+    <Content Include="Scripts\i18n\fi.js" />
+    <Content Include="Scripts\i18n\fr.js" />
+    <Content Include="Scripts\i18n\gl.js" />
+    <Content Include="Scripts\i18n\he.js" />
+    <Content Include="Scripts\i18n\hi.js" />
+    <Content Include="Scripts\i18n\hr.js" />
+    <Content Include="Scripts\i18n\hsb.js" />
+    <Content Include="Scripts\i18n\hu.js" />
+    <Content Include="Scripts\i18n\hy.js" />
+    <Content Include="Scripts\i18n\id.js" />
+    <Content Include="Scripts\i18n\is.js" />
+    <Content Include="Scripts\i18n\it.js" />
+    <Content Include="Scripts\i18n\ja.js" />
+    <Content Include="Scripts\i18n\km.js" />
+    <Content Include="Scripts\i18n\ko.js" />
+    <Content Include="Scripts\i18n\lt.js" />
+    <Content Include="Scripts\i18n\lv.js" />
+    <Content Include="Scripts\i18n\mk.js" />
+    <Content Include="Scripts\i18n\ms.js" />
+    <Content Include="Scripts\i18n\nb.js" />
+    <Content Include="Scripts\i18n\nl.js" />
+    <Content Include="Scripts\i18n\pl.js" />
+    <Content Include="Scripts\i18n\ps.js" />
+    <Content Include="Scripts\i18n\pt-BR.js" />
+    <Content Include="Scripts\i18n\pt.js" />
+    <Content Include="Scripts\i18n\ro.js" />
+    <Content Include="Scripts\i18n\ru.js" />
+    <Content Include="Scripts\i18n\sk.js" />
+    <Content Include="Scripts\i18n\sl.js" />
+    <Content Include="Scripts\i18n\sr-Cyrl.js" />
+    <Content Include="Scripts\i18n\sr.js" />
+    <Content Include="Scripts\i18n\sv.js" />
+    <Content Include="Scripts\i18n\th.js" />
+    <Content Include="Scripts\i18n\tr.js" />
+    <Content Include="Scripts\i18n\uk.js" />
+    <Content Include="Scripts\i18n\vi.js" />
+    <Content Include="Scripts\i18n\zh-CN.js" />
+    <Content Include="Scripts\i18n\zh-TW.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
-    <Content Include="Scripts\jquery-3.3.1.min.js" />
-    <Content Include="Scripts\jquery-3.3.1.slim.js" />
-    <Content Include="Scripts\jquery-3.3.1.slim.min.js" />
+    <Content Include="Scripts\jquery-3.3.1.min.js">
+      <DependentUpon>jquery-3.3.1.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\jquery-3.3.1.slim.js">
+      <DependentUpon>jquery-3.3.1.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\jquery-3.3.1.slim.min.js">
+      <DependentUpon>jquery-3.3.1.slim.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\popper-utils.js" />
-    <Content Include="Scripts\popper-utils.min.js" />
+    <Content Include="Scripts\popper-utils.min.js">
+      <DependentUpon>popper-utils.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\popper.js" />
-    <Content Include="Scripts\popper.min.js" />
+    <Content Include="Scripts\popper.min.js">
+      <DependentUpon>popper.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\select2.js" />
+    <Content Include="Scripts\select2.min.js">
+      <DependentUpon>select2.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\umd\popper-utils.js" />
     <Content Include="Scripts\umd\popper-utils.min.js" />
     <Content Include="Scripts\umd\popper.js" />
@@ -544,19 +646,43 @@
     <Content Include="Views\Ods\Partials\StudentDrillDownTable.cshtml" />
     <Content Include="Views\Ods\Partials\RequestRecordsModal.cshtml" />
     <Content Include="Views\Ods\Partials\ViewRequestModal.cshtml" />
-    <Content Include="Scripts\jquery-3.3.1.slim.min.map" />
-    <Content Include="Scripts\jquery-3.3.1.min.map" />
+    <Content Include="Scripts\jquery-3.3.1.slim.min.map">
+      <DependentUpon>jquery-3.3.1.slim.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\jquery-3.3.1.min.map">
+      <DependentUpon>jquery-3.3.1.min.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\umd\popper.min.js.map" />
     <Content Include="Scripts\umd\popper.js.map" />
     <Content Include="Scripts\umd\popper-utils.min.js.map" />
     <Content Include="Scripts\umd\popper-utils.js.map" />
     <Content Include="Scripts\README.md" />
-    <Content Include="Scripts\popper.min.js.map" />
-    <Content Include="Scripts\popper.js.map" />
-    <Content Include="Scripts\popper-utils.min.js.map" />
-    <Content Include="Scripts\popper-utils.js.map" />
+    <Content Include="Scripts\popper.js.map">
+      <DependentUpon>popper.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\popper-utils.min.js.map">
+      <DependentUpon>popper-utils.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\popper-utils.js.map">
+      <DependentUpon>popper-utils.js</DependentUpon>
+    </Content>
     <Content Include="Views\Login\Index.cshtml" />
     <Content Include="Views\Login\LoginRedirect.cshtml" />
+    <None Include="Scripts\popper-utils.js.map">
+      <DependentUpon>popper-utils.js</DependentUpon>
+    </None>
+    <None Include="Scripts\popper-utils.js.map">
+      <DependentUpon>popper-utils.js</DependentUpon>
+    </None>
+    <None Include="Scripts\popper-utils.min.js.map">
+      <DependentUpon>popper-utils.min.js</DependentUpon>
+    </None>
+    <None Include="Scripts\popper-utils.min.js.map">
+      <DependentUpon>popper-utils.min.js</DependentUpon>
+    </None>
+    <None Include="Scripts\popper.js.map">
+      <DependentUpon>popper.js</DependentUpon>
+    </None>
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -569,42 +695,84 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Scripts\bootstrap.js" />
-    <Content Include="Content\Scripts\bootstrap.min.js" />
-    <None Include="Content\Scripts\jquery-3.2.1.intellisense.js" />
+    <Content Include="Content\Scripts\bootstrap.min.js">
+      <DependentUpon>bootstrap.js</DependentUpon>
+    </Content>
+    <None Include="Content\Scripts\jquery-3.2.1.intellisense.js">
+      <DependentUpon>jquery-3.2.1.js</DependentUpon>
+    </None>
     <Content Include="Content\Scripts\jquery-3.2.1.js" />
-    <Content Include="Content\Scripts\jquery-3.2.1.min.js" />
-    <Content Include="Content\Scripts\jquery-3.2.1.slim.js" />
-    <Content Include="Content\Scripts\jquery-3.2.1.slim.min.js" />
-    <None Include="Content\Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Content\Scripts\jquery-3.2.1.min.js">
+      <DependentUpon>jquery-3.2.1.js</DependentUpon>
+    </Content>
+    <Content Include="Content\Scripts\jquery-3.2.1.slim.js">
+      <DependentUpon>jquery-3.2.1.js</DependentUpon>
+    </Content>
+    <Content Include="Content\Scripts\jquery-3.2.1.slim.min.js">
+      <DependentUpon>jquery-3.2.1.slim.js</DependentUpon>
+    </Content>
+    <None Include="Content\Scripts\jquery.validate-vsdoc.js">
+      <DependentUpon>jquery.validate.js</DependentUpon>
+    </None>
     <Content Include="Content\Scripts\jquery.validate.js" />
-    <Content Include="Content\Scripts\jquery.validate.min.js" />
-    <Content Include="Content\Scripts\jquery.validate.unobtrusive.js" />
-    <Content Include="Content\Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Content\Scripts\jquery.validate.min.js">
+      <DependentUpon>jquery.validate.js</DependentUpon>
+    </Content>
+    <Content Include="Content\Scripts\jquery.validate.unobtrusive.js">
+      <DependentUpon>jquery.validate.js</DependentUpon>
+    </Content>
+    <Content Include="Content\Scripts\jquery.validate.unobtrusive.min.js">
+      <DependentUpon>jquery.validate.unobtrusive.js</DependentUpon>
+    </Content>
     <Content Include="Content\Scripts\modernizr-2.6.2.js" />
     <Content Include="Content\Scripts\popper.min.js" />
     <Content Include="Content\Scripts\respond.js" />
-    <Content Include="Content\Scripts\respond.min.js" />
+    <Content Include="Content\Scripts\respond.min.js">
+      <DependentUpon>respond.js</DependentUpon>
+    </Content>
     <None Include="Content\Scripts\_references.js" />
     <Content Include="Content\Styles\bootstrap-grid.css" />
-    <Content Include="Content\Styles\bootstrap-grid.min.css" />
+    <Content Include="Content\Styles\bootstrap-grid.min.css">
+      <DependentUpon>bootstrap-grid.css</DependentUpon>
+    </Content>
     <Content Include="Content\Styles\bootstrap-reboot.css" />
-    <Content Include="Content\Styles\bootstrap-reboot.min.css" />
+    <Content Include="Content\Styles\bootstrap-reboot.min.css">
+      <DependentUpon>bootstrap-reboot.css</DependentUpon>
+    </Content>
     <Content Include="Content\Styles\bootstrap.css" />
-    <Content Include="Content\Styles\bootstrap.min.css" />
+    <Content Include="Content\Styles\bootstrap.min.css">
+      <DependentUpon>bootstrap.css</DependentUpon>
+    </Content>
     <Content Include="Content\Styles\validationportal.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Content\Scripts\jquery-3.2.1.min.map" />
-    <Content Include="Content\Scripts\jquery-3.2.1.slim.min.map" />
-    <Content Include="Content\Styles\bootstrap-grid.css.map" />
-    <Content Include="Content\Styles\bootstrap-grid.min.css.map" />
-    <Content Include="Content\Styles\bootstrap-reboot.css.map" />
-    <Content Include="Content\Styles\bootstrap-reboot.min.css.map" />
-    <Content Include="Content\Styles\bootstrap.css.map" />
-    <Content Include="Content\Styles\bootstrap.min.css.map" />
+    <Content Include="Content\Scripts\jquery-3.2.1.min.map">
+      <DependentUpon>jquery-3.2.1.min.js</DependentUpon>
+    </Content>
+    <Content Include="Content\Scripts\jquery-3.2.1.slim.min.map">
+      <DependentUpon>jquery-3.2.1.slim.min.js</DependentUpon>
+    </Content>
+    <Content Include="Content\Styles\bootstrap-grid.css.map">
+      <DependentUpon>bootstrap-grid.css</DependentUpon>
+    </Content>
+    <Content Include="Content\Styles\bootstrap-grid.min.css.map">
+      <DependentUpon>bootstrap-grid.min.css</DependentUpon>
+    </Content>
+    <Content Include="Content\Styles\bootstrap-reboot.css.map">
+      <DependentUpon>bootstrap-reboot.css</DependentUpon>
+    </Content>
+    <Content Include="Content\Styles\bootstrap-reboot.min.css.map">
+      <DependentUpon>bootstrap-reboot.min.css</DependentUpon>
+    </Content>
+    <Content Include="Content\Styles\bootstrap.css.map">
+      <DependentUpon>bootstrap.css</DependentUpon>
+    </Content>
+    <Content Include="Content\Styles\bootstrap.min.css.map">
+      <DependentUpon>bootstrap.min.css</DependentUpon>
+    </Content>
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Rules\Collections.cshtml" />

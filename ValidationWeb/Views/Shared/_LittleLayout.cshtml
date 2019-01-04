@@ -11,6 +11,7 @@
     @Styles.Render("~/Content/datePickerCSS")
     @Styles.Render("~/Content/DataTables/css/DataTablesCSS")
     @Styles.Render("~/Content/Styles/BootstrapSelectCSS")
+    @Styles.Render("~/Content/Styles/Select2CSS")
     @Styles.Render("~/Content/ValidationPortal")
 </head>
 <body>
@@ -34,9 +35,9 @@
                             <li>@Html.Raw(Html.ActionLink("LinkText", "Reports", "Validation", new { area = "" }, new { @class = "nav-link validation-nav-link show-page-loading" }).ToHtmlString().Replace("LinkText", "Validation Reports"))</li>
                             <li>@Html.Raw(Html.ActionLink("LinkText", "Reports", "Ods", new { area = "" }, new { @class = "nav-link validation-nav-link show-page-loading" }).ToHtmlString().Replace("LinkText", "ODS Reports"))</li>
                             <!--
-                                
+
                             <li>@Html.Raw(Html.ActionLink("LinkText", "Collections", "Rules", new { area = "" }, new { @class = "nav-link validation-nav-link" }).ToHtmlString().Replace("LinkText", "<i class=\"fas fa-list-alt white-heavy-text\"></i> Rule Collections"))</li>
-                            
+
                             -->
                             <li class="mr-auto"><a class="nav-link validation-nav-link mr-auto show-page-loading" href="https://w1.education.state.mn.us/MIDMSWEB/MDELogin.html">MARSS WES</a></li>
                             @Html.Action("NavDropDowns", "Nav")
@@ -65,9 +66,10 @@
     @Scripts.Render("~/bundles/jqueryUI")
     @Scripts.Render("~/bundles/datePickerJS")
     @Scripts.Render("~/bundles/BootstrapSelect")
+    @Scripts.Render("~/bundles/Select2")
     @Scripts.Render("~/bundles/DataTables")
     <script>
-        @*  The contents of this script tag are not in a separate file because portions are generated on the sever side with ASP.NET MVC *@
+        @*  The contents of this script tag are not in a separate file because portions are generated on the server side with ASP.NET MVC *@
         // Supports overlay
         function overlayOn() { $("#overlay").fadeIn(100); }
         function overlayDelayedOn() { $("#overlay").delay(1000).fadeIn(100); }
@@ -104,20 +106,20 @@
                     }
                 });
             }
-            
+
         $.get("@Url.Content("~/api/validation/edorgs/autocomplete")")
             .done((data) => {
 
                 var dropDown = $('#testEdOrgNames');
                 debugger;
-                let availableEdOrgs = data.map(x => { 
+                let availableEdOrgs = data.map(x => {
                     dropDown.append($("<option></option>")
                         .attr("value", x.Id)
-                        .text(x.OrganizationName)); 
+                        .text(x.OrganizationName));
                 });
 
-                $('#testEdOrgNames').selectpicker();
-                
+                $('#testEdOrgNames').();
+
                 if ("one" == "zero") {
                     $("#edOrgNames").autocomplete({
                         source: availableEdOrgs,
@@ -139,7 +141,7 @@
                               .appendTo( ul );
                     }
                 }
-            }).fail(() => 
+            }).fail(() =>
                 console.log(`An error occurred when attempting to get EdOrgs`));
 
             // Supports NavDropDowns, School Year selection menu dropdown

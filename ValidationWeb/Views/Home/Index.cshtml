@@ -33,7 +33,7 @@
         <div class="tbmargin10 col-4">
             @{ var rnd = new Random();  
                 // todo what the heck? 
-            }}
+            }
             @foreach (var announcement in Model.Announcements.OrderByDescending(a => a.Priority).ToList())
             {
                 var cardHeader = announcement.IsEmergency ? "Urgent!" : "Announcement";

@@ -44,6 +44,14 @@ namespace ValidationWeb
                 new ScriptBundle("~/bundles/BootstrapSelect")
                     .Include("~/Scripts/bootstrap-select.js"));
 
+            bundles.Add(
+                new StyleBundle("~/Content/Styles/Select2CSS")
+                    .Include("~/Content/Styles/select2.css/")
+                    .Include("~/Content/Styles/select2-bootstrap4.css"));
+
+            bundles.Add(
+                new ScriptBundle("~/bundles/Select2")
+                    .Include("~/Scripts/select2.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/DataTables").Include(
                 "~/Scripts/DataTables/jquery.dataTables.js",
