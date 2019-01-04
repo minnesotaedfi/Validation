@@ -39,7 +39,7 @@
   <parameter
       name="AuthorizationStoredProcedureName"
       description="Name of the stored procedure to call in the Single Sign On database to retrieve which resources the user is authorized to access."
-      defaultValue="apps.GetAuthorizations">
+      defaultValue="apps.EDVP_MidmsEdiamUser_View">
     <parameterEntry
           kind="XmlFile"
           scope="Web.config"
