@@ -21,10 +21,13 @@
             </div>
         </li>
         <li class="nav-item dropdown pull-right">
-            <span id="selectedOrg" class="white-heavy-text">@Model.FocusedEdOrg.OrganizationName</span>
+            @*<span id="selectedOrg" class="white-heavy-text">@Model.FocusedEdOrg.OrganizationName</span>*@
+            @*todo: put this selectedOrg as the selected value *@
             @if (Model.EdOrgs.Count() > 1)
             {
-            <input id="edOrgNames" placeholder="District name">
+                <select id="edOrgNames" class="form-control validation-drowdown-menu">
+                    <option>Select a District</option>
+                </select>
             }
         </li>
         <li class="nav-item dropdown pull-right">

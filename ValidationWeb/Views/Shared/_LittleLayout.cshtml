@@ -10,6 +10,7 @@
     @Styles.Render("~/Content/jqueryUICSS")
     @Styles.Render("~/Content/datePickerCSS")
     @Styles.Render("~/Content/DataTables/css/DataTablesCSS")
+    @Styles.Render("~/Content/Styles/BootstrapSelectCSS")
     @Styles.Render("~/Content/ValidationPortal")
 </head>
 <body>
@@ -63,6 +64,7 @@
     @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/bundles/jqueryUI")
     @Scripts.Render("~/bundles/datePickerJS")
+    @Scripts.Render("~/bundles/BootstrapSelect")
     @Scripts.Render("~/bundles/DataTables")
     <script>
         @*  The contents of this script tag are not in a separate file because portions are generated on the sever side with ASP.NET MVC *@
@@ -89,45 +91,56 @@
                         // If looking at detailed errors, go back to main reports listing for the new district.
                         if (location.pathname.toLowerCase().indexOf("validation/report/") !== -1) {
                             location.replace("@Url.Action("Reports","Validation")");
-                        return;
+                            return;
+                        }
+                        // If looking at any other reports, get the listing for the new district.
+                        if (location.pathname.toLowerCase().indexOf("report") !== -1) {
+                            location.reload();
+                            return;
+                        }
+                    },
+                    error: function () {
+                        console.log(`An error occurred when attempting to change Ed Org to ${orgId}.`);
                     }
-                    // If looking at any other reports, get the listing for the new district.
-                    if (location.pathname.toLowerCase().indexOf("report") !== -1) {
-                        location.reload();
-                        return;
-                    }
-                },
-                error: function () {
-                    console.log(`An error occurred when attempting to change Ed Org to ${orgId}.`);
-                }
-            });
-        }
-
+                });
+            }
+            
         $.get("@Url.Content("~/api/validation/edorgs/autocomplete")")
             .done((data) => {
-                availableEdOrgs = data.map(x => { 
-                    return { value: x.Id, label: x.OrganizationName }
+
+                var dropDown = $('#testEdOrgNames');
+                debugger;
+                let availableEdOrgs = data.map(x => { 
+                    dropDown.append($("<option></option>")
+                        .attr("value", x.Id)
+                        .text(x.OrganizationName)); 
                 });
-                $("#edOrgNames").autocomplete({
-                    source: availableEdOrgs,
-                    focus: function (event, ui) {
-                        $("#edOrgNames").val(ui.item.label);
-                        return false;
-                    },
-                    select: function (event, ui) {
-                        let edOrgName = ui.item.label;
-                        let edOrgId = ui.item.value.toString();
-                        $("#edOrgNames").val(edOrgName);
-                        changeEdOrg(edOrgId, edOrgName);
-                        return false;
+
+                $('#testEdOrgNames').selectpicker();
+                
+                if ("one" == "zero") {
+                    $("#edOrgNames").autocomplete({
+                        source: availableEdOrgs,
+                        focus: function (event, ui) {
+                            $("#edOrgNames").val(ui.item.label);
+                            return false;
+                        },
+                        select: function (event, ui) {
+                            let edOrgName = ui.item.label;
+                            let edOrgId = ui.item.value.toString();
+                            $("#edOrgNames").val(edOrgName);
+                            changeEdOrg(edOrgId, edOrgName);
+                            return false;
+                        }
+                    })
+                        .autocomplete("instance")._renderItem = function (ul, item) {
+                            return $( "<li>" )
+                              .append(item.label)
+                              .appendTo( ul );
                     }
-                })
-                    .autocomplete("instance")._renderItem = function (ul, item) {
-                        return $( "<li>" )
-                          .append(item.label)
-                          .appendTo( ul );
-                    }
-            }).fail(() => console.log(`An error occurred when attempting to get EdOrgs`));
+                }
+            }).fail(() => 
+                console.log(`An error occurred when attempting to get EdOrgs`));
 
             // Supports NavDropDowns, School Year selection menu dropdown
             $(".select-school-year-link").on('click', function (e) {
