@@ -208,8 +208,9 @@ namespace ValidationWeb
             {
                 using (var ssoDatabaseConnection = new SqlConnection(_singleSignOnDatabaseConnectionString))
                 {
-                    var ssoCommand = new SqlCommand(_authorizationStoredProcedureName, ssoDatabaseConnection);
-                    ssoCommand.CommandType = CommandType.StoredProcedure;
+                    var sqlCommandText = $"select * from {_authorizationStoredProcedureName} where UserId = @UserId";
+                    var ssoCommand = new SqlCommand(sqlCommandText, ssoDatabaseConnection);
+                    ssoCommand.CommandType = CommandType.Text;
                     var userIdInput = ssoCommand.Parameters.Add("@UserId", SqlDbType.VarChar);
                     userIdInput.Value = authHeaderValue;
                     ssoDatabaseConnection.Open();

@@ -5,7 +5,7 @@
     <ValidationPortalIisAppPool Condition=" '$(ValidationPortalIisAppPool)'==''">DefaultAppPool</ValidationPortalIisAppPool>
     <ValidationPortalIisPathToRoot Condition=" '$(ValidationPortalIisPathToRoot)'==''">D:\ValidationPortal</ValidationPortalIisPathToRoot>
     <AuthenticationServerRedirectUrl Condition=" '$(AuthenticationServerRedirectUrl)'==''">http://www.wearedoubleline.com/</AuthenticationServerRedirectUrl>
-    <AuthorizationStoredProcedureName Condition=" '$(AuthorizationStoredProcedureName)'==''">apps.GetAuthorizations</AuthorizationStoredProcedureName>
+    <AuthorizationStoredProcedureName Condition=" '$(AuthorizationStoredProcedureName)'==''">apps.EDVP_MidmsEdiamUser_View</AuthorizationStoredProcedureName>
     <SsoAppId Condition=" '$(SsoAppId)'==''">VAL"</SsoAppId>
     <RulesFileFolder Condition=" '$(RulesFileFolder)'==''">~/Content/Rules</RulesFileFolder>
     <RuleEngineResultsSchema Condition=" '$(RuleEngineResultsSchema)'==''">rules</RuleEngineResultsSchema>
@@ -23,7 +23,7 @@
       <AuthenticationServerRedirectUrlParamName>AuthenticationServerRedirectUrl</AuthenticationServerRedirectUrlParamName>
       <AuthenticationServerRedirectUrlParamValue>~/Login</AuthenticationServerRedirectUrlParamValue>
       <AuthorizationStoredProcedureNameParamName>AuthorizationStoredProcedureName</AuthorizationStoredProcedureNameParamName>
-      <AuthorizationStoredProcedureNameParamValue>apps.GetAuthorizations</AuthorizationStoredProcedureNameParamValue>
+      <AuthorizationStoredProcedureNameParamValue>apps.EDVP_MidmsEdiamUser_View</AuthorizationStoredProcedureNameParamValue>
       <SsoAppIdParamName>SsoAppId</SsoAppIdParamName>
       <SsoAppIdParamValue>VAL</SsoAppIdParamValue>
       <RulesFileFolderParamName>RulesFileFolder</RulesFileFolderParamName>
