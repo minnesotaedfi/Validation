@@ -591,6 +591,12 @@
     <Content Include="Scripts\popper.min.js">
       <DependentUpon>popper.js</DependentUpon>
     </Content>
+    <Content Include="Scripts\select2.full.js">
+      <DependentUpon>select2.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\select2.full.min.js">
+      <DependentUpon>select2.full.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\select2.js" />
     <Content Include="Scripts\select2.min.js">
       <DependentUpon>select2.js</DependentUpon>

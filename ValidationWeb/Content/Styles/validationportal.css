@@ -294,16 +294,18 @@ ul.navbar-nav {
     padding: 0;
 }
 
-div.validation-drowdown-menu {
+
+.validation-dropdown-menu {
     padding-top: 0;
     padding-bottom: 0;
     margin-top: 0;
     margin-bottom: 0;
     border-color: rgb(120, 190, 33);
+    background-color: white;
     left: initial;
 }
 
-.validation-drowdown-menu > a:hover, .validation-dropdown-toggle:hover, .validation-nav-link:hover {
+.validation-dropdown-menu > a:hover, .validation-dropdown-toggle:hover, .validation-nav-link:hover {
     padding-top: 0;
     padding-bottom: 0;
     margin-top: 0;
@@ -317,10 +319,17 @@ li.dropdown.nav-item.pull-right, li.dropdown-toggle.nav-item.pull-right {
     float: right !important;
 }
 
-/* Removes standard black arrow that has been replaced with a themed one */
-li.dropdown-toggle.nav-item::after {
-    display: none;
+.select2-container--bootstrap4 .select2-results__option--highlighted,
+.select2-container--bootstrap4 .select2-results__option--highlighted.select2-results__option[aria-selected=true] {
+    background-color: #004085;
+    color: #f8f9fa;
 }
+
+/* Removes standard black arrow that has been replaced with a themed one */
+/*li.dropdown-toggle.nav-item::after {
+    display: none;
+}*/
+
 /***************************************************************************************/
 
 

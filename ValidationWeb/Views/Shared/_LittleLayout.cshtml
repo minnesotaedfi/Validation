@@ -34,12 +34,9 @@
                             <li>@Html.Raw(Html.ActionLink("LinkText", "Index", "Home", new { area = "" }, new { @class = "nav-link validation-nav-link show-page-loading" }).ToHtmlString().Replace("LinkText", "<i class=\"fas fa-home white-heavy-text\"></i> Home"))</li>
                             <li>@Html.Raw(Html.ActionLink("LinkText", "Reports", "Validation", new { area = "" }, new { @class = "nav-link validation-nav-link show-page-loading" }).ToHtmlString().Replace("LinkText", "Validation Reports"))</li>
                             <li>@Html.Raw(Html.ActionLink("LinkText", "Reports", "Ods", new { area = "" }, new { @class = "nav-link validation-nav-link show-page-loading" }).ToHtmlString().Replace("LinkText", "ODS Reports"))</li>
-                            <!--
-
-                            <li>@Html.Raw(Html.ActionLink("LinkText", "Collections", "Rules", new { area = "" }, new { @class = "nav-link validation-nav-link" }).ToHtmlString().Replace("LinkText", "<i class=\"fas fa-list-alt white-heavy-text\"></i> Rule Collections"))</li>
-
-                            -->
-                            <li class="mr-auto"><a class="nav-link validation-nav-link mr-auto show-page-loading" href="https://w1.education.state.mn.us/MIDMSWEB/MDELogin.html">MARSS WES</a></li>
+                            <li class="mr-auto">
+                                <a class="nav-link validation-nav-link mr-auto show-page-loading" href="https://w1.education.state.mn.us/MIDMSWEB/MDELogin.html">MARSS WES</a>
+                            </li>
                             @Html.Action("NavDropDowns", "Nav")
                         </ul>
                     </div>
@@ -81,15 +78,15 @@
             $(".show-page-loading").bind('click', function () { overlayDelayedOn(); });
             $(".show-data-loading").bind('click', function () { overlayOn(); });
 
-            function changeEdOrg(orgId, orgName) {
+            function changeEdOrg(e) {
+                var orgId = e.params.data.id;
+                
                 $.ajax({
                     url: "@Url.Content("~/api/user-session/ed-org/select")",
                     type: "Post",
                     data: orgId,
                     contentType: 'application/json; charset=utf-8',
                     success: function (data) {
-                        $("#selectedOrg").html("<span class=\"white-heavy-text\">" + orgName + "</span>");
-                        $("#edOrgNames").val("");
                         // If looking at detailed errors, go back to main reports listing for the new district.
                         if (location.pathname.toLowerCase().indexOf("validation/report/") !== -1) {
                             location.replace("@Url.Action("Reports","Validation")");
@@ -109,17 +106,28 @@
 
         $.get("@Url.Content("~/api/validation/edorgs/autocomplete")")
             .done((data) => {
+                var dropDown = $('#edOrgNames');
 
-                var dropDown = $('#testEdOrgNames');
-                debugger;
                 let availableEdOrgs = data.map(x => {
                     dropDown.append($("<option></option>")
                         .attr("value", x.Id)
                         .text(x.OrganizationName));
                 });
 
-                $('#testEdOrgNames').();
+                $.get("@Url.Content("~/api/user-session/ed-org/get")")
+                    .done((data) => {
+                        dropDown.val(data.id);
+                        
+                        dropDown.select2({
+                            theme: 'bootstrap4',
+                            containerCssClass: 'validation-dropdown-menu'
+                        });
 
+                        dropDown.on('select2:select', changeEdOrg);
+                    })
+                    .fail(() =>
+                        console.log(`An error occurred when attempting to get current EdOrg`));
+                
                 if ("one" == "zero") {
                     $("#edOrgNames").autocomplete({
                         source: availableEdOrgs,

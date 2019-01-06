@@ -5,6 +5,7 @@
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     using System.Data.SqlClient;
+    using System.IO;
     using System.Linq;
     using System.Runtime.InteropServices;
     using System.Text;
@@ -186,6 +187,19 @@
                     List<RulesEngineExecutionException> rulesEngineExecutionExceptions =
                         new List<RulesEngineExecutionException>();
 
+                    /*
+                    var path = Path.Combine("D:\\scratch", "Sql");
+                    var ruleSqlDir = Path.Combine(path, "RulesSql");
+                    var execSqlDir = Path.Combine(path, "ExecSql");
+
+                    try
+                    {
+                        Directory.CreateDirectory(ruleSqlDir);
+                        Directory.CreateDirectory(execSqlDir);
+                    }
+                    catch {}
+                    */
+
                     for (var i = 0; i < rules.Length; i++)
                     {
                         var rule = rules[i];
@@ -196,6 +210,9 @@
 
                             _loggingService.LogDebugMessage($"Executing Rule {rule.RuleId}.");
                             _loggingService.LogDebugMessage($"Executing Rule SQL {rule.Sql}.");
+
+                           // File.WriteAllText(Path.Combine(ruleSqlDir, $"Rule_{rule.RuleId}.sql"), rule.Sql);
+
                             var detailParams = new List<SqlParameter>
                                            {
                                                new SqlParameter(
@@ -206,6 +223,9 @@
                                 _engineObjectModel.GetParameters(collectionId)
                                     .Select(x => new SqlParameter(x.ParameterName, x.Value)));
                             odsRawDbContext.Database.CommandTimeout = 60;
+
+                           // File.WriteAllText(Path.Combine(execSqlDir, $"Rule_{rule.RuleId}.sql"), rule.ExecSql);
+                            
                             var result = odsRawDbContext.Database.ExecuteSqlCommand(rule.ExecSql, detailParams.ToArray());
                             _loggingService.LogDebugMessage($"Executing Rule {rule.RuleId} rows affected = {result}.");
 

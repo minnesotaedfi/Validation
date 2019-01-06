@@ -46,12 +46,12 @@ namespace ValidationWeb
 
             bundles.Add(
                 new StyleBundle("~/Content/Styles/Select2CSS")
-                    .Include("~/Content/Styles/select2.css/")
+                    .Include("~/Content/Styles/select2.css")
                     .Include("~/Content/Styles/select2-bootstrap4.css"));
 
             bundles.Add(
                 new ScriptBundle("~/bundles/Select2")
-                    .Include("~/Scripts/select2.js"));
+                    .Include("~/Scripts/select2.full.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/DataTables").Include(
                 "~/Scripts/DataTables/jquery.dataTables.js",
