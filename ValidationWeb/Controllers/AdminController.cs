@@ -104,13 +104,13 @@ namespace ValidationWeb
                 ModelState.AddModelError("EndDate", "End Date needs to be later than Start Date");
             }
 
-            // We should not let the user add a submission cycle with the same school year and collectionId combination 
+            // We should not let the user add a collection cycle with the same school year and collectionId combination 
             // that already exists in the database, or set the school year and collectionId of an existing cycle
-            // to ones of another existing submission cycle.
+            // to ones of another existing collection cycle.
             SubmissionCycle duplicate = _submissionCycleService.SchoolYearCollectionAlreadyExists(submissionCycle);
             if (duplicate != null && (submissionCycle.Id == 0 || submissionCycle.Id != duplicate.Id))
             {
-                ModelState.AddModelError("CollectionId", "A submission cycle with this School Year and Collection already exists.");
+                ModelState.AddModelError("CollectionId", "A collection cycle with this School Year and Collection already exists.");
             }
 
             if (ModelState.IsValid)

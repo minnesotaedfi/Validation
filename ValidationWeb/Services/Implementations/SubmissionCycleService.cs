@@ -203,7 +203,7 @@
                 if (submissionCycle == null)
                 {
                     throw new Exception(
-                        $"Could not delete a submission cycle because submission cycle with ID {Id} was not found");
+                        $"Could not delete a collection cycle because collection cycle with ID {Id} was not found");
                 }
 
                 validationPortalDataContext.SubmissionCycles.Remove(submissionCycle);

@@ -173,7 +173,7 @@ namespace ValidationWeb
             SubmissionCycle submissionCycle = _submissionCycleService.GetSubmissionCycle(submissionCycleId);
             if (submissionCycle == null)
             {
-                string strMessage = $"Submission cycle with id {submissionCycleId} not found.";
+                string strMessage = $"Collection cycle with id {submissionCycleId} not found.";
                 _loggingService.LogErrorMessage(strMessage);
                 throw new InvalidOperationException(strMessage);
             }
