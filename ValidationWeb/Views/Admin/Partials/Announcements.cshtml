@@ -16,7 +16,7 @@
     <table class="table table-sm table-responsive-md table-bordered" id="reportsTable">
         <tr class="table-primary">
             <th class="id-hide-column">Id</th>
-            <th>Priority</th>
+            <th>Sort Order</th>
             <th>Message</th>
             <th>Contact Info</th>
             <th>Link Url</th>
@@ -24,7 +24,7 @@
             <th></th>
             <th></th>
         </tr>
-        @foreach (var announcement in Model)
+        @foreach (var announcement in Model.OrderBy(x => x.Priority))
         {   
             <tr>
                 <td class="id-hide-column">@announcement.Id</td>

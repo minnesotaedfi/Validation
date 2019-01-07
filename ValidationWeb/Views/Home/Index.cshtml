@@ -33,7 +33,7 @@
             @{ var rnd = new Random();  
                 // todo what the heck? 
             }
-            @foreach (var announcement in Model.Announcements.OrderByDescending(a => a.Priority).ToList())
+            @foreach (var announcement in Model.Announcements.OrderBy(a => a.Priority))
             {
                 var cardHeader = announcement.IsEmergency ? "Urgent!" : "Announcement";
                 var announcementParagraphs = (announcement.Message ?? string.Empty).Replace("\r", "").Split(new char[] { '\n' });
@@ -42,8 +42,7 @@
 
                 if (announcement.Expiration > DateTime.UtcNow)
                 {
-                    @*todo: clean this up *@
-                    <div id="@(cardId)" class="@(cardColor) clear-margin rounded-padded">
+                    <div id="@(cardId)" class="card @(cardColor) clear-margin rounded-padded">
                         <div class="vp-body-header">@(cardHeader)</div>
                         @foreach (var paragraph in announcementParagraphs)
                         {
