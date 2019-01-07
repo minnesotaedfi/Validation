@@ -8,6 +8,8 @@
     {
         public RecordsRequest()
         {
+            // TODO: these should be associated with a school year! 
+
             AssessmentResults = new RecordsRequestDetail();
             CumulativeFiles = new RecordsRequestDetail();
             DisciplineRecords = new RecordsRequestDetail();

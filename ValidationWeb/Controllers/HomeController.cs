@@ -11,52 +11,70 @@ namespace ValidationWeb
     [PortalAuthorize(Roles = "DataOwner,DistrictUser,HelpDesk")]
     public class HomeController : Controller
     {
-        private readonly IAnnouncementService _announcementService;
-        private readonly IAppUserService _appUserService;
-        private readonly IEdOrgService _edOrgService;
-        private readonly ISchoolYearService _schoolYearService;
-        private readonly IValidatedDataSubmissionService _validatedDataSubmissionService;
+        protected IAnnouncementService AnnouncementService { get; set; }
+        
+        protected IAppUserService AppUserService { get; set; }
+        
+        protected IEdOrgService EdOrgService { get; set; }
+       
+        protected ISchoolYearService SchoolYearService { get; set; }
+        
+        protected IOdsDataService OdsDataService { get; set; }
+        
+        protected IValidatedDataSubmissionService ValidatedDataSubmissionService { get; set; }
 
         public HomeController(
             IAnnouncementService announcementService,
             IAppUserService appUserService,
             IEdOrgService edOrgService,
             ISchoolYearService schoolYearService,
+            IOdsDataService odsDataService,
             IValidatedDataSubmissionService validatedDataSubmissionService)
         {
-            _announcementService = announcementService;
-            _appUserService = appUserService;
-            _edOrgService = edOrgService;
-            _schoolYearService = schoolYearService;
-            _validatedDataSubmissionService = validatedDataSubmissionService;
+            AnnouncementService = announcementService;
+            AppUserService = appUserService;
+            EdOrgService = edOrgService;
+            SchoolYearService = schoolYearService;
+            OdsDataService = odsDataService;
+            ValidatedDataSubmissionService = validatedDataSubmissionService;
         }
 
         public ActionResult Index()
         {
+            var focusedEdOrg = EdOrgService.GetEdOrgById(
+                AppUserService.GetSession().FocusedEdOrgId,
+                SchoolYearService.GetSchoolYearById(AppUserService.GetSession().FocusedSchoolYearId).Id);
+
+            //var recordsRequests = OdsDataService.GetAllRecordsRequests()
+            //    .Where(x => x.RespondingDistrict == focusedEdOrg.Id);
+
             var model = new HomeIndexViewModel
             {
-                AppUserSession = _appUserService.GetSession(),
-                Announcements = _announcementService.GetAnnouncements(),
-                YearsOpenForDataSubmission = _validatedDataSubmissionService.GetYearsOpenForDataSubmission(),
-                AuthorizedEdOrgs = _edOrgService.GetEdOrgs(),
-                FocusedEdOrg = _edOrgService.GetEdOrgById(_appUserService.GetSession().FocusedEdOrgId, _schoolYearService.GetSchoolYearById(_appUserService.GetSession().FocusedSchoolYearId).Id)
+                AppUserSession = AppUserService.GetSession(),
+                Announcements = AnnouncementService.GetAnnouncements(),
+                YearsOpenForDataSubmission = ValidatedDataSubmissionService.GetYearsOpenForDataSubmission(),
+                AuthorizedEdOrgs = EdOrgService.GetEdOrgs(),
+                FocusedEdOrg = focusedEdOrg,
+               // RecordsRequests = recordsRequests
             };
-            if (model.AuthorizedEdOrgs.Count() == 0)
+
+            if (!model.AuthorizedEdOrgs.Any())
             {
                 return new HttpUnauthorizedResult("Unauthorized - no educational organizations assigned to user.");
             }
+
             return View(model);
         }
 
         public ActionResult SelectOrg(string selectedEdOrgId)
         {
-            _appUserService.UpdateFocusedEdOrg(selectedEdOrgId);
+            AppUserService.UpdateFocusedEdOrg(selectedEdOrgId);
             return RedirectToAction("Index");
         }
 
         public ActionResult SelectSchoolYear(int selectedSchoolYearId)
         {
-            _appUserService.UpdateFocusedSchoolYear(selectedSchoolYearId);
+            AppUserService.UpdateFocusedSchoolYear(selectedSchoolYearId);
             return RedirectToAction("Index");
         }
 
@@ -64,14 +82,14 @@ namespace ValidationWeb
         {
             var model = new HomeAnnouncementsViewModel
             {
-                Announcements = _announcementService.GetAnnouncements()
+                Announcements = AnnouncementService.GetAnnouncements()
             };
             return View(model);
         }
 
         public string DismissAnnouncement(int announcement)
         {
-            _appUserService.DismissAnnouncement(announcement);
+            AppUserService.DismissAnnouncement(announcement);
             return string.Empty;
         }
     }

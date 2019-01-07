@@ -9,7 +9,9 @@ namespace ValidationWeb.Services
     public interface IEdOrgService
     {
         List<EdOrg> GetEdOrgs();
-        EdOrg GetEdOrgById(int edorgId, int fourDigitOdsDbYear);
+
+        EdOrg GetEdOrgById(int edOrgId, int fourDigitOdsDbYear);
+
         void RefreshEdOrgCache(int fourDigitOdsDbYear);
 
         SingleEdOrgByIdQuery GetSingleEdOrg(int edOrgId, int schoolYearId);
