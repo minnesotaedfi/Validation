@@ -5,6 +5,7 @@
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     using System.Data.SqlClient;
+    using System.Diagnostics;
     using System.IO;
     using System.Linq;
     using System.Runtime.InteropServices;
@@ -203,6 +204,17 @@
                     for (var i = 0; i < rules.Length; i++)
                     {
                         var rule = rules[i];
+
+                        if (rule.RuleId == "10.10.6516")
+                        {
+                            Debugger.Break();
+                        }
+                        else
+                        {
+                            continue; 
+                            #warning remove this! 
+                        }
+
                         try
                         {
                             // By default, rules are run against ALL districts in the Ed Fi ODS. This line filters for multi-district/multi-tenant ODS's.

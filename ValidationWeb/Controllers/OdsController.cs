@@ -14,10 +14,9 @@ namespace ValidationWeb
 
     using MoreLinq;
 
-    using Newtonsoft.Json;
-
     using ValidationWeb.ApiControllers.ModelBinders;
     using ValidationWeb.DataCache;
+    using ValidationWeb.Models;
     using ValidationWeb.Services;
     using ValidationWeb.Utility;
     using ValidationWeb.ViewModels;
@@ -1131,8 +1130,8 @@ namespace ValidationWeb
 
         public JsonResult GetRecordsRequestData(int edOrgId, string studentId)
         {
-            var result = OdsDataService.GetRecordsRequestData(edOrgId, studentId);
             var session = AppUserService.GetSession();
+            var result = OdsDataService.GetRecordsRequestData(session.FocusedSchoolYearId, edOrgId, studentId);
             result.RequestingUser = session.UserIdentity.UserId;
             return Json(result, JsonRequestBehavior.AllowGet);
         }
@@ -1140,118 +1139,17 @@ namespace ValidationWeb
         [HttpPost]
         public JsonResult SendRecordsRequest([ModelBinder(typeof(JsonNetModelBinder))]RecordsRequestFormData request)
         {
-            OdsDataService.SaveRecordsRequest(request);
+            var session = AppUserService.GetSession();
+            OdsDataService.SaveRecordsRequest(session.FocusedSchoolYearId, request);
             return Json(new { }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
         public JsonResult SendRecordsResponse([ModelBinder(typeof(JsonNetModelBinder))]RecordsResponseFormData response)
         {
-            OdsDataService.SaveRecordsResponse(response);
+            var session = AppUserService.GetSession();
+            OdsDataService.SaveRecordsResponse(session.FocusedSchoolYearId, response);
             return Json(new { }, JsonRequestBehavior.AllowGet);
         }
-    }
-
-    public class BoolConverter : JsonConverter
-    {
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-        {
-            writer.WriteValue(((bool)value) ? 1 : 0);
-        }
-
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-        {
-            return reader.Value.ToString() == "1";
-        }
-
-        public override bool CanConvert(Type objectType)
-        {
-            return objectType == typeof(bool);
-        }
-    }
-
-
-    [JsonObject]
-    public class RecordsRequestFormData
-    {
-        [JsonProperty("requestId")]
-        public int RequestId { get; set; }
-
-        [JsonProperty("studentId")]
-        public string StudentId { get; set; }
-
-        [JsonProperty("requesting-user-id")]
-        public string RequestingUserId { get; set; }
-
-        [JsonProperty("requesting-district-id")]
-        public int RequestingDistrictId { get; set; }
-
-        [JsonProperty("check-assessment")]
-        [JsonConverter(typeof(BoolConverter))]
-        public bool CheckAssessment { get; set; }
-
-        [JsonProperty("check-cumulative")]
-        [JsonConverter(typeof(BoolConverter))]
-        public bool CheckCumulative { get; set; }
-
-        [JsonProperty("check-discipline")]
-        [JsonConverter(typeof(BoolConverter))]
-        public bool CheckDiscipline { get; set; }
-
-        [JsonProperty("check-iep")]
-        [JsonConverter(typeof(BoolConverter))]
-        public bool CheckIEP { get; set; }
-
-        [JsonProperty("check-evaluation")]
-        [JsonConverter(typeof(BoolConverter))]
-        public bool CheckEvaluation { get; set; }
-
-        [JsonProperty("check-immunization")]
-        [JsonConverter(typeof(BoolConverter))]
-        public bool CheckImmunization { get; set; }
-
-        [JsonProperty("transmittal-instructions")]
-        public string TransmittalInstructions { get; set; }
-    }
-
-
-    [JsonObject]
-    public class RecordsResponseFormData
-    {
-        [JsonProperty("requestId")]
-        public int RequestId { get; set; }
-
-        [JsonProperty("studentId")]
-        public string StudentId { get; set; }
-
-        [JsonProperty("responding-user-id")]
-        public string RespondingUserId { get; set; }
-
-        [JsonProperty("responding-district-id")]
-        public int RespondingDistrictId { get; set; }
-
-        [JsonProperty("check-assessment-sent")]
-        [JsonConverter(typeof(BoolConverter))]
-        public bool CheckAssessment { get; set; }
-
-        [JsonProperty("check-cumulative-sent")]
-        [JsonConverter(typeof(BoolConverter))]
-        public bool CheckCumulative { get; set; }
-
-        [JsonProperty("check-discipline-sent")]
-        [JsonConverter(typeof(BoolConverter))]
-        public bool CheckDiscipline { get; set; }
-
-        [JsonProperty("check-iep-sent")]
-        [JsonConverter(typeof(BoolConverter))]
-        public bool CheckIEP { get; set; }
-
-        [JsonProperty("check-evaluation-sent")]
-        [JsonConverter(typeof(BoolConverter))]
-        public bool CheckEvaluation { get; set; }
-
-        [JsonProperty("check-immunization-sent")]
-        [JsonConverter(typeof(BoolConverter))]
-        public bool CheckImmunization { get; set; }
     }
 }

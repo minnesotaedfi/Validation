@@ -8,8 +8,6 @@
     {
         public RecordsRequest()
         {
-            // TODO: these should be associated with a school year! 
-
             AssessmentResults = new RecordsRequestDetail();
             CumulativeFiles = new RecordsRequestDetail();
             DisciplineRecords = new RecordsRequestDetail();
@@ -23,6 +21,8 @@
 
         public string StudentId { get; set; }
 
+        public int SchoolYearId { get; set; }
+
         public string TransmittalInstructions { get; set; }
 
         public int RequestingDistrict { get; set; }
@@ -33,16 +33,16 @@
         
         public string RespondingUser { get; set; }
 
-        public virtual RecordsRequestDetail AssessmentResults { get; set; }
+        public RecordsRequestDetail AssessmentResults { get; set; }
 
-        public virtual RecordsRequestDetail CumulativeFiles { get; set; }
+        public RecordsRequestDetail CumulativeFiles { get; set; }
 
-        public virtual RecordsRequestDetail DisciplineRecords { get; set; }
+        public RecordsRequestDetail DisciplineRecords { get; set; }
 
-        public virtual RecordsRequestDetail IEP { get; set; }
+        public RecordsRequestDetail IEP { get; set; }
 
-        public virtual RecordsRequestDetail EvaluationSummary { get; set; }
+        public RecordsRequestDetail EvaluationSummary { get; set; }
 
-        public virtual RecordsRequestDetail Immunizations { get; set; }
+        public RecordsRequestDetail Immunizations { get; set; }
     }
 }

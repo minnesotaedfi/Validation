@@ -472,6 +472,7 @@
     <Content Include="Scripts\DataTables\dataTables.foundation.min.js" />
     <Content Include="Scripts\DataTables\dataTables.jqueryui.js" />
     <Content Include="Scripts\DataTables\dataTables.jqueryui.min.js" />
+    <Content Include="Scripts\DataTables\dataTables.jumpToData.js" />
     <Content Include="Scripts\DataTables\dataTables.keyTable.js" />
     <Content Include="Scripts\DataTables\dataTables.keyTable.min.js" />
     <Content Include="Scripts\DataTables\dataTables.material.js" />
@@ -797,6 +798,9 @@
     <Compile Include="App_Start\JsonNetFormatter.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Models\RecordsRequestFormData.cs" />
+    <Compile Include="Models\RecordsResponseFormData.cs" />
+    <Compile Include="Utility\BoolConverter.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\NavController.cs" />
@@ -820,6 +824,7 @@
     <Compile Include="Models\RecordsRequestType.cs" />
     <Compile Include="Models\RecordsRequest.cs" />
     <Compile Include="Models\RecordsRequestDetail.cs" />
+    <Compile Include="Utility\DataRecordExtensions.cs" />
     <Compile Include="Utility\GradeLevelComparer.cs" />
     <Compile Include="Utility\ImportPropertySelectionBehavior.cs" />
     <Compile Include="Utility\SimpleInjectorExtension.cs" />

@@ -248,7 +248,7 @@
                                     CurrentEdOrgEnrollmentDate = DateTime.Now.Subtract(new TimeSpan(random.Next(1, 365), 0, 0, 0)),
                                     CurrentEdOrgExitDate = DateTime.Now.Subtract(new TimeSpan(random.Next(91, 180), 0, 0, 0)),
                                     IsCurrentDistrict = true,
-                                    PastDistEdOrgId = oldDistrict,
+                                    PastDistEdOrgId = edOrgId,
                                     PastDistrictName = "Old District",
                                     PastSchoolEdOrgId = oldSchool,
                                     PastSchoolName = "Old School",

@@ -7,7 +7,6 @@ namespace ValidationWeb
 {
     public class ChangeOfEnrollmentReportQuery
     {
-        public static string ChangeOfEnrollmentQuery = "rules.ChangeOfEnrollment";
         public const string IsCurrentDistrictColumnName = "IsCurrentDistrict";
         public const string CurrentDistEdOrgIdColumnName = "CurrentDistEdOrgId";
         public const string CurrentDistrictNameColumnName = "CurrentDistrictName";
@@ -16,18 +15,21 @@ namespace ValidationWeb
         public const string CurrentEdOrgEnrollmentDateColumnName = "CurrentEdOrgEnrollmentDate";
         public const string CurrentEdOrgExitDateColumnName = "CurrentEdOrgExitDate";
         public const string CurrentGradeColumnName = "CurrentGrade";
-        public const string PastDistEdOrgIdColumnName = "CurrentDistEdOrgId";
-        public const string PastDistrictNameColumnName = "CurrentDistrictName";
-        public const string PastSchoolEdOrgIdColumnName = "CurrentSchoolEdOrgId";
-        public const string PastSchoolNameColumnName = "CurrentSchoolName";
-        public const string PastEdOrgEnrollmentDateColumnName = "CurrentEdOrgEnrollmentDate";
-        public const string PastEdOrgExitDateColumnName = "CurrentEdOrgExitDate";
-        public const string PastGradeColumnName = "CurrentGrade";
+        public const string PastDistEdOrgIdColumnName = "PastDistEdOrgId";
+        public const string PastDistrictNameColumnName = "PastDistrictName";
+        public const string PastSchoolEdOrgIdColumnName = "PastSchoolEdOrgId";
+        public const string PastSchoolNameColumnName = "PastSchoolName";
+        public const string PastEdOrgEnrollmentDateColumnName = "PastEdOrgEnrollmentDate";
+        public const string PastEdOrgExitDateColumnName = "PastEdOrgExitDate";
+        public const string PastGradeColumnName = "PastGrade";
         public const string StudentIDColumnName = "StudentID";
         public const string StudentLastNameColumnName = "StudentLastName";
         public const string StudentFirstNameColumnName = "StudentFirstName";
         public const string StudentMiddleNameColumnName = "StudentMiddleName";
         public const string StudentBirthDateColumnName = "StudentBirthDate";
+        
+        public static string ChangeOfEnrollmentQuery = "rules.ChangeOfEnrollment";
+
         public bool IsCurrentDistrict { get; set; }
         public int CurrentDistEdOrgId { get; set; }
         public string CurrentDistrictName { get; set; }

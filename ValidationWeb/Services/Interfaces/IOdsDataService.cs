@@ -5,6 +5,8 @@ using System.Web;
 
 namespace ValidationWeb.Services
 {
+    using ValidationWeb.Models;
+
     public interface IOdsDataService
     {
         List<DemographicsCountReportQuery> GetDistrictAncestryRaceCounts(int? districtEdOrgId, string fourDigitOdsDbYear);
@@ -18,12 +20,12 @@ namespace ValidationWeb.Services
         List<ResidentsEnrolledElsewhereReportQuery> GetResidentsEnrolledElsewhereReport(int? districtEdOrgId, string fourDigitOdsDbYear);
         List<StudentDrillDownQuery> GetResidentsEnrolledElsewhereStudentDrillDown(int? districtEdOrgId, string fourDigitOdsDbYear);
 
-        RecordsRequest GetRecordsRequestData(int edOrgId, string studentId);
+        RecordsRequest GetRecordsRequestData(int schoolYearId, int edOrgId, string studentId);
 
         IEnumerable<RecordsRequest> GetAllRecordsRequests();
 
-        void SaveRecordsRequest(RecordsRequestFormData recordsRequest);
+        void SaveRecordsRequest(int schoolYearId, RecordsRequestFormData recordsRequest);
 
-        void SaveRecordsResponse(RecordsResponseFormData recordsResponse);
+        void SaveRecordsResponse(int schoolYearId, RecordsResponseFormData recordsResponse);
     }
 }

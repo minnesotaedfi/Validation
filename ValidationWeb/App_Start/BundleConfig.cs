@@ -57,7 +57,8 @@ namespace ValidationWeb
                 "~/Scripts/DataTables/jquery.dataTables.js",
                 "~/Scripts/DataTables/dataTables.bootstrap4.js",
                 "~/Scripts/DataTables/dataTables.fixedheader.js",
-                "~/Scripts/DataTables/dataTables.scroller.js"));
+                "~/Scripts/DataTables/dataTables.scroller.js",
+                "~/Scripts/DataTables/dataTables.jumpToData.js"));
         }
     }
 }

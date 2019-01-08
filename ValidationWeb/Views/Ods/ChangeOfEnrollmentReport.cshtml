@@ -69,6 +69,14 @@
 @section scripts {
     <script>
         $(function() {
+            var urlParams = new URLSearchParams(window.location.search);
+            var recordRequestStudentId = null;
+            if (urlParams.has('recordRequestStudentId')) {
+                recordRequestStudentId = urlParams.get('recordRequestStudentId');
+                $('input[name=date-filter][value=1-year]').prop('checked', 'checked');
+                $('.nav-tabs a[href="#withdrawalsPane"]').tab('show');
+            }
+
             $('div.dataTables_scrollBody').css('min-height', '350px');
 
             // notify tables within tab panes that it's time to refresh/draw
@@ -198,15 +206,12 @@
                         render: function(data, type, row) {
                             return '<a href="#" data-toggle="modal" data-target="#request-records-modal">Request&nbsp;Records</button>';
                         }
-
-
                     }
-                ]
+                ],
             });
 
             $('#request-records-modal').on('show.bs.modal',
                 function(event) {
-                    debugger;
                     var row = $(event.relatedTarget).closest('tr');
                     var data = enrollmentsTable.row(row).data();
 
@@ -215,7 +220,11 @@
                         data.studentFirstName +
                         ' ' +
                         data.studentMiddleName;
-                    $('#request-records-studentName').text(studentName);
+
+                    $('#request-records-form #request-records-studentName').text(studentName);
+                    $('#request-records-form #responding-district-id').val(data.pastDistEdOrgId);
+
+                    debugger;
 
                     $.ajax({
                         type: 'GET',
@@ -229,72 +238,72 @@
                         success: function(data) {
                             debugger;
 
-                            $('#requestId').val(data.Id);
-                            $('#studentId').val(data.StudentId);
-                            $('#requesting-district-id').val(data.RequestingDistrict);
-                            $('#requesting-user-id').val(data.RequestingUser);
+                            $('#request-records-form #requestId').val(data.Id);
+                            $('#request-records-form #studentId').val(data.StudentId);
+                            $('#request-records-form #requesting-district-id').val(data.RequestingDistrict);
+                            $('#request-records-form #requesting-user-id').val(data.RequestingUser);
 
                             var transmittalInstructions = data.TransmittalInstructions;
                             if (transmittalInstructions == null || transmittalInstructions.length == 0) {
                                 transmittalInstructions = "";
                             }
 
-                            $('#transmittal-instructions').text(transmittalInstructions);
+                            $('#request-records-form #transmittal-instructions').text(transmittalInstructions);
 
                             // todo: turn all this into a function
-                            $('#check-assessment').prop('checked', data.AssessmentResults.Requested);
-                            $('#check-assessment').prop('disabled', data.AssessmentResults.Requested);
+                            $('#request-records-form #check-assessment').prop('checked', data.AssessmentResults.Requested);
+                            $('#request-records-form #check-assessment').prop('disabled', data.AssessmentResults.Requested);
                             if (data.AssessmentResults.Sent) {
-                                $('#status-assessment-requested').text('Sent');
+                                $('#request-records-form #status-assessment-requested').text('Sent');
                             } else {
-                                $('#status-assessment-requested').text(data.AssessmentResults.Requested ? 'Requested' : '');
+                                $('#request-records-form #status-assessment-requested').text(data.AssessmentResults.Requested ? 'Requested' : '');
                             }
-                            $('#status-assessment-responder').text(data.AssessmentResults.RespondingUserId);
+                            $('#request-records-form #status-assessment-responder').text(data.AssessmentResults.RespondingUserId);
 
-                            $('#check-cumulative').prop('checked', data.CumulativeFiles.Requested);
+                            $('#request-records-form #check-cumulative').prop('checked', data.CumulativeFiles.Requested);
                             $('#check-cumulative').prop('disabled', data.CumulativeFiles.Requested);
                             if (data.CumulativeFiles.Sent) {
-                                $('#status-cumulative-requested').text('Sent');
+                                $('#request-records-form #status-cumulative-requested').text('Sent');
                             } else {
-                                $('#status-cumulative-requested').text(data.CumulativeFiles.Requested ? 'Requested' : '');
+                                $('#request-records-form #status-cumulative-requested').text(data.CumulativeFiles.Requested ? 'Requested' : '');
                             }
-                            $('#status-cumulative-responder').text(data.CumulativeFiles.RespondingUserId);
+                            $('#request-records-form #status-cumulative-responder').text(data.CumulativeFiles.RespondingUserId);
 
-                            $('#check-discipline').prop('checked', data.DisciplineRecords.Requested);
-                            $('#check-discipline').prop('disabled', data.DisciplineRecords.Requested);
+                            $('#request-records-form  #check-discipline').prop('checked', data.DisciplineRecords.Requested);
+                            $('#request-records-form  #check-discipline').prop('disabled', data.DisciplineRecords.Requested);
                             if (data.DisciplineRecords.Sent) {
-                                $('#status-discipline-requested').text('Sent');
+                                $('#request-records-form  #status-discipline-requested').text('Sent');
                             } else {
-                                $('#status-discipline-requested').text(data.DisciplineRecords.Requested ? 'Requested' : '');
+                                $('#request-records-form  #status-discipline-requested').text(data.DisciplineRecords.Requested ? 'Requested' : '');
                             }
-                            $('#status-discipline-responder').text(data.DisciplineRecords.RespondingUserId);
+                            $('#request-records-form  #status-discipline-responder').text(data.DisciplineRecords.RespondingUserId);
 
-                            $('#check-iep').prop('checked', data.IEP.Requested);
-                            $('#check-iep').prop('disabled', data.IEP.Requested);
+                            $('#request-records-form  #check-iep').prop('checked', data.IEP.Requested);
+                            $('#request-records-form  #check-iep').prop('disabled', data.IEP.Requested);
                             if (data.IEP.Sent) {
-                                $('#status-iep-requested').text('Sent');
+                                $('#request-records-form  #status-iep-requested').text('Sent');
                             } else {
-                                $('#status-iep-requested').text(data.IEP.Requested ? 'Requested' : '');
+                                $('#request-records-form  #status-iep-requested').text(data.IEP.Requested ? 'Requested' : '');
                             }
-                            $('#status-iep-responder').text(data.IEP.RespondingUserId);
+                            $('#request-records-form  #status-iep-responder').text(data.IEP.RespondingUserId);
 
-                            $('#check-evaluation').prop('checked', data.EvaluationSummary.Requested);
-                            $('#check-evaluation').prop('disabled', data.EvaluationSummary.Requested);
+                            $('#request-records-form  #check-evaluation').prop('checked', data.EvaluationSummary.Requested);
+                            $('#request-records-form  #check-evaluation').prop('disabled', data.EvaluationSummary.Requested);
                             if (data.EvaluationSummary.Sent) {
-                                $('#status-evaluation-requested').text('Sent');
+                                $('#request-records-form  #status-evaluation-requested').text('Sent');
                             } else {
-                                $('#status-evaluation-requested').text(data.EvaluationSummary.Requested ? 'Requested' : '');
+                                $('#request-records-form  #status-evaluation-requested').text(data.EvaluationSummary.Requested ? 'Requested' : '');
                             }
-                            $('#status-evaluation-responder').text(data.EvaluationSummary.RespondingUserId);
+                            $('#request-records-form  #status-evaluation-responder').text(data.EvaluationSummary.RespondingUserId);
 
-                            $('#check-immunization').prop('checked', data.Immunizations.Requested);
-                            $('#check-immunization').prop('disabled', data.Immunizations.Requested);
+                            $('#request-records-form  #check-immunization').prop('checked', data.Immunizations.Requested);
+                            $('#request-records-form  #check-immunization').prop('disabled', data.Immunizations.Requested);
                             if (data.Immunizations.Sent) {
-                                $('#status-immunization-requested').text('Sent');
+                                $('#request-records-form  #status-immunization-requested').text('Sent');
                             } else {
-                                $('#status-immunization-requested').text(data.Immunizations.Requested ? 'Requested' : '');
+                                $('#request-records-form  #status-immunization-requested').text(data.Immunizations.Requested ? 'Requested' : '');
                             }
-                            $('#status-immunization-responder').text(data.Immunizations.RespondingUserId);
+                            $('#request-records-form  #status-immunization-responder').text(data.Immunizations.RespondingUserId);
                         },
                         error: function() {
                             alert('Could not retrieve record request data');
@@ -302,7 +311,12 @@
                     });
                 });
 
-            function serializeFormToJson(array) {
+            function serializeFormToJson(form) {
+                debugger;
+                // they won't serialize if they're disabled!
+                form.find('input:checkbox').prop('disabled', false);
+
+                var array = form.serializeArray();
                 var jsonObj = {};
                 jQuery.map(array, function( n, i ) {
                     jsonObj[n.name] = n.value;
@@ -313,10 +327,8 @@
 
             $("#request-records-form").on("submit",
                 function(event) {
-                    debugger;
-
                     var $this = $(this);
-                    var formValues = JSON.stringify(serializeFormToJson($this.serializeArray()));
+                    var formValues = JSON.stringify(serializeFormToJson($this));
                     $.ajax({
                             type: $this.attr('method'),
                             url: $this.attr('action'),
@@ -329,7 +341,7 @@
                         })
                         .fail(function () {
                             alert('An error occurred while saving records request data');
-                            debugger;
+
                         });
 
                     event.preventDefault();
@@ -360,7 +372,8 @@
                             debugger;
                         }
 
-                        data.columns[8].search.value = checkedValue.attr('id');;
+                        data.columns[8].search.value = checkedValue.attr('id');
+
                     },
                     url: "@Html.Raw(Url.Action("GetChangeOfEnrollmentReportData", new
                                                                                   {
@@ -467,12 +480,23 @@
                             }
                         }
                     }
-                ]
+                ],
+                createdRow: function(row, data, dataIndex) {
+                    if (data.hasRecordsRequest) {
+                        $(row).addClass('selected');
+                    }
+                },
+                initComplete: function (settings, json) {
+                    if (recordRequestStudentId != null) {
+                        debugger;
+                        this.api().page.jumpToData(recordRequestStudentId, 1);
+                    }
+                },
+                stripeClasses: ['']
             });
 
             $('#view-request-modal').on('show.bs.modal',
                 function(event) {
-                    debugger;
                     var row = $(event.relatedTarget).closest('tr');
                     var data = withdrawalsTable.row(row).data();
 
@@ -493,7 +517,6 @@
                         },
                         datatype: "json",
                         success: function(data) {
-                            debugger;
 
                             $('#view-request-form #requestId').val(data.Id);
                             $('#view-request-form #studentId').val(data.StudentId);
@@ -540,8 +563,6 @@
 
             $("#view-request-form").on("submit",
                 function (event) {
-                    debugger;
-
                     var $this = $(this);
                     var formValues = JSON.stringify(serializeFormToJson($this.serializeArray()));
                     $.ajax({
@@ -556,7 +577,6 @@
                         })
                         .fail(function () {
                             alert('An error occurred while saving records request data');
-                            debugger;
                         });
 
                     event.preventDefault();

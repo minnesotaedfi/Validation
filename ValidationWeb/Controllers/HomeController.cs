@@ -45,8 +45,8 @@ namespace ValidationWeb
                 AppUserService.GetSession().FocusedEdOrgId,
                 SchoolYearService.GetSchoolYearById(AppUserService.GetSession().FocusedSchoolYearId).Id);
 
-            //var recordsRequests = OdsDataService.GetAllRecordsRequests()
-            //    .Where(x => x.RespondingDistrict == focusedEdOrg.Id);
+            var recordsRequests = OdsDataService.GetAllRecordsRequests()
+                .Where(x => x.RespondingDistrict == focusedEdOrg.Id && string.IsNullOrEmpty(x.RespondingUser));
 
             var model = new HomeIndexViewModel
             {
@@ -55,7 +55,7 @@ namespace ValidationWeb
                 YearsOpenForDataSubmission = ValidatedDataSubmissionService.GetYearsOpenForDataSubmission(),
                 AuthorizedEdOrgs = EdOrgService.GetEdOrgs(),
                 FocusedEdOrg = focusedEdOrg,
-               // RecordsRequests = recordsRequests
+                RecordsRequests = recordsRequests
             };
 
             if (!model.AuthorizedEdOrgs.Any())

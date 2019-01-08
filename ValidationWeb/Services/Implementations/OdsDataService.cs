@@ -7,6 +7,9 @@
     using System.Data.SqlClient;
     using System.Linq;
 
+    using ValidationWeb.Models;
+    using ValidationWeb.Utility;
+
     public class OdsDataService : IOdsDataService
     {
         public readonly ILoggingService LoggingService;
@@ -498,24 +501,29 @@
                         {
                             conn.Close();
                         }
-                        catch (Exception) { }
+                        catch (Exception) { }   // todo: remove all these
                     }
                 }
             }
         }
         
-        public RecordsRequest GetRecordsRequestData(int edOrgId, string studentId)
+        public RecordsRequest GetRecordsRequestData(int schoolYearId, int edOrgId, string studentId)
         {
             using (var dbContext = DbContextFactory.Create())
             {
                 try
                 {
-                    var studentRecord = dbContext.RecordsRequests.FirstOrDefault(x => x.StudentId == studentId) 
+                    var studentRecord = dbContext.RecordsRequests.FirstOrDefault(x => 
+                                            x.StudentId == studentId && 
+                                            x.SchoolYearId == schoolYearId && 
+                                            x.RequestingDistrict == edOrgId) 
                                         ?? new RecordsRequest
                                            {
                                                StudentId = studentId,
+                                               SchoolYearId = schoolYearId,
                                                RequestingDistrict = edOrgId
                                            };
+
                     return studentRecord;
                 }
                 catch (Exception ex)
@@ -542,23 +550,23 @@
             }
         }
 
-        public void SaveRecordsRequest(RecordsRequestFormData formData)
+        public void SaveRecordsRequest(int schoolYearId, RecordsRequestFormData formData)
         {
             using (var dbContext = DbContextFactory.Create())
             {
                 try
                 {
-                    RecordsRequest studentRecord = dbContext.RecordsRequests.FirstOrDefault(x => x.StudentId == formData.StudentId);
-
-                    if (studentRecord == null)
-                    {
-                        studentRecord = new RecordsRequest();
-                    }
+                    var studentRecord = dbContext.RecordsRequests.FirstOrDefault(x => 
+                                            x.StudentId == formData.StudentId && 
+                                            x.SchoolYearId == schoolYearId) 
+                                        ?? new RecordsRequest();
 
                     studentRecord.StudentId = formData.StudentId;
-                    studentRecord.RequestingDistrict = formData.RequestingDistrictId;
-                    studentRecord.RequestingUser = formData.RequestingUserId.ToString();
+                    studentRecord.RespondingDistrict = int.Parse(formData.RespondingDistrictId);
+                    studentRecord.RequestingDistrict = int.Parse(formData.RequestingDistrictId);
+                    studentRecord.RequestingUser = formData.RequestingUserId;
                     studentRecord.TransmittalInstructions = formData.TransmittalInstructions;
+                    studentRecord.SchoolYearId = schoolYearId;
 
                     if (formData.CheckAssessment)
                     {
@@ -621,20 +629,31 @@
             }
         }
 
-        public void SaveRecordsResponse(RecordsResponseFormData formData)
+        protected void SetRecordRequester(RecordsRequest recordsRequest, RecordsRequestFormData formData)
+        {
+
+        }
+
+        protected void SetRecordResponder(RecordsRequest recordsRequest, RecordsRequestFormData formData)
+        {
+
+        }
+
+        public void SaveRecordsResponse(int schoolYearId, RecordsResponseFormData formData)
         {
             using (var dbContext = DbContextFactory.Create())
             {
                 try
                 {
-                    RecordsRequest studentRecord = dbContext.RecordsRequests.FirstOrDefault(x => x.StudentId == formData.StudentId);
+                    RecordsRequest studentRecord = dbContext.RecordsRequests.FirstOrDefault(x => 
+                        x.StudentId == formData.StudentId && 
+                        x.SchoolYearId == schoolYearId);
 
                     if (studentRecord == null)
                     {
                         throw new InvalidOperationException($"Unable to find record request for student ID {formData.StudentId}");
                     }
 
-                    studentRecord.StudentId = formData.StudentId;
                     studentRecord.RespondingDistrict = formData.RespondingDistrictId;
                     studentRecord.RespondingUser = formData.RespondingUserId;
 
@@ -705,24 +724,33 @@
                 }
 
                 int? districtId = null;
-                var districtIdObj = reader[StudentDrillDownQuery.DistrictIdColumnName];
-                if (!(districtIdObj is DBNull))
+                if (reader.HasColumn(StudentDrillDownQuery.DistrictIdColumnName))
                 {
-                    districtId = System.Convert.ToInt32(reader[StudentDrillDownQuery.DistrictIdColumnName]);
+                    var districtIdObj = reader[StudentDrillDownQuery.DistrictIdColumnName];
+                    if (!(districtIdObj is DBNull))
+                    {
+                        districtId = System.Convert.ToInt32(reader[StudentDrillDownQuery.DistrictIdColumnName]);
+                    }
                 }
 
                 DateTime? enrolledDate = null;
-                var enrolledDateObj = reader[StudentDrillDownQuery.EnrolledDateColumnName];
-                if (!(enrolledDateObj is DBNull))
+                if (reader.HasColumn(StudentDrillDownQuery.EnrolledDateColumnName))
                 {
-                    enrolledDate = System.Convert.ToDateTime(reader[StudentDrillDownQuery.EnrolledDateColumnName]);
+                    var enrolledDateObj = reader[StudentDrillDownQuery.EnrolledDateColumnName];
+                    if (!(enrolledDateObj is DBNull))
+                    {
+                        enrolledDate = System.Convert.ToDateTime(reader[StudentDrillDownQuery.EnrolledDateColumnName]);
+                    }
                 }
 
                 DateTime? withdrawDate = null;
-                var withdrawDateObj = reader[StudentDrillDownQuery.WithdrawDateColumnName];
-                if (!(withdrawDateObj is DBNull))
+                if (reader.HasColumn(StudentDrillDownQuery.WithdrawDateColumnName))
                 {
-                    withdrawDate = System.Convert.ToDateTime(reader[StudentDrillDownQuery.WithdrawDateColumnName]);
+                    var withdrawDateObj = reader[StudentDrillDownQuery.WithdrawDateColumnName];
+                    if (!(withdrawDateObj is DBNull))
+                    {
+                        withdrawDate = System.Convert.ToDateTime(reader[StudentDrillDownQuery.WithdrawDateColumnName]);
+                    }
                 }
 
                 recordsReturned.Add(new StudentDrillDownQuery
@@ -732,15 +760,16 @@
                     StudentMiddleName = reader[StudentDrillDownQuery.StudentMiddleNameColumnName].ToString(),
                     StudentLastName = reader[StudentDrillDownQuery.StudentLastNameColumnName].ToString(),
                     DistrictId = districtId,
-                    DistrictName = reader[StudentDrillDownQuery.DistrictNameColumnName].ToString(),
+                    DistrictName = reader.HasColumn(StudentDrillDownQuery.DistrictNameColumnName) ? reader[StudentDrillDownQuery.DistrictNameColumnName].ToString() : string.Empty,
                     SchoolId = schoolId,
                     SchoolName = reader[StudentDrillDownQuery.SchoolNameColumnName].ToString(),
                     EnrolledDate = enrolledDate,
                     WithdrawDate = withdrawDate,
-                    Grade = reader[StudentDrillDownQuery.GradeColumnName].ToString(),
-                    SpecialEdStatus = reader[StudentDrillDownQuery.SpecialEdStatusColumnName].ToString()
+                    Grade = reader.HasColumn(StudentDrillDownQuery.GradeColumnName) ? reader[StudentDrillDownQuery.GradeColumnName].ToString() : string.Empty,
+                    SpecialEdStatus = reader.HasColumn(StudentDrillDownQuery.SpecialEdStatusColumnName) ? reader[StudentDrillDownQuery.SpecialEdStatusColumnName].ToString() : string.Empty
                 });
             }
+
             return recordsReturned;
         }
     }

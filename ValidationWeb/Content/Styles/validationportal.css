@@ -209,9 +209,13 @@ div.dataTables_scrollBody {
     min-height: 350px
 }
 
-div.DTS
+/*div.DTS
 tbody > tr.odd {
     background-color: #fff !important;
+}*/
+
+table.dataTable tr.selected {
+    background-color: #B0BED9 !important;
 }
 
 div.DTS div.dataTables_scrollBody table {
