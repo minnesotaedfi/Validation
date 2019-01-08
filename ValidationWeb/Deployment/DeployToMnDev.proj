@@ -10,9 +10,9 @@
     <RulesFileFolder Condition=" '$(RulesFileFolder)'==''">~/Content/Rules</RulesFileFolder>
     <RuleEngineResultsSchema Condition=" '$(RuleEngineResultsSchema)'==''">rules</RuleEngineResultsSchema>
     <UseFakeViewModelData Condition=" '$(UseFakeViewModelData)'==''">false</UseFakeViewModelData>
-    <ValidationPortalDbContext Condition=" '$(ValidationPortalDbContext)'==''">Data Source=MN-DEV.doubleline.us;Initial Catalog=ValidationPortal;Integrated Security=True;Application Name=EntityFramework</ValidationPortalDbContext>
-    <SingleSignOnDatabase Condition="'$(SingleSignOnDatabase)'==''">Data Source=MN-DEV.doubleline.us;Initial Catalog=ValidationPortalSsoMock;Integrated Security=True</SingleSignOnDatabase>
-    <ODSDatabase Condition="'$(ODS)'==''">Data Source=MN-DEV.doubleline.us;Initial Catalog=EdFi_Ods_{0};Integrated Security=True</ODSDatabase>
+    <ValidationPortalDbContext Condition=" '$(ValidationPortalDbContext)'==''">Data Source=MN-DEV;Initial Catalog=ValidationPortal;Integrated Security=True;Application Name=EntityFramework</ValidationPortalDbContext>
+    <SingleSignOnDatabase Condition="'$(SingleSignOnDatabase)'==''">Data Source=MN-DEV;Initial Catalog=ValidationPortalSsoMock;Integrated Security=True</SingleSignOnDatabase>
+    <ODSDatabase Condition="'$(ODS)'==''">Data Source=MN-DEV;Initial Catalog=EdFi_Ods_{0};Integrated Security=True</ODSDatabase>
   </PropertyGroup>
   <ItemGroup>
     <PublishPackages Include="ValidationPortal.deploy.cmd">
@@ -105,6 +105,6 @@
 			XmlInputPath="%(PublishPackages.ParametersXml)"
 			Query="//parameters/setParameter[@name='SimulatedUserName']/@value"
 			Value="jane" />
-    <Exec Condition="'$(Configuration)'!='Debug'" Command="..\obj\$(Configuration)\Package\ValidationWeb.deploy.cmd /Y /M:mn-dev.doubleline.us" /> 
+    <Exec Condition="'$(Configuration)'!='Debug'" Command="..\obj\$(Configuration)\Package\ValidationWeb.deploy.cmd /Y /M:mn-dev" /> 
 	</Target>
 </Project>

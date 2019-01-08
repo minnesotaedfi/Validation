@@ -249,7 +249,7 @@
                                     : System.Convert.ToDateTime(reader[ChangeOfEnrollmentReportQuery.PastEdOrgEnrollmentDateColumnName]),
                                 PastEdOrgExitDate = (reader[ChangeOfEnrollmentReportQuery.PastEdOrgExitDateColumnName] is DBNull)
                                     ? (DateTime?)null
-                                    : System.Convert.ToDateTime(reader[ChangeOfEnrollmentReportQuery.CurrentEdOrgExitDateColumnName]),
+                                    : System.Convert.ToDateTime(reader[ChangeOfEnrollmentReportQuery.PastEdOrgExitDateColumnName]),
                                 PastGrade = reader[ChangeOfEnrollmentReportQuery.PastGradeColumnName].ToString(),
                                 StudentID = reader[ChangeOfEnrollmentReportQuery.StudentIDColumnName].ToString(),
                                 StudentLastName = reader[ChangeOfEnrollmentReportQuery.StudentLastNameColumnName].ToString(),
