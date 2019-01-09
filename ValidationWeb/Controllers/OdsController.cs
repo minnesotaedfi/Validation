@@ -792,7 +792,7 @@ namespace ValidationWeb
         public JsonResult GetChangeOfEnrollmentReportData(
             int edOrgId,
             string fourDigitSchoolYear,
-            bool isCurrentDistrict,
+            bool isCurrentDistrict, 
             IDataTablesRequest request)
         {
 #if DEBUG
@@ -1132,7 +1132,12 @@ namespace ValidationWeb
         {
             var session = AppUserService.GetSession();
             var result = OdsDataService.GetRecordsRequestData(session.FocusedSchoolYearId, edOrgId, studentId);
-            result.RequestingUser = session.UserIdentity.UserId;
+
+            if (result.RequestingUser == null)
+            {
+                result.RequestingUser = session.UserIdentity.UserId;
+            }
+
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 

@@ -349,6 +349,13 @@
 
             $(enrollmentsTable.table().header()).addClass('table-primary');
 
+            var order; 
+            if (recordRequestStudentId != null) {
+                order = [[9, "desc"]];
+            } else {
+                order = [[0, "asc"]];
+            }
+
             var withdrawalsTable = $('#reportsTable2').DataTable({
                 paging: true,
                 pagingType: 'full_numbers',
@@ -471,7 +478,7 @@
                         title: 'Records Requested',
                         orderable: true,
                         name: 'recordsRequested',
-                        data: 'null',
+                        data: 'hasRecordsRequest',
                         render: function(data, type, row) {
                             if (row.hasRecordsRequest) {
                                 return '<a href="#" data-toggle="modal" data-target="#view-request-modal">View&nbsp;Request</button>';
@@ -482,16 +489,16 @@
                     }
                 ],
                 createdRow: function(row, data, dataIndex) {
-                    if (data.hasRecordsRequest) {
+                    if (data.hasRecordsRequest && data.studentID == recordRequestStudentId) {
                         $(row).addClass('selected');
                     }
                 },
-                initComplete: function (settings, json) {
-                    if (recordRequestStudentId != null) {
-                        debugger;
-                        this.api().page.jumpToData(recordRequestStudentId, 1);
-                    }
-                },
+                //initComplete: function (settings, json) {
+                //    if (recordRequestStudentId != null) {
+                //        this.api().page.jumpToData(recordRequestStudentId, 1);
+                //    }
+                //},
+                order: order,
                 stripeClasses: ['']
             });
 
@@ -563,8 +570,9 @@
 
             $("#view-request-form").on("submit",
                 function (event) {
+                    debugger; 
                     var $this = $(this);
-                    var formValues = JSON.stringify(serializeFormToJson($this.serializeArray()));
+                    var formValues = JSON.stringify(serializeFormToJson($this));
                     $.ajax({
                         type: $this.attr('method'),
                         url: $this.attr('action'),

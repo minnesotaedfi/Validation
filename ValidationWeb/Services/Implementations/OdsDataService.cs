@@ -515,8 +515,7 @@
                 {
                     var studentRecord = dbContext.RecordsRequests.FirstOrDefault(x => 
                                             x.StudentId == studentId && 
-                                            x.SchoolYearId == schoolYearId && 
-                                            x.RequestingDistrict == edOrgId) 
+                                            x.SchoolYearId == schoolYearId) 
                                         ?? new RecordsRequest
                                            {
                                                StudentId = studentId,
