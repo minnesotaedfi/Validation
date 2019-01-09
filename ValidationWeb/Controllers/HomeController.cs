@@ -11,18 +11,6 @@ namespace ValidationWeb
     [PortalAuthorize(Roles = "DataOwner,DistrictUser,HelpDesk")]
     public class HomeController : Controller
     {
-        protected IAnnouncementService AnnouncementService { get; set; }
-        
-        protected IAppUserService AppUserService { get; set; }
-        
-        protected IEdOrgService EdOrgService { get; set; }
-       
-        protected ISchoolYearService SchoolYearService { get; set; }
-        
-        protected IOdsDataService OdsDataService { get; set; }
-        
-        protected IValidatedDataSubmissionService ValidatedDataSubmissionService { get; set; }
-
         public HomeController(
             IAnnouncementService announcementService,
             IAppUserService appUserService,
@@ -38,6 +26,18 @@ namespace ValidationWeb
             OdsDataService = odsDataService;
             ValidatedDataSubmissionService = validatedDataSubmissionService;
         }
+
+        protected IAnnouncementService AnnouncementService { get; set; }
+        
+        protected IAppUserService AppUserService { get; set; }
+        
+        protected IEdOrgService EdOrgService { get; set; }
+       
+        protected ISchoolYearService SchoolYearService { get; set; }
+        
+        protected IOdsDataService OdsDataService { get; set; }
+        
+        protected IValidatedDataSubmissionService ValidatedDataSubmissionService { get; set; }
 
         public ActionResult Index()
         {

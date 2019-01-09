@@ -22,16 +22,44 @@
             <!-- all notifications here -->
             <!-- add enrollment request (and responses!?) to notifications -->
             <!-- see Home Page - Notification tab in spec worksheet -->
-            <div class="row vp-body-header">
-                <div class="col-md-10">
-                    
+            @if (Model.RecordsRequests.Any())
+            {
+                <div class="row vp-body-header">
+                    Notifications:</div>
+                <div class="row">
+                    <table class="table table-bordered table-sm table-responsive-md" id="notificationsTable">
+                        <thead>
+                        <tr class="table-primary">
+                            <th colspan="2">
+                                Message
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var recordsRequest in Model.RecordsRequests)
+                        {
+                            <tr>
+                                <td>
+                                    Your district has unresolved Change of Enrollment Records Requests
+                                </td>
+                                <td>
+                                    @Html.ActionLink(
+                                        "view",
+                                        "ChangeOfEnrollmentReport",
+                                        "Ods",
+                                        new { recordRequestStudentId = recordsRequest.StudentId },
+                                        new {})
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
                 </div>
-            </div>
-            
+            }
         </div>
         <div class="tbmargin10 col-4">
-            @{ var rnd = new Random();  
-                // todo what the heck? 
+            @{ var rnd = new Random();
+                // todo what the heck?
             }
             @foreach (var announcement in Model.Announcements.OrderBy(a => a.Priority))
             {
@@ -56,8 +84,8 @@
                         {
                             <p>@(announcement.ContactInfo)</p>
 
-                            @* todo... dismissing announcements seems to not be implemented 
-                            <!-- <button type="button" onclick="hideElement('#@(cardId)',  @(announcement.Id))" class="btn btn-sm btn-primary btn-light float-right">Dismiss</button>-->
+                            @* todo... dismissing announcements seems to not be implemented
+                                <!-- <button type="button" onclick="hideElement('#@(cardId)',  @(announcement.Id))" class="btn btn-sm btn-primary btn-light float-right">Dismiss</button>-->
                             *@
                         }
                     </div>
