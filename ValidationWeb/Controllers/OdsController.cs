@@ -189,6 +189,11 @@ namespace ValidationWeb
                 results = results.Where(x => x.SchoolId == schoolId);
             }
 
+            if (reportType == StudentDrillDownReportType.EnrolledElsewhere)
+            {
+                results = results.Where(x => x.DistrictId == schoolId);
+            }
+
             // some drilldown reports show apparent dupes, but they're only distinct by undisplayed fields
             // distinct them by basically everything but SpecialEdStatus
             if (reportType == StudentDrillDownReportType.Demographics || reportType == StudentDrillDownReportType.Programs)
@@ -252,6 +257,14 @@ namespace ValidationWeb
                     case "schoolId":
                         {
                             orderingFunctionNullableInt = x => x.SchoolId;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? results.OrderBy(orderingFunctionNullableInt)
+                                                : results.OrderByDescending(orderingFunctionNullableInt);
+                            break;
+                        }
+                    case "districtId":
+                        {
+                            orderingFunctionNullableInt = x => x.DistrictId;
                             sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
                                                 ? results.OrderBy(orderingFunctionNullableInt)
                                                 : results.OrderByDescending(orderingFunctionNullableInt);
@@ -989,7 +1002,11 @@ namespace ValidationWeb
         }
 
         // GET: Ods/ResidentsEnrolledElsewhereReport
-        public ActionResult ResidentsEnrolledElsewhereReport(bool isStateMode = false, int? districtToDisplay = null, bool isStudentDrillDown = false)
+        public ActionResult ResidentsEnrolledElsewhereReport(
+            bool isStateMode = false, 
+            int? districtToDisplay = null, 
+            bool isStudentDrillDown = false, 
+            int? schoolId = null)
         {
             var session = AppUserService.GetSession();
             var edOrg = EdOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
@@ -1011,6 +1028,7 @@ namespace ValidationWeb
                 {
                     ReportName = "Residents Enrolled Elsewhere",
                     EdOrgId = edOrgId,
+                    SchoolId = schoolId,
                     DrillDownColumnIndex = 0,
                     EdOrgName = edOrgName,
                     User = theUser,

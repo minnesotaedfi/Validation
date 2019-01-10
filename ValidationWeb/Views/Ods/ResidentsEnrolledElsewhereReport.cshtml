@@ -43,7 +43,7 @@
                               "Ods",
                               new
                                 {
-                                    schoolId = "_EdOrgId_",
+                                    schoolId = "_SchoolId_",
                                     drillDownColumnIndex = "_DrillDownIndex_",
                                     isStateMode = Model.IsStateMode,
                                     districtToDisplay = "_EdOrgId_",
@@ -51,9 +51,10 @@
                                     orgType = "_OrgType_"
                                 }))" target="_blank">_LinkText_</a>';
 
-            function createDrillDownLink(edOrgId, drillDownIndex, orgType, linkText) {
+            function createDrillDownLink(edOrgId, schoolId, drillDownIndex, orgType, linkText) {
                 return drillDownLinkTemplate
                     .replace(/_EdOrgId_/g, edOrgId)
+                    .replace(/_SchoolId_/g, schoolId)
                     .replace(/_DrillDownIndex_/g, drillDownIndex)
                     .replace(/_OrgType_/g, orgType)
                     .replace(/_LinkText_/g, linkText);
@@ -111,7 +112,7 @@
                         data: 'residentsEnrolled',
                         render: function (data, type, row, meta) {
                             if (type === 'display') {
-                                return (data === 0) ? "-" : createDrillDownLink(row.edOrgId, 0, row.orgType, data);
+                                return (data === 0) ? "-" : createDrillDownLink(@Model.EdOrgId, row.districtOfEnrollmentId, 0, row.orgType, data);
                             } else {
                                 return data;
                             }
