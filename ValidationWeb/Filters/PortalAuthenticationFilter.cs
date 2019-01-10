@@ -342,7 +342,7 @@ namespace ValidationWeb
                 FullName = fullName,
                 Name = theUserId,
                 UserId = theUserId,
-                CanView = SetViewPermissions(appRole)
+                ViewPermissions = SetViewPermissions(appRole)
             };
             filterContext.HttpContext.User = new ValidationPortalPrincipal(newUserIdentity);
             _loggingService.LogInfoMessage($"Successfully retrieved at least one organization authorization for user {authHeaderValue}; now creating a new session.");
