@@ -25,6 +25,7 @@ namespace ValidationWeb
             //return portalIdentity.AppRole >= roleSought;
             return portalIdentity.AppRole.Name == roleSought.Name;
         }
+        public Dictionary<string, bool> ViewPermissions { get; set; }
     }
 
     /// <summary>
@@ -45,7 +46,7 @@ namespace ValidationWeb
         public string FullName { get; set; }
         public string Email { get; set; }
         public ICollection<EdOrg> AuthorizedEdOrgs { get; set; }
-        public IDictionary<string,bool> ViewPermissions { get; set; }
+        public Dictionary<string,bool> ViewPermissions { get; set; }
     }
 }
 

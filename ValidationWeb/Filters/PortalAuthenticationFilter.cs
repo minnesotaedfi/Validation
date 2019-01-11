@@ -330,6 +330,8 @@ namespace ValidationWeb
                 return;
             }
 
+            var viewPermissions = SetViewPermissions(appRole);
+
             // Success - now store the authenticated Principal and create a new session.
             var newUserIdentity = new ValidationPortalIdentity
             {
@@ -342,7 +344,7 @@ namespace ValidationWeb
                 FullName = fullName,
                 Name = theUserId,
                 UserId = theUserId,
-                ViewPermissions = SetViewPermissions(appRole)
+                ViewPermissions = viewPermissions
             };
             filterContext.HttpContext.User = new ValidationPortalPrincipal(newUserIdentity);
             _loggingService.LogInfoMessage($"Successfully retrieved at least one organization authorization for user {authHeaderValue}; now creating a new session.");
