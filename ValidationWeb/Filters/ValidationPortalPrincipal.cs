@@ -32,10 +32,6 @@ namespace ValidationWeb
         }
     }
 
-    public static class IIPrincipalExtensions
-    {
-    }
-
     /// <summary>
     /// A representation of the authenticated Validation Portal user, for use in HTTP Contexts.
     /// </summary>
@@ -54,12 +50,18 @@ namespace ValidationWeb
         public string FullName { get; set; }
         public string Email { get; set; }
         public ICollection<EdOrg> AuthorizedEdOrgs { get; set; }
-        public Dictionary<string, bool> ViewPermissions { get { return IIdentityExtensions.GetViewPermissions(this, AppRole.Name);  } } }
     }
 
+    /// <summary>
+    /// Extensions for IIdentity
+    /// </summary>
     public static class IIdentityExtensions
     {
-        private static class ViewPermissionsConstants
+
+        /// <summary>
+        /// Permission names for the portal application.
+        /// </summary>                    
+        private static class PortalPermissions
         {
             public const string CanViewAllAdminFunctions = "CanViewAllAdminFunctions";                                          // EDVP-Admin -- true   EDVP-HelpDesk -- false   EDVP-RegionUser -- false     EDVP-DistrictUser -- false      EDVP-DataOwner -- false 
             public const string CanViewStudentCounts = "CanViewStudentCounts";                                                  // EDVP-Admin -- false  EDVP-HelpDesk -- true    EDVP-RegionUser -- true      EDVP-DistrictUser -- true       EDVP-DataOwner -- false
@@ -72,34 +74,58 @@ namespace ValidationWeb
 
         }
 
+        private static class PortalRoles
+        {
+            public const string Admin = "Administrator";
+            public const string EDVPAdmin = "EDVP-Admin";
+            public const string EDVPHelpDesk = "EDVP-HelpDesk";
+            public const string EDVPRegionUser = "EDVP-RegionUser";
+            public const string EDVPDistrictUser = "EDVP-DistrictUser";
+            public const string EDVPDataOwner = "EDVP-DataOwner";
+        }
+
+        /// <summary>
+        /// Returns the app role name so it's easier to get at.
+        /// </summary>
         public static string AppRoleName { get; set; }
 
+        /// <summary>
+        /// Method to extend IIdentity so that it will return the dictionary of permissions
+        /// </summary>
+        /// <param name="identity">ValidationPortalIdentity</param>
+        /// <param name="roleName">Role Name of the User</param>
+        /// <returns>Dictionary with permissions and the settings for that user.</returns>
         public static Dictionary<string, bool> GetViewPermissions(this IIdentity identity, string roleName) //ILoggingService _loggingService
         {
 
-            Dictionary<string, bool> viewPermissions = new Dictionary<string, bool>();
+            Dictionary<string, bool> permissions = new Dictionary<string, bool>();
 
-            try
-            {
-                viewPermissions.Add(ViewPermissionsConstants.CanViewAllAdminFunctions, false);
-                viewPermissions.Add(ViewPermissionsConstants.CanViewStudentCounts, false);
-                viewPermissions.Add(ViewPermissionsConstants.CanViewAllValidationReportsTab, false);
+            // Start with every permission being automatically set to false;
+            permissions.Add(PortalPermissions.CanViewAllAdminFunctions, false);
+            permissions.Add(PortalPermissions.CanViewStudentCounts, false);
+            permissions.Add(PortalPermissions.CanViewAllValidationReportsTab, false);
 
-            if (roleName == "Administrator" || roleName == "EDVP - Admin")
-                {
-                    viewPermissions[ViewPermissionsConstants.CanViewAllAdminFunctions] = true;
-                    viewPermissions[ViewPermissionsConstants.CanViewStudentCounts] = true;
-                    viewPermissions[ViewPermissionsConstants.CanViewAllValidationReportsTab] = false;
-            }
-                // _loggingService.LogInfoMessage($"Successfully set permissions for user;");
-            }
-            catch (Exception ex)
+            // Logic for setting the permissions.  TODO: needs to be a switch
+            switch (roleName)
             {
-                //_loggingService.LogInfoMessage($"Failed to set permissions for user; See error message: {ex.Message}");
+                case PortalRoles.Admin:
+                    permissions[PortalPermissions.CanViewAllAdminFunctions] = true;
+                    permissions[PortalPermissions.CanViewStudentCounts] = true;
+                    permissions[PortalPermissions.CanViewAllValidationReportsTab] = false;
+                    break;
+                case PortalRoles.EDVPAdmin:
+                    permissions[PortalPermissions.CanViewAllAdminFunctions] = true;
+                    permissions[PortalPermissions.CanViewStudentCounts] = true;
+                    permissions[PortalPermissions.CanViewAllValidationReportsTab] = false;
+                    break;
+                default:
+                    break;
             }
-            return viewPermissions;
+
+            return permissions;
         }
     }
+}
 
 
 
