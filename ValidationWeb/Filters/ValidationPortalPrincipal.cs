@@ -14,6 +14,11 @@ namespace ValidationWeb
             Identity = ident;
         }
         public IIdentity Identity { get; set; }
+        public ValidationPortalIdentity PortalIdentity()
+        {
+            var portalIdentity = Identity as ValidationPortalIdentity;
+            return portalIdentity;
+        }
         public bool IsInRole(string role)
         {
             var portalIdentity = Identity as ValidationPortalIdentity;
@@ -25,6 +30,10 @@ namespace ValidationWeb
             //return portalIdentity.AppRole >= roleSought;
             return portalIdentity.AppRole.Name == roleSought.Name;
         }
+    }
+
+    public static class IIPrincipalExtensions
+    {
     }
 
     /// <summary>
@@ -45,9 +54,11 @@ namespace ValidationWeb
         public string FullName { get; set; }
         public string Email { get; set; }
         public ICollection<EdOrg> AuthorizedEdOrgs { get; set; }
-        public Dictionary<string, bool> ViewPermissions { get { return SetViewPermissions(AppRole); } }
+        public Dictionary<string, bool> ViewPermissions { get { return IIdentityExtensions.GetViewPermissions(this, AppRole.Name);  } } }
+    }
 
-
+    public static class IIdentityExtensions
+    {
         private static class ViewPermissionsConstants
         {
             public const string CanViewAllAdminFunctions = "CanViewAllAdminFunctions";                                          // EDVP-Admin -- true   EDVP-HelpDesk -- false   EDVP-RegionUser -- false     EDVP-DistrictUser -- false      EDVP-DataOwner -- false 
@@ -61,7 +72,9 @@ namespace ValidationWeb
 
         }
 
-        public static Dictionary<string, bool> SetViewPermissions(AppRole appRole) //ILoggingService _loggingService
+        public static string AppRoleName { get; set; }
+
+        public static Dictionary<string, bool> GetViewPermissions(this IIdentity identity, string roleName) //ILoggingService _loggingService
         {
 
             Dictionary<string, bool> viewPermissions = new Dictionary<string, bool>();
@@ -70,13 +83,15 @@ namespace ValidationWeb
             {
                 viewPermissions.Add(ViewPermissionsConstants.CanViewAllAdminFunctions, false);
                 viewPermissions.Add(ViewPermissionsConstants.CanViewStudentCounts, false);
+                viewPermissions.Add(ViewPermissionsConstants.CanViewAllValidationReportsTab, false);
 
-                if (appRole.Name == "Administrator" || appRole.Name == "EDVP - Admin")
+            if (roleName == "Administrator" || roleName == "EDVP - Admin")
                 {
                     viewPermissions[ViewPermissionsConstants.CanViewAllAdminFunctions] = true;
                     viewPermissions[ViewPermissionsConstants.CanViewStudentCounts] = true;
-                }
-               // _loggingService.LogInfoMessage($"Successfully set permissions for user;");
+                    viewPermissions[ViewPermissionsConstants.CanViewAllValidationReportsTab] = false;
+            }
+                // _loggingService.LogInfoMessage($"Successfully set permissions for user;");
             }
             catch (Exception ex)
             {
@@ -84,9 +99,7 @@ namespace ValidationWeb
             }
             return viewPermissions;
         }
-
     }
-}
 
 
 

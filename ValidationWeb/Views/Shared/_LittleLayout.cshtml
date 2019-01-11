@@ -1,4 +1,11 @@
 ﻿@using MvcSiteMapProvider.Web.Html
+@using ValidationWeb
+@{ 
+    var identity = (ValidationPortalIdentity)User.Identity;
+    var appRoleName = identity.AppRole.Name;
+    var permissions = User.Identity.GetViewPermissions(appRoleName);
+}
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -32,7 +39,12 @@
                     <div class="collapse navbar-collapse" id="theNavBar">
                         <ul class="navbar-nav">
                             <li>@Html.Raw(Html.ActionLink("LinkText", "Index", "Home", new { area = "" }, new { @class = "nav-link validation-nav-link show-page-loading" }).ToHtmlString().Replace("LinkText", "<i class=\"fas fa-home white-heavy-text\"></i> Home"))</li>
-                            <li>@Html.Raw(Html.ActionLink("LinkText", "Reports", "Validation", new { area = "" }, new { @class = "nav-link validation-nav-link show-page-loading" }).ToHtmlString().Replace("LinkText", "Validation Reports"))</li>
+
+                            @if (permissions["CanViewAllValidationReportsTab"] == true)
+                            {
+                                <li>@Html.Raw(Html.ActionLink("LinkText", "Reports", "Validation", new { area = "" }, new { @class = "nav-link validation-nav-link show-page-loading" }).ToHtmlString().Replace("LinkText", "Validation Reports"))</li>
+                            }
+                                
                             <li>@Html.Raw(Html.ActionLink("LinkText", "Reports", "Ods", new { area = "" }, new { @class = "nav-link validation-nav-link show-page-loading" }).ToHtmlString().Replace("LinkText", "ODS Reports"))</li>
                             <li class="mr-auto">
                                 <a class="nav-link validation-nav-link mr-auto show-page-loading" href="https://w1.education.state.mn.us/MIDMSWEB/MDELogin.html">MARSS WES</a>
