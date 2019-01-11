@@ -330,8 +330,6 @@ namespace ValidationWeb
                 return;
             }
 
-            var viewPermissions = SetViewPermissions(appRole);
-
             // Success - now store the authenticated Principal and create a new session.
             var newUserIdentity = new ValidationPortalIdentity
             {
@@ -344,7 +342,7 @@ namespace ValidationWeb
                 FullName = fullName,
                 Name = theUserId,
                 UserId = theUserId,
-                ViewPermissions = viewPermissions
+                ViewPermissions = SetViewPermissions(appRole, _loggingService)
             };
             filterContext.HttpContext.User = new ValidationPortalPrincipal(newUserIdentity);
             _loggingService.LogInfoMessage($"Successfully retrieved at least one organization authorization for user {authHeaderValue}; now creating a new session.");
@@ -376,7 +374,7 @@ namespace ValidationWeb
             #endregion Create and add a new user session to the database.
         }
 
-        private static class ViewPermissions
+        private static class ViewPermissionsConstants
         {
             public const string CanViewAllAdminFunctions =                                        "CanViewAllAdminFunctions";   // EDVP-Admin -- true   EDVP-HelpDesk -- false   EDVP-RegionUser -- false     EDVP-DistrictUser -- false      EDVP-DataOwner -- false 
             public const string CanViewStudentCounts =                                                "CanViewStudentCounts";   // EDVP-Admin -- false  EDVP-HelpDesk -- true    EDVP-RegionUser -- true      EDVP-DistrictUser -- true       EDVP-DataOwner -- false
@@ -389,19 +387,27 @@ namespace ValidationWeb
 
         }
 
-        private Dictionary<string, bool> SetViewPermissions(AppRole appRole) {
+        public static Dictionary<string, bool> SetViewPermissions(AppRole appRole, ILoggingService _loggingService) {
 
-            Dictionary<string, bool> canView = new Dictionary<string, bool>();            
-            canView.Add(ViewPermissions.CanViewAllAdminFunctions, false);
-            canView.Add(ViewPermissions.CanViewStudentCounts, false);
+            Dictionary<string, bool> viewPermissions = new Dictionary<string, bool>();
 
-            if (appRole.Name == "Administrator" || appRole.Name == "EDVP - Admin")
-            {
-                canView[ViewPermissions.CanViewAllAdminFunctions] = true;
-                canView[ViewPermissions.CanViewStudentCounts] = true;
+            try
+            {                
+                viewPermissions.Add(ViewPermissionsConstants.CanViewAllAdminFunctions, false);
+                viewPermissions.Add(ViewPermissionsConstants.CanViewStudentCounts, false);
+
+                if (appRole.Name == "Administrator" || appRole.Name == "EDVP - Admin")
+                {
+                    viewPermissions[ViewPermissionsConstants.CanViewAllAdminFunctions] = true;
+                    viewPermissions[ViewPermissionsConstants.CanViewStudentCounts] = true;
+                }
+                _loggingService.LogInfoMessage($"Successfully set permissions for user;");
             }
-            
-            return canView;
+            catch (Exception ex)
+            {
+                _loggingService.LogInfoMessage($"Failed to set permissions for user; See error message: {ex.Message}");
+            }
+            return viewPermissions;
         }
 
         public void OnAuthenticationChallenge(AuthenticationChallengeContext filterContext)
