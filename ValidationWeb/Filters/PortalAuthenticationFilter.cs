@@ -341,8 +341,8 @@ namespace ValidationWeb
                 LastName = lastName,
                 FullName = fullName,
                 Name = theUserId,
-                UserId = theUserId,
-                ViewPermissions = SetViewPermissions(appRole, _loggingService)
+                UserId = theUserId //,
+                //ViewPermissions = ValidationPortalIdentity.SetViewPermissions(appRole) //, _loggingService)
             };
             filterContext.HttpContext.User = new ValidationPortalPrincipal(newUserIdentity);
             _loggingService.LogInfoMessage($"Successfully retrieved at least one organization authorization for user {authHeaderValue}; now creating a new session.");
@@ -372,42 +372,6 @@ namespace ValidationWeb
             }
             _loggingService.LogInfoMessage($"User {authHeaderValue}; session {newCurrentSession.Id} saved.");
             #endregion Create and add a new user session to the database.
-        }
-
-        private static class ViewPermissionsConstants
-        {
-            public const string CanViewAllAdminFunctions =                                        "CanViewAllAdminFunctions";   // EDVP-Admin -- true   EDVP-HelpDesk -- false   EDVP-RegionUser -- false     EDVP-DistrictUser -- false      EDVP-DataOwner -- false 
-            public const string CanViewStudentCounts =                                                "CanViewStudentCounts";   // EDVP-Admin -- false  EDVP-HelpDesk -- true    EDVP-RegionUser -- true      EDVP-DistrictUser -- true       EDVP-DataOwner -- false
-            public const string CanViewReadOnlyAllFeaturesAllDistricts =            "CanViewReadOnlyAllFeaturesAllDistricts";   // EDVP-Admin -- false  EDVP-HelpDesk -- true    EDVP-RegionUser -- false     EDVP-DistrictUser -- false      EDVP-DataOwner -- false
-            public const string CanViewODSReportsViewAllDistricts =                      "CanViewODSReportsViewAllDistricts";   // EDVP-Admin -- false  EDVP-HelpDesk -- true    EDVP-RegionUser -- true      EDVP-DistrictUser -- true       EDVP-DataOwner -- false
-            public const string CanViewODSReportLinks =                                             "CanViewODSReportsLinks";   // EDVP-Admin -- false  EDVP-HelpDesk -- false   EDVP-RegionUser -- true      EDVP-DistrictUser -- true       EDVP-DataOwner -- false
-            public const string CanViewAllAggregatedReportsForAllDistricts =    "CanViewAllAggregatedReportsForAllDistricts";   // EDVP-Admin -- false  EDVP-HelpDesk -- true    EDVP-RegionUser -- true      EDVP-DistrictUser -- true       EDVP-DataOwner -- true
-            public const string CanViewAllValidationReportsTab =                            "CanViewAllValidationReportsTab";   // EDVP-Admin -- false  EDVP-HelpDesk -- true    EDVP-RegionUser -- true      EDVP-DistrictUser -- true       EDVP-DataOwner -- false
-            public const string CanViewAllDistricts =                                                  "CanViewAllDistricts";   // EDVP-Admin -- false  EDVP-HelpDesk -- true    EDVP-RegionUser -- false     EDVP-DistrictUser -- false      EDVP-DataOwner -- true
-
-        }
-
-        public static Dictionary<string, bool> SetViewPermissions(AppRole appRole, ILoggingService _loggingService) {
-
-            Dictionary<string, bool> viewPermissions = new Dictionary<string, bool>();
-
-            try
-            {                
-                viewPermissions.Add(ViewPermissionsConstants.CanViewAllAdminFunctions, false);
-                viewPermissions.Add(ViewPermissionsConstants.CanViewStudentCounts, false);
-
-                if (appRole.Name == "Administrator" || appRole.Name == "EDVP - Admin")
-                {
-                    viewPermissions[ViewPermissionsConstants.CanViewAllAdminFunctions] = true;
-                    viewPermissions[ViewPermissionsConstants.CanViewStudentCounts] = true;
-                }
-                _loggingService.LogInfoMessage($"Successfully set permissions for user;");
-            }
-            catch (Exception ex)
-            {
-                _loggingService.LogInfoMessage($"Failed to set permissions for user; See error message: {ex.Message}");
-            }
-            return viewPermissions;
         }
 
         public void OnAuthenticationChallenge(AuthenticationChallengeContext filterContext)
