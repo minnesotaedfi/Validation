@@ -188,11 +188,6 @@ rule 10.10.6148
 	and {StudentDemographic}.[LastName] exists
 	else '6. The field given contains an invalid value as defined in the MARSS Manual.  Note:  Fields are edited only if they are required in that reporting cycle (fall or end-of-year).'
 	
-rule 10.10.6150
-	require that {StudentDemographic}.[EnglishLearner] is in ['Yes','No']
-	else '6. The field given contains an invalid value as defined in the MARSS Manual.  Note:  Fields are edited only if they are required in that reporting cycle (fall or end-of-year).'
-	
-	
 rule 10.10.6179
 	require that count({StudentDemographic}) = count({StudentDemographic} by [BirthDate])
 	else '132. The student\'s birthdate as well as the student\'s gender must match on all records within the district.'
