@@ -3,7 +3,7 @@
 @{ 
     var identity = (ValidationPortalIdentity)User.Identity;
     var appRoleName = identity.AppRole.Name;
-    var permissions = User.Identity.GetViewPermissions(appRoleName);
+    var permissions = User.Identity.GetViewPermissions(identity.AppRole);
 }
 
 <!DOCTYPE html>
@@ -40,12 +40,15 @@
                         <ul class="navbar-nav">
                             <li>@Html.Raw(Html.ActionLink("LinkText", "Index", "Home", new { area = "" }, new { @class = "nav-link validation-nav-link show-page-loading" }).ToHtmlString().Replace("LinkText", "<i class=\"fas fa-home white-heavy-text\"></i> Home"))</li>
 
-                            @if (permissions["CanViewAllValidationReportsTab"] == true)
+                            @if (permissions.CanViewValidationReports)
                             {
                                 <li>@Html.Raw(Html.ActionLink("LinkText", "Reports", "Validation", new { area = "" }, new { @class = "nav-link validation-nav-link show-page-loading" }).ToHtmlString().Replace("LinkText", "Validation Reports"))</li>
                             }
-                                
-                            <li>@Html.Raw(Html.ActionLink("LinkText", "Reports", "Ods", new { area = "" }, new { @class = "nav-link validation-nav-link show-page-loading" }).ToHtmlString().Replace("LinkText", "ODS Reports"))</li>
+                            @if (permissions.CanViewOdsReports)
+                            {
+                                <li>@Html.Raw(Html.ActionLink("LinkText", "Reports", "Ods", new { area = "" }, new { @class = "nav-link validation-nav-link show-page-loading" }).ToHtmlString().Replace("LinkText", "ODS Reports"))</li>
+                            }
+
                             <li class="mr-auto">
                                 <a class="nav-link validation-nav-link mr-auto show-page-loading" href="https://w1.education.state.mn.us/MIDMSWEB/MDELogin.html">MARSS WES</a>
                             </li>

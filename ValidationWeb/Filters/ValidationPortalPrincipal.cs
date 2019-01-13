@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Security.Principal;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Principal;
 
 namespace ValidationWeb
 {
@@ -14,11 +12,13 @@ namespace ValidationWeb
             Identity = ident;
         }
         public IIdentity Identity { get; set; }
+
         public ValidationPortalIdentity PortalIdentity()
         {
             var portalIdentity = Identity as ValidationPortalIdentity;
             return portalIdentity;
         }
+
         public bool IsInRole(string role)
         {
             var portalIdentity = Identity as ValidationPortalIdentity;
@@ -26,9 +26,8 @@ namespace ValidationWeb
             {
                 return false;
             }
-            var roleSought = AppRole.CreateAppRole(role);
-            //return portalIdentity.AppRole >= roleSought;
-            return portalIdentity.AppRole.Name == roleSought.Name;
+            
+            return string.CompareOrdinal(portalIdentity.AppRole.Name, role) == 0;
         }
     }
 
@@ -38,91 +37,117 @@ namespace ValidationWeb
     [Serializable]
     public class ValidationPortalIdentity : IIdentity
     {
-        public string AuthenticationType { get { return "Minnesota DOE SSO"; } }
-        public bool IsAuthenticated { get { return true; } }
+        public string AuthenticationType => "Minnesota DOE SSO";
+
+        public bool IsAuthenticated => true;
+
         public string Name { get; set; }
+
         public AppRole AppRole { get; set; }
+
         [Key]
         public string UserId { get; set; }
+        
         public string FirstName { get; set; }
+        
         public string MiddleName { get; set; }
+        
         public string LastName { get; set; }
+        
         public string FullName { get; set; }
+        
         public string Email { get; set; }
+        
         public ICollection<EdOrg> AuthorizedEdOrgs { get; set; }
+    }
+
+    public class SSORoleNames
+    {
+        public const string Admin = "EDVP-Admin";
+        public const string HelpDesk = "EDVP-HelpDesk";
+        public const string RegionUser = "EDVP-RegionUser";
+        public const string DistrictUser = "EDVP-DistrictUser";
+        public const string DataOwner = "EDVP-DataOwner";
+    }
+
+    public class PortalRoleNames
+    {
+        public const string Admin = "Admin";
+        
+        public const string HelpDesk = "HelpDesk";
+        
+        public const string RegionUser = "RegionUser";
+
+        public const string DistrictUser = "DistrictUser";
+
+        public const string DataOwner = "DataOwner";
+    }
+
+    public class RolePermissions
+    {
+        public bool CanAccessAdminFeatures { get; set; }
+
+        public bool CanViewOdsReports { get; set; }
+
+        public bool CanModifyRecordsRequests { get; set; }
+
+        public bool CanViewStudentDrilldownReports { get; set; }
+
+        public bool CanViewValidationReports { get; set; }
+
+        public bool CanRunValidationReports { get; set; }
+
+        public bool CanAccessAllDistrictsMode { get; set; }
     }
 
     /// <summary>
     /// Extensions for IIdentity
     /// </summary>
+    // ReSharper disable once InconsistentNaming
     public static class IIdentityExtensions
     {
-
-        /// <summary>
-        /// Permission names for the portal application.
-        /// </summary>                    
-        private static class PortalPermissions
-        {
-            public const string CanViewAllAdminFunctions = "CanViewAllAdminFunctions";                                          // EDVP-Admin -- true   EDVP-HelpDesk -- false   EDVP-RegionUser -- false     EDVP-DistrictUser -- false      EDVP-DataOwner -- false 
-            public const string CanViewStudentCounts = "CanViewStudentCounts";                                                  // EDVP-Admin -- false  EDVP-HelpDesk -- true    EDVP-RegionUser -- true      EDVP-DistrictUser -- true       EDVP-DataOwner -- false
-            public const string CanViewReadOnlyAllFeaturesAllDistricts = "CanViewReadOnlyAllFeaturesAllDistricts";              // EDVP-Admin -- false  EDVP-HelpDesk -- true    EDVP-RegionUser -- false     EDVP-DistrictUser -- false      EDVP-DataOwner -- false
-            public const string CanViewODSReportsViewAllDistricts = "CanViewODSReportsViewAllDistricts";                        // EDVP-Admin -- false  EDVP-HelpDesk -- true    EDVP-RegionUser -- true      EDVP-DistrictUser -- true       EDVP-DataOwner -- false
-            public const string CanViewODSReportLinks = "CanViewODSReportsLinks";                                               // EDVP-Admin -- false  EDVP-HelpDesk -- false   EDVP-RegionUser -- true      EDVP-DistrictUser -- true       EDVP-DataOwner -- false
-            public const string CanViewAllAggregatedReportsForAllDistricts = "CanViewAllAggregatedReportsForAllDistricts";      // EDVP-Admin -- false  EDVP-HelpDesk -- true    EDVP-RegionUser -- true      EDVP-DistrictUser -- true       EDVP-DataOwner -- true
-            public const string CanViewAllValidationReportsTab = "CanViewAllValidationReportsTab";                              // EDVP-Admin -- false  EDVP-HelpDesk -- true    EDVP-RegionUser -- true      EDVP-DistrictUser -- true       EDVP-DataOwner -- false
-            public const string CanViewAllDistricts = "CanViewAllDistricts";                                                    // EDVP-Admin -- false  EDVP-HelpDesk -- true    EDVP-RegionUser -- false     EDVP-DistrictUser -- false      EDVP-DataOwner -- true
-
-        }
-
-        private static class PortalRoles
-        {
-            public const string Admin = "Administrator";
-            public const string EDVPAdmin = "EDVP-Admin";
-            public const string EDVPHelpDesk = "EDVP-HelpDesk";
-            public const string EDVPRegionUser = "EDVP-RegionUser";
-            public const string EDVPDistrictUser = "EDVP-DistrictUser";
-            public const string EDVPDataOwner = "EDVP-DataOwner";
-        }
-
-        /// <summary>
-        /// Returns the app role name so it's easier to get at.
-        /// </summary>
-        public static string AppRoleName { get; set; }
-
         /// <summary>
         /// Method to extend IIdentity so that it will return the dictionary of permissions
         /// </summary>
         /// <param name="identity">ValidationPortalIdentity</param>
         /// <param name="roleName">Role Name of the User</param>
         /// <returns>Dictionary with permissions and the settings for that user.</returns>
-        public static Dictionary<string, bool> GetViewPermissions(this IIdentity identity, string roleName) //ILoggingService _loggingService
+        public static RolePermissions GetViewPermissions(this IIdentity identity, AppRole role) 
         {
+            var rolePermissions = new RolePermissions();
 
-            Dictionary<string, bool> permissions = new Dictionary<string, bool>();
-
-            // Start with every permission being automatically set to false;
-            permissions.Add(PortalPermissions.CanViewAllAdminFunctions, false);
-            permissions.Add(PortalPermissions.CanViewStudentCounts, false);
-            permissions.Add(PortalPermissions.CanViewAllValidationReportsTab, false);
-
-            // Logic for setting the permissions.  TODO: needs to be a switch
-            switch (roleName)
+            switch (role.Name)
             {
-                case PortalRoles.Admin:
-                    permissions[PortalPermissions.CanViewAllAdminFunctions] = true;
-                    permissions[PortalPermissions.CanViewStudentCounts] = true;
-                    permissions[PortalPermissions.CanViewAllValidationReportsTab] = false;
+                case PortalRoleNames.Admin:
+                    rolePermissions.CanAccessAdminFeatures = true; 
                     break;
-                case PortalRoles.EDVPAdmin:
-                    permissions[PortalPermissions.CanViewAllAdminFunctions] = true;
-                    permissions[PortalPermissions.CanViewStudentCounts] = true;
-                    permissions[PortalPermissions.CanViewAllValidationReportsTab] = false;
+                case PortalRoleNames.HelpDesk:
+                    rolePermissions.CanViewOdsReports = true;
+                    rolePermissions.CanViewStudentDrilldownReports = true;
+                    rolePermissions.CanViewValidationReports = true;
+                    rolePermissions.CanAccessAllDistrictsMode = true; 
+                    break; 
+                case PortalRoleNames.DataOwner:
+                    rolePermissions.CanViewOdsReports = true;
+                    rolePermissions.CanAccessAllDistrictsMode = true; 
+                    break; 
+                case PortalRoleNames.DistrictUser:
+                    rolePermissions.CanViewOdsReports = true;
+                    rolePermissions.CanModifyRecordsRequests = true;
+                    rolePermissions.CanViewStudentDrilldownReports = true;
+                    rolePermissions.CanViewValidationReports = true;
+                    rolePermissions.CanRunValidationReports = true;
                     break;
-                default:
-                    break;
+                case PortalRoleNames.RegionUser:
+                    rolePermissions.CanViewOdsReports = true;
+                    rolePermissions.CanModifyRecordsRequests = true;
+                    rolePermissions.CanViewStudentDrilldownReports = true;
+                    rolePermissions.CanViewValidationReports = true;
+                    rolePermissions.CanRunValidationReports = true; 
+                    break; 
             }
 
-            return permissions;
+            return rolePermissions;
         }
     }
 }
