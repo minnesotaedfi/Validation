@@ -32,7 +32,19 @@
 
         public List<EdOrg> GetEdOrgs()
         {
-            return AppUserService.GetSession().UserIdentity.AuthorizedEdOrgs.OrderBy(eo => eo.OrganizationName).ToList();
+            var userIdentity = AppUserService.GetSession().UserIdentity;
+            // var permissions = userIdentity.GetViewPermissions(userIdentity.AppRole);
+            if (userIdentity.AppRole.Name == PortalRoleNames.DataOwner || userIdentity.AppRole.Name == PortalRoleNames.HelpDesk)
+            {
+                using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
+                {
+                    return validationPortalDataContext.EdOrgs.ToList();
+                }
+            }
+            else
+            {
+                return userIdentity.AuthorizedEdOrgs.OrderBy(eo => eo.OrganizationName).ToList();
+            }
         }
 
         public EdOrg GetEdOrgById(int edOrgId, int schoolYearId)
