@@ -207,7 +207,7 @@
                     {
                         title: 'Records Requested',
                         orderable: false,
-                        @if (permissions.CanModifyRecordsRequests)
+                        @if (!permissions.CanModifyRecordsRequests)
                         {
                             @:visible: false,
                         }
@@ -478,7 +478,7 @@
                     },
                     {
                         title: 'Records Requested',
-                        @if (permissions.CanModifyRecordsRequests)
+                        @if (!permissions.CanModifyRecordsRequests)
                         {
                             @:visible: false,
                         }

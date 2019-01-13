@@ -117,11 +117,14 @@
                         render: function (data, type, row, meta) {
                             if (type === 'display') {
                                 return (data === 0) ? "-" : 
-                                    
                                     @if (permissions.CanViewStudentDrilldownReports)
                                     {
-                                        @: createDrillDownLink(row.edOrgId, 0, row.orgType, data);
-                                    } else { @: data }
+                                        @:createDrillDownLink(row.edOrgId, 0, row.orgType, data);
+                                    } 
+                                    else 
+                                    {
+                                        @:data
+                                    }
                             } else {
                                 return data;
                             }

@@ -1,4 +1,9 @@
 ﻿@model OdsMultipleEnrollmentsReportViewModel
+@{
+    var identity = (ValidationPortalIdentity)User.Identity;
+    var appRoleName = identity.AppRole.Name;
+    var permissions = User.Identity.GetViewPermissions(identity.AppRole);
+}
 
 <div id="pagetop" class="row tbmargin10">
 
@@ -17,14 +22,25 @@
             </div>
         }
     }
-
-    @if (Model.IsStateMode)
+    
+    @if (permissions.CanAccessAllDistrictsMode)
     {
-        <div class="col-md-2"><a href="@Url.Action("MultipleEnrollmentsReport", "Ods", new { isStateMode = false })" class="show-data-loading">View Single District</a></div>
-    }
-    else
-    {
-        <div class="col-md-2"><a href="@Url.Action("MultipleEnrollmentsReport", "Ods", new { isStateMode = true })" class="show-data-loading">View All Districts</a></div>
+        if (Model.IsStateMode)
+         {
+             <div class="col-md-2">
+                 <a href="@Url.Action("MultipleEnrollmentsReport", "Ods", new
+                                                                          {
+                                                                              isStateMode = false
+                                                                          })" class="show-data-loading">View Single District</a></div>
+         }
+         else
+         {
+             <div class="col-md-2">
+                 <a href="@Url.Action("MultipleEnrollmentsReport", "Ods", new
+                                                                          {
+                                                                              isStateMode = true
+                                                                          })" class="show-data-loading">View All Districts</a></div>
+         }
     }
 </div>
 <div id="requestedReportContent" class="row">
@@ -69,8 +85,8 @@
 
             var stateLinkTemplate =
                 '<a href="@Html.Raw(Url.Action(
-                              "MultipleEnrollmentsReport", 
-                              "Ods", 
+                              "MultipleEnrollmentsReport",
+                              "Ods",
                               new
                                 { isStateMode = false, districtToDisplay = "_EdOrgId_" }))" class="show-data-loading">_EdOrgId_</a>';
 
@@ -117,7 +133,10 @@
                             <text>
                         render: function(data, type, row, meta) {
                             if (data != null && type === 'display' && row.orgType === 200) {
-                                return createStateLink(data);
+                                @if (permissions.CanAccessAllDistrictsMode)
+                                {
+                                    @:return createStateLink(data);
+                                }
                             } else {
                                 return data;
                             }
@@ -135,7 +154,15 @@
                         data: 'distinctEnrollmentCount',
                         render: function (data, type, row, meta) {
                             if (type === 'display') {
-                                return (data === 0) ? "-" : createDrillDownLink(row.edOrgId, 0, row.orgType, data);
+                                return (data === 0) ? "-" : 
+                                @if (permissions.CanViewStudentDrilldownReports)
+                                {
+                                    @:createDrillDownLink(row.edOrgId, 0, row.orgType, data);
+                                }
+                                else
+                                {
+                                    @: data 
+                                }
                             } else {
                                 return data;
                             }
@@ -146,7 +173,15 @@
                         data: 'enrolledInOtherSchoolsCount',
                         render: function (data, type, row, meta) {
                             if (type === 'display') {
-                                return (data === 0) ? "-" : createDrillDownLink(row.edOrgId, 1, row.orgType, data);
+                                return (data === 0) ? "-" : 
+                                    @if (permissions.CanViewStudentDrilldownReports)
+                                {
+                                    @:createDrillDownLink(row.edOrgId, 1, row.orgType, data);
+                                }
+                                else
+                                {
+                                    @: data 
+                                }
                             } else {
                                 return data;
                             }
@@ -157,7 +192,15 @@
                         data: 'enrolledInOtherDistrictsCount',
                         render: function (data, type, row, meta) {
                             if (type === 'display') {
-                                return (data === 0) ? "-" : createDrillDownLink(row.edOrgId, 2, row.orgType, data);
+                                return (data === 0) ? "-" : 
+                                    @if (permissions.CanViewStudentDrilldownReports)
+                                {
+                                    @:createDrillDownLink(row.edOrgId, 2, row.orgType, data);
+                                }
+                                else
+                                {
+                                    @: data 
+                                }
                             } else {
                                 return data;
                             }
