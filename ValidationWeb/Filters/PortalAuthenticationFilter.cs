@@ -257,21 +257,26 @@ namespace ValidationWeb
             _loggingService.LogDebugMessage($"Extracting authorization information from remote authorization response for {authHeaderValue}.");
             // Filter on App ID
             ssoUserAuthorizations.RemoveAll(ss => string.Compare(ss.AppId, _appId, true) != 0);
+
             // Role - grab the first one if there are more than one. This is okay because above we filter records 
             //        to the Validation Portal application only.
             var theRole = ssoUserAuthorizations.FirstOrDefault(ss => ss.RoleId != null).RoleId;
             _loggingService.LogDebugMessage($"User: {authHeaderValue}, Role: {theRole}.");
             var appRole = AppRole.CreateAppRole(theRole);
+
             // Role Description
             var theRoleDescription = ssoUserAuthorizations.FirstOrDefault(ss => ss.RoleDescription != null).RoleDescription;
             _loggingService.LogDebugMessage($"User: {authHeaderValue}, Role Description: {theRoleDescription}.");
+
             // UserId
             var theUserId = ssoUserAuthorizations.FirstOrDefault(ss => ss.UserId != null).UserId;
             _loggingService.LogDebugMessage($"User: {authHeaderValue}, UserId: {theUserId}.");
-            if (ssoUserAuthorizations.Select(ss1 => ss1.RoleId).Distinct().Where(rid => !string.IsNullOrWhiteSpace(rid)).Count() > 1)
+
+            if (ssoUserAuthorizations.Select(ss1 => ss1.RoleId).Distinct().Count(rid => !string.IsNullOrWhiteSpace(rid)) > 1)
             {
                 _loggingService.LogWarningMessage($"The user {theUserId} has been assigned more than one role for the Validation Portal application {_appId}. The role {theRole} was used because it was the first encountered.");
             }
+
             // Names and Addresses
             var firstName = ssoUserAuthorizations.FirstOrDefault(ss => ss.FirstName != null).FirstName;
             _loggingService.LogDebugMessage($"User: {authHeaderValue}, First Name: {firstName}.");
@@ -318,9 +323,9 @@ namespace ValidationWeb
 
             if (!authorizedEdOrgs.Any())
             {
-                var unauthMessage = $"The user {theUserId} logged in successfully, and accessed the Validation Portal application, but wasn't authorized any access to Educational Organizations according to EDIDMS (single sign on authorizations), thus couldn't use the application ... or it is possible none of the authorized organizations have been loaded from the Ed Fi Operational Datastore to the Validation database.";
-                _loggingService.LogErrorMessage(unauthMessage);
-                throw new UnauthorizedAccessException(unauthMessage);
+                var unauthorizedMessage = $"The user {theUserId} logged in successfully, and accessed the Validation Portal application, but wasn't authorized any access to Educational Organizations according to EDIDMS (single sign on authorizations), thus couldn't use the application ... or it is possible none of the authorized organizations have been loaded from the Ed Fi Operational Datastore to the Validation database.";
+                _loggingService.LogErrorMessage(unauthorizedMessage);
+                throw new UnauthorizedAccessException(unauthorizedMessage);
             }
 
             if ((appRole == AppRole.Unauthorized) || (appRole == null))
@@ -341,7 +346,8 @@ namespace ValidationWeb
                 LastName = lastName,
                 FullName = fullName,
                 Name = theUserId,
-                UserId = theUserId
+                UserId = theUserId //,
+                //ViewPermissions = ValidationPortalIdentity.SetViewPermissions(appRole) //, _loggingService)
             };
             filterContext.HttpContext.User = new ValidationPortalPrincipal(newUserIdentity);
             _loggingService.LogInfoMessage($"Successfully retrieved at least one organization authorization for user {authHeaderValue}; now creating a new session.");
@@ -358,8 +364,10 @@ namespace ValidationWeb
                 FocusedSchoolYearId = previousSessionFocusedSchoolYearId.HasValue ? previousSessionFocusedSchoolYearId.Value : validYears.First().Id,
                 UserIdentity = newUserIdentity
             };
+
             // Make the session accessible throughout the request.
             httpContext.Items[SessionItemName] = newCurrentSession;
+            
             // Let ASP.NET save these objects in the session state for the next request.
             session[SessionKey] = newCurrentSession.Id;
             session[SessionIdentityKey] = newUserIdentity;

@@ -18,7 +18,7 @@
             Configuration.LazyLoadingEnabled = false;
           
             #if DEBUG
-            Database.Log = x => System.Diagnostics.Debug.Write(x);
+            // Database.Log = x => System.Diagnostics.Debug.Write(x);
             #endif
         }
 

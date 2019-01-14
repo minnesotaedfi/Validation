@@ -1,4 +1,9 @@
 ﻿@model OdsResidentsEnrolledElsewhereReportViewModel
+@{
+    var identity = (ValidationPortalIdentity)User.Identity;
+    var appRoleName = identity.AppRole.Name;
+    var permissions = User.Identity.GetViewPermissions(identity.AppRole);
+}
 
 <div id="pagetop" class="row tbmargin10">
     @if (Model.IsStateMode)
@@ -10,7 +15,7 @@
         <div class="vp-body-header col-md-6 justify-content-start align-self-center">Residents Enrolled Elsewhere for District @Model.EdOrgName (@Model.EdOrgId.ToString())</div>
     }
 
-    @if (Model.IsStateMode)
+    @if (Model.IsStateMode && permissions.CanAccessAllDistrictsMode)
     {
         <div class="col-md-3"><a href="@Url.Action("ResidentsEnrolledElsewhereReport", "Ods", new { isStateMode = false })" class="show-data-loading">View Single District</a></div>
     }
@@ -28,7 +33,7 @@
 </div>
 <div class="row">The district where the student resides is determined from the student-school association extensions in the Ed Fi ODS database.</div>
 <div class="row tbmargin10">
-    <div  class="col-md-2">
+    <div class="col-md-2">
         <a href="#pagetop">Back to Top</a>
     </div>
 </div>
@@ -62,8 +67,8 @@
 
             var stateLinkTemplate =
                 '<a href="@Html.Raw(Url.Action(
-                              "ResidentsEnrolledElsewhereReport", 
-                              "Ods", 
+                              "ResidentsEnrolledElsewhereReport",
+                              "Ods",
                               new
                                 { isStateMode = false, districtToDisplay = "_EdOrgId_" }))" class="show-data-loading">_EdOrgId_</a>';
 
@@ -112,7 +117,15 @@
                         data: 'residentsEnrolled',
                         render: function (data, type, row, meta) {
                             if (type === 'display') {
-                                return (data === 0) ? "-" : createDrillDownLink(@Model.EdOrgId, row.districtOfEnrollmentId, 0, row.orgType, data);
+                                return (data === 0) ? "-" : 
+                                    @if (permissions.CanViewStudentDrilldownReports)
+                                    {
+                                        @:createDrillDownLink(row.edOrgId, 0, row.orgType, data);
+                                    } 
+                                    else 
+                                    {
+                                        @:data
+                                    }
                             } else {
                                 return data;
                             }

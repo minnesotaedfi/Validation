@@ -1,45 +1,50 @@
 ﻿@model NavMenusViewModel
+@{
+    var identity = (ValidationPortalIdentity)User.Identity;
+    var permissions = User.Identity.GetViewPermissions(identity.AppRole);
+}
 
-    <div class="ml-auto justify-content-end">
-        <li class="nav-item dropdown pull-right">
-            <a class="nav-link dropdown-toggle validation-dropdown-toggle" href="#" id="actionDropdownProfile" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="fas fa-user-circle white-heavy-text"></span> @Model.AppUserSession.UserIdentity.UserId
-            </a>
-            <div class="dropdown-menu validation-dropdown-menu" style="left: initial;" aria-labelledby="actionDropdown">
-                @*TODO - If admin only show admin page. ASK - Is this ok? TODO *@
-                @if (Model.AppUserSession.UserIdentity.AppRole.Name == "Administrator")
-                {
-                    @Html.ActionLink("Admin page", "Index", "Admin", new { area = "" }, new { @class = "nav-item nav-link" })
-                }
-
-                @Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "nav-item nav-link" })
-                
-                @if (Model.ShowLogoutLink)
-                {
-                    @Html.ActionLink("Sign Out", "Logout", "Login", new { area = string.Empty }, new { @class = "nav-item nav-link"})
-                }
-            </div>
-        </li>
-        <li class="nav-item dropdown pull-right">
-            @*<span id="selectedOrg" class="white-heavy-text">@Model.FocusedEdOrg.OrganizationName</span>*@
-            @*todo: put this selectedOrg as the selected value *@
-            @if (Model.EdOrgs.Count() > 1)
+<div class="ml-auto justify-content-end">
+    <li class="nav-item dropdown pull-right">
+        <a class="nav-link dropdown-toggle validation-dropdown-toggle" href="#" id="actionDropdownProfile" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="fas fa-user-circle white-heavy-text"></span> @Model.AppUserSession.UserIdentity.UserId
+        </a>
+        <div class="dropdown-menu validation-dropdown-menu" style="left: initial;" aria-labelledby="actionDropdown">
+            @*TODO - If admin only show admin page. ASK - Is this ok? TODO *@
+            @if (permissions.CanAccessAdminFeatures)
             {
-                <select id="edOrgNames" class="form-control validation-dropdown-menu district-dropdown">
-                    @*<option>Select a District</option>*@
-                </select>
+                @Html.ActionLink("Admin page", "Index", "Admin", new { area = "" }, new { @class = "nav-item nav-link" })
             }
-        </li>
-        <li class="nav-item dropdown pull-right">
-            <a class="nav-link dropdown-toggle validation-dropdown-toggle" href="#" id="actionDropdownYear" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                @Model.FocusedSchoolYear
-            </a>
-            <div class="dropdown-menu validation-dropdown-menu" style="left: initial;" aria-labelledby="actionDropdown">
-                @foreach (var schoolYear in Model.SchoolYears)
-                {
-                    <a class="nav-item nav-link select-school-year-link" href="#" data-year-id="@(schoolYear.Id.ToString())">@(schoolYear.ToString())</a>
-                }
-            </div>
-        </li>
-    </div>
+
+            @Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "nav-item nav-link" })
+
+            @if (Model.ShowLogoutLink)
+            {
+                @Html.ActionLink("Sign Out", "Logout", "Login", new { area = string.Empty }, new { @class = "nav-item nav-link" })
+            }
+        </div>
+    </li>
+    <li class="nav-item dropdown pull-right">
+        @* TODO: put this displayed district name back for single-district users who don't get the dropdown *@
+        @*<span id="selectedOrg" class="white-heavy-text">@Model.FocusedEdOrg.OrganizationName</span>*@
+        @*todo: put this selectedOrg as the selected value *@
+        @if (Model.EdOrgs.Count() > 1)
+        {
+            <select id="edOrgNames" class="form-control validation-dropdown-menu district-dropdown">
+                @*<option>Select a District</option>*@
+            </select>
+        }
+    </li>
+    <li class="nav-item dropdown pull-right">
+        <a class="nav-link dropdown-toggle validation-dropdown-toggle" href="#" id="actionDropdownYear" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            @Model.FocusedSchoolYear
+        </a>
+        <div class="dropdown-menu validation-dropdown-menu" style="left: initial;" aria-labelledby="actionDropdown">
+            @foreach (var schoolYear in Model.SchoolYears)
+            {
+                <a class="nav-item nav-link select-school-year-link" href="#" data-year-id="@(schoolYear.Id.ToString())">@(schoolYear.ToString())</a>
+            }
+        </div>
+    </li>
+</div>
 

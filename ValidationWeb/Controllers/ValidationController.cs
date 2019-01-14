@@ -53,7 +53,6 @@ namespace ValidationWeb
             var edOrg = _edOrgService.GetEdOrgById(_appUserService.GetSession().FocusedEdOrgId, _appUserService.GetSession().FocusedSchoolYearId);
             var rulesCollections = _engineObjectModel.Collections.OrderBy(x => x.CollectionId).ToList();
             var theUser = _appUserService.GetUser();
-            bool readOnly = (theUser.AppRole.Name == AppRole.HelpDesk.Name || theUser.AppRole.Name == AppRole.DataOwner.Name);
             var districtName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
 
             var model = new ValidationReportsViewModel

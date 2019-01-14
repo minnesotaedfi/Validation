@@ -1,4 +1,9 @@
 ﻿@model OdsChangeOfEnrollmentReportViewModel
+@{
+    var identity = (ValidationPortalIdentity)User.Identity;
+    var appRoleName = identity.AppRole.Name;
+    var permissions = User.Identity.GetViewPermissions(identity.AppRole);
+}
 
 <div class="row tbmargin10" id="pagetop">
     <div class="vp-body-header justify-content-start align-self-center">Changes of Enrollment for District @Model.EdOrgName (@Model.EdOrgId.ToString())</div>
@@ -67,7 +72,7 @@
 
 
 @section scripts {
-    <script>
+<script>
         $(function() {
             var urlParams = new URLSearchParams(window.location.search);
             var recordRequestStudentId = null;
@@ -202,6 +207,10 @@
                     {
                         title: 'Records Requested',
                         orderable: false,
+                        @if (!permissions.CanModifyRecordsRequests)
+                        {
+                            @:visible: false,
+                        }
                         data: 'null',
                         render: function(data, type, row) {
                             return '<a href="#" data-toggle="modal" data-target="#request-records-modal">Request&nbsp;Records</button>';
@@ -221,7 +230,7 @@
                         ' ' +
                         data.studentMiddleName;
 
-                    $('#request-records-form #request-records-studentName').text(studentName);
+                    $('#request-records-studentName').text(studentName);
                     $('#request-records-form #responding-district-id').val(data.pastDistEdOrgId);
 
                     debugger;
@@ -476,6 +485,10 @@
                     },
                     {
                         title: 'Records Requested',
+                        @if (!permissions.CanModifyRecordsRequests)
+                        {
+                            @:visible: false,
+                        }
                         orderable: true,
                         name: 'recordsRequested',
                         data: 'hasRecordsRequest',
@@ -599,5 +612,5 @@
 
             $('.jumpToNotes').html('<a href="#notes">View Report notes</a>');
         });
-    </script>
+</script>
 }

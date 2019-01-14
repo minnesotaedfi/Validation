@@ -19,7 +19,7 @@
 
         protected DateTimeOffset CacheExpirationOffset => DateTimeOffset.Now.AddMinutes(30);
 
-        private static object LockObject => new object(); 
+        private static object LockObject => new object();
 
         public IEnumerable<DemographicsCountReportQuery> GetDistrictAncestryRaceCounts(
             IOdsDataService odsDataService,
@@ -121,8 +121,8 @@
         }
 
         public IEnumerable<StudentProgramsCountReportQuery> GetStudentProgramsCounts(
-            IOdsDataService odsDataService, 
-            int? edOrgId, 
+            IOdsDataService odsDataService,
+            int? edOrgId,
             string fourDigitSchoolYear)
         {
             var cacheKey = $"GetStudentProgramsCounts_{edOrgId}_{fourDigitSchoolYear}";
@@ -215,8 +215,8 @@
         }
 
         public IEnumerable<ChangeOfEnrollmentReportQuery> GetChangeOfEnrollmentReport(
-            IOdsDataService odsDataService, 
-            int edOrgId, 
+            IOdsDataService odsDataService,
+            int edOrgId,
             string fourDigitSchoolYear)
         {
             var cacheKey = $"GetChangeOfEnrollmentReport_{edOrgId}_{fourDigitSchoolYear}";
@@ -235,7 +235,7 @@
                     {
                         var fakeResults = new List<ChangeOfEnrollmentReportQuery>();
                         var oldDistrict = 12345;
-                        var oldSchool = 2345; 
+                        var oldSchool = 2345;
                         Random random = new Random(); // not cryptographically strong
                         for (var i = 0; i < 100; i++)
                         {
@@ -267,7 +267,7 @@
                                     CurrentDistEdOrgId = oldDistrict,
                                     PastGrade = ((i % 12) + 1).ToString(),
                                     PastDistrictName = "Old District",
-                                    CurrentDistrictName = "incoming district",                                                                                          
+                                    CurrentDistrictName = "incoming district",
                                     CurrentSchoolName = "New School",
                                     CurrentEdOrgEnrollmentDate = DateTime.Now.Subtract(new TimeSpan(random.Next(1, 365), 0, 0, 0)),
                                     PastEdOrgEnrollmentDate = DateTime.Now.Subtract(new TimeSpan(random.Next(180, 365), 0, 0, 0)),
@@ -281,11 +281,85 @@
                                 });
                         }
 
+                        /// ENROLLING ST PAUL
+                        //fakeResults.Add(
+                        //    new ChangeOfEnrollmentReportQuery
+                        //    {
+                        //        CurrentDistEdOrgId = 10625,
+                        //        StudentID = "605056",
+                        //        StudentBirthDate = new DateTime(2015, 06, 29),
+                        //        CurrentGrade = "1",
+                        //        PastDistEdOrgId = 10347,
+                        //        PastDistrictName = "Willmar Public School District",
+                        //        PastEdOrgEnrollmentDate = new DateTime(2018, 08, 30),
+                        //        PastEdOrgExitDate = new DateTime(2018, 11, 30),
+                        //        StudentFirstName = "Shane",
+                        //        StudentLastName = "Blake",
+                        //        StudentMiddleName = "Wayne",
+                        //        CurrentEdOrgEnrollmentDate = new DateTime(2018, 12, 17)
+                        //        ,IsCurrentDistrict = true
+                        //    });
+
+                        //fakeResults.Add(
+                        //    new ChangeOfEnrollmentReportQuery
+                        //    {
+                        //        CurrentDistEdOrgId = 10625,
+                        //        StudentID = "605404",
+                        //        StudentBirthDate = new DateTime(2010, 09, 10),
+                        //        PastGrade = "1",
+                        //        PastDistEdOrgId = 10347,
+                        //        PastDistrictName = "Willmar Public School District",
+                        //        PastEdOrgEnrollmentDate = new DateTime(2018, 08, 30),
+                        //        PastEdOrgExitDate = new DateTime(2018, 11, 30),
+                        //        StudentFirstName = "Katherine",
+                        //        StudentLastName = "Riley",
+                        //        StudentMiddleName = string.Empty,
+                        //        CurrentEdOrgEnrollmentDate = new DateTime(2018, 12, 17)
+                        //        ,IsCurrentDistrict = true
+                        //    });
+
+
+                        //// WITHDRAWING WILLMAR
+
+                        //fakeResults.Add(
+                        //    new ChangeOfEnrollmentReportQuery
+                        //    {
+                        //        CurrentDistEdOrgId = 10625,
+                        //        StudentID = "605056",
+                        //        StudentBirthDate = new DateTime(2015, 06, 29),
+                        //        PastGrade = "1",
+                        //        PastDistEdOrgId = 10347,
+                        //        PastDistrictName = "Willmar Public School District",
+                        //        PastEdOrgEnrollmentDate = new DateTime(2018, 08, 30),
+                        //        PastEdOrgExitDate = new DateTime(2018, 11, 30),
+                        //        StudentFirstName = "Shane",
+                        //        StudentLastName = "Blake",
+                        //        StudentMiddleName = "Wayne",
+                        //        CurrentEdOrgEnrollmentDate = new DateTime(2018, 12, 17)
+                        //    });
+
+                        //fakeResults.Add(
+                        //    new ChangeOfEnrollmentReportQuery
+                        //    {
+                        //        CurrentDistEdOrgId = 10625,
+                        //        StudentID = "605404",
+                        //        StudentBirthDate = new DateTime(2010, 09, 10),
+                        //        PastGrade = "1",
+                        //        PastDistEdOrgId = 10347,
+                        //        PastDistrictName = "Willmar Public School District",
+                        //        PastEdOrgEnrollmentDate = new DateTime(2018, 08, 30),
+                        //        PastEdOrgExitDate = new DateTime(2018, 11, 30),
+                        //        StudentFirstName = "Katherine",
+                        //        StudentLastName = "Riley",
+                        //        StudentMiddleName = string.Empty,
+                        //        CurrentEdOrgEnrollmentDate = new DateTime(2018, 12, 17)
+                        //    });
+
                         var blah = fakeResults
                             .Where(x => !x.IsCurrentDistrict)
                             .OrderByDescending(x => x.PastEdOrgExitDate);
 
-                        results = fakeResults; 
+                        results = fakeResults;
                     }
 
                     Cache.Add(cacheKey, results, CacheExpirationOffset);

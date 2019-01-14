@@ -7,9 +7,11 @@ using System.Web.Mvc;
 
 namespace ValidationWeb.Filters
 {
+    using System.Web.Routing;
+
     public class PortalAuthorize : System.Web.Mvc.AuthorizeAttribute
     {
-        #if TODO
+#if true
         public override void OnAuthorization(AuthorizationContext filterContext)
         {
             // If they are authorized, handle accordingly
@@ -19,16 +21,16 @@ namespace ValidationWeb.Filters
             }
             else
             {
-                if (filterContext.HttpContext.User.IsInRole("Administrator")) {
-                    filterContext.Result = new RedirectResult("~/Admin/Index");
-                }
-                else {
-                    // Otherwise redirect to your specific authorized area
-                    filterContext.Result = new RedirectResult("~/Home/Index");
+                if (filterContext.HttpContext.User.IsInRole("Administrator") 
+                    && filterContext.ActionDescriptor.ControllerDescriptor.ControllerName != "Admin")
+                {
+
+                    filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary(new { controller = "Admin", action = "Index" }));
+                    filterContext.Result.ExecuteResult(filterContext.Controller.ControllerContext);
                 }
             }
         }
-        #else 
+#else
         public override void OnAuthorization(AuthorizationContext filterContext)
         {
             // If they are authorized, handle accordingly
@@ -37,6 +39,6 @@ namespace ValidationWeb.Filters
                 base.OnAuthorization(filterContext);
             }
         }
-        #endif 
+#endif
     }
 }
