@@ -34,7 +34,8 @@ namespace ValidationWeb
             bundles.Add(new ScriptBundle("~/bundles/datePickerJS").Include("~/Content/Scripts/moment.js", "~/Content/Scripts/bootstrap-datetimepicker.min.js"));
 
             bundles.Add(new StyleBundle("~/Content/DataTables/css/DataTablesCSS").Include(
-                "~/Content/DataTables/css/dataTables.bootstrap4.css")); 
+                "~/Content/DataTables/css/dataTables.bootstrap4.css",
+                "~/Content/DataTables/css/buttons.bootstrap4.css")); 
             
             bundles.Add(
                 new StyleBundle("~/Content/Styles/BootstrapSelectCSS")
@@ -58,7 +59,9 @@ namespace ValidationWeb
                 "~/Scripts/DataTables/dataTables.bootstrap4.js",
                 "~/Scripts/DataTables/dataTables.fixedheader.js",
                 "~/Scripts/DataTables/dataTables.scroller.js",
-                "~/Scripts/DataTables/dataTables.jumpToData.js"));
+                "~/Scripts/DataTables/dataTables.jumpToData.js",
+                "~/Scripts/DataTables/dataTables.buttons.js",
+                "~/Scripts/DataTables/buttons.bootstrap4.js"));
         }
     }
 }
