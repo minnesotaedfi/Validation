@@ -112,10 +112,9 @@
 				XmlInputPath="%(PublishPackages.ParametersXml)"
 				Query="//parameters/setParameter[@name='UseSimulatedSSO']/@value"
 				Value="false"  />
-		<!--<XmlPoke
-				XmlInputPath="%(PublishPackages.ParametersXml)"
-				Query="//parameters/setParameter[@name='SimulatedUserName']/@value"
-				Value="jane" />-->
+
+		<Message Text="%(PublishPackages.SessionStateConnectionString)" />
+
 		<XmlPoke
 				XmlInputPath="%(PublishPackages.ParametersXml)"
 				Query="//parameters/setParameter[@name='SessionStateConnectionString']/@value"
@@ -123,6 +122,5 @@
 				Condition=" '%(PublishPackages.SessionStateConnectionString)'!=''"/>
 
 		<Exec Condition="'$(Configuration)'!='Debug'" Command="..\obj\$(Configuration)\Package\ValidationWeb.deploy.cmd /Y /M:edu-edfiapiq01.educ.state.mn.us" />
-		<!--<Exec Command="..\obj\$(Configuration)\Package\ValidationWeb.deploy.cmd /Y /M:mn-dev -verbose" />-->
 	</Target>
 </Project>

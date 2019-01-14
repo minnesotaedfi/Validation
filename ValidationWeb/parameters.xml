@@ -109,11 +109,11 @@
 	<parameter
 	    name="SessionStateConnectionString"
 	    description="Connection string to use for ASP session state server"
-	    defaultValue="SessionStateConnectionString">
+	    defaultValue="localhost">
 		<parameterEntry
 		    kind="XmlFile"
 		    scope="Web.config"
-		    match="/configuration/system.web/sessionState[@mode='SQLServer']/@sqlConnectionString"
-	    />
+		    match="/configuration/system.web/sessionState/@sqlConnectionString"
+	     />
 	</parameter>
 </parameters>
