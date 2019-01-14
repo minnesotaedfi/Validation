@@ -174,7 +174,7 @@ namespace ValidationWeb
             #endregion If we find the Session Key checks out, then load the user's session, and skip checking the database for authorizations. 
 
             #region Since there wasn't a session, we will authenticate. Make sure the HTTP header placed by the Login Page is present. 
-            var authHeaderValue = request.Headers["Authorization"];
+            var authHeaderValue = request.Headers["HTTP_OBLIX_UID"];
             if (_config.UseSimulatedSSO)
             {
                 var cookie = filterContext.HttpContext.Request.Cookies["MockSSOAuth"];
