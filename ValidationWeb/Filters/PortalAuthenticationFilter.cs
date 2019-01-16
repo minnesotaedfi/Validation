@@ -221,27 +221,29 @@ namespace ValidationWeb
                         var hasDistrictNumber = int.TryParse(ssoReader["DistrictNumber"]?.ToString(), out districtNumber);
                         var hasDistrictType = int.TryParse(ssoReader["DistrictType"]?.ToString(), out districtType);
                         var theAppId = ssoReader["AppId"]?.ToString();
-                        if (string.Compare(theAppId, _config.AppId, true) ==0)
-                        ssoUserAuthorizations.Add(
-                            new SsoUserAuthorization
-                            {
-                                AppId = theAppId,
-                                AppName = ssoReader["AppName"]?.ToString(),
-                                DistrictNumber = hasDistrictNumber ? (int?)districtNumber : null,
-                                DistrictType = hasDistrictType ? (int?)districtType : null,
-                                Email = ssoReader["Email"]?.ToString(),
-                                FirstName = ssoReader["FirstName"]?.ToString(),
-                                MiddleName = ssoReader["MiddleName"]?.ToString(),
-                                LastName = ssoReader["LastName"]?.ToString(),
-                                FullName = ssoReader["FullName"]?.ToString(),
-                                UserId = ssoReader["UserId"]?.ToString(),
-                                StateOrganizationId = ssoReader["StateOrganizationId"]?.ToString(),
-                                FormattedOrganizationId = ssoReader["FormattedOrganizationId"]?.ToString(),
-                                OrganizationName = ssoReader["OrganizationName"]?.ToString(),
-                                RoleDescription = ssoReader["RoleDescription"]?.ToString(),
-                                RoleId = ssoReader["RoleId"]?.ToString()
-                            }
-                        );
+
+                        if (string.Compare(theAppId, _config.AppId, StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            ssoUserAuthorizations.Add(
+                                new SsoUserAuthorization
+                                {
+                                    AppId = theAppId,
+                                    AppName = ssoReader["AppName"]?.ToString(),
+                                    DistrictNumber = hasDistrictNumber ? (int?)districtNumber : null,
+                                    DistrictType = hasDistrictType ? (int?)districtType : null,
+                                    Email = ssoReader["Email"]?.ToString(),
+                                    FirstName = ssoReader["FirstName"]?.ToString(),
+                                    MiddleName = ssoReader["MiddleName"]?.ToString(),
+                                    LastName = ssoReader["LastName"]?.ToString(),
+                                    FullName = ssoReader["FullName"]?.ToString(),
+                                    UserId = ssoReader["UserId"]?.ToString(),
+                                    StateOrganizationId = ssoReader["StateOrganizationId"]?.ToString(),
+                                    FormattedOrganizationId = ssoReader["FormattedOrganizationId"]?.ToString(),
+                                    OrganizationName = ssoReader["OrganizationName"]?.ToString(),
+                                    RoleDescription = ssoReader["RoleDescription"]?.ToString(),
+                                    RoleId = ssoReader["RoleId"]?.ToString()
+                                });
+                        }
                     }
                     ssoReader.Close();
                     ssoDatabaseConnection.Close();
@@ -253,132 +255,178 @@ namespace ValidationWeb
             }
             #endregion Retrieve user access from single sign on database
 
-            #region Extract data about the user that is common to all SSO Authorization records.
-            _loggingService.LogDebugMessage($"Extracting authorization information from remote authorization response for {authHeaderValue}.");
-            // Filter on App ID
-            ssoUserAuthorizations.RemoveAll(ss => string.Compare(ss.AppId, _appId, true) != 0);
-
-            // Role - grab the first one if there are more than one. This is okay because above we filter records 
-            //        to the Validation Portal application only.
-            var theRole = ssoUserAuthorizations.FirstOrDefault(ss => ss.RoleId != null).RoleId;
-            _loggingService.LogDebugMessage($"User: {authHeaderValue}, Role: {theRole}.");
-            var appRole = AppRole.CreateAppRole(theRole);
-
-            // Role Description
-            var theRoleDescription = ssoUserAuthorizations.FirstOrDefault(ss => ss.RoleDescription != null).RoleDescription;
-            _loggingService.LogDebugMessage($"User: {authHeaderValue}, Role Description: {theRoleDescription}.");
-
-            // UserId
-            var theUserId = ssoUserAuthorizations.FirstOrDefault(ss => ss.UserId != null).UserId;
-            _loggingService.LogDebugMessage($"User: {authHeaderValue}, UserId: {theUserId}.");
-
-            if (ssoUserAuthorizations.Select(ss1 => ss1.RoleId).Distinct().Count(rid => !string.IsNullOrWhiteSpace(rid)) > 1)
+            try
             {
-                _loggingService.LogWarningMessage($"The user {theUserId} has been assigned more than one role for the Validation Portal application {_appId}. The role {theRole} was used because it was the first encountered.");
-            }
+                #region Extract data about the user that is common to all SSO Authorization records.
 
-            // Names and Addresses
-            var firstName = ssoUserAuthorizations.FirstOrDefault(ss => ss.FirstName != null).FirstName;
-            _loggingService.LogDebugMessage($"User: {authHeaderValue}, First Name: {firstName}.");
-            var middleName = ssoUserAuthorizations.FirstOrDefault(ss => ss.MiddleName != null).MiddleName;
-            _loggingService.LogDebugMessage($"User: {authHeaderValue}, Middle Name: {middleName}.");
-            var lastName = ssoUserAuthorizations.FirstOrDefault(ss => ss.LastName != null).LastName;
-            _loggingService.LogDebugMessage($"User: {authHeaderValue}, Last Name: {lastName}.");
-            var fullName = ssoUserAuthorizations.FirstOrDefault(ss => ss.FullName != null).FullName;
-            _loggingService.LogDebugMessage($"User: {authHeaderValue}, Full Name: {fullName}.");
-            var theEmail = ssoUserAuthorizations.FirstOrDefault(ss => ss.Email != null).Email;
-            _loggingService.LogDebugMessage($"User: {authHeaderValue}, Email: {theEmail}.");
-            var appName = ssoUserAuthorizations.FirstOrDefault(ss => ss.AppName != null).AppName;
-            _loggingService.LogDebugMessage($"User: {authHeaderValue}, Application Name: {appName}.");
-            #endregion Extract data about the user that is common to all SSO Authorization records.
+                _loggingService.LogDebugMessage(
+                    $"Extracting authorization information from remote authorization response for {authHeaderValue}.");
 
-            var authorizedEdOrgs = new List<EdOrg>();
-            foreach (var ssoUserOrg in ssoUserAuthorizations)
-            {
-                int schoolYearId = 0;
-                try
+                // Filter on App ID
+                ssoUserAuthorizations.RemoveAll(ss => string.Compare(ss.AppId, _appId, true) != 0);
+
+                _loggingService.LogDebugMessage(
+                    $"Found {ssoUserAuthorizations.Count} auth records for app id {_appId}");
+
+                foreach (var ssoUserAuth in ssoUserAuthorizations)
                 {
-                    _loggingService.LogDebugMessage($"User: {authHeaderValue}, Ed Organization ID: {ssoUserOrg?.StateOrganizationId ?? "null"}.");
-                    int authorizedEdOrgId;
-                    if (int.TryParse(ssoUserOrg.StateOrganizationId, out authorizedEdOrgId))
+                    _loggingService.LogDebugMessage(ssoUserAuth.ToString());
+                }
+
+                // Role - grab the first one if there are more than one. This is okay because above we filter records to the Validation Portal application only.
+                var userAuthWithAnyRole = ssoUserAuthorizations.FirstOrDefault(ss => ss.RoleId != null);
+                if (userAuthWithAnyRole == null)
+                {
+                    throw new InvalidOperationException("No user found with any role ID");
+                }
+
+                var theRole = userAuthWithAnyRole.RoleId;
+                
+                _loggingService.LogDebugMessage($"User: {authHeaderValue}, Role: {theRole}.");
+                var appRole = AppRole.CreateAppRole(theRole);
+
+                // Role Description
+                var theRoleDescription = ssoUserAuthorizations.FirstOrDefault(ss => ss.RoleDescription != null)
+                    .RoleDescription;
+                _loggingService.LogDebugMessage($"User: {authHeaderValue}, Role Description: {theRoleDescription}.");
+
+                // UserId
+                var theUserId = ssoUserAuthorizations.FirstOrDefault(ss => ss.UserId != null).UserId;
+                _loggingService.LogDebugMessage($"User: {authHeaderValue}, UserId: {theUserId}.");
+
+                if (ssoUserAuthorizations.Select(ss1 => ss1.RoleId).Distinct()
+                        .Count(rid => !string.IsNullOrWhiteSpace(rid)) > 1)
+                {
+                    _loggingService.LogWarningMessage(
+                        $"The user {theUserId} has been assigned more than one role for the Validation Portal application {_appId}. The role {theRole} was used because it was the first encountered.");
+                }
+
+                // Names and Addresses
+                var firstName = ssoUserAuthorizations.FirstOrDefault(ss => ss.FirstName != null).FirstName;
+                _loggingService.LogDebugMessage($"User: {authHeaderValue}, First Name: {firstName}.");
+                var middleName = ssoUserAuthorizations.FirstOrDefault(ss => ss.MiddleName != null).MiddleName;
+                _loggingService.LogDebugMessage($"User: {authHeaderValue}, Middle Name: {middleName}.");
+                var lastName = ssoUserAuthorizations.FirstOrDefault(ss => ss.LastName != null).LastName;
+                _loggingService.LogDebugMessage($"User: {authHeaderValue}, Last Name: {lastName}.");
+                var fullName = ssoUserAuthorizations.FirstOrDefault(ss => ss.FullName != null).FullName;
+                _loggingService.LogDebugMessage($"User: {authHeaderValue}, Full Name: {fullName}.");
+                var theEmail = ssoUserAuthorizations.FirstOrDefault(ss => ss.Email != null).Email;
+                _loggingService.LogDebugMessage($"User: {authHeaderValue}, Email: {theEmail}.");
+                var appName = ssoUserAuthorizations.FirstOrDefault(ss => ss.AppName != null).AppName;
+                _loggingService.LogDebugMessage($"User: {authHeaderValue}, Application Name: {appName}.");
+
+                #endregion Extract data about the user that is common to all SSO Authorization records.
+
+                var authorizedEdOrgs = new List<EdOrg>();
+                foreach (var ssoUserOrg in ssoUserAuthorizations)
+                {
+                    int schoolYearId = 0;
+                    try
                     {
-                        // A school year is needed to identify which Ed Fi ODS database to pull organizational information from.
-                        schoolYearId = previousSessionFocusedSchoolYearId.HasValue ? previousSessionFocusedSchoolYearId.Value : validYears.First().Id;
-                        _loggingService.LogDebugMessage($"User: {authHeaderValue}, Taking information from the ODS associated with school year ID number {schoolYearId.ToString()}.");
-                        try
+                        _loggingService.LogDebugMessage(
+                            $"User: {authHeaderValue}, Ed Organization ID: {ssoUserOrg?.StateOrganizationId ?? "null"}.");
+                        int authorizedEdOrgId;
+                        if (int.TryParse(ssoUserOrg.StateOrganizationId, out authorizedEdOrgId))
                         {
-                            authorizedEdOrgs.Add(_edOrgService.GetEdOrgById(authorizedEdOrgId, schoolYearId));
-                        }
-                        catch(Exception ex)
-                        {
-                            _loggingService.LogErrorMessage($"When retrieving the information for Organization ID {authorizedEdOrgId} from the ODS associated with school year ID {schoolYearId} for user {authHeaderValue}, an error occurred: {ex.ChainInnerExceptionMessages()}");
+                            // A school year is needed to identify which Ed Fi ODS database to pull organizational information from.
+                            schoolYearId = previousSessionFocusedSchoolYearId.HasValue
+                                               ? previousSessionFocusedSchoolYearId.Value
+                                               : validYears.First().Id;
+                            _loggingService.LogDebugMessage(
+                                $"User: {authHeaderValue}, Taking information from the ODS associated with school year ID number {schoolYearId.ToString()}.");
+                            try
+                            {
+                                authorizedEdOrgs.Add(_edOrgService.GetEdOrgById(authorizedEdOrgId, schoolYearId));
+                            }
+                            catch (Exception ex)
+                            {
+                                _loggingService.LogErrorMessage(
+                                    $"When retrieving the information for Organization ID {authorizedEdOrgId} from the ODS associated with school year ID {schoolYearId} for user {authHeaderValue}, an error occurred: {ex.ChainInnerExceptionMessages()}");
+                            }
                         }
                     }
+                    catch (Exception ex)
+                    {
+                        _loggingService.LogErrorMessage(
+                            $"A user was authorized an Ed Org with the StateOrganizationId: {ssoUserOrg.StateOrganizationId}, but this Ed Org doesn't exist in the ODS database for school year {schoolYearId}. Error: {ex.ChainInnerExceptionMessages()}");
+                    }
                 }
-                catch (Exception ex)
+
+                if (!authorizedEdOrgs.Any())
                 {
-                    _loggingService.LogErrorMessage($"A user was authorized an Ed Org with the StateOrganizationId: {ssoUserOrg.StateOrganizationId}, but this Ed Org doesn't exist in the ODS database for school year {schoolYearId}. Error: {ex.ChainInnerExceptionMessages()}");
+                    var unauthorizedMessage =
+                        $"The user {theUserId} logged in successfully, and accessed the Validation Portal application, but wasn't authorized any access to Educational Organizations according to EDIDMS (single sign on authorizations), thus couldn't use the application ... or it is possible none of the authorized organizations have been loaded from the Ed Fi Operational Datastore to the Validation database.";
+                    _loggingService.LogErrorMessage(unauthorizedMessage);
+                    throw new UnauthorizedAccessException(unauthorizedMessage);
                 }
+
+                if ((appRole == AppRole.Unauthorized) || (appRole == null))
+                {
+                    // Do not set the HttpContext User property, so the user will be redirected to Login Page
+                    _loggingService.LogInfoMessage(
+                        $"The user {authHeaderValue} wasn't authorized - no SSO authorizations applied to the application {appName} with a valid role and organization combination.");
+                    return;
+                }
+
+                // Success - now store the authenticated Principal and create a new session.
+                var newUserIdentity = new ValidationPortalIdentity
+                                      {
+                                          AppRole = appRole,
+                                          AuthorizedEdOrgs = authorizedEdOrgs,
+                                          Email = theEmail,
+                                          FirstName = firstName,
+                                          MiddleName = middleName,
+                                          LastName = lastName,
+                                          FullName = fullName,
+                                          Name = theUserId,
+                                          UserId = theUserId //,
+                                          //ViewPermissions = ValidationPortalIdentity.SetViewPermissions(appRole) //, _loggingService)
+                                      };
+                filterContext.HttpContext.User = new ValidationPortalPrincipal(newUserIdentity);
+                _loggingService.LogInfoMessage(
+                    $"Successfully retrieved at least one organization authorization for user {authHeaderValue}; now creating a new session.");
+
+                #region Create and add a new user session to the database.
+
+                var firstEdOrg = newUserIdentity.AuthorizedEdOrgs.FirstOrDefault();
+                var firstSchoolYear = newUserIdentity.AuthorizedEdOrgs.FirstOrDefault();
+                var newCurrentSession = new AppUserSession
+                                        {
+                                            Id = Guid.NewGuid().ToString(),
+                                            DismissedAnnouncements = new HashSet<DismissedAnnouncement>(),
+                                            ExpiresUtc = DateTime.UtcNow.AddMinutes(30),
+                                            FocusedEdOrgId =
+                                                (previousSessionFocusedEdOrgId == 0)
+                                                    ? firstEdOrg.Id
+                                                    : previousSessionFocusedEdOrgId,
+                                            FocusedSchoolYearId =
+                                                previousSessionFocusedSchoolYearId.HasValue
+                                                    ? previousSessionFocusedSchoolYearId.Value
+                                                    : validYears.First().Id,
+                                            UserIdentity = newUserIdentity
+                                        };
+
+                // Make the session accessible throughout the request.
+                httpContext.Items[SessionItemName] = newCurrentSession;
+
+                // Let ASP.NET save these objects in the session state for the next request.
+                session[SessionKey] = newCurrentSession.Id;
+                session[SessionIdentityKey] = newUserIdentity;
+                _loggingService.LogInfoMessage($"User {authHeaderValue}; session {newCurrentSession.Id} created.");
+                using (var dbContext = DbContextFactory.Create())
+                {
+                    dbContext.AppUserSessions.Add(newCurrentSession);
+                    dbContext.SaveChanges();
+                }
+
+                _loggingService.LogInfoMessage($"User {authHeaderValue}; session {newCurrentSession.Id} saved.");
+
+                #endregion Create and add a new user session to the database.
             }
-
-            if (!authorizedEdOrgs.Any())
+            catch(Exception ex)
             {
-                var unauthorizedMessage = $"The user {theUserId} logged in successfully, and accessed the Validation Portal application, but wasn't authorized any access to Educational Organizations according to EDIDMS (single sign on authorizations), thus couldn't use the application ... or it is possible none of the authorized organizations have been loaded from the Ed Fi Operational Datastore to the Validation database.";
-                _loggingService.LogErrorMessage(unauthorizedMessage);
-                throw new UnauthorizedAccessException(unauthorizedMessage);
+                _loggingService.LogErrorMessage($"Error occurred when retrieving authorization for user {authHeaderValue}. {ex.ChainInnerExceptionMessages()}");
             }
-
-            if ((appRole == AppRole.Unauthorized) || (appRole == null))
-            {
-                // Do not set the HttpContext User property, so the user will be redirected to Login Page
-                _loggingService.LogInfoMessage($"The user {authHeaderValue} wasn't authorized - no SSO authorizations applied to the application {appName} with a valid role and organization combination.");
-                return;
-            }
-
-            // Success - now store the authenticated Principal and create a new session.
-            var newUserIdentity = new ValidationPortalIdentity
-            {
-                AppRole = appRole,
-                AuthorizedEdOrgs = authorizedEdOrgs,
-                Email = theEmail,
-                FirstName = firstName,
-                MiddleName = middleName,
-                LastName = lastName,
-                FullName = fullName,
-                Name = theUserId,
-                UserId = theUserId //,
-                //ViewPermissions = ValidationPortalIdentity.SetViewPermissions(appRole) //, _loggingService)
-            };
-            filterContext.HttpContext.User = new ValidationPortalPrincipal(newUserIdentity);
-            _loggingService.LogInfoMessage($"Successfully retrieved at least one organization authorization for user {authHeaderValue}; now creating a new session.");
-
-            #region Create and add a new user session to the database.
-            var firstEdOrg = newUserIdentity.AuthorizedEdOrgs.FirstOrDefault();
-            var firstSchoolYear = newUserIdentity.AuthorizedEdOrgs.FirstOrDefault();
-            var newCurrentSession = new AppUserSession
-            {
-                Id = Guid.NewGuid().ToString(),
-                DismissedAnnouncements = new HashSet<DismissedAnnouncement>(),
-                ExpiresUtc = DateTime.UtcNow.AddMinutes(30),
-                FocusedEdOrgId = (previousSessionFocusedEdOrgId == 0) ? firstEdOrg.Id : previousSessionFocusedEdOrgId,
-                FocusedSchoolYearId = previousSessionFocusedSchoolYearId.HasValue ? previousSessionFocusedSchoolYearId.Value : validYears.First().Id,
-                UserIdentity = newUserIdentity
-            };
-
-            // Make the session accessible throughout the request.
-            httpContext.Items[SessionItemName] = newCurrentSession;
-            
-            // Let ASP.NET save these objects in the session state for the next request.
-            session[SessionKey] = newCurrentSession.Id;
-            session[SessionIdentityKey] = newUserIdentity;
-            _loggingService.LogInfoMessage($"User {authHeaderValue}; session {newCurrentSession.Id} created.");
-            using (var dbContext = DbContextFactory.Create())
-            {
-                dbContext.AppUserSessions.Add(newCurrentSession);
-                dbContext.SaveChanges();
-            }
-            _loggingService.LogInfoMessage($"User {authHeaderValue}; session {newCurrentSession.Id} saved.");
-            #endregion Create and add a new user session to the database.
         }
 
         public void OnAuthenticationChallenge(AuthenticationChallengeContext filterContext)
