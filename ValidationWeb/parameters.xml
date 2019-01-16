@@ -49,7 +49,7 @@
 	<parameter
 		name="SsoAppId"
 		description="How the Single Sign On database refers to this web application.."
-		defaultValue="VAL">
+		defaultValue="EDVP">
 		<parameterEntry
 			  kind="XmlFile"
 			  scope="Web.config"
