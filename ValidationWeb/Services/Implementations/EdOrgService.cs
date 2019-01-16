@@ -51,14 +51,19 @@
         {
             using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
             {
+                var schoolYear = SchoolYearService.GetSchoolYearById(schoolYearId);
+
+                if (!validationPortalDataContext.EdOrgs.Any())
+                {
+                    RefreshEdOrgCache(schoolYear);
+                }
+
                 var result = validationPortalDataContext.EdOrgs.FirstOrDefault(eo => eo.Id == edOrgId);
                 if (result != null)
                 {
                     return result;
                 }
-
-                var schoolYear = SchoolYearService.GetSchoolYearById(schoolYearId);
-
+                
                 using (var _odsRawDbContext = new RawOdsDbContext(schoolYear.EndYear))
                 {
                     var conn = _odsRawDbContext.Database.Connection;
@@ -104,20 +109,20 @@
             }
         }
 
-        public void RefreshEdOrgCache(int fourDigitOdsDbYear)
+        public void RefreshEdOrgCache(SchoolYear schoolYear)
         {
+            string fourDigitOdsDbYear = schoolYear.EndYear;
             var edOrgsExtractedFromODS = new List<EdOrg>();
-            using (var _odsRawDbContext = new RawOdsDbContext(fourDigitOdsDbYear.ToString()))
+            using (var odsRawDbContext = new RawOdsDbContext(fourDigitOdsDbYear))
             {
-                var conn = _odsRawDbContext.Database.Connection;
+                var conn = odsRawDbContext.Database.Connection;
                 try
                 {
                     conn.Open();
                     var edOrgQueryCmd = conn.CreateCommand();
                     edOrgQueryCmd.CommandType = System.Data.CommandType.Text;
-                    edOrgQueryCmd.CommandText = EdOrgQuery.SingleEdOrgsQuery;
-                    edOrgQueryCmd.Parameters.Add(new SqlParameter("@lea_id", System.Data.SqlDbType.Int));
-                    edOrgsExtractedFromODS.AddRange(ReadEdOrgs(edOrgQueryCmd, fourDigitOdsDbYear).ToList());
+                    edOrgQueryCmd.CommandText = EdOrgQuery.AllEdOrgQuery;
+                    edOrgsExtractedFromODS.AddRange(ReadEdOrgs(edOrgQueryCmd, schoolYear.Id).ToList());
                 }
                 catch (Exception ex)
                 {
@@ -140,7 +145,7 @@
             {
                 foreach (var singleEdOrg in edOrgsExtractedFromODS)
                 {
-                    validationPortalDataContext.EdOrgs.AddOrUpdate();
+                    validationPortalDataContext.EdOrgs.AddOrUpdate(singleEdOrg);
                 }
 
                 validationPortalDataContext.SaveChanges();
