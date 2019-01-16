@@ -5,6 +5,8 @@ using System.Web;
 
 namespace ValidationWeb
 {
+    using System.Text;
+
     /// <summary>
     /// This class represents a single row in the recordset returned by the Minnesota Dept of Education
     /// application SSO authorization list for the Portal UI application.
@@ -34,5 +36,26 @@ namespace ValidationWeb
         // Not used - these comments are documenting the availablity of these properties.
         // public int? SchoolNumber { get; set; }
         // public bool HasParentConcept { get; set; }  Part of a tree - we determine this tree using ODS information.
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append($"UserId: {UserId}\r\n");
+            sb.Append($"FirstName: {FirstName}\r\n");
+            sb.Append($"MiddleName: {MiddleName}\r\n");
+            sb.Append($"LastName: {LastName}\r\n");
+            sb.Append($"FullName: {FullName}\r\n");
+            sb.Append($"Email: {Email}\r\n");
+            sb.Append($"AppId: {AppId}\r\n");
+            sb.Append($"AppName: {AppName}\r\n");
+            sb.Append($"RoleId: {RoleId}\r\n");
+            sb.Append($"RoleDescription: {RoleDescription}\r\n");
+            sb.Append($"StateOrganizationId: {StateOrganizationId}\r\n");
+            sb.Append($"FormattedOrganizationId: {FormattedOrganizationId}\r\n");
+            sb.Append($"DistrictNumber: {DistrictNumber}\r\n");
+            sb.Append($"OrganizationName: {OrganizationName}\r\n");
+            sb.Append($"DistrictType: {DistrictType}\r\n");
+            return sb.ToString();
+        }
     }
 }

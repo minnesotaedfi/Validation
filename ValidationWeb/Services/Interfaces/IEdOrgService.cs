@@ -12,7 +12,7 @@ namespace ValidationWeb.Services
 
         EdOrg GetEdOrgById(int edOrgId, int fourDigitOdsDbYear);
 
-        void RefreshEdOrgCache(int fourDigitOdsDbYear);
+        void RefreshEdOrgCache(SchoolYear schoolYear);
 
         SingleEdOrgByIdQuery GetSingleEdOrg(int edOrgId, int schoolYearId);
     }
