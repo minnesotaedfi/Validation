@@ -26,7 +26,7 @@
 			<AuthenticationServerRedirectUrlParamName>AuthenticationServerRedirectUrl</AuthenticationServerRedirectUrlParamName>
 			<AuthenticationServerRedirectUrlParamValue>http://www.wearedoubleline.com/</AuthenticationServerRedirectUrlParamValue>
 			<AuthorizationStoredProcedureNameParamName>AuthorizationStoredProcedureName</AuthorizationStoredProcedureNameParamName>
-			<AuthorizationStoredProcedureNameParamValue>apps.EDVP_MidmsEdiamUser_View</AuthorizationStoredProcedureNameParamValue>
+			<AuthorizationStoredProcedureNameParamValue>dbo.EDVP_MidmsEdiamUser_View</AuthorizationStoredProcedureNameParamValue>
 			<SsoAppIdParamName>SsoAppId</SsoAppIdParamName>
 			<SsoAppIdParamValue>VAL</SsoAppIdParamValue>
 			<RulesFileFolderParamName>RulesFileFolder</RulesFileFolderParamName>
