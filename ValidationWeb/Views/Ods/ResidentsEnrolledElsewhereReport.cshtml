@@ -57,6 +57,7 @@
                                 }))" target="_blank">_LinkText_</a>';
 
             function createDrillDownLink(edOrgId, schoolId, drillDownIndex, orgType, linkText) {
+                debugger;
                 return drillDownLinkTemplate
                     .replace(/_EdOrgId_/g, edOrgId)
                     .replace(/_SchoolId_/g, schoolId)
@@ -117,10 +118,11 @@
                         data: 'residentsEnrolled',
                         render: function (data, type, row, meta) {
                             if (type === 'display') {
+                                debugger;
                                 return (data === 0) ? "-" : 
                                     @if (permissions.CanViewStudentDrilldownReports)
                                     {
-                                        @:createDrillDownLink(row.edOrgId, 0, row.orgType, data);
+                                        @:createDrillDownLink(row.edOrgId, row.districtOfEnrollmentId, 0, row.orgType, data);
                                     } 
                                     else 
                                     {
