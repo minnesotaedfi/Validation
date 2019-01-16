@@ -326,7 +326,7 @@ namespace ValidationWeb
                         _loggingService.LogDebugMessage(
                             $"User: {authHeaderValue}, Ed Organization ID: {ssoUserOrg?.StateOrganizationId ?? "null"}.");
                         int authorizedEdOrgId;
-                        if (int.TryParse(ssoUserOrg.StateOrganizationId, out authorizedEdOrgId))
+                        if (int.TryParse(ssoUserOrg.StateOrganizationId.Substring(0, 5), out authorizedEdOrgId))
                         {
                             // A school year is needed to identify which Ed Fi ODS database to pull organizational information from.
                             schoolYearId = previousSessionFocusedSchoolYearId.HasValue
@@ -343,6 +343,10 @@ namespace ValidationWeb
                                 _loggingService.LogErrorMessage(
                                     $"When retrieving the information for Organization ID {authorizedEdOrgId} from the ODS associated with school year ID {schoolYearId} for user {authHeaderValue}, an error occurred: {ex.ChainInnerExceptionMessages()}");
                             }
+                        }
+                        else
+                        {
+                            _loggingService.LogWarningMessage($"Could not look up Ed Organization Id {ssoUserOrg.StateOrganizationId}");
                         }
                     }
                     catch (Exception ex)
