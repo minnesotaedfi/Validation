@@ -416,7 +416,13 @@ namespace ValidationWeb
         }
 
         // GET: Ods/MultipleEnrollmentsReport
-        public ActionResult MultipleEnrollmentsReport(bool isStateMode = false, int? districtToDisplay = null, bool isStudentDrillDown = false, int? schoolId = null, int? drillDownColumnIndex = null, OrgType orgType = OrgType.District)
+        public ActionResult MultipleEnrollmentsReport(
+            bool isStateMode = false, 
+            int? districtToDisplay = null, 
+            bool isStudentDrillDown = false, 
+            int? schoolId = null, 
+            int? drillDownColumnIndex = null, 
+            OrgType orgType = OrgType.District)
         {
             var session = AppUserService.GetSession();
             var edOrg = EdOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
@@ -554,7 +560,13 @@ namespace ValidationWeb
         }
 
         // GET: Ods/StudentProgramsReport
-        public ActionResult StudentProgramsReport(bool isStateMode = false, int? districtToDisplay = null, bool isStudentDrillDown = false, int? schoolId = null, int? drillDownColumnIndex = null, OrgType orgType = OrgType.District)
+        public ActionResult StudentProgramsReport(
+            bool isStateMode = false,
+            int? districtToDisplay = null,
+            bool isStudentDrillDown = false,
+            int? schoolId = null,
+            int? drillDownColumnIndex = null,
+            OrgType orgType = OrgType.District)
         {
             var session = AppUserService.GetSession();
             var edOrg = EdOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
@@ -621,7 +633,7 @@ namespace ValidationWeb
 #endif
             var results = CacheManager.GetStudentProgramsCounts(
                 OdsDataService,
-                edOrgId,
+                isStateMode ? (int?)null : edOrgId,
                 fourDigitSchoolYear);
 #if DEBUG
             System.Diagnostics.Debug.WriteLine($"GetStudentProgramsCounts: {(DateTime.Now - startTime).Milliseconds}ms");
@@ -1023,6 +1035,7 @@ namespace ValidationWeb
                 edOrg = EdOrgService.GetEdOrgById(edOrgId, session.FocusedSchoolYearId);
                 edOrgName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
             }
+
             var fourDigitSchoolYear = SchoolYearService.GetSchoolYearById(session.FocusedSchoolYearId).EndYear;
             var theUser = AppUserService.GetUser();
             if (isStudentDrillDown)
@@ -1063,7 +1076,10 @@ namespace ValidationWeb
 #if DEBUG
             var startTime = DateTime.Now;
 #endif
-            var results = CacheManager.GetResidentsEnrolledElsewhereReport(OdsDataService, edOrgId, fourDigitSchoolYear);
+            var results = CacheManager.GetResidentsEnrolledElsewhereReport(
+                OdsDataService, 
+                isStateMode ? (int?)null : edOrgId, 
+                fourDigitSchoolYear);
 #if DEBUG
             System.Diagnostics.Debug.WriteLine(
                 $"GetResidentsEnrolledElsewhere: {(DateTime.Now - startTime).Milliseconds}ms");

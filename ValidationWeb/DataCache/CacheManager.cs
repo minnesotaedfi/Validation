@@ -169,7 +169,7 @@
 
         public IEnumerable<ResidentsEnrolledElsewhereReportQuery> GetResidentsEnrolledElsewhereReport(
             IOdsDataService odsDataService,
-            int edOrgId,
+            int? edOrgId,
             string fourDigitSchoolYear)
         {
             var cacheKey = $"GetResidentsEnrolledElsewhereReport_{edOrgId}_{fourDigitSchoolYear}";

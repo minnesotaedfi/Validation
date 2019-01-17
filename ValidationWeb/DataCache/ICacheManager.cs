@@ -48,7 +48,7 @@
 
         IEnumerable<ResidentsEnrolledElsewhereReportQuery> GetResidentsEnrolledElsewhereReport(
             IOdsDataService odsDataService,
-            int edOrgId,
+            int? edOrgId,
             string fourDigitSchoolYear);
 
         IEnumerable<StudentDrillDownQuery> GetResidentsEnrolledElsewhereStudentDrillDown(

@@ -60,9 +60,7 @@
                 {
                     var desiredEdOrgId = int.Parse(newFocusedEdOrgId);
                     var sessionObj = GetSession();
-                    if (sessionObj == null
-                        || sessionObj.UserIdentity.AuthorizedEdOrgs.FirstOrDefault(eo => eo.Id == desiredEdOrgId)
-                        == null)
+                    if (sessionObj?.UserIdentity.AuthorizedEdOrgs.FirstOrDefault(eo => eo.Id == desiredEdOrgId) == null)
                     {
                         return;
                     }
