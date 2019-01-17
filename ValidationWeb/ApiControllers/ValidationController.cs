@@ -10,6 +10,8 @@ using ValidationWeb.Services;
 
 namespace ValidationWeb.ApiControllers
 {
+    using MoreLinq;
+
     [RoutePrefix("api/validation")]
     public class ValidationController : ApiController
     {
@@ -40,7 +42,11 @@ namespace ValidationWeb.ApiControllers
         [HttpGet]
         public IHttpActionResult GetEdOrgs()
         {
-            return Json(_edOrgService.GetEdOrgs());
+            var edOrgs = _edOrgService.GetEdOrgs()
+                .DistinctBy(x => x.OrganizationName)
+                .OrderBy(x => x.OrganizationName);
+
+            return Json(edOrgs);
         }
 
     }

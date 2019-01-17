@@ -708,8 +708,7 @@
                 }
             }
         }
-
-
+        
         protected List<StudentDrillDownQuery> ReadStudentDrillDownDataReader(DbDataReader reader)
         {
             var recordsReturned = new List<StudentDrillDownQuery>();

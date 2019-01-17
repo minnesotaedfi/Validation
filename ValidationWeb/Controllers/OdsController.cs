@@ -481,7 +481,10 @@ namespace ValidationWeb
 #if DEBUG
             var startTime = DateTime.Now;
 #endif
-            var results = CacheManager.GetMultipleEnrollmentCounts(OdsDataService, edOrgId, fourDigitSchoolYear);
+            var results = CacheManager.GetMultipleEnrollmentCounts(
+                OdsDataService, 
+                isStateMode ? (int?)null : edOrgId, 
+                fourDigitSchoolYear);
 #if DEBUG
             System.Diagnostics.Debug.WriteLine($"GetMultipleEnrollmentCounts: {(DateTime.Now - startTime).Milliseconds}ms");
 #endif 
