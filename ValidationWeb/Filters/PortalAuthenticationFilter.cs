@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Mvc.Filters;
 using ValidationWeb.Services;
+using MoreLinq;
 
 namespace ValidationWeb
 {
@@ -317,21 +318,21 @@ namespace ValidationWeb
 
                 #endregion Extract data about the user that is common to all SSO Authorization records.
 
+                // A school year is needed to identify which Ed Fi ODS database to pull organizational information from.
+                var schoolYearId = previousSessionFocusedSchoolYearId ?? validYears.First().Id;
+
                 var authorizedEdOrgs = new List<EdOrg>();
                 foreach (var ssoUserOrg in ssoUserAuthorizations)
                 {
-                    int schoolYearId = 0;
                     try
                     {
                         _loggingService.LogDebugMessage(
                             $"User: {authHeaderValue}, Ed Organization ID: {ssoUserOrg?.StateOrganizationId ?? "null"}.");
+
                         int authorizedEdOrgId;
                         if (int.TryParse(ssoUserOrg.StateOrganizationId.Substring(0, 5), out authorizedEdOrgId))
                         {
-                            // A school year is needed to identify which Ed Fi ODS database to pull organizational information from.
-                            schoolYearId = previousSessionFocusedSchoolYearId.HasValue
-                                               ? previousSessionFocusedSchoolYearId.Value
-                                               : validYears.First().Id;
+                            
                             _loggingService.LogDebugMessage(
                                 $"User: {authHeaderValue}, Taking information from the ODS associated with school year ID number {schoolYearId.ToString()}.");
                             try
@@ -354,6 +355,14 @@ namespace ValidationWeb
                         _loggingService.LogErrorMessage(
                             $"A user was authorized an Ed Org with the StateOrganizationId: {ssoUserOrg.StateOrganizationId}, but this Ed Org doesn't exist in the ODS database for school year {schoolYearId}. Error: {ex.ChainInnerExceptionMessages()}");
                     }
+                }
+
+                // special case for users who can view all districts
+                // todo: add to the logic in IIdentityExtensions.GetViewPermissions() 
+                if (appRole.Name == PortalRoleNames.HelpDesk || appRole.Name == PortalRoleNames.DataOwner)
+                {
+                    var allEdOrgs = _edOrgService.GetAllEdOrgs();
+                    authorizedEdOrgs.AddRange(allEdOrgs.ExceptBy(authorizedEdOrgs, x => x.Id));
                 }
 
                 if (!authorizedEdOrgs.Any())

@@ -8,8 +8,10 @@ namespace ValidationWeb.Services
 {
     public interface IEdOrgService
     {
-        List<EdOrg> GetEdOrgs();
-
+        List<EdOrg> GetAuthorizedEdOrgs();
+        
+        List<EdOrg> GetAllEdOrgs();
+        
         EdOrg GetEdOrgById(int edOrgId, int fourDigitOdsDbYear);
 
         void RefreshEdOrgCache(SchoolYear schoolYear);

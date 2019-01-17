@@ -30,20 +30,18 @@
 
         protected ISchoolYearService SchoolYearService { get; set; }
 
-        public List<EdOrg> GetEdOrgs()
+        public List<EdOrg> GetAuthorizedEdOrgs()
         {
+            // todo! refactor- this almost doesn't need to exist ... it's in user identity already
             var userIdentity = AppUserService.GetSession().UserIdentity;
-            // var permissions = userIdentity.GetViewPermissions(userIdentity.AppRole);
-            if (userIdentity.AppRole.Name == PortalRoleNames.DataOwner || userIdentity.AppRole.Name == PortalRoleNames.HelpDesk)
+            return userIdentity.AuthorizedEdOrgs.OrderBy(eo => eo.OrganizationName).ToList();
+        }
+
+        public List<EdOrg> GetAllEdOrgs()
+        {
+            using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
             {
-                using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
-                {
-                    return validationPortalDataContext.EdOrgs.ToList();
-                }
-            }
-            else
-            {
-                return userIdentity.AuthorizedEdOrgs.OrderBy(eo => eo.OrganizationName).ToList();
+                return validationPortalDataContext.EdOrgs.ToList();
             }
         }
 
@@ -66,7 +64,7 @@
                 {
                     return result;
                 }
-                
+
                 using (var _odsRawDbContext = new RawOdsDbContext(schoolYear.EndYear))
                 {
                     var conn = _odsRawDbContext.Database.Connection;
@@ -106,7 +104,7 @@
                     validationPortalDataContext.SaveChanges();
                     return result;
                 }
-                
+
                 throw new ApplicationException(
                     $"The Ed Org with ID# {edOrgId}, school year {schoolYear.ToString()}, was not found.");
             }
@@ -150,7 +148,7 @@
                 {
                     validationPortalDataContext.EdOrgs.AddOrUpdate(singleEdOrg);
                 }
-                
+
                 LoggingService.LogDebugMessage($"EdOrgCache: saving changes");
                 validationPortalDataContext.SaveChanges();
             }

@@ -38,7 +38,7 @@ namespace ValidationWeb
             var model = new NavMenusViewModel
             {
                 AppUserSession = _appUserService.GetSession(),
-                EdOrgs = _edOrgService.GetEdOrgs(),
+                EdOrgs = _edOrgService.GetAuthorizedEdOrgs(),
                 SchoolYears = _schoolYearService.GetSubmittableSchoolYears().OrderByDescending(x => x.EndYear)
             };
 

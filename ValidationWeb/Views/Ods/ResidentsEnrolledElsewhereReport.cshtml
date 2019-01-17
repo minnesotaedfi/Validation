@@ -104,6 +104,20 @@
                      }))"
                 },
                 columns: [
+                    @if (Model.IsStateMode)
+                    {
+                        <text>
+                            {
+                                title: 'District of Residence ID',
+                                data: 'edOrgId',
+                            },
+                            {
+                                title: 'District of Residence',
+                                data: 'edOrgName',
+                                width: '250px'
+                            },
+                        </text>
+                    }
                     {
                         title: 'District of Enrollment ID',
                         data: 'districtOfEnrollmentId',
@@ -111,7 +125,7 @@
                     {
                         title: 'District of Enrollment',
                         data: 'districtOfEnrollmentName',
-                        width: '300px',
+                        width: '250px',
                     },
                     {
                         title: 'Residents Enrolled',

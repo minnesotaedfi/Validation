@@ -42,7 +42,7 @@ namespace ValidationWeb.ApiControllers
         [HttpGet]
         public IHttpActionResult GetEdOrgs()
         {
-            var edOrgs = _edOrgService.GetEdOrgs()
+            var edOrgs = _edOrgService.GetAuthorizedEdOrgs()
                 .DistinctBy(x => x.OrganizationName)
                 .OrderBy(x => x.OrganizationName);
 

@@ -1084,7 +1084,7 @@ namespace ValidationWeb
             System.Diagnostics.Debug.WriteLine(
                 $"GetResidentsEnrolledElsewhere: {(DateTime.Now - startTime).Milliseconds}ms");
 #endif
-            IEnumerable<ResidentsEnrolledElsewhereReportQuery> sortedResults = results;
+            IEnumerable<ResidentsEnrolledElsewhereReportQuery> sortedResults = results.Distinct();
 
             var sortColumn = request.Columns.FirstOrDefault(x => x.Sort != null);
             if (sortColumn != null)

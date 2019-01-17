@@ -40,7 +40,7 @@ namespace ValidationWeb
             var model = new AdminIndexViewModel
             {
                 AppUserSession = _appUserService.GetSession(),
-                AuthorizedEdOrgs = _edOrgService.GetEdOrgs(),
+                AuthorizedEdOrgs = _edOrgService.GetAuthorizedEdOrgs(),
                 FocusedEdOrg = _edOrgService.GetEdOrgById(_appUserService.GetSession().FocusedEdOrgId, _schoolYearService.GetSchoolYearById(_appUserService.GetSession().FocusedSchoolYearId).Id),
                 YearsOpenForDataSubmission = _schoolYearService.GetSubmittableSchoolYears().OrderByDescending(x => x.EndYear),
                 RuleCollections = _rulesEngineService.GetCollections(),

@@ -53,7 +53,7 @@ namespace ValidationWeb
                 AppUserSession = AppUserService.GetSession(),
                 Announcements = AnnouncementService.GetAnnouncements(),
                 YearsOpenForDataSubmission = ValidatedDataSubmissionService.GetYearsOpenForDataSubmission(),
-                AuthorizedEdOrgs = EdOrgService.GetEdOrgs(),
+                AuthorizedEdOrgs = EdOrgService.GetAuthorizedEdOrgs(),
                 FocusedEdOrg = focusedEdOrg,
                 RecordsRequests = recordsRequests
             };
