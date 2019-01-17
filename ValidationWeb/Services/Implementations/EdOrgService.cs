@@ -53,8 +53,11 @@
             {
                 var schoolYear = SchoolYearService.GetSchoolYearById(schoolYearId);
 
+                LoggingService.LogDebugMessage($"EdOrg cache: {validationPortalDataContext.EdOrgs.Count()} currently in ValidationPortal database");
+
                 if (!validationPortalDataContext.EdOrgs.Any())
                 {
+                    LoggingService.LogDebugMessage($"Refreshing EdOrg cache");
                     RefreshEdOrgCache(schoolYear);
                 }
 
@@ -147,7 +150,8 @@
                 {
                     validationPortalDataContext.EdOrgs.AddOrUpdate(singleEdOrg);
                 }
-
+                
+                LoggingService.LogDebugMessage($"EdOrgCache: saving changes");
                 validationPortalDataContext.SaveChanges();
             }
         }
@@ -211,6 +215,8 @@
             var result = new List<EdOrg>();
             try
             {
+                LoggingService.LogDebugMessage($"EdOrg cache: Adding EdOrgs from year id {schoolYearId}");
+
                 using (var reader = edOrgQueryCmd.ExecuteReader())
                 {
                     while (reader.Read())
@@ -232,6 +238,8 @@
                             OrgTypeShortDescription = reader[EdOrgQuery.OrganizationShortNameColumnName].ToString(),
                             EdOrgTypeLookupId = isStateAgency ? (int)EdOrgType.State : (int)EdOrgType.District
                         });
+
+                        LoggingService.LogDebugMessage($"Adding {theId}");
                     }
                 }
             }
@@ -239,6 +247,8 @@
             {
                 LoggingService.LogErrorMessage($"An error occurred while trying to read the Ed Org information from the Ed Fi ODS referring to the school year with ID {schoolYearId}: {ex.ChainInnerExceptionMessages()}");
             }
+            LoggingService.LogDebugMessage($"Added {result.Count} EdOrgs");
+
             return result;
         }
     }
