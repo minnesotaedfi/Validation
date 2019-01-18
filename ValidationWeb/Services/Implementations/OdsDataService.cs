@@ -394,12 +394,15 @@
                     var queryCmd = conn.CreateCommand();
                     queryCmd.CommandType = System.Data.CommandType.StoredProcedure;
                     queryCmd.CommandText = MultipleEnrollmentsCountReportQuery.MultipleEnrollmentsStudentDetailsQuery;
+                    
                     queryCmd.Parameters.Add(new SqlParameter("@schoolid", System.Data.SqlDbType.Int));
-                    queryCmd.Parameters["@schoolid"].Value = schoolEdOrgId.HasValue && orgType == OrgType.School ? (object) schoolEdOrgId.Value : (object) DBNull.Value;
+                    queryCmd.Parameters["@schoolid"].Value = schoolEdOrgId.HasValue && orgType == OrgType.School ? schoolEdOrgId.Value : (object)DBNull.Value;
+                    
                     queryCmd.Parameters.Add(new SqlParameter("@distid", System.Data.SqlDbType.Int));
-                    queryCmd.Parameters["@distid"].Value = districtEdOrgId.HasValue && orgType == OrgType.District ? (object) districtEdOrgId.Value : (object) DBNull.Value;
+                    queryCmd.Parameters["@distid"].Value = districtEdOrgId.HasValue && orgType == OrgType.District ? districtEdOrgId.Value : (object)DBNull.Value;
+                    
                     queryCmd.Parameters.Add(new SqlParameter("@columnIndex", System.Data.SqlDbType.Int));
-                    queryCmd.Parameters["@columnIndex"].Value = columnIndex.HasValue? (object) columnIndex.Value : (object) DBNull.Value;
+                    queryCmd.Parameters["@columnIndex"].Value = columnIndex ?? (object)DBNull.Value;
                     using (var reader = queryCmd.ExecuteReader())
                     {
                         returnedList = ReadStudentDrillDownDataReader(reader);

@@ -15,13 +15,16 @@
         <div class="vp-body-header col-md-6 justify-content-start align-self-center">Residents Enrolled Elsewhere for District @Model.EdOrgName (@Model.EdOrgId.ToString())</div>
     }
 
-    @if (Model.IsStateMode && permissions.CanAccessAllDistrictsMode)
+    @if (permissions.CanAccessAllDistrictsMode)
     {
-        <div class="col-md-3"><a href="@Url.Action("ResidentsEnrolledElsewhereReport", "Ods", new { isStateMode = false })" class="show-data-loading">View Single District</a></div>
-    }
-    else
-    {
-        <div class="col-md-3"><a href="@Url.Action("ResidentsEnrolledElsewhereReport", "Ods", new { isStateMode = true })" class="show-data-loading">View All Districts</a></div>
+        if(Model.IsStateMode)
+        {
+            @:<div class="col-md-3"><a href="@Url.Action("ResidentsEnrolledElsewhereReport", "Ods", new { isStateMode = false })" class="show-data-loading">View Single District</a></div>
+        }
+        else
+        {
+            @:<div class="col-md-3"><a href="@Url.Action("ResidentsEnrolledElsewhereReport", "Ods", new { isStateMode = true })" class="show-data-loading">View All Districts</a></div>
+        }
     }
 </div>
 <div id="requestedReportContent" class="row">

@@ -104,12 +104,12 @@
 
             lock (LockObject)
             {
-                if (!Cache.Contains(cacheKey))
+                // if (!Cache.Contains(cacheKey))
                 {
                     var results = odsDataService.GetMultipleEnrollmentStudentDrillDown(
                         orgType,
                         schoolId,
-                        schoolId ?? edOrgId,
+                        edOrgId,
                         drillDownColumnIndex,
                         fourDigitSchoolYear);
 
