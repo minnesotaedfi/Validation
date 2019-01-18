@@ -134,7 +134,7 @@
                         title: 'ID',
                         data: 'edOrgId',
                         width: '100px',
-                        @if (Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
+                        @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                         {
                             <text>
                         render: function(data, type, row, meta) {
@@ -158,7 +158,7 @@
                         render: function (data, type, row, meta) {
                             if (type === 'display') {
                                 return (data === 0) ? "-" : 
-                                    @if (permissions.CanViewStudentDrilldownReports)
+                                    @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                     {
                                         @: createDrillDownLink(row.edOrgId, 0, row.orgType, data);
                                     } 
@@ -177,7 +177,7 @@
                         render: function (data, type, row, meta) {
                             if (type === 'display') {
                                 return (data === 0) ? "-" :
-                                    @if (permissions.CanViewStudentDrilldownReports)
+                                    @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                     {
                                         @: createDrillDownLink(row.edOrgId, 1, row.orgType, data);
                                     } else { 
@@ -194,7 +194,7 @@
                         render: function (data, type, row, meta) {
                             if (type === 'display') {
                                 return (data === 0) ? "-" :
-                                @if (permissions.CanViewStudentDrilldownReports)
+                                @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                     {
                                         @: createDrillDownLink(row.edOrgId, 2, row.orgType, data);
                                     } 
@@ -213,7 +213,7 @@
                         render: function (data, type, row, meta) {
                             if (type === 'display') {
                                 return (data === 0) ? "-" : 
-                                @if (permissions.CanViewStudentDrilldownReports)
+                                @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                 {
                                     @:createDrillDownLink(row.edOrgId, 3, row.orgType, data);
                                 } else { 
@@ -230,7 +230,7 @@
                         render: function (data, type, row, meta) {
                             if (type === 'display') {
                                 return (data === 0) ? "-" : 
-                                @if (permissions.CanViewStudentDrilldownReports)
+                                @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                 {
                                     @:createDrillDownLink(row.edOrgId, 4, row.orgType, data);
                                 } else { 
@@ -247,7 +247,7 @@
                         render: function (data, type, row, meta) {
                             if (type === 'display') {
                                 return (data === 0) ? "-" :
-                                @if (permissions.CanViewStudentDrilldownReports)
+                                @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                 { @: createDrillDownLink(row.edOrgId, 5, row.orgType, data);
                                 } else { 
                                     @:data
@@ -263,7 +263,7 @@
                         render: function (data, type, row, meta) {
                             if (type === 'display') {
                                 return (data === 0) ? "-" : 
-                                @if (permissions.CanViewStudentDrilldownReports)
+                                @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                 { 
                                     @: createDrillDownLink(row.edOrgId, 6, row.orgType, data);
                                 } 
@@ -281,7 +281,7 @@
                         render: function (data, type, row, meta) {
                             if (type === 'display') {
                                 return (data === 0) ? "-" : 
-                                @if (permissions.CanViewStudentDrilldownReports)
+                                @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                 { @: createDrillDownLink(row.edOrgId, 7, row.orgType, data);
                                 } else { 
                                     @:data
@@ -297,7 +297,7 @@
                         render: function (data, type, row, meta) {
                             if (type === 'display') {
                                 return (data === 0) ? "-" : 
-                                @if (permissions.CanViewStudentDrilldownReports)
+                                @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                 { @: createDrillDownLink(row.edOrgId, 8, row.orgType, data);
                                 } else {
                                     @:data
@@ -344,7 +344,7 @@
                         title: 'ID',
                         data: 'edOrgId',
                         width: '100px',
-                        @if (Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
+                        @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                         {
                             <text>
                         render: function(data, type, row, meta) {
@@ -368,7 +368,7 @@
                         render: function (data, type, row, meta) {
                             if (type === 'display') {
                                 return (data === 0) ? "-" : 
-                                    @if (permissions.CanViewStudentDrilldownReports)
+                                    @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                 { @: createDrillDownLink(row.edOrgId, 9, row.orgType, data);
                                 } else {
                                     @:data
@@ -384,7 +384,7 @@
                         render: function (data, type, row, meta) {
                             if (type === 'display') {
                                 return (data === 0) ? "-" : 
-                                    @if (permissions.CanViewStudentDrilldownReports)
+                                    @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                 { @: createDrillDownLink(row.edOrgId, 10, row.orgType, data);
                                 } else {
                                     @:data
@@ -400,7 +400,7 @@
                         render: function (data, type, row, meta) {
                             if (type === 'display') {
                                 return (data === 0) ? "-" : 
-                                    @if (permissions.CanViewStudentDrilldownReports)
+                                    @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                 { @: createDrillDownLink(row.edOrgId, 11, row.orgType, data);
                                 } else {
                                     @: data
@@ -416,7 +416,7 @@
                         render: function (data, type, row, meta) {
                             if (type === 'display') {
                                 return (data === 0) ? "-" : 
-                                    @if (permissions.CanViewStudentDrilldownReports)
+                                    @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                 { @: createDrillDownLink(row.edOrgId, 12, row.orgType, data);
                                 } else {
                                     @:data
@@ -432,7 +432,7 @@
                         render: function (data, type, row, meta) {
                             if (type === 'display') {
                                 return (data === 0) ? "-" : 
-                                    @if (permissions.CanViewStudentDrilldownReports)
+                                    @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                 { @: createDrillDownLink(row.edOrgId, 13, row.orgType, data);
                                 } else {
                                     @:data
@@ -448,7 +448,7 @@
                         render: function (data, type, row, meta) {
                             if (type === 'display') {
                                 return (data === 0) ? "-" : 
-                                    @if (permissions.CanViewStudentDrilldownReports)
+                                    @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                 { @: createDrillDownLink(row.edOrgId, 14, row.orgType, data);
                                 } else {
                                     @:data

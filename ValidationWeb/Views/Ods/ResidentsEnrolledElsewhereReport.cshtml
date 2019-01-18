@@ -137,7 +137,7 @@
                             if (type === 'display') {
                                 debugger;
                                 return (data === 0) ? "-" : 
-                                    @if (permissions.CanViewStudentDrilldownReports)
+                                    @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                     {
                                         @:createDrillDownLink(row.edOrgId, row.districtOfEnrollmentId, 0, row.orgType, data);
                                     } 

@@ -101,7 +101,7 @@
                         title: 'ID',
                         data: 'edOrgId',
                         width: '100px',
-                    @if (Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
+                    @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                     {
                         <text>
                         render: function(data, type, row, meta) {
@@ -125,7 +125,7 @@
                         render: function (data, type, row, meta) {
                             if (type === 'display') {
                                 return (data === 0) ? "-" : 
-                                    @if (permissions.CanViewStudentDrilldownReports)
+                                    @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                     {
                                         @:createDrillDownLink(row.edOrgId, 0, row.orgType, data);
                                     } else {
@@ -142,7 +142,7 @@
                         render: function(data, type, row, meta) {
                             if (type === 'display') {
                                 return (data === 0) ? "-" : 
-                                @if (permissions.CanViewStudentDrilldownReports)
+                                @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                 {
                                     @: createDrillDownLink(row.edOrgId, 1, row.orgType, data);
                                 } else {
@@ -159,7 +159,7 @@
                         render: function(data, type, row, meta) {
                             if (type === 'display') {
                                 return (data === 0) ? "-" : 
-                                @if (permissions.CanViewStudentDrilldownReports)
+                                @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                 {
                                     @: createDrillDownLink(row.edOrgId, 2, row.orgType, data);
                                 } else {
@@ -176,7 +176,7 @@
                         render: function(data, type, row, meta) {
                             if (type === 'display') {
                                 return (data === 0) ? "-" : 
-                                @if (permissions.CanViewStudentDrilldownReports)
+                                @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                 {
                                     @: createDrillDownLink(row.edOrgId, 3, row.orgType, data);
                                 } else {
