@@ -17,7 +17,7 @@
         public readonly IDbContextFactory<ValidationPortalDbContext> DbContextFactory;
 
         public OdsDataService(
-            ILoggingService loggingService, 
+            ILoggingService loggingService,
             IDbContextFactory<ValidationPortalDbContext> dbContextFactory)
         {
             LoggingService = loggingService;
@@ -382,7 +382,12 @@
             }
         }
 
-        public List<StudentDrillDownQuery> GetMultipleEnrollmentStudentDrillDown(OrgType orgType, int? schoolEdOrgId, int? districtEdOrgId, int? columnIndex, string fourDigitOdsDbYear)
+        public List<StudentDrillDownQuery> GetMultipleEnrollmentStudentDrillDown(
+            OrgType orgType,
+            int? schoolEdOrgId,
+            int? districtEdOrgId,
+            int? columnIndex,
+            string fourDigitOdsDbYear)
         {
             var returnedList = new List<StudentDrillDownQuery>();
             using (var rawOdsContext = new RawOdsDbContext(fourDigitOdsDbYear))
@@ -394,19 +399,23 @@
                     var queryCmd = conn.CreateCommand();
                     queryCmd.CommandType = System.Data.CommandType.StoredProcedure;
                     queryCmd.CommandText = MultipleEnrollmentsCountReportQuery.MultipleEnrollmentsStudentDetailsQuery;
-                    
+
                     queryCmd.Parameters.Add(new SqlParameter("@schoolid", System.Data.SqlDbType.Int));
-                    queryCmd.Parameters["@schoolid"].Value = schoolEdOrgId.HasValue && orgType == OrgType.School ? schoolEdOrgId.Value : (object)DBNull.Value;
-                    
+                    queryCmd.Parameters["@schoolid"].Value = schoolEdOrgId.HasValue && 
+                                                             orgType == OrgType.School ? schoolEdOrgId.Value : (object)DBNull.Value;
+
                     queryCmd.Parameters.Add(new SqlParameter("@distid", System.Data.SqlDbType.Int));
-                    queryCmd.Parameters["@distid"].Value = districtEdOrgId.HasValue && orgType == OrgType.District ? districtEdOrgId.Value : (object)DBNull.Value;
-                    
+                    queryCmd.Parameters["@distid"].Value = districtEdOrgId.HasValue && 
+                                                           (orgType == OrgType.District || orgType == OrgType.School) ? districtEdOrgId.Value : (object)DBNull.Value;
+
                     queryCmd.Parameters.Add(new SqlParameter("@columnIndex", System.Data.SqlDbType.Int));
                     queryCmd.Parameters["@columnIndex"].Value = columnIndex ?? (object)DBNull.Value;
+                    
                     using (var reader = queryCmd.ExecuteReader())
                     {
                         returnedList = ReadStudentDrillDownDataReader(reader);
-}
+                    }
+
                     return returnedList;
                 }
                 catch (Exception ex)
@@ -509,22 +518,22 @@
                 }
             }
         }
-        
+
         public RecordsRequest GetRecordsRequestData(int schoolYearId, int edOrgId, string studentId)
         {
             using (var dbContext = DbContextFactory.Create())
             {
                 try
                 {
-                    var studentRecord = dbContext.RecordsRequests.FirstOrDefault(x => 
-                                            x.StudentId == studentId && 
-                                            x.SchoolYearId == schoolYearId) 
+                    var studentRecord = dbContext.RecordsRequests.FirstOrDefault(x =>
+                                            x.StudentId == studentId &&
+                                            x.SchoolYearId == schoolYearId)
                                         ?? new RecordsRequest
-                                           {
-                                               StudentId = studentId,
-                                               SchoolYearId = schoolYearId,
-                                               RequestingDistrict = edOrgId
-                                           };
+                                        {
+                                            StudentId = studentId,
+                                            SchoolYearId = schoolYearId,
+                                            RequestingDistrict = edOrgId
+                                        };
 
                     return studentRecord;
                 }
@@ -558,9 +567,9 @@
             {
                 try
                 {
-                    var studentRecord = dbContext.RecordsRequests.FirstOrDefault(x => 
-                                            x.StudentId == formData.StudentId && 
-                                            x.SchoolYearId == schoolYearId) 
+                    var studentRecord = dbContext.RecordsRequests.FirstOrDefault(x =>
+                                            x.StudentId == formData.StudentId &&
+                                            x.SchoolYearId == schoolYearId)
                                         ?? new RecordsRequest();
 
                     studentRecord.StudentId = formData.StudentId;
@@ -614,7 +623,7 @@
 
                     if (studentRecord.Id == 0)
                     {
-                        dbContext.RecordsRequests.Add(studentRecord); 
+                        dbContext.RecordsRequests.Add(studentRecord);
                     }
                     else
                     {
@@ -647,8 +656,8 @@
             {
                 try
                 {
-                    RecordsRequest studentRecord = dbContext.RecordsRequests.FirstOrDefault(x => 
-                        x.StudentId == formData.StudentId && 
+                    RecordsRequest studentRecord = dbContext.RecordsRequests.FirstOrDefault(x =>
+                        x.StudentId == formData.StudentId &&
                         x.SchoolYearId == schoolYearId);
 
                     if (studentRecord == null)
@@ -711,7 +720,7 @@
                 }
             }
         }
-        
+
         protected List<StudentDrillDownQuery> ReadStudentDrillDownDataReader(DbDataReader reader)
         {
             var recordsReturned = new List<StudentDrillDownQuery>();
