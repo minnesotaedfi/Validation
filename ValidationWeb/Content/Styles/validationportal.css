@@ -146,8 +146,15 @@ div#notes {
 input, select, textarea {
     max-width: 280px;
 }
-/***************************************************************************************/
 
+/* override/undo this for announcement dialog ... */
+
+div#announcement-modal-content input,
+div#announcement-modal-content textarea {
+    max-width: 100%;
+}
+
+/***************************************************************************************/
 /***************************************************************************************/
 /* Nav */
 .nav-link-label {
