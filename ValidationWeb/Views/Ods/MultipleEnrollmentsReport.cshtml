@@ -25,21 +25,15 @@
     
     @if (permissions.CanAccessAllDistrictsMode)
     {
-        if (Model.IsStateMode)
+         if (Model.IsStateMode)
          {
              <div class="col-md-2">
-                 <a href="@Url.Action("MultipleEnrollmentsReport", "Ods", new
-                                                                          {
-                                                                              isStateMode = false
-                                                                          })" class="show-data-loading">View Single District</a></div>
+                 <a href="@Url.Action("MultipleEnrollmentsReport", "Ods", new { isStateMode = false })" class="show-data-loading">View Single District</a></div>
          }
          else
          {
              <div class="col-md-2">
-                 <a href="@Url.Action("MultipleEnrollmentsReport", "Ods", new
-                                                                          {
-                                                                              isStateMode = true
-                                                                          })" class="show-data-loading">View All Districts</a></div>
+                 <a href="@Url.Action("MultipleEnrollmentsReport", "Ods", new { isStateMode = true })" class="show-data-loading">View All Districts</a></div>
          }
     }
 </div>

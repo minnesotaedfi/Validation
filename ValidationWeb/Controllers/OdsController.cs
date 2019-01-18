@@ -184,7 +184,7 @@ namespace ValidationWeb
                 fourDigitSchoolYear);
 
             // the underlying sql query is returning for all schools even though we're trying to view for one school 
-            if (orgType == OrgType.School && schoolId.HasValue)
+            if (reportType != StudentDrillDownReportType.MultipleEnrollment && (orgType == OrgType.School && schoolId.HasValue))
             {
                 results = results.Where(x => x.SchoolId == schoolId);
             }
