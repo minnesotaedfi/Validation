@@ -14,44 +14,78 @@
 
                 You are logged in as @(Model.AppUserSession.UserIdentity.FullName) with access level: @(Model.AppUserSession.UserIdentity.AppRole?.Name).
             </div>
-            <div class="row vp-body-header">
-                School year(s) available to validate:&nbsp;
-                <span>@(string.Join(", ", Model.YearsOpenForDataSubmission.Select(yr => yr.ToString()).OrderBy(y => y).ToList()))</span>
-            </div>
+            @*<div class="row vp-body-header">
+                    School year(s) available to validate:&nbsp;
+                    <span>@(string.Join(", ", Model.YearsOpenForDataSubmission.Select(yr => yr.ToString()).OrderBy(y => y).ToList()))</span>
+                </div>*@
 
+            @if (Model.SubmissionCycles.Any())
+            {
+                <div class="row vp-body-header">
+                    Collection Cycles open for Validation:&nbsp;
+                </div>
+                <div class="row">
+                    <table class="table table-bordered table-sm table-responsive-md">
+                        <thead>
+                            <tr class="table-primary">
+                                <th>School Year</th>
+                                <th>Date Range</th>
+                                <th>Collection</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var submissionCycle in Model.SubmissionCycles.OrderBy(x => x.SchoolYearDisplay).ThenBy(x => x.StartDate).ThenBy(x => x.CollectionId))
+                            {
+                                <tr>
+                                    <td>
+                                        @submissionCycle.SchoolYearDisplay
+                                    </td>
+                                    <td>
+                                        @submissionCycle.StartDate.ToShortDateString() &ndash; @submissionCycle.EndDate.ToShortDateString()
+                                    </td>
+                                    <td>
+                                        @submissionCycle.CollectionId
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
             <!-- all notifications here -->
             <!-- add enrollment request (and responses!?) to notifications -->
             <!-- see Home Page - Notification tab in spec worksheet -->
             @if (Model.RecordsRequests.Any())
             {
                 <div class="row vp-body-header">
-                    Notifications:</div>
+                    Notifications:
+                </div>
                 <div class="row">
                     <table class="table table-bordered table-sm table-responsive-md" id="notificationsTable">
                         <thead>
-                        <tr class="table-primary">
-                            <th colspan="2">
-                                Message
-                            </th>
-                        </tr>
+                            <tr class="table-primary">
+                                <th colspan="2">
+                                    Message
+                                </th>
+                            </tr>
                         </thead>
                         <tbody>
-                        @foreach (var recordsRequest in Model.RecordsRequests)
-                        {
-                            <tr>
-                                <td>
-                                    Your district has unresolved Change of Enrollment Records Requests
-                                </td>
-                                <td>
-                                    @Html.ActionLink(
-                                        "view",
-                                        "ChangeOfEnrollmentReport",
-                                        "Ods",
-                                        new { recordRequestStudentId = recordsRequest.StudentId },
-                                        new {})
-                                </td>
-                            </tr>
-                        }
+                            @foreach (var recordsRequest in Model.RecordsRequests)
+                            {
+                                <tr>
+                                    <td>
+                                        Your district has unresolved Change of Enrollment Records Requests
+                                    </td>
+                                    <td>
+                                        @Html.ActionLink(
+                                            "view",
+                                            "ChangeOfEnrollmentReport",
+                                            "Ods",
+                                            new { recordRequestStudentId = recordsRequest.StudentId },
+                                            new {})
+                                    </td>
+                                </tr>
+                            }
                         </tbody>
                     </table>
                 </div>

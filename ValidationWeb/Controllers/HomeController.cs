@@ -17,7 +17,8 @@ namespace ValidationWeb
             IEdOrgService edOrgService,
             ISchoolYearService schoolYearService,
             IOdsDataService odsDataService,
-            IValidatedDataSubmissionService validatedDataSubmissionService)
+            IValidatedDataSubmissionService validatedDataSubmissionService,
+            ISubmissionCycleService submissionCycleService)
         {
             AnnouncementService = announcementService;
             AppUserService = appUserService;
@@ -25,6 +26,7 @@ namespace ValidationWeb
             SchoolYearService = schoolYearService;
             OdsDataService = odsDataService;
             ValidatedDataSubmissionService = validatedDataSubmissionService;
+            SubmissionCycleService = submissionCycleService;
         }
 
         protected IAnnouncementService AnnouncementService { get; set; }
@@ -38,6 +40,8 @@ namespace ValidationWeb
         protected IOdsDataService OdsDataService { get; set; }
         
         protected IValidatedDataSubmissionService ValidatedDataSubmissionService { get; set; }
+
+        protected ISubmissionCycleService SubmissionCycleService { get; set; }
 
         public ActionResult Index()
         {
@@ -55,7 +59,8 @@ namespace ValidationWeb
                 YearsOpenForDataSubmission = ValidatedDataSubmissionService.GetYearsOpenForDataSubmission(),
                 AuthorizedEdOrgs = EdOrgService.GetAuthorizedEdOrgs(),
                 FocusedEdOrg = focusedEdOrg,
-                RecordsRequests = recordsRequests
+                RecordsRequests = recordsRequests,
+                SubmissionCycles = SubmissionCycleService.GetSubmissionCyclesOpenToday()
             };
 
             if (!model.AuthorizedEdOrgs.Any())

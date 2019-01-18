@@ -21,5 +21,7 @@
         public IEnumerable<SchoolYear> YearsOpenForDataSubmission { get; set; }
 
         public IEnumerable<RecordsRequest> RecordsRequests { get; set; }
+
+        public IEnumerable<SubmissionCycle> SubmissionCycles { get; set; }
     }
 }
