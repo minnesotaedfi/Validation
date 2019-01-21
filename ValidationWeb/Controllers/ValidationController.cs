@@ -10,8 +10,10 @@ using ValidationWeb.Services;
 
 namespace ValidationWeb
 {
-   
+    using System.IO;
     using System.Web.Hosting;
+
+    using CsvHelper;
 
     using DataTables.AspNet.Core;
     using DataTables.AspNet.Mvc5;
@@ -66,6 +68,48 @@ namespace ValidationWeb
                 FocusedSchoolYearId = _appUserService.GetSession().FocusedSchoolYearId
             };
             return View(model);
+        }
+
+        public FileStreamResult DownloadReportSummariesCsv(int edOrgId)
+        {
+            var results = _validationResultsService.GetValidationReportSummaries(edOrgId)
+                .OrderByDescending(rs => rs.CompletedWhen)
+                .ToList();
+
+            var csvArray = WriteCsvToMemory(results.Select(
+                x => new
+                     {
+                         x.RequestedWhen,
+                         x.Collection,
+                         x.InitiatedBy,
+                         x.Status,
+                         x.CompletedWhen,
+                         x.ErrorCount,
+                         x.WarningCount
+                     }));
+
+            var memoryStream = new MemoryStream(csvArray);
+            
+            return new FileStreamResult(memoryStream, "text/csv")
+                   {
+                       FileDownloadName = "ValidationSummary.csv"
+                   };
+        }
+
+        public byte[] WriteCsvToMemory<T>(IEnumerable<T> records)
+        {
+            using (var memoryStream = new MemoryStream())
+            {
+                using (var streamWriter = new StreamWriter(memoryStream))
+                {
+                    using (var csvWriter = new CsvWriter(streamWriter))
+                    {
+                        csvWriter.WriteRecords(records);
+                        streamWriter.Flush();
+                        return memoryStream.ToArray();
+                    }
+                }
+            }
         }
 
         public JsonResult ReportSummaries(int edOrgId, IDataTablesRequest request)
