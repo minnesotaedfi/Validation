@@ -126,10 +126,15 @@
                         {
                             <text>
                         render: function(data, type, row, meta) {
+                            //debugger;
                             if (data != null && type === 'display' && row.orgType === 200) {
                                 @if (permissions.CanAccessAllDistrictsMode)
                                 {
                                     @:return createStateLink(data);
+                                }
+                                else
+                                {
+                                    @:return data;
                                 }
                             } else {
                                 return data;

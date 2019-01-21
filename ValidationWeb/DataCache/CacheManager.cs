@@ -81,7 +81,7 @@
 
             lock (LockObject)
             {
-                if (!Cache.Contains(cacheKey))
+                // if (!Cache.Contains(cacheKey))
                 {
                     var results = odsDataService.GetMultipleEnrollmentCounts(edOrgId, fourDigitSchoolYear);
 
