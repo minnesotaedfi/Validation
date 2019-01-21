@@ -1,5 +1,6 @@
 ﻿@using MvcSiteMapProvider.Web.Html
 @using ValidationWeb
+@using ValidationWeb.ApiControllers
 @{ 
     var identity = (ValidationPortalIdentity)User.Identity;
     var appRoleName = identity.AppRole.Name;
@@ -95,7 +96,8 @@
 
             function changeEdOrg(e) {
                 var orgId = e.params.data.id;
-                
+                @*Url.RouteUrl("api/user-session", new { httpRoute = string.Empty, controller = "UserSessionController" })*@
+
                 $.ajax({
                     url: "@Url.Content("~/api/user-session/ed-org/select")",
                     type: "Post",
@@ -108,10 +110,11 @@
                             return;
                         }
                         // If looking at any other reports, get the listing for the new district.
-                        if (location.pathname.toLowerCase().indexOf("report") !== -1) {
-                            location.reload();
-                            return;
-                        }
+                        //if (location.pathname.toLowerCase().indexOf("report") !== -1) {
+                        console.log(`changing to ${orgId}`);
+                        location.reload();
+                        return;
+                        //}
                     },
                     error: function () {
                         console.log(`An error occurred when attempting to change Ed Org to ${orgId}.`);
@@ -142,28 +145,6 @@
                     })
                     .fail(() =>
                         console.log(`An error occurred when attempting to get current EdOrg`));
-                
-                if ("one" == "zero") {
-                    $("#edOrgNames").autocomplete({
-                        source: availableEdOrgs,
-                        focus: function (event, ui) {
-                            $("#edOrgNames").val(ui.item.label);
-                            return false;
-                        },
-                        select: function (event, ui) {
-                            let edOrgName = ui.item.label;
-                            let edOrgId = ui.item.value.toString();
-                            $("#edOrgNames").val(edOrgName);
-                            changeEdOrg(edOrgId, edOrgName);
-                            return false;
-                        }
-                    })
-                        .autocomplete("instance")._renderItem = function (ul, item) {
-                            return $( "<li>" )
-                              .append(item.label)
-                              .appendTo( ul );
-                    }
-                }
             }).fail(() =>
                 console.log(`An error occurred when attempting to get EdOrgs`));
 
@@ -183,16 +164,18 @@
                             $(`#syopt${chosenLink.text().substring(0, 4)}`).prop("selected", true);
                         }
                         catch (e) { }
+
+                        console.log(`setting school year to ${chosenLink.text()}`);
                         // If looking at detailed errors, go back to main reports listing for the new ODS School Year.
                         if (location.pathname.toLowerCase().indexOf("validation/report/") !== -1) {
                             location.replace("@Url.Action("Reports","Validation")");
                             return;
                         }
                         // If looking at any other reports, get the listing for the new ODS School Year.
-                        if (location.pathname.toLowerCase().indexOf("report") !== -1) {
+                        // if (location.pathname.toLowerCase().indexOf("report") !== -1) {
                             location.reload();
                             return;
-                        }
+                        //}
                     },
                     error: function () {
                         console.log(`An error occurred when attempting to change School Year to ${yearId}.`);

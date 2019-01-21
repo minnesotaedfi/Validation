@@ -85,12 +85,11 @@
             $('div.dataTables_scrollBody').css('min-height', '350px');
 
             // notify tables within tab panes that it's time to refresh/draw
-            $('a[data-toggle="tab"]').on('shown.bs.tab',
-                function(e) {
-                    var tables = $.fn.dataTable.tables({ visible: true, api: true });
-                    tables.columns.adjust();
-                    tables.scroller.measure();
-                });
+            // $('a[data-toggle="tab"]').on('shown.bs.tab',
+            //    function(e) {
+                    // var tables = $.fn.dataTable.tables({ visible: true, api: true });
+                    // tables.columns.adjust();
+            //    });
 
             var enrollmentsTable = $('#reportsTable1').DataTable({
                 paging: true,

@@ -45,12 +45,17 @@ namespace ValidationWeb
 
         public ActionResult Index()
         {
+            var focusedSchoolYearId = AppUserService.GetSession().FocusedSchoolYearId;
+
             var focusedEdOrg = EdOrgService.GetEdOrgById(
                 AppUserService.GetSession().FocusedEdOrgId,
-                SchoolYearService.GetSchoolYearById(AppUserService.GetSession().FocusedSchoolYearId).Id);
+                SchoolYearService.GetSchoolYearById(focusedSchoolYearId).Id);
 
             var recordsRequests = OdsDataService.GetAllRecordsRequests()
-                .Where(x => x.RespondingDistrict == focusedEdOrg.Id && string.IsNullOrEmpty(x.RespondingUser));
+                .Where(x => 
+                    x.RespondingDistrict == focusedEdOrg.Id && 
+                    x.SchoolYearId == focusedSchoolYearId &&
+                    string.IsNullOrEmpty(x.RespondingUser));
 
             var model = new HomeIndexViewModel
             {
