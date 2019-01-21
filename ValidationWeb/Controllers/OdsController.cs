@@ -872,8 +872,9 @@ namespace ValidationWeb
                     case "currentEdOrgEnrollmentDate":
                         filteredResults = filteredResults.Where(x => x.CurrentEdOrgEnrollmentDate != null && x.CurrentEdOrgEnrollmentDate >= minDate);
                         break;
-                    default:
-                        throw new InvalidOperationException($"Unknown search field {filterColumn.Name}");
+
+                    // default:
+                    //    throw new InvalidOperationException($"Unknown search field {filterColumn.Name}");
                 }
             }
 

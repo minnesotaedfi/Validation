@@ -45,14 +45,14 @@
     <div class="tab-pane row fade show active" id="enrollmentsPane">
         <div id="requestedReportContent">
             <div class="row">
-                <table class="table table-bordered" id="reportsTable1"></table>
+                <table class="table table-bordered" id="reportsTable1" style="width: 100%;"></table>
             </div>
         </div>
     </div>
     <div class="tab-pane row fade" id="withdrawalsPane">
         <div id="requestedReportContent2">
             <div class="row">
-                <table class="table table-bordered" id="reportsTable2"></table>
+                <table class="table table-bordered" id="reportsTable2" style="width: 100%;"></table>
             </div>
         </div>
     </div>
@@ -83,14 +83,7 @@
             }
 
             $('div.dataTables_scrollBody').css('min-height', '350px');
-
-            // notify tables within tab panes that it's time to refresh/draw
-            // $('a[data-toggle="tab"]').on('shown.bs.tab',
-            //    function(e) {
-                    // var tables = $.fn.dataTable.tables({ visible: true, api: true });
-                    // tables.columns.adjust();
-            //    });
-
+            
             var enrollmentsTable = $('#reportsTable1').DataTable({
                 paging: true,
                 pagingType: 'full_numbers',
@@ -465,11 +458,11 @@
                         name: 'currentDistrictName',
                         data: 'currentDistrictName',
                     },
-                    {
-                        title: 'New School',
-                        name: 'currentSchoolName',
-                        data: 'currentSchoolName',
-                    },
+                    //{
+                    //    title: 'New School',
+                    //    name: 'currentSchoolName',
+                    //    data: 'currentSchoolName',
+                    //},
                     {
                         title: 'New Entry Date',
                         name: 'currentEdOrgEnrollmentDate',
