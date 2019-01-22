@@ -135,8 +135,13 @@
 
         // TODO: Puts the table into a downloadable CSV - unfortunately, it doesn't support dates
         $(document).ready(function() {
-            $("#export").click(function() {
+            $("#export").click(function(e) {
                 //$('#reportsTable').table2csv({ filename: 'validationReports.csv' });
+                e.preventDefault();
+                window.location.href = "@Html.Raw(Url.Action(
+                                            "DownloadReportSummariesCsv",
+                                            "Validation",
+                                            new { edOrgId = Model.FocusedEdOrgId }))";
             });
 
             var reportLinkTemplate =

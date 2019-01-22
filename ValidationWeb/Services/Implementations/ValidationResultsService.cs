@@ -619,5 +619,17 @@
                 return result;
             }
         }
+
+        public IList<ValidationErrorSummary> GetValidationErrors(int reportDetailsId)
+        {
+            using (var portalDbContext = DbContextFactory.Create())
+            {
+                return portalDbContext.ValidationErrorSummaries
+                    .Include(x => x.ErrorEnrollmentDetails)
+                    .Include(x => x.Severity)
+                    .Where(x => x.ValidationReportDetailsId == reportDetailsId)
+                    .ToList();
+            }
+        }
     }
 }
