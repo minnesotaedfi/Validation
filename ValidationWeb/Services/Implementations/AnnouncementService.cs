@@ -30,9 +30,18 @@
             {
                 using (var dbContext = DbContextFactory.Create())
                 {
-                    var dismissedAnnouncementIds = AppUserService.GetSession().DismissedAnnouncements
-                        .Select(da => da.AnnouncementId).ToArray();
-                    
+                    int[] dismissedAnnouncementIds;
+
+                    if (!includePreviouslyDismissedAnnouncements)
+                    {
+                        dismissedAnnouncementIds = AppUserService.GetSession().DismissedAnnouncements
+                            .Select(da => da.AnnouncementId).ToArray();
+                    }
+                    else
+                    {
+                        dismissedAnnouncementIds = Array.Empty<int>();
+                    }
+
                     var edOrgIds = AppUserService.GetSession().UserIdentity.AuthorizedEdOrgs
                         .Select(aeo => aeo.Id)
                         .ToArray();

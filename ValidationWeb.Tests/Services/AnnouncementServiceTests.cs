@@ -183,7 +183,7 @@
             DbContextFactoryMock.Setup(x => x.Create()).Returns(ValidationPortalDbContextMock.Object);
             var announcementService = new AnnouncementService(DbContextFactoryMock.Object, AppUserServiceMock.Object, LoggingServiceMock.Object);
 
-            var result = announcementService.GetAnnouncements(true);
+            var result = announcementService.GetAnnouncements(false);
 
             result.ShouldNotBeNull();
             result.ShouldNotBeEmpty();
@@ -402,8 +402,7 @@
 
             ValidationPortalDbContextMock.Verify(x => x.SaveChanges(), Times.Once);
         }
-
-
+        
         [Test]
         public void SaveExistingAnnouncement_Should_ThrowIfNotExistsAndLogError()
         {
