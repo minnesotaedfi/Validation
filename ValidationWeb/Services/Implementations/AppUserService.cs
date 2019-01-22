@@ -24,6 +24,7 @@
             LoggingService = loggingService;
         }
 
+        // todo: refactor! why is this here? 
         public void DismissAnnouncement(int announcementId)
         {
             using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
@@ -62,7 +63,7 @@
                     var sessionObj = GetSession();
                     if (sessionObj?.UserIdentity.AuthorizedEdOrgs.FirstOrDefault(eo => eo.Id == desiredEdOrgId) == null)
                     {
-                        return;
+                        return; // todo: why silently fail? 
                     }
 
                     validationPortalDataContext.AppUserSessions
