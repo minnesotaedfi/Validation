@@ -63,7 +63,7 @@
                     var sessionObj = GetSession();
                     if (sessionObj?.UserIdentity.AuthorizedEdOrgs.FirstOrDefault(eo => eo.Id == desiredEdOrgId) == null)
                     {
-                        return;
+                        return; // todo: why silently fail? 
                     }
 
                     validationPortalDataContext.AppUserSessions

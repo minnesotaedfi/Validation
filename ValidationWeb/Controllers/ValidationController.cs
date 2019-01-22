@@ -82,7 +82,7 @@ namespace ValidationWeb
                 x => new
                      {
                          x.RequestedWhen,
-                         x.Collection,
+                         Collection = $"{x.SchoolYear.StartYear}-{x.SchoolYear.EndYear} / {x.Collection}",
                          x.InitiatedBy,
                          x.Status,
                          x.CompletedWhen,
@@ -124,7 +124,7 @@ namespace ValidationWeb
                         }
                     case "collection":
                         {
-                            orderingFunctionString = x => x.Collection;
+                            orderingFunctionString = x => $"{x.SchoolYear.StartYear}-{x.SchoolYear.EndYear} / {x.Collection}";
                             sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
                                                 ? results.OrderBy(orderingFunctionString)
                                                 : results.OrderByDescending(orderingFunctionString);

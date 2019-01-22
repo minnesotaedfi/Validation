@@ -59,6 +59,7 @@
             {
                 var reportSummaryList = portalDbContext.ValidationReportSummaries
                     .Where(vrs => vrs.EdOrgId == edOrgId)
+                    .Include(x => x.SchoolYear)
                     .ToList();
 
                 reportSummaryList.ForEach(

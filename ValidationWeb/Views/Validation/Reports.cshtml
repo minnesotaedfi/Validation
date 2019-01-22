@@ -138,17 +138,17 @@
             $("#export").click(function(e) {
                 //$('#reportsTable').table2csv({ filename: 'validationReports.csv' });
                 e.preventDefault();
-                window.location.href = "@Html.Raw(Url.Action(
-                                            "DownloadReportSummariesCsv",
-                                            "Validation",
-                                            new { edOrgId = Model.FocusedEdOrgId }))";
+                window.location.href = "@Html.Raw(Url.Action("DownloadReportSummariesCsv", "Validation", new
+                                                                                                         {
+                                                                                                             edOrgId = Model.FocusedEdOrgId
+                                                                                                         }))";
             });
 
             var reportLinkTemplate =
-                '<a href="@Html.Raw(Url.Action(
-                              "Report",
-                              "Validation",
-                              new { id = "_id_" }))" class="show-data-loading">_collection_</a>';
+                '<a href="@Html.Raw(Url.Action("Report", "Validation", new
+                                                                       {
+                                                                           id = "_id_"
+                                                                       }))" class="show-data-loading">_collection_</a>';
 
             function createReportLink(id, collection) {
                 return reportLinkTemplate
@@ -173,12 +173,13 @@
                     "<'row'<'col-sm-12'tr>>" +
                     "<'row'<'col-md-3'i><'col-md-5 offset-4 pull-right'p>>",
                 ajax: {
-                    url: "@Html.Raw(Url.Action(
-                              "ReportSummaries",
-                              new { edOrgId = Model.FocusedEdOrgId }))",
+                    url: "@Html.Raw(Url.Action("ReportSummaries", new
+                                                                  {
+                                                                      edOrgId = Model.FocusedEdOrgId
+                                                                  }))",
                     complete: tableDataRefreshed
                 },
-                order: [[ 0, 'desc' ]],
+                order: [[0, 'desc']],
                 columns: [
                     {
                         title: 'Request Date/Time',
@@ -195,10 +196,15 @@
                         title: 'Collection',
                         data: 'collection',
                         render: function(data, type, row, meta) {
+                            debugger;
+
+                            var collectionNameWithYear =
+                                `${row.schoolYear.startYear}-${row.schoolYear.endYear} / ${data}`;
+
                             if (row.status.indexOf("In Progress") >= 0) {
-                                return data;
+                                return collectionNameWithYear;
                             } else {
-                                return createReportLink(row.id, data);
+                                return createReportLink(row.id, collectionNameWithYear);
                             }
                         }
                     },
