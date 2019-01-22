@@ -57,12 +57,13 @@
         </div>
     </div>
 </div>
-
-<div id="notes" class="row">
-    <div class="vp-body-header">Notes:</div>
+<div role="note">
+    <div id="notes" class="row">
+        <div class="vp-body-header">Notes:</div>
+    </div>
+    <div class="row">(1) Enrolling students are those who enrolled in a district school in the past and had previously enrolled in some other school in the state.</div>
+    <div class="row">(2) Withdrawing students are those that withdrew and subsequently enrolled elsewhere in the state.</div>
 </div>
-<div class="row">(1) Enrolling students are those who enrolled in a district school in the past and had previously enrolled in some other school in the state.</div>
-<div class="row">(2) Withdrawing students are those that withdrew and subsequently enrolled elsewhere in the state.</div>
 <div class="row tbmargin10">
     <a href="#pagetop">Back to Top</a>
 </div>
@@ -83,7 +84,7 @@
             }
 
             $('div.dataTables_scrollBody').css('min-height', '350px');
-            
+
             var enrollmentsTable = $('#reportsTable1').DataTable({
                 paging: true,
                 pagingType: 'full_numbers',
@@ -350,7 +351,7 @@
 
             $(enrollmentsTable.table().header()).addClass('table-primary');
 
-            var order; 
+            var order;
             if (recordRequestStudentId != null) {
                 order = [[8, "desc"]];
             } else {
@@ -575,7 +576,7 @@
 
             $("#view-request-form").on("submit",
                 function (event) {
-                    debugger; 
+                    debugger;
                     var $this = $(this);
                     var formValues = JSON.stringify(serializeFormToJson($this));
                     $.ajax({

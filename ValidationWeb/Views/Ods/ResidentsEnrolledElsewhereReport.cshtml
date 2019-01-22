@@ -30,11 +30,12 @@
 <div id="requestedReportContent" class="row">
     <table class="table table-bordered" id="reportsTable"></table>
 </div>
-
-<div id="notes" class="row">
-    <div class="vp-body-header">Notes:</div>
+<div role="note">
+    <div id="notes" class="row">
+        <div class="vp-body-header">Notes:</div>
+    </div>
+    <div class="row">The district where the student resides is determined from the student-school association extensions in the Ed Fi ODS database.</div>
 </div>
-<div class="row">The district where the student resides is determined from the student-school association extensions in the Ed Fi ODS database.</div>
 <div class="row tbmargin10">
     <div class="col-md-2">
         <a href="#pagetop">Back to Top</a>
@@ -136,12 +137,12 @@
                         render: function (data, type, row, meta) {
                             if (type === 'display') {
                                 debugger;
-                                return (data === 0) ? "-" : 
+                                return (data === 0) ? "-" :
                                     @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                     {
                                         @:createDrillDownLink(row.edOrgId, row.districtOfEnrollmentId, 0, row.orgType, data);
-                                    } 
-                                    else 
+                                    }
+                                    else
                                     {
                                         @:data
                                     }
