@@ -524,9 +524,17 @@
                 let currentFilter = SetFilter();
                 RefreshGrid("errorGrid", currentFilter);
             });
-            $("#downloadAsCSV").click(function() {
+            
+            $("#downloadAsCSV").click(function(e) {
                 // $('#errorTable').table2csv({ filename: 'validationReportDetails.csv' });
+
+                e.preventDefault();
+                window.location.href = "@Html.Raw(Url.Action(
+                                            "DownloadReportCsv",
+                                            "Validation",
+                                            new { Id = Model.Details.Id, ReportSummaryId = Model.Details.ValidationReportSummary.Id }))";
             });
+
             // Trigger autocomplete when user has typed at least two characters.
             $('input.autocomplete').bind('keyup', function(e) {
                 let currentValue = $(this).val();

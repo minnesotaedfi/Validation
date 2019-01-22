@@ -12,5 +12,7 @@ namespace ValidationWeb.Services
         ValidationReportDetails GetValidationReportDetails(int validationReportId);
         List<string> AutocompleteErrorFilter(ValidationErrorFilter filterSpecification);
         FilteredValidationErrors GetFilteredValidationErrorTableData(ValidationErrorFilter filterSpecification);
+
+        IList<ValidationErrorSummary> GetValidationErrors(int reportDetailsId);
     }
 }

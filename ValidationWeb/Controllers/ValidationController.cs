@@ -72,6 +72,8 @@ namespace ValidationWeb
 
         public FileStreamResult DownloadReportSummariesCsv(int edOrgId)
         {
+            var edOrg = _edOrgService.GetSingleEdOrg(edOrgId, _appUserService.GetSession().FocusedSchoolYearId);
+
             var results = _validationResultsService.GetValidationReportSummaries(edOrgId)
                 .OrderByDescending(rs => rs.CompletedWhen)
                 .ToList();
@@ -92,24 +94,8 @@ namespace ValidationWeb
             
             return new FileStreamResult(memoryStream, "text/csv")
                    {
-                       FileDownloadName = "ValidationSummary.csv"
+                       FileDownloadName = $"ValidationSummary_{edOrg.OrganizationName.Replace(' ', '-')}.csv"
                    };
-        }
-
-        public byte[] WriteCsvToMemory<T>(IEnumerable<T> records)
-        {
-            using (var memoryStream = new MemoryStream())
-            {
-                using (var streamWriter = new StreamWriter(memoryStream))
-                {
-                    using (var csvWriter = new CsvWriter(streamWriter))
-                    {
-                        csvWriter.WriteRecords(records);
-                        streamWriter.Flush();
-                        return memoryStream.ToArray();
-                    }
-                }
-            }
         }
 
         public JsonResult ReportSummaries(int edOrgId, IDataTablesRequest request)
@@ -209,6 +195,37 @@ namespace ValidationWeb
             return View(model);
         }
 
+        public FileStreamResult DownloadReportCsv(int id, int reportSummaryId)
+        {
+            var results = _validationResultsService.GetValidationErrors(id);
+
+            var csvArray = WriteCsvToMemory(
+                results
+                    .Where(x => x.ErrorEnrollmentDetails != null && x.ErrorEnrollmentDetails.Any())
+                    .Select(x => new
+                         {
+                             x.StudentUniqueId,
+                             x.StudentFullName,
+                             x.ErrorEnrollmentDetails.FirstOrDefault().School,
+                             x.ErrorEnrollmentDetails.FirstOrDefault().SchoolId,
+                             x.ErrorEnrollmentDetails.FirstOrDefault().DateEnrolled,
+                             x.ErrorEnrollmentDetails.FirstOrDefault().DateWithdrawn,
+                             x.ErrorEnrollmentDetails.FirstOrDefault().Grade,
+                             x.Severity.CodeValue,
+                             x.ErrorCode,
+                             x.ErrorText
+                         }));
+
+            var memoryStream = new MemoryStream(csvArray);
+
+            var reportSummary = _validationResultsService.GetValidationReportDetails(reportSummaryId);
+
+            return new FileStreamResult(memoryStream, "text/csv")
+                   {
+                       FileDownloadName = $"ValidationErrors_{reportSummary.DistrictName.Replace(' ', '-')}_{reportSummary.CollectionName}_{reportSummary.CompletedWhen?.ToShortDateString()}.csv"
+                   };
+        }
+
         [PortalAuthorize(Roles = "DistrictUser")]
         [HttpPost]
         public ActionResult RunEngine(int submissionCycleId)
@@ -229,6 +246,22 @@ namespace ValidationWeb
             HostingEnvironment.QueueBackgroundWorkItem(cancellationToken => _rulesEngineService.RunValidationAsync(submissionCycle.StartDate.Year.ToString(), summary.Id));
             
             return Json(summary);
+        }
+        
+        protected byte[] WriteCsvToMemory<T>(IEnumerable<T> records)
+        {
+            using (var memoryStream = new MemoryStream())
+            {
+                using (var streamWriter = new StreamWriter(memoryStream))
+                {
+                    using (var csvWriter = new CsvWriter(streamWriter))
+                    {
+                        csvWriter.WriteRecords(records);
+                        streamWriter.Flush();
+                        return memoryStream.ToArray();
+                    }
+                }
+            }
         }
     }
 }
