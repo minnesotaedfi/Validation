@@ -68,7 +68,7 @@
 
                     validationPortalDataContext.AppUserSessions
                         .First(x => x.Id == sessionObj.Id)
-                        .FocusedEdOrgId = desiredEdOrgId;
+                        .FocusedEdOrgId = desiredEdOrgId;   
 
                     validationPortalDataContext.SaveChanges();
                 }
@@ -94,11 +94,11 @@
 
                     if (sessionObj == null || !validSchoolYearId.HasValue)
                     {
-                        return;
+                        return; // todo: another silent fail! 
                     }
 
                     validationPortalDataContext.AppUserSessions
-                        .First(x => x.Id == sessionObj.Id)
+                        .First(x => x.Id == sessionObj.Id)  // todo: null ref
                         .FocusedSchoolYearId = validSchoolYearId.Value;
                     
                     validationPortalDataContext.SaveChanges();
