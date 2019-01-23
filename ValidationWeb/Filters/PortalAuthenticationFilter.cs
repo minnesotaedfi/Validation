@@ -192,7 +192,7 @@ namespace ValidationWeb
             }
             else
             {
-                _loggingService.LogInfoMessage($"Single Sign On user found in header - simulated user is {authHeaderValue ?? "null"}");
+                _loggingService.LogInfoMessage($"Single Sign On user found in header - authenticated user is {authHeaderValue ?? "null"}");
             }
 
             if (string.IsNullOrWhiteSpace(authHeaderValue))
@@ -329,25 +329,29 @@ namespace ValidationWeb
                         _loggingService.LogDebugMessage(
                             $"User: {authHeaderValue}, Ed Organization ID: {ssoUserOrg?.StateOrganizationId ?? "null"}.");
 
-                        int authorizedEdOrgId;
-                        if (int.TryParse(ssoUserOrg.StateOrganizationId.Substring(0, 5), out authorizedEdOrgId))
+                        if (!ssoUserOrg.StateOrganizationId.Equals("ALL", StringComparison.InvariantCultureIgnoreCase))
                         {
-                            
-                            _loggingService.LogDebugMessage(
-                                $"User: {authHeaderValue}, Taking information from the ODS associated with school year ID number {schoolYearId.ToString()}.");
-                            try
+                            int authorizedEdOrgId;
+                            if (int.TryParse(ssoUserOrg.StateOrganizationId.Substring(0, 5), out authorizedEdOrgId))
                             {
-                                authorizedEdOrgs.Add(_edOrgService.GetEdOrgById(authorizedEdOrgId, schoolYearId));
+
+                                _loggingService.LogDebugMessage(
+                                    $"User: {authHeaderValue}, Taking information from the ODS associated with school year ID number {schoolYearId.ToString()}.");
+                                try
+                                {
+                                    authorizedEdOrgs.Add(_edOrgService.GetEdOrgById(authorizedEdOrgId, schoolYearId));
+                                }
+                                catch (Exception ex)
+                                {
+                                    _loggingService.LogErrorMessage(
+                                        $"When retrieving the information for Organization ID {authorizedEdOrgId} from the ODS associated with school year ID {schoolYearId} for user {authHeaderValue}, an error occurred: {ex.ChainInnerExceptionMessages()}");
+                                }
                             }
-                            catch (Exception ex)
+                            else
                             {
-                                _loggingService.LogErrorMessage(
-                                    $"When retrieving the information for Organization ID {authorizedEdOrgId} from the ODS associated with school year ID {schoolYearId} for user {authHeaderValue}, an error occurred: {ex.ChainInnerExceptionMessages()}");
+                                _loggingService.LogWarningMessage(
+                                    $"Could not look up Ed Organization Id {ssoUserOrg.StateOrganizationId}");
                             }
-                        }
-                        else
-                        {
-                            _loggingService.LogWarningMessage($"Could not look up Ed Organization Id {ssoUserOrg.StateOrganizationId}");
                         }
                     }
                     catch (Exception ex)
@@ -359,7 +363,14 @@ namespace ValidationWeb
 
                 // special case for users who can view all districts
                 // todo: add to the logic in IIdentityExtensions.GetViewPermissions() 
-                if (appRole.Name == PortalRoleNames.HelpDesk || appRole.Name == PortalRoleNames.DataOwner)
+                var allDistrictRoles = new[]
+                                       {
+                                           PortalRoleNames.HelpDesk, 
+                                           PortalRoleNames.DataOwner, 
+                                           PortalRoleNames.Admin
+                                       };
+
+                if (allDistrictRoles.Contains(appRole.Name))
                 {
                     var allEdOrgs = _edOrgService.GetAllEdOrgs();
                     authorizedEdOrgs.AddRange(allEdOrgs.ExceptBy(authorizedEdOrgs, x => x.Id));
