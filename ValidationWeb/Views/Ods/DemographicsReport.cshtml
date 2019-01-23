@@ -10,11 +10,11 @@
 <div class="row tbmargin10">
     @if (Model.IsStateMode)
     {
-        <div class="vp-body-header justify-content-start align-self-center">Ancestry Ethnic Origin and Race Counts for All Minnesota Districts</div>
+        <h1 class="vp-body-header justify-content-start align-self-center">Ancestry Ethnic Origin and Race Counts for All Minnesota Districts</h1>
     }
     else
     {
-        <div class="vp-body-header justify-content-start align-self-center">Ancestry Ethnic Origin and Race Counts for District @Model.EdOrgName (@Model.EdOrgId.ToString())</div>
+        <h1 class="vp-body-header justify-content-start align-self-center">Ancestry Ethnic Origin and Race Counts for District @Model.EdOrgName (@Model.EdOrgId.ToString())</h1>
 
         if (Model.SchoolId.HasValue && !string.IsNullOrWhiteSpace(Model.SchoolName))
         {
