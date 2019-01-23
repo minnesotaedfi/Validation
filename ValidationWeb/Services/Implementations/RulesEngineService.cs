@@ -106,7 +106,19 @@
 
         public Task RunValidationAsync(string fourDigitOdsDbYear, long ruleValidationId)
         {
-            return Task.Factory.StartNew(() => RunValidation(fourDigitOdsDbYear, ruleValidationId));
+            _loggingService.LogInfoMessage($"===== Starting validation run for year {fourDigitOdsDbYear}, ruleValidationId {ruleValidationId}");
+
+            return Task.Factory
+                .StartNew(() => RunValidation(fourDigitOdsDbYear, ruleValidationId))
+                .ContinueWith(task =>
+                    {
+                        _loggingService.LogInfoMessage($"===== Completed validation run for year {fourDigitOdsDbYear}, ruleValidationId {ruleValidationId}");
+
+                        if (task.Exception != null)
+                        {
+                            _loggingService.LogErrorMessage(task.Exception.Flatten().ChainInnerExceptionMessages());
+                        }
+                    });
         }
 
         public void RunValidation(string fourDigitOdsDbYear, long ruleValidationId)
