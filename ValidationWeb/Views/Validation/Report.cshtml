@@ -526,8 +526,6 @@
             });
             
             $("#downloadAsCSV").click(function(e) {
-                // $('#errorTable').table2csv({ filename: 'validationReportDetails.csv' });
-
                 e.preventDefault();
                 window.location.href = "@Html.Raw(Url.Action(
                                             "DownloadReportCsv",

@@ -1,10 +1,8 @@
-﻿using Engine.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using System.Web.Script.Serialization;
+using Engine.Models;
 using ValidationWeb.Filters;
 using ValidationWeb.Services;
 
@@ -17,7 +15,7 @@ namespace ValidationWeb
 
     using DataTables.AspNet.Core;
     using DataTables.AspNet.Mvc5;
- [PortalAuthorize(Roles = "DistrictUser,HelpDesk")]
+    [PortalAuthorize(Roles = "DistrictUser,HelpDesk")]
     public class ValidationController : Controller
     {
         protected readonly IAppUserService _appUserService;
@@ -80,28 +78,28 @@ namespace ValidationWeb
 
             var csvArray = WriteCsvToMemory(results.Select(
                 x => new
-                     {
-                         x.RequestedWhen,
-                         Collection = $"{x.SchoolYear.StartYear}-{x.SchoolYear.EndYear} / {x.Collection}",
-                         x.InitiatedBy,
-                         x.Status,
-                         x.CompletedWhen,
-                         x.ErrorCount,
-                         x.WarningCount
-                     }));
+                {
+                    x.RequestedWhen,
+                    Collection = $"{x.SchoolYear.StartYear}-{x.SchoolYear.EndYear} / {x.Collection}",
+                    x.InitiatedBy,
+                    x.Status,
+                    x.CompletedWhen,
+                    x.ErrorCount,
+                    x.WarningCount
+                }));
 
             var memoryStream = new MemoryStream(csvArray);
-            
+
             return new FileStreamResult(memoryStream, "text/csv")
-                   {
-                       FileDownloadName = $"ValidationSummary_{edOrg.OrganizationName.Replace(' ', '-')}.csv"
-                   };
+            {
+                FileDownloadName = $"ValidationSummary_{edOrg.OrganizationName.Replace(' ', '-')}.csv"
+            };
         }
 
         public JsonResult ReportSummaries(int edOrgId, IDataTablesRequest request)
         {
             var results = _validationResultsService.GetValidationReportSummaries(edOrgId).OrderByDescending(rs => rs.CompletedWhen).ToList();
-            
+
             IEnumerable<ValidationReportSummary> sortedResults = results;
 
             var sortColumn = request.Columns.FirstOrDefault(x => x.Sort != null);
@@ -197,33 +195,43 @@ namespace ValidationWeb
 
         public FileStreamResult DownloadReportCsv(int id, int reportSummaryId)
         {
-            var results = _validationResultsService.GetValidationErrors(id);
+            var results = _validationResultsService.GetValidationErrors(reportSummaryId);
 
-            var csvArray = WriteCsvToMemory(
-                results
-                    .Where(x => x.ErrorEnrollmentDetails != null && x.ErrorEnrollmentDetails.Any())
-                    .Select(x => new
-                         {
-                             x.StudentUniqueId,
-                             x.StudentFullName,
-                             x.ErrorEnrollmentDetails.FirstOrDefault().School,
-                             x.ErrorEnrollmentDetails.FirstOrDefault().SchoolId,
-                             x.ErrorEnrollmentDetails.FirstOrDefault().DateEnrolled,
-                             x.ErrorEnrollmentDetails.FirstOrDefault().DateWithdrawn,
-                             x.ErrorEnrollmentDetails.FirstOrDefault().Grade,
-                             x.Severity.CodeValue,
-                             x.ErrorCode,
-                             x.ErrorText
-                         }));
+            var groupedByStudent = new List<dynamic>();
 
+            foreach (var detailRow in results)
+            {
+                groupedByStudent.Add(
+                    new
+                    {
+                        StudentId = detailRow.StudentUniqueId,
+                        Student = detailRow.StudentFullName,
+                        School = CombineDetailField(detailRow.ErrorEnrollmentDetails, x => x.School),
+                        SchoolId = CombineDetailField(detailRow.ErrorEnrollmentDetails, x => x.SchoolId),
+                        DateEnrolled = CombineDetailField(
+                                 detailRow.ErrorEnrollmentDetails,
+                                 x => x.DateEnrolled?.ToShortDateString()),
+                        DateWithdrawn = CombineDetailField(
+                                 detailRow.ErrorEnrollmentDetails,
+                                 x => x.DateWithdrawn == null
+                                          ? "Present"
+                                          : x.DateWithdrawn.Value.ToShortDateString()),
+                        Grade = CombineDetailField(detailRow.ErrorEnrollmentDetails, x => x.Grade),
+                        detailRow.Severity.CodeValue,
+                        detailRow.ErrorCode,
+                        detailRow.ErrorText
+                    });
+            }
+
+            var csvArray = WriteCsvToMemory(groupedByStudent);
             var memoryStream = new MemoryStream(csvArray);
 
             var reportSummary = _validationResultsService.GetValidationReportDetails(reportSummaryId);
 
             return new FileStreamResult(memoryStream, "text/csv")
-                   {
-                       FileDownloadName = $"ValidationErrors_{reportSummary.DistrictName.Replace(' ', '-')}_{reportSummary.CollectionName}_{reportSummary.CompletedWhen?.ToShortDateString()}.csv"
-                   };
+            {
+                FileDownloadName = $"ValidationErrors_{reportSummary.DistrictName.Replace(' ', '-')}_{reportSummary.CollectionName}_{reportSummary.CompletedWhen?.ToShortDateString()}.csv"
+            };
         }
 
         [PortalAuthorize(Roles = "DistrictUser")]
@@ -244,10 +252,10 @@ namespace ValidationWeb
             // refactor: step 1 set up run, get id. step 2, queue background run engine in thread 
             ValidationReportSummary summary = _rulesEngineService.SetupValidationRun(submissionCycle.StartDate.Year.ToString(), submissionCycle.CollectionId);
             HostingEnvironment.QueueBackgroundWorkItem(cancellationToken => _rulesEngineService.RunValidationAsync(submissionCycle.StartDate.Year.ToString(), summary.Id));
-            
+
             return Json(summary);
         }
-        
+
         protected byte[] WriteCsvToMemory<T>(IEnumerable<T> records)
         {
             using (var memoryStream = new MemoryStream())
@@ -262,6 +270,13 @@ namespace ValidationWeb
                     }
                 }
             }
+        }
+
+        protected string CombineDetailField(
+            ICollection<ValidationErrorEnrollmentDetail> details,
+            Func<ValidationErrorEnrollmentDetail, string> func)
+        {
+            return string.Join(Environment.NewLine, details.Select(func));
         }
     }
 }
