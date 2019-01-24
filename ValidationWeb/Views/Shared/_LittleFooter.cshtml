@@ -1,12 +1,12 @@
 ﻿@{var footerLinkBaseUrl = "https://Education.mn.gov"; }
 <div class="row noprint layout layout-footer container-fluid" role="contentinfo">
     <div class="col-md-1 col-sm-12 d-none d-sm-block noprint">&nbsp;</div>
-    <div class="col-md-3 col-sm-12 d-none d-sm-block noprint">
+    <div class="col-md-3 col-sm-12 d-none d-sm-block noprint" aria-label="Footer version">
         <ul class="noDisc">
             <li>Revision @Html.Action("ProductVersion", "Nav")</li>
         </ul>
     </div>
-    <div class="col-md-3 col-sm-12 d-none d-sm-block noprint">
+    <div class="col-md-3 col-sm-12 d-none d-sm-block noprint" aria-label="Footer links">
         <ul class="noDisc">
             <li><a href="https://mn.gov/portal/">Minnesota.gov</a></li>
             <li><a href="@(footerLinkBaseUrl)/MDE/about/004831" target="">Accessibility Policy</a></li>
@@ -15,7 +15,7 @@
             <li><a href="@(footerLinkBaseUrl)/MDE/about/MDEDEV_001317" target="">Help</a></li>
         </ul>
     </div>
-    <div class="col-md-3 col-sm-12 d-none d-sm-block noprint">
+    <div class="col-md-3 col-sm-12 d-none d-sm-block noprint" aria-label="Footer copyright">
         Copyright 2018<br />Minnesota Department of Education<br />1500 Highway 36 West<br />Roseville MN 55113<br />Phone: 651-582-8200
     </div>
     <div class="col-md-1 col-sm-12 d-none d-sm-block noprint">&nbsp;</div>
