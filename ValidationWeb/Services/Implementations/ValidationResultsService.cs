@@ -625,10 +625,12 @@
         {
             using (var portalDbContext = DbContextFactory.Create())
             {
-                return portalDbContext.ValidationErrorSummaries
-                    .Include(x => x.ErrorEnrollmentDetails)
-                    .Include(x => x.Severity)
-                    .Where(x => x.ValidationReportDetailsId == reportDetailsId)
+                return portalDbContext.ValidationReportDetails
+                    .Include(x => x.ErrorSummaries)
+                    .Include(x => x.ErrorSummaries.Select(y => y.Severity))
+                    .Include(x => x.ErrorSummaries.Select(y => y.ErrorEnrollmentDetails))
+                    .First(x => x.ValidationReportSummaryId == reportDetailsId)
+                    .ErrorSummaries
                     .ToList();
             }
         }
