@@ -50,6 +50,13 @@ div#notes {
     color: white;
     transform: translate(-50%,-50%);
     -ms-transform: translate(-50%,-50%);
+
+    width: 100%;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    text-align: center;
+    background-color: rgb(0, 56, 101, 0.9);
+    text-shadow: 0 0 1px #000, 0 0 1px #000, 0 0 1px #000; /* text outline */
 }
 
 /* Background Colors */
