@@ -31,6 +31,7 @@
     using ValidationWeb.Database;
     using ValidationWeb.DataCache;
     using ValidationWeb.Services;
+    using ValidationWeb.Services.Implementations;
     using ValidationWeb.Utility;
 
     public class Global : System.Web.HttpApplication
@@ -93,10 +94,13 @@
             container.Register<IValidatedDataSubmissionService, ValidatedDataSubmissionService>(Lifestyle.Scoped);
             container.Register<IValidationResultsService, ValidationResultsService>(Lifestyle.Scoped);
             container.Register<ISubmissionCycleService, SubmissionCycleService>(Lifestyle.Scoped);
+            container.Register<IEdFiApiLogService, EdFiApiLogService>(Lifestyle.Scoped);
             container.Register<ICacheManager, CacheManager>(Lifestyle.Singleton);
             container.Register<IOdsConfigurationValues, OdsConfigurationValues>(Lifestyle.Scoped);
 
             container.Register<IDbContextFactory<ValidationPortalDbContext>, DbContextFactory<ValidationPortalDbContext>>(Lifestyle.Singleton);
+            container.Register<IDbContextFactory<EdFiLogDbContext>, DbContextFactory<EdFiLogDbContext>>(Lifestyle.Singleton);
+
             
             // Rules Engine
             container.Register<ISchemaProvider, EngineSchemaProvider>(Lifestyle.Scoped);

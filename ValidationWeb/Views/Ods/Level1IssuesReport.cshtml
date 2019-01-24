@@ -1,43 +1,75 @@
 ﻿@model OdsLevel1IssuesReportViewModel
 
-<div id="requestedReportContent">
-    <table class="table table-sm table-responsive-md table-bordered" id="reportsTable">
-        <tr class="table-primary">
-            <th>Request Date/Time</th>
-            <th>Collection</th>
-            <th>Initiated By</th>
-            <th>Status</th>
-            <th>Completion Date/Time</th>
-            <th>Error Count</th>
-            <th>Warning Count</th>
-        </tr>
-        @*@foreach (var summary in Model.ReportSummaries)
-            {
-                    <tr>
-                        <td>
-                            @summary.RequestedWhen.ToShortDateString()
-                            <br />@summary.RequestedWhen.ToShortTimeString()
-                        </td>
-                        <td>@Html.ActionLink(summary.Collection ?? "Unknown", "Report", "Validation", new { area = "", id = summary.Id }, null)</td>
-                        <td>@summary.InitiatedBy</td>
-                        <td>@summary.Status</td>
-                        <td>
-                            @(summary.CompletedWhen.HasValue ? summary.CompletedWhen.Value.ToShortDateString() : string.Empty)
-                            <br />@(summary.CompletedWhen.HasValue ? summary.CompletedWhen.Value.ToShortTimeString() : string.Empty)
-                        </td>
-                        <td>@(summary.ErrorCount.HasValue ? summary.ErrorCount.Value.ToString() : string.Empty)</td>
-                        <td>@(summary.WarningCount.HasValue ? summary.WarningCount.Value.ToString() : string.Empty)</td>
-                    </tr>
-                }*@
-    </table>
+<div class="row tbmargin10" id="pagetop">
+    <div class="vp-body-header justify-content-start align-self-center">Level 1 Validation Issues Report</div>
 </div>
 
+<div class="row" id="requestedReportContent">
+    <table class="table table-bordered" id="reportsTable"></table>
+</div>
 
 @section scripts {
-    <script>
+    <script type="text/javascript">
+        $(function() {
+
+            function getDateTimeString(serverDateTime) {
+                let dateTime = new Date(serverDateTime);
+                return `${dateTime.toLocaleDateString("en-US")}&nbsp;${dateTime.toLocaleTimeString("en-US")}`;
+            }
+
+            var dataTable = $('#reportsTable').DataTable({
+                paging: true,
+                pagingType: 'full_numbers',
+                info: true,
+                scrollCollapse: true,
+                deferRender: true,
+                searching: false,
+                serverSide: true,
+                processing: true,
+                language: {
+                    loadingRecords: 'Loading...',
+                    processing: "Loading..."
+                },
+                dom: "<'row'<'col-md-3'l><'col-md-3 offset-6 text-right jumpToNotes'>>" +
+                    "<'row'<'col-sm-12'tr>>" +
+                    "<'row'<'col-md-3'i><'col-md-5 offset-4 pull-right'p>>",
+                ajax: {
+                    url: "@Html.Raw(Url.Action("GetApiErrorsReportData", new { }))"
+                },
+                columns: [
+                    {
+                        title: 'District',
+                        data: 'district',
+                    },
+                    {
+                        title: 'Date/Time',
+                        data: 'date',
+                        render: function(data, type, row, meta) {
+                            if (type === 'display') {
+                                return data == null ? "Unknown" : getDateTimeString(data);
+                            } else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        title: 'API Endpoint',
+                        data: 'url',
+                    },
+                    {
+                        title: 'Response Code',
+                        data: 'responseCode',
+                    },
+                    {
+                        title: 'Response Body',
+                        data: 'responsePhrase',
+                    }
+                ]
+            });
+
+            $(dataTable.table().header()).addClass('table-primary');
+        });
     </script>
+
 }
-
-
-
 
