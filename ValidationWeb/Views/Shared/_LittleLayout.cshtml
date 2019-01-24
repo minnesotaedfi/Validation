@@ -33,7 +33,7 @@
         </div>
         <div class="row noprint">
             <div class="col-12">
-                <nav id="layout-navbar" role="navigation" aria-label="Main" class="navbar navbar-expand-sm prime-blue">
+               <nav id="layout-navbar" role="navigation" aria-label="Main navigation" class="navbar navbar-expand-sm prime-blue">
                     <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#theNavBar" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
@@ -59,7 +59,7 @@
                 </nav>
             </div>
         </div>
-        <div class="row">
+        <div class="row" role="navigation" aria-label="Breadcrumb navigation">
             <div class="col-12">
                 @Html.MvcSiteMap().SiteMapPath()
             </div>
