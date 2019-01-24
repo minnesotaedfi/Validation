@@ -31,6 +31,8 @@
 
         public string ResponsePhrase { get; set; }
 
+        public string ResponseBody { get; set; }
+
         public string Exception { get; set; }
     }
 }

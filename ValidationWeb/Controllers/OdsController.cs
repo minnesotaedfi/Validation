@@ -1175,7 +1175,25 @@ namespace ValidationWeb
 
         protected JsonResult SortAndFilterApiReportData(IEnumerable<Log> results, IDataTablesRequest request)
         {
-            var sortedResults = results.Distinct();
+            var session = AppUserService.GetSession();
+            //var edOrg = EdOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
+            var schoolYear = SchoolYearService.GetSchoolYearById(session.FocusedSchoolYearId);
+
+            results = results.Where(
+                x => x.District == session.FocusedEdOrgId.ToString() && x.Year == schoolYear.EndYear);
+
+            var sortedResults = results.Select(x =>
+                new Log
+                {
+                    Date = x.Date,
+                    District = x.District,
+                    Year = x.Year,
+                    Method = x.Method,
+                    Url = new Uri(x.Url).PathAndQuery,
+                    ResponseCode = x.ResponseCode,
+                    ResponsePhrase = x.ResponsePhrase,
+                    ResponseBody = x.ResponseBody
+                });
 
             var sortColumn = request.Columns.FirstOrDefault(x => x.Sort != null);
             if (sortColumn != null)
@@ -1190,48 +1208,48 @@ namespace ValidationWeb
                         {
                             orderingFunctionInt = x => x.Id;
                             sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
-                                                ? results.OrderBy(orderingFunctionInt)
-                                                : results.OrderByDescending(orderingFunctionInt);
+                                                ? sortedResults.OrderBy(orderingFunctionInt)
+                                                : sortedResults.OrderByDescending(orderingFunctionInt);
                             break;
                         }
                     case "date":
                         {
                             orderingFunctionNullableDateTime = x => x.Date;
                             sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
-                                                ? results.OrderBy(orderingFunctionNullableDateTime)
-                                                : results.OrderByDescending(orderingFunctionNullableDateTime);
+                                                ? sortedResults.OrderBy(orderingFunctionNullableDateTime)
+                                                : sortedResults.OrderByDescending(orderingFunctionNullableDateTime);
                             break;
                         }
                     case "thread":
                         {
                             orderingFunctionString = x => x.Thread;
                             sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
-                                                ? results.OrderBy(orderingFunctionString)
-                                                : results.OrderByDescending(orderingFunctionString);
+                                                ? sortedResults.OrderBy(orderingFunctionString)
+                                                : sortedResults.OrderByDescending(orderingFunctionString);
                             break;
                         }
                     case "level":
                         {
                             orderingFunctionString = x => x.Level;
                             sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
-                                                ? results.OrderBy(orderingFunctionString)
-                                                : results.OrderByDescending(orderingFunctionString);
+                                                ? sortedResults.OrderBy(orderingFunctionString)
+                                                : sortedResults.OrderByDescending(orderingFunctionString);
                             break;
                         }
                     case "logger":
                         {
                             orderingFunctionString = x => x.Logger;
                             sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
-                                                ? results.OrderBy(orderingFunctionString)
-                                                : results.OrderByDescending(orderingFunctionString);
+                                                ? sortedResults.OrderBy(orderingFunctionString)
+                                                : sortedResults.OrderByDescending(orderingFunctionString);
                             break;
                         }
                     case "year":
                         {
                             orderingFunctionString = x => x.Year;
                             sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
-                                                ? results.OrderBy(orderingFunctionString)
-                                                : results.OrderByDescending(orderingFunctionString);
+                                                ? sortedResults.OrderBy(orderingFunctionString)
+                                                : sortedResults.OrderByDescending(orderingFunctionString);
                             break;
                         }
 
@@ -1239,48 +1257,48 @@ namespace ValidationWeb
                         {
                             orderingFunctionString = x => x.District;
                             sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
-                                                ? results.OrderBy(orderingFunctionString)
-                                                : results.OrderByDescending(orderingFunctionString);
+                                                ? sortedResults.OrderBy(orderingFunctionString)
+                                                : sortedResults.OrderByDescending(orderingFunctionString);
                             break;
                         }
                     case "method":
                         {
                             orderingFunctionString = x => x.Method;
                             sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
-                                                ? results.OrderBy(orderingFunctionString)
-                                                : results.OrderByDescending(orderingFunctionString);
+                                                ? sortedResults.OrderBy(orderingFunctionString)
+                                                : sortedResults.OrderByDescending(orderingFunctionString);
                             break;
                         }
                     case "url":
                         {
                             orderingFunctionString = x => x.Url;
                             sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
-                                                ? results.OrderBy(orderingFunctionString)
-                                                : results.OrderByDescending(orderingFunctionString);
+                                                ? sortedResults.OrderBy(orderingFunctionString)
+                                                : sortedResults.OrderByDescending(orderingFunctionString);
                             break;
                         }
                     case "responseCode":
                         {
-                            orderingFunctionString = x => x.ResponseCode;
+                            orderingFunctionString = x => $"{x.ResponseCode} {x.ResponsePhrase}";
                             sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
-                                                ? results.OrderBy(orderingFunctionString)
-                                                : results.OrderByDescending(orderingFunctionString);
+                                                ? sortedResults.OrderBy(orderingFunctionString)
+                                                : sortedResults.OrderByDescending(orderingFunctionString);
                             break;
                         }
-                    case "responsePhrase":
+                    case "responseBody":
                         {
-                            orderingFunctionString = x => x.ResponsePhrase;
+                            orderingFunctionString = x => x.ResponseBody;
                             sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
-                                                ? results.OrderBy(orderingFunctionString)
-                                                : results.OrderByDescending(orderingFunctionString);
+                                                ? sortedResults.OrderBy(orderingFunctionString)
+                                                : sortedResults.OrderByDescending(orderingFunctionString);
                             break;
                         }
                     case "exception":
                         {
                             orderingFunctionString = x => x.Exception;
                             sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
-                                                ? results.OrderBy(orderingFunctionString)
-                                                : results.OrderByDescending(orderingFunctionString);
+                                                ? sortedResults.OrderBy(orderingFunctionString)
+                                                : sortedResults.OrderByDescending(orderingFunctionString);
                             break;
                         }
                 }

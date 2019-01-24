@@ -58,11 +58,14 @@
                     },
                     {
                         title: 'Response Code',
-                        data: 'responseCode',
+                        name: 'responseCode',
+                        data: function(row, type, set) {
+                            return row.responseCode + " " + row.responsePhrase;
+                        }
                     },
                     {
-                        title: 'Response Body',
-                        data: 'responsePhrase',
+                        title: 'Response',
+                        data: 'responseBody',
                     }
                 ]
             });
