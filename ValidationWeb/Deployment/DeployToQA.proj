@@ -16,6 +16,7 @@
 		<SingleSignOnDatabase Condition="'$(SingleSignOnDatabase)'==''">Data Source=EDU-SQL2014DEV;Initial Catalog=MidmsAudit_10g;Integrated Security=True;MultipleActiveResultSets=True;App=EntityFramework</SingleSignOnDatabase>
 		<RawOdsDbContext Condition="'$(RawOdsDbContext)'==''">Data Source=EDU-EDFIODSQ01;Initial Catalog=EdFi_Ods_{0};Integrated Security=True;MultipleActiveResultSets=True;App=EntityFramework</RawOdsDbContext>
 		<ValidatedOdsDbContext Condition="'$(ValidatedOdsDbContext)'==''">data source=EDU-EDFIODSQ01;initial catalog=ValidationPortal;integrated security=True;MultipleActiveResultSets=True;App=EntityFramework</ValidatedOdsDbContext>
+		<EdFiLogDbContext Condition=" '$(EdFiLogDbContext)'==''">data source=EDU-EDFIODSQ01;initial catalog=EdFi_Log;integrated security=True;MultipleActiveResultSets=True;App=EntityFramework</EdFiLogDbContext>
 	</PropertyGroup>
 	<ItemGroup>
 		<PublishPackages Include="ValidationPortal.deploy.cmd">
@@ -45,6 +46,8 @@
 			<RawOdsDbContextConnectionString>$(RawOdsDbContext.Replace(";","%3b"))</RawOdsDbContextConnectionString>
 			<ValidatedOdsDbContextName>ValidatedOdsDbContext-Web.config Connection String</ValidatedOdsDbContextName>
 			<ValidatedOdsDbContextConnectionString>$(ValidatedOdsDbContext.Replace(";","%3b"))</ValidatedOdsDbContextConnectionString>
+			<EdFiLogDbContextName>EdFiLogDbContext-Web.config Connection String</EdFiLogDbContextName>
+			<EdFiLogDbContextConnectionString>$(EdFiLogDbContext.Replace(";","%3b"))</EdFiLogDbContextConnectionString>
 		</PublishPackages>
 	</ItemGroup>
 	<Target Name="PublishWebPackages" Outputs="%(PublishPackages.Identity)">
@@ -110,11 +113,13 @@
 				Condition =" '%(PublishPackages.ValidatedOdsDbContextConnectionString)'!=''" />
 		<XmlPoke
 				XmlInputPath="%(PublishPackages.ParametersXml)"
+				Query="//parameters/setParameter[@name='%(PublishPackages.EdFiLogDbContextName)']/@value"
+				Value="%(PublishPackages.EdFiLogDbContextConnectionString)"
+				Condition =" '%(PublishPackages.EdFiLogDbContextConnectionString)'!=''" />
+		<XmlPoke
+				XmlInputPath="%(PublishPackages.ParametersXml)"
 				Query="//parameters/setParameter[@name='UseSimulatedSSO']/@value"
 				Value="false"  />
-
-		<Message Text="%(PublishPackages.SessionStateConnectionString)" />
-
 		<XmlPoke
 				XmlInputPath="%(PublishPackages.ParametersXml)"
 				Query="//parameters/setParameter[@name='SessionStateConnectionString']/@value"

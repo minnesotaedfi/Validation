@@ -16,6 +16,7 @@
 		<SingleSignOnDatabase Condition="'$(SingleSignOnDatabase)'==''">Data Source=MN-DEV;Initial Catalog=ValidationPortalSsoMock;Integrated Security=True;MultipleActiveResultSets=True;App=EntityFramework</SingleSignOnDatabase>
 		<RawOdsDbContext Condition="'$(RawOdsDbContext)'==''">Data Source=MN-DEV;Initial Catalog=EdFi_Ods_{0};Integrated Security=True;MultipleActiveResultSets=True;App=EntityFramework</RawOdsDbContext>
 		<ValidatedOdsDbContext Condition="'$(ValidatedOdsDbContext)'==''">data source=MN-DEV;initial catalog=ValidationPortal;integrated security=True;MultipleActiveResultSets=True;App=EntityFramework</ValidatedOdsDbContext>
+		<EdFiLogDbContext Condition=" '$(EdFiLogDbContext)'==''">data source=MN-DEV;initial catalog=EdFi_Log;integrated security=True;MultipleActiveResultSets=True;App=EntityFramework</EdFiLogDbContext>
 	</PropertyGroup>
 	<ItemGroup>
 		<PublishPackages Include="ValidationPortal.deploy.cmd">
@@ -45,6 +46,8 @@
 			<RawOdsDbContextConnectionString>$(RawOdsDbContext.Replace(";","%3b"))</RawOdsDbContextConnectionString>
 			<ValidatedOdsDbContextName>ValidatedOdsDbContext-Web.config Connection String</ValidatedOdsDbContextName>
 			<ValidatedOdsDbContextConnectionString>$(ValidatedOdsDbContext.Replace(";","%3b"))</ValidatedOdsDbContextConnectionString>
+			<EdFiLogDbContextName>EdFiLogDbContext-Web.config Connection String</EdFiLogDbContextName>
+			<EdFiLogDbContextConnectionString>$(EdFiLogDbContext.Replace(";","%3b"))</EdFiLogDbContextConnectionString>
 			<!-- These get added due to the project properties >> Publish SQL. These actually get deployed. -->
 			<!--<ValidationPortalDbContextName>ValidationPortalDbContext-Deployment-Deployment Connection String</ValidationPortalDbContextName>
 			<ValidationPortalDbContextConnectionString>$(ValidationPortalDbContext.Replace(";","%3b"))</ValidationPortalDbContextConnectionString>
@@ -115,6 +118,11 @@
 				Query="//parameters/setParameter[@name='%(PublishPackages.ValidatedOdsDbContextName)']/@value"
 				Value="%(PublishPackages.ValidatedOdsDbContextConnectionString)"
 				Condition =" '%(PublishPackages.ValidatedOdsDbContextConnectionString)'!=''" />
+		<XmlPoke
+				XmlInputPath="%(PublishPackages.ParametersXml)"
+				Query="//parameters/setParameter[@name='%(PublishPackages.EdFiLogDbContextName)']/@value"
+				Value="%(PublishPackages.EdFiLogDbContextConnectionString)"
+				Condition =" '%(PublishPackages.EdFiLogDbContextConnectionString)'!=''" />
 		<XmlPoke
 				XmlInputPath="%(PublishPackages.ParametersXml)"
 				Query="//parameters/setParameter[@name='UseSimulatedSSO']/@value"

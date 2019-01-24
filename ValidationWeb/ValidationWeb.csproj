@@ -801,8 +801,12 @@
     <Compile Include="App_Start\JsonNetFormatter.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Database\EdFiLogDbContext.cs" />
+    <Compile Include="Models\Log.cs" />
     <Compile Include="Models\RecordsRequestFormData.cs" />
     <Compile Include="Models\RecordsResponseFormData.cs" />
+    <Compile Include="Services\Implementations\EdFiApiLogService.cs" />
+    <Compile Include="Services\Interfaces\IEdFiApiLogService.cs" />
     <Compile Include="Utility\BoolConverter.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LoginController.cs" />

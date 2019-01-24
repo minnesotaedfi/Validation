@@ -18,6 +18,7 @@ namespace ValidationWeb
     using ValidationWeb.DataCache;
     using ValidationWeb.Models;
     using ValidationWeb.Services;
+    using ValidationWeb.Services.Implementations;
     using ValidationWeb.Utility;
     using ValidationWeb.ViewModels;
 
@@ -32,6 +33,7 @@ namespace ValidationWeb
             IRulesEngineService rulesEngineService,
             ISchoolYearService schoolYearService,
             ICacheManager cacheManager,
+            IEdFiApiLogService apiLogService,
             Model engineObjectModel)
         {
             AppUserService = appUserService;
@@ -41,6 +43,7 @@ namespace ValidationWeb
             RulesEngineService = rulesEngineService;
             SchoolYearService = schoolYearService;
             CacheManager = cacheManager;
+            ApiLogService = apiLogService;
         }
 
         protected IAppUserService AppUserService { get; set; }
@@ -54,6 +57,8 @@ namespace ValidationWeb
         protected ISchoolYearService SchoolYearService { get; set; }
 
         protected ICacheManager CacheManager { get; set; }
+
+        protected IEdFiApiLogService ApiLogService { get; set; }
 
         protected Model EngineObjectModel { get; set; }
 
@@ -417,11 +422,11 @@ namespace ValidationWeb
 
         // GET: Ods/MultipleEnrollmentsReport
         public ActionResult MultipleEnrollmentsReport(
-            bool isStateMode = false, 
-            int? districtToDisplay = null, 
-            bool isStudentDrillDown = false, 
-            int? schoolId = null, 
-            int? drillDownColumnIndex = null, 
+            bool isStateMode = false,
+            int? districtToDisplay = null,
+            bool isStudentDrillDown = false,
+            int? schoolId = null,
+            int? drillDownColumnIndex = null,
             OrgType orgType = OrgType.District)
         {
             var session = AppUserService.GetSession();
@@ -488,8 +493,8 @@ namespace ValidationWeb
             var startTime = DateTime.Now;
 #endif
             var results = CacheManager.GetMultipleEnrollmentCounts(
-                OdsDataService, 
-                isStateMode ? (int?)null : edOrgId, 
+                OdsDataService,
+                isStateMode ? (int?)null : edOrgId,
                 fourDigitSchoolYear);
 #if DEBUG
             System.Diagnostics.Debug.WriteLine($"GetMultipleEnrollmentCounts: {(DateTime.Now - startTime).Milliseconds}ms");
@@ -820,7 +825,7 @@ namespace ValidationWeb
         public JsonResult GetChangeOfEnrollmentReportData(
             int edOrgId,
             string fourDigitSchoolYear,
-            bool isCurrentDistrict, 
+            bool isCurrentDistrict,
             IDataTablesRequest request)
         {
 #if DEBUG
@@ -873,8 +878,8 @@ namespace ValidationWeb
                         filteredResults = filteredResults.Where(x => x.CurrentEdOrgEnrollmentDate != null && x.CurrentEdOrgEnrollmentDate >= minDate);
                         break;
 
-                    // default:
-                    //    throw new InvalidOperationException($"Unknown search field {filterColumn.Name}");
+                        // default:
+                        //    throw new InvalidOperationException($"Unknown search field {filterColumn.Name}");
                 }
             }
 
@@ -1019,9 +1024,9 @@ namespace ValidationWeb
 
         // GET: Ods/ResidentsEnrolledElsewhereReport
         public ActionResult ResidentsEnrolledElsewhereReport(
-            bool isStateMode = false, 
-            int? districtToDisplay = null, 
-            bool isStudentDrillDown = false, 
+            bool isStateMode = false,
+            int? districtToDisplay = null,
+            bool isStudentDrillDown = false,
             int? schoolId = null)
         {
             var session = AppUserService.GetSession();
@@ -1078,8 +1083,8 @@ namespace ValidationWeb
             var startTime = DateTime.Now;
 #endif
             var results = CacheManager.GetResidentsEnrolledElsewhereReport(
-                OdsDataService, 
-                isStateMode ? (int?)null : edOrgId, 
+                OdsDataService,
+                isStateMode ? (int?)null : edOrgId,
                 fourDigitSchoolYear);
 #if DEBUG
             System.Diagnostics.Debug.WriteLine(
@@ -1151,9 +1156,158 @@ namespace ValidationWeb
         {
             var model = new OdsIdentityIssuesReportViewModel
             {
-
+                // todo: implement
             };
             return View(model);
+        }
+
+        public JsonResult GetIdentityIssuesReportData(IDataTablesRequest request)
+        {
+            var results = ApiLogService.GetIdentityIssues();
+            return SortAndFilterApiReportData(results, request);
+        }
+
+        public JsonResult GetApiErrorsReportData(IDataTablesRequest request)
+        {
+            var results = ApiLogService.GetApiErrors();
+            return SortAndFilterApiReportData(results, request);
+        }
+
+        protected JsonResult SortAndFilterApiReportData(IEnumerable<Log> results, IDataTablesRequest request)
+        {
+            var session = AppUserService.GetSession();
+            //var edOrg = EdOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
+            var schoolYear = SchoolYearService.GetSchoolYearById(session.FocusedSchoolYearId);
+
+            results = results.Where(
+                x => x.District == session.FocusedEdOrgId.ToString() && x.Year == schoolYear.EndYear);
+
+            var sortedResults = results.Select(x =>
+                new Log
+                {
+                    Date = x.Date,
+                    District = x.District,
+                    Year = x.Year,
+                    Method = x.Method,
+                    Url = new Uri(x.Url).PathAndQuery,
+                    ResponseCode = x.ResponseCode,
+                    ResponsePhrase = x.ResponsePhrase,
+                    ResponseBody = x.ResponseBody
+                });
+
+            var sortColumn = request.Columns.FirstOrDefault(x => x.Sort != null);
+            if (sortColumn != null)
+            {
+                Func<Log, string> orderingFunctionString = null;
+                Func<Log, DateTime?> orderingFunctionNullableDateTime = null;
+                Func<Log, int> orderingFunctionInt = null;
+
+                switch (sortColumn.Field)
+                {
+                    case "id":
+                        {
+                            orderingFunctionInt = x => x.Id;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? sortedResults.OrderBy(orderingFunctionInt)
+                                                : sortedResults.OrderByDescending(orderingFunctionInt);
+                            break;
+                        }
+                    case "date":
+                        {
+                            orderingFunctionNullableDateTime = x => x.Date;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? sortedResults.OrderBy(orderingFunctionNullableDateTime)
+                                                : sortedResults.OrderByDescending(orderingFunctionNullableDateTime);
+                            break;
+                        }
+                    case "thread":
+                        {
+                            orderingFunctionString = x => x.Thread;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? sortedResults.OrderBy(orderingFunctionString)
+                                                : sortedResults.OrderByDescending(orderingFunctionString);
+                            break;
+                        }
+                    case "level":
+                        {
+                            orderingFunctionString = x => x.Level;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? sortedResults.OrderBy(orderingFunctionString)
+                                                : sortedResults.OrderByDescending(orderingFunctionString);
+                            break;
+                        }
+                    case "logger":
+                        {
+                            orderingFunctionString = x => x.Logger;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? sortedResults.OrderBy(orderingFunctionString)
+                                                : sortedResults.OrderByDescending(orderingFunctionString);
+                            break;
+                        }
+                    case "year":
+                        {
+                            orderingFunctionString = x => x.Year;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? sortedResults.OrderBy(orderingFunctionString)
+                                                : sortedResults.OrderByDescending(orderingFunctionString);
+                            break;
+                        }
+
+                    case "district":
+                        {
+                            orderingFunctionString = x => x.District;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? sortedResults.OrderBy(orderingFunctionString)
+                                                : sortedResults.OrderByDescending(orderingFunctionString);
+                            break;
+                        }
+                    case "method":
+                        {
+                            orderingFunctionString = x => x.Method;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? sortedResults.OrderBy(orderingFunctionString)
+                                                : sortedResults.OrderByDescending(orderingFunctionString);
+                            break;
+                        }
+                    case "url":
+                        {
+                            orderingFunctionString = x => x.Url;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? sortedResults.OrderBy(orderingFunctionString)
+                                                : sortedResults.OrderByDescending(orderingFunctionString);
+                            break;
+                        }
+                    case "responseCode":
+                        {
+                            orderingFunctionString = x => $"{x.ResponseCode} {x.ResponsePhrase}";
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? sortedResults.OrderBy(orderingFunctionString)
+                                                : sortedResults.OrderByDescending(orderingFunctionString);
+                            break;
+                        }
+                    case "responseBody":
+                        {
+                            orderingFunctionString = x => x.ResponseBody;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? sortedResults.OrderBy(orderingFunctionString)
+                                                : sortedResults.OrderByDescending(orderingFunctionString);
+                            break;
+                        }
+                    case "exception":
+                        {
+                            orderingFunctionString = x => x.Exception;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? sortedResults.OrderBy(orderingFunctionString)
+                                                : sortedResults.OrderByDescending(orderingFunctionString);
+                            break;
+                        }
+                }
+            }
+
+            var pagedResults = sortedResults.Skip(request.Start).Take(request.Length);
+            var response = DataTablesResponse.Create(request, results.Count(), results.Count(), pagedResults);
+            var jsonResult = new DataTablesJsonResult(response, JsonRequestBehavior.AllowGet);
+            return jsonResult;
         }
 
         // GET: Ods/Level1IssuesReport
@@ -1161,7 +1315,7 @@ namespace ValidationWeb
         {
             var model = new OdsLevel1IssuesReportViewModel
             {
-
+                // todo: implement
             };
             return View(model);
         }
