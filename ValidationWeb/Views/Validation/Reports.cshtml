@@ -16,12 +16,12 @@
         <div class="container-fluid">
             <div class="row justify-content-end">
                 <!-- New Validation Modal -->
-                <div id="NewValidationModal" class="modal fade" role="dialog">
+                <div id="NewValidationModal" class="modal fade" role="dialog" aria-label="Select Collection and School Year" aria-modal="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header prime-blue white-heavy-text">
                                 <h4 class="modal-title">Select Collection and School Year</h4>
-                                <button type="button" class="close" onclick="lastModalExitButton='cancel'" data-dismiss="modal">&times;</button>
+                                <button type="button" class="close" aria-label="close" onclick="lastModalExitButton='cancel'" data-dismiss="modal">&times;</button>
                             </div>
                             <div class="modal-body">
                                 <label for="collectionIdSelect">Select a collection of rules to validate: </label>
@@ -48,12 +48,12 @@
 
 
                 <!-- Confirm Validation Modal -->
-                <div id="ConfirmNewValidationModal" class="modal fade" role="dialog">
+                <div id="ConfirmNewValidationModal" class="modal fade" role="dialog" aria-label="Confirm: Run Validation" aria-modal="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header prime-blue white-heavy-text">
                                 <h4 class="modal-title">Confirm: Run Validation</h4>
-                                <button type="button" class="close" data-dismiss="modal" onclick="lastModalExitButton='cancel'">&times;</button>
+                                <button type="button" class="close" aria-label="close" data-dismiss="modal" onclick="lastModalExitButton='cancel'">&times;</button>
                             </div>
                             <div class="modal-body">
                                 Please confirm you would like to run a validation for District @(Model.DistrictName), School Year <span class="schoolYearDisplayName"></span>, Collection <span class="collectionDisplayName"></span>?
@@ -138,8 +138,8 @@
             $("#export").click(function(e) {
                 e.preventDefault();
                 window.location.href = "@Html.Raw(Url.Action(
-                                            "DownloadReportSummariesCsv", 
-                                            "Validation", 
+                                            "DownloadReportSummariesCsv",
+                                            "Validation",
                                             new { edOrgId = Model.FocusedEdOrgId }))";
             });
 
