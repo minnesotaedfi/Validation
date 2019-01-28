@@ -50,40 +50,7 @@ namespace ValidationWeb
 
             return new AppRole { Name = "Unauthorized" };
         }
-
-        #region Operator Overloads
-        //public static bool operator >=(AppRole leftHandSide, AppRole rightHandSide)
-        //{
-        //    return !(leftHandSide <= rightHandSide) || (leftHandSide.Name == rightHandSide.Name);
-        //}
-
-        //public static bool operator <=(AppRole leftHandSide, AppRole rightHandSide)
-        //{
-        //    if (leftHandSide.Name == Administrator.Name)
-        //    {
-        //        return rightHandSide.Name == Administrator.Name;
-        //    }
-        //    if (leftHandSide.Name == Launcher.Name)
-        //    {
-        //        return rightHandSide.Name == Administrator.Name
-        //            || rightHandSide.Name == Launcher.Name;
-        //    }
-        //    if (leftHandSide.Name == Viewer.Name)
-        //    {
-        //        return rightHandSide.Name == Administrator.Name
-        //            || rightHandSide.Name == Launcher.Name
-        //            || rightHandSide.Name == Viewer.Name;
-        //    }
-        //    if (leftHandSide.Name == SummaryViewer.Name)
-        //    {
-        //        return rightHandSide.Name == Administrator.Name
-        //            || rightHandSide.Name == Launcher.Name
-        //            || rightHandSide.Name == Viewer.Name
-        //            || rightHandSide.Name == SummaryViewer.Name;
-        //    }
-        //    return true;
-        //}
-
+        
         public override bool Equals(object obj)
         {
             return (obj as AppRole)?.Name == this.Name;
@@ -93,8 +60,7 @@ namespace ValidationWeb
         {
             return this.Name.GetHashCode();
         }
-        #endregion Operator Overloads
-
+        
         public string Name { get; set; }
     }
 }
