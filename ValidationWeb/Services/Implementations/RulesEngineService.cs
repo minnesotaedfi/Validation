@@ -123,6 +123,9 @@
 
         public void RunValidation(string fourDigitOdsDbYear, long ruleValidationId)
         {
+            var schoolYear = _schoolYearService.GetSubmittableSchoolYears()
+                .FirstOrDefault(sy => sy.EndYear == fourDigitOdsDbYear);
+
             // todo: dependency inject the initialization of RawOdsDbContext with a year. introduce a factory for most simple implementation
             using (var odsRawDbContext = new RawOdsDbContext(fourDigitOdsDbYear))
             {
@@ -134,7 +137,9 @@
                     var newReportSummary = validationDbContext
                         .ValidationReportSummaries
                         .Include(x => x.SchoolYear)
-                        .FirstOrDefault(x => x.Id == newRuleValidationExecution.RuleValidationId);
+                        .FirstOrDefault(x => 
+                            x.Id == newRuleValidationExecution.RuleValidationId && 
+                            x.SchoolYearId == schoolYear.Id);
 
                     var collectionId = newRuleValidationExecution.CollectionId;
 
