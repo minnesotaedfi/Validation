@@ -161,6 +161,12 @@ div#announcement-modal-content textarea {
     max-width: 100%;
 }
 
+div#NewValidationModal input,
+div#NewValidationModal select {
+    max-width: 100%;
+}
+
+
 /***************************************************************************************/
 /***************************************************************************************/
 /* Nav */
@@ -614,6 +620,13 @@ th {
     -moz-hyphens: auto;
     -webkit-hyphens: auto;
     hyphens: auto;
+}
+
+.table-primary,
+.table-primary > th,
+.table-primary > td {
+    color: rgb(255, 255, 255);
+    background-color: rgb(0, 56, 101);
 }
 
 /***************************************************************************************/

@@ -24,19 +24,30 @@
                                 <button type="button" class="close" aria-label="close" onclick="lastModalExitButton='cancel'" data-dismiss="modal">&times;</button>
                             </div>
                             <div class="modal-body">
-                                <label for="collectionIdSelect">Select a collection of rules to validate: </label>
-                                <select id="cycleIdSelect" name="cycleIdSelect" class="form-control">
-                                    @foreach (var cycle in Model.SubmissionCycles)
-                                    {
-                                        var schoolYearAndCollectionName = "";
-                                        var coll = Model.RulesCollections.FirstOrDefault(c => c.CollectionId == cycle.CollectionId);
-                                        if (coll != null)
-                                        {
-                                            schoolYearAndCollectionName = $"{cycle.SchoolYearDisplay} / {coll.ToFriendlyName()}";
-                                            <option value="@(cycle.Id)" @if (cycle.SchoolYearId == Model.FocusedSchoolYearId) { <text> selected </text> }>@(schoolYearAndCollectionName)</option>
-                                        }
-                                    }
-                                </select>
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        <label for="collectionIdSelect">Select a collection of rules to validate:</label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        <select id="cycleIdSelect" name="cycleIdSelect" class="form-control">
+                                            @foreach (var cycle in Model.SubmissionCycles)
+                                            {
+                                                var schoolYearAndCollectionName = "";
+                                                var coll = Model.RulesCollections.FirstOrDefault(c => c.CollectionId == cycle.CollectionId);
+                                                if (coll != null)
+                                                {
+                                                    schoolYearAndCollectionName = $"{cycle.SchoolYearDisplay} / {coll.ToFriendlyName()}";
+                                                    <option value="@(cycle.Id)"
+                                                            @if (cycle.SchoolYearId == Model.FocusedSchoolYearId) { <text> selected </text>  }>
+                                                        @(schoolYearAndCollectionName)
+                                                    </option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                             <div class="modal-footer">
                                 <button id="confirm-validation" type="button" class="btn prime-blue white-heavy-text" data-dismiss="modal" data-toggle="modal" data-target="#ConfirmNewValidationModal">Next &gt;&gt;</button>
@@ -45,47 +56,41 @@
                         </div>
                     </div>
                 </div>
+            </div>
 
-
-                <!-- Confirm Validation Modal -->
-                <div id="ConfirmNewValidationModal" class="modal fade" role="dialog" aria-label="Confirm: Run Validation" aria-modal="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header prime-blue white-heavy-text">
-                                <h4 class="modal-title">Confirm: Run Validation</h4>
-                                <button type="button" class="close" aria-label="close" data-dismiss="modal" onclick="lastModalExitButton='cancel'">&times;</button>
-                            </div>
-                            <div class="modal-body">
-                                Please confirm you would like to run a validation for District @(Model.DistrictName), School Year <span class="schoolYearDisplayName"></span>, Collection <span class="collectionDisplayName"></span>?
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn prime-blue white-heavy-text" data-dismiss="modal" onclick="lastModalExitButton='launch'">Launch Validation</button>
-                                <button type="button" class="btn prime-blue white-heavy-text" data-dismiss="modal" onclick="lastModalExitButton='cancel'">Cancel</button>
-                            </div>
+            <!-- Confirm Validation Modal -->
+            <div id="ConfirmNewValidationModal" class="modal fade" role="dialog" aria-label="Confirm: Run Validation" aria-modal="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header prime-blue white-heavy-text">
+                            <h4 class="modal-title">Confirm: Run Validation</h4>
+                            <button type="button" class="close" aria-label="close" data-dismiss="modal" onclick="lastModalExitButton='cancel'">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            Please confirm you would like to run a validation for District @(Model.DistrictName), School Year <span class="schoolYearDisplayName"></span>, Collection <span class="collectionDisplayName"></span>?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn prime-blue white-heavy-text" data-dismiss="modal" onclick="lastModalExitButton='launch'">Launch Validation</button>
+                            <button type="button" class="btn prime-blue white-heavy-text" data-dismiss="modal" onclick="lastModalExitButton='cancel'">Cancel</button>
                         </div>
                     </div>
                 </div>
-
-                @if (permissions.CanRunValidationReports)
-                {
-                    <button id="newValidationButton" type="button" class="btn prime-blue white-heavy-text margin10 justify-self-end" data-toggle="modal" data-target="#NewValidationModal">Validate</button>
-                }
-                <button id="export" data-export="export" class="btn prime-blue white-heavy-text margin10 justify-self-end">Export</button>
-
             </div>
+
+            @if (permissions.CanRunValidationReports)
+            {
+                <button id="newValidationButton" type="button" class="btn prime-blue white-heavy-text margin10 justify-self-end" data-toggle="modal" data-target="#NewValidationModal">Validate</button>
+            }
+            <button id="export" data-export="export" class="btn prime-blue white-heavy-text margin10 justify-self-end">Export</button>
+
         </div>
     </div>
 </div>
 
-
-
-
 <div class="row tbmargin10">
-
     <div id="requestedReportContent" class="col-md-12">
         <table class="table table-bordered" id="reportsTable"></table>
     </div>
-
 </div>
 
 @section scripts {
@@ -195,8 +200,6 @@
                         title: 'Collection',
                         data: 'collection',
                         render: function(data, type, row, meta) {
-                            debugger;
-
                             var collectionNameWithYear =
                                 `${row.schoolYear.startYear}-${row.schoolYear.endYear} / ${data}`;
 
