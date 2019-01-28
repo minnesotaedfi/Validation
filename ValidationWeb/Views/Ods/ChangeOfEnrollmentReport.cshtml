@@ -6,7 +6,7 @@
 }
 
 <div class="row tbmargin10" id="pagetop">
-    <div class="vp-body-header justify-content-start align-self-center">Changes of Enrollment for District @Model.EdOrgName (@Model.EdOrgId.ToString())</div>
+    <h1 class="vp-body-header justify-content-start align-self-center">Changes of Enrollment for District @Model.EdOrgName (@Model.EdOrgId.ToString())</h1>
 </div>
 
 <div class="row">
@@ -22,19 +22,19 @@
     </div>
 </div>
 
-<div class="row tbmargin10">
+<div class="row tbmargin10" role="radiogroup">
     <div class="col-md-2 text-right"><span class="align-middle">Changes within the last:</span></div>
     <div class="col-md-7">
         <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="date-filter" id="30days" value="30-days" autocomplete="off" checked />
+            <input class="form-check-input" type="radio" role="radio" aria-label="changes within the last 30-days" name="date-filter" id="30days" value="30-days" autocomplete="off" checked />
             <label class="form-check-label" for="30days">30 days</label>
         </div>
         <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="date-filter" id="90days" value="90-days" autocomplete="off" />
+            <input class="form-check-input" type="radio" role="radio" aria-label="changes within the last 90-days" name="date-filter" id="90days" value="90-days" autocomplete="off" />
             <label class="form-check-label" for="90days">90 days</label>
         </div>
         <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="date-filter" id="1year" value="1-year" autocomplete="off" />
+            <input class="form-check-input" type="radio" role="radio" aria-label="changes within the last 1-year" name="date-filter" id="1year" value="1-year" autocomplete="off" />
             <label class="form-check-label" for="1year">1 year</label>
         </div>
     </div>
@@ -57,12 +57,13 @@
         </div>
     </div>
 </div>
-
-<div id="notes" class="row">
-    <div class="vp-body-header">Notes:</div>
+<div role="note">
+    <div id="notes" class="row">
+        <div class="vp-body-header">Notes:</div>
+    </div>
+    <div class="row">(1) Enrolling students are those who enrolled in a district school in the past and had previously enrolled in some other school in the state.</div>
+    <div class="row">(2) Withdrawing students are those that withdrew and subsequently enrolled elsewhere in the state.</div>
 </div>
-<div class="row">(1) Enrolling students are those who enrolled in a district school in the past and had previously enrolled in some other school in the state.</div>
-<div class="row">(2) Withdrawing students are those that withdrew and subsequently enrolled elsewhere in the state.</div>
 <div class="row tbmargin10">
     <a href="#pagetop">Back to Top</a>
 </div>
@@ -83,7 +84,7 @@
             }
 
             $('div.dataTables_scrollBody').css('min-height', '350px');
-            
+
             var enrollmentsTable = $('#reportsTable1').DataTable({
                 paging: true,
                 pagingType: 'full_numbers',
@@ -350,7 +351,7 @@
 
             $(enrollmentsTable.table().header()).addClass('table-primary');
 
-            var order; 
+            var order;
             if (recordRequestStudentId != null) {
                 order = [[8, "desc"]];
             } else {
@@ -575,7 +576,7 @@
 
             $("#view-request-form").on("submit",
                 function (event) {
-                    debugger; 
+                    debugger;
                     var $this = $(this);
                     var formValues = JSON.stringify(serializeFormToJson($this));
                     $.ajax({

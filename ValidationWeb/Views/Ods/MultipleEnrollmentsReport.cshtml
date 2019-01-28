@@ -9,11 +9,11 @@
 
     @if (Model.IsStateMode)
     {
-        <div class="vp-body-header justify-content-start align-self-center">Students with Multiple Open Enrollment for All Minnesota Districts</div>
+        <h1 class="vp-body-header justify-content-start align-self-center">Students with Multiple Open Enrollment for All Minnesota Districts</h1>
     }
     else
     {
-        <div class="vp-body-header justify-content-start align-self-center">Students with Multiple Open Enrollments for District @Model.EdOrgName (@Model.EdOrgId.ToString())</div>
+        <h1 class="vp-body-header justify-content-start align-self-center">Students with Multiple Open Enrollments for District @Model.EdOrgName (@Model.EdOrgId.ToString())</h1>
 
         if (Model.SchoolId.HasValue && !string.IsNullOrWhiteSpace(Model.SchoolName))
         {
@@ -22,7 +22,7 @@
             </div>
         }
     }
-    
+
     @if (permissions.CanAccessAllDistrictsMode)
     {
          if (Model.IsStateMode)
@@ -40,12 +40,14 @@
 <div id="requestedReportContent" class="row">
     <table class="table table-bordered nowrap" id="reportsTable" style="table-layout: fixed; width: 98% !important;"></table>
 </div>
-<div id="notes" class="row">
-    <div class="vp-body-header">Notes:</div>
+<div role="note">
+    <div id="notes" class="row">
+        <div class="vp-body-header">Notes:</div>
+    </div>
+    <div class="row">(1) School values might not sum to District values. This is expected because a particular student may be counted separately at all schools where that student has been enrolled.</div>
+    <div class="row">(2) All columns including Cumulative Enrollments count individual students only once, even if they have multiple enrollments.</div>
+    <div class="row">(3) &quot;Cumulative&quot; means that enrollments are accounted as at least one enrollment any time during the school year - not only &quot;Currently Enrolled&quot;.</div>
 </div>
-<div class="row">(1) School values might not sum to District values. This is expected because a particular student may be counted separately at all schools where that student has been enrolled.</div>
-<div class="row">(2) All columns including Cumulative Enrollments count individual students only once, even if they have multiple enrollments.</div>
-<div class="row">(3) &quot;Cumulative&quot; means that enrollments are accounted as at least one enrollment any time during the school year - not only &quot;Currently Enrolled&quot;.</div>
 <div class="row tbmargin10">
     <div class="col-md-2">
         <a href="#pagetop">Back to Top</a>
@@ -153,14 +155,14 @@
                         data: 'distinctEnrollmentCount',
                         render: function (data, type, row, meta) {
                             if (type === 'display') {
-                                return (data === 0) ? "-" : 
+                                return (data === 0) ? "-" :
                                 @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                 {
                                     @:createDrillDownLink(row.edOrgId, 0, row.orgType, data);
                                 }
                                 else
                                 {
-                                    @: data 
+                                    @: data
                                 }
                             } else {
                                 return data;
@@ -172,14 +174,14 @@
                         data: 'enrolledInOtherSchoolsCount',
                         render: function (data, type, row, meta) {
                             if (type === 'display') {
-                                return (data === 0) ? "-" : 
+                                return (data === 0) ? "-" :
                                     @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                 {
                                     @:createDrillDownLink(row.edOrgId, 1, row.orgType, data);
                                 }
                                 else
                                 {
-                                    @: data 
+                                    @: data
                                 }
                             } else {
                                 return data;
@@ -191,14 +193,14 @@
                         data: 'enrolledInOtherDistrictsCount',
                         render: function (data, type, row, meta) {
                             if (type === 'display') {
-                                return (data === 0) ? "-" : 
+                                return (data === 0) ? "-" :
                                     @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                 {
                                     @:createDrillDownLink(row.edOrgId, 2, row.orgType, data);
                                 }
                                 else
                                 {
-                                    @: data 
+                                    @: data
                                 }
                             } else {
                                 return data;
