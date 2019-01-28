@@ -10,10 +10,10 @@
 <div class="container-fluid">
     <div class="row">
         <div class="tbmargin10 col-8">
-            <div class="row vp-body-header">
+            <h1 class="row vp-body-header">
 
                 You are logged in as @(Model.AppUserSession.UserIdentity.FullName) with access level: @(Model.AppUserSession.UserIdentity.AppRole?.Name).
-            </div>
+            </h1>
             @*<div class="row vp-body-header">
                     School year(s) available to validate:&nbsp;
                     <span>@(string.Join(", ", Model.YearsOpenForDataSubmission.Select(yr => yr.ToString()).OrderBy(y => y).ToList()))</span>

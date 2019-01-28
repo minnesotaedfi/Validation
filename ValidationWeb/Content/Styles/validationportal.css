@@ -50,6 +50,13 @@ div#notes {
     color: white;
     transform: translate(-50%,-50%);
     -ms-transform: translate(-50%,-50%);
+
+    width: 100%;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    text-align: center;
+    background-color: rgb(0, 56, 101, 0.9);
+    text-shadow: 0 0 1px #000, 0 0 1px #000, 0 0 1px #000; /* text outline */
 }
 
 /* Background Colors */
@@ -154,6 +161,12 @@ div#announcement-modal-content textarea {
     max-width: 100%;
 }
 
+div#NewValidationModal input,
+div#NewValidationModal select {
+    max-width: 100%;
+}
+
+
 /***************************************************************************************/
 /***************************************************************************************/
 /* Nav */
@@ -180,7 +193,7 @@ div#announcement-modal-content textarea {
 /***************************************************************************************/
 /* Bootstrap Overrides */
 
-/* 
+/*
     (width & margin) Ensure container rows (especially colored bars) touch the left and right sides of screen.
                      Override the evil -15px Margin
     (padding) Keep text from butting again edge of screen.
@@ -195,7 +208,7 @@ div#announcement-modal-content textarea {
     min-height: 450px;
 }
 
-/* 
+/*
     (width & margin) Ensure container rows (especially colored bars) touch the left and right sides of screen.
     (padding) Keep colored Navigation bar flush against edge of screen.
 */
@@ -346,18 +359,18 @@ li.dropdown.nav-item.pull-right, li.dropdown-toggle.nav-item.pull-right {
 
 /***************************************************************************************/
 /* Footer area Quick Links */
-div.layout-footer {
+footer.layout-footer {
     color: rgb(255, 255, 255);
     background-color: rgb(0, 56, 101);
     padding: 0;
 }
 
-    div.layout-footer li a {
+    footer.layout-footer li a {
         color: rgb(164, 188, 194);
         text-decoration: underline solid rgb(164, 188, 194);
     }
 
-div.hfooter {
+footer.hfooter {
     font-size: 133%;
     font-weight: bold;
 }
@@ -601,7 +614,7 @@ th {
 .card {
     overflow-wrap: break-word;
     word-wrap: break-word;
-    
+
     /* Adds a hyphen where the word breaks, if supported (No Blink) */
     -ms-hyphens: auto;
     -moz-hyphens: auto;
@@ -609,4 +622,30 @@ th {
     hyphens: auto;
 }
 
-/***************************************************************************************/
+.table-primary,
+.table-primary > th,
+.table-primary > td {
+    color: rgb(255, 255, 255);
+    background-color: #008EAA;
+}
+
+a {
+    color: #0563c1;
+}
+
+    a:hover {
+        color: #196486;
+    }
+
+.page-item.active .page-link {
+    background-color: #0563c1;
+}
+
+.page-link {
+    color: #0563c1;
+}
+
+.page-link:hover {
+    color: #196486;
+}
+    /***************************************************************************************/

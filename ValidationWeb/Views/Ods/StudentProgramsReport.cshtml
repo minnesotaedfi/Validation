@@ -13,11 +13,11 @@
 
         @if (Model.IsStateMode)
         {
-            <div class="col-md-2"><a href="@Url.Action("StudentProgramsReport", "Ods", new { isStateMode = false })" class="show-data-loading">View Single District</a></div>
+            <h1 class="col-md-2"><a href="@Url.Action("StudentProgramsReport", "Ods", new { isStateMode = false })" class="show-data-loading">View Single District</a></h1>
         }
         else
         {
-            <div class="col-md-2"><a href="@Url.Action("StudentProgramsReport", "Ods", new { isStateMode = true })" class="show-data-loading">View All Districts</a></div>
+            <h1 class="col-md-2"><a href="@Url.Action("StudentProgramsReport", "Ods", new { isStateMode = true })" class="show-data-loading">View All Districts</a></h1>
 
             if (Model.SchoolId.HasValue && !string.IsNullOrWhiteSpace(Model.SchoolName))
             {
@@ -58,11 +58,13 @@
     <table class="table table-bordered" id="reportsTable2"></table>
 </div>
 
-<div id="notes" class="row tbmargin10">
-    <div class="vp-body-header">Notes:</div>
+<div role="note">
+    <div id="notes" class="row tbmargin10">
+        <div class="vp-body-header">Notes:</div>
+    </div>
+    <div class="row">(1) A student is counted as enrolled if the student was enrolled at least once during the school year.</div>
+    <div class="row">(2) Students are counted only once per table cell for the particular school/district/state.</div>
 </div>
-<div class="row">(1) A student is counted as enrolled if the student was enrolled at least once during the school year.</div>
-<div class="row">(2) Students are counted only once per table cell for the particular school/district/state.</div>
 <div class="row tbmargin10">
     <div class="col-md-2">
         <a href="#pagetop">Back to Top</a>
@@ -159,13 +161,13 @@
                         data: 'distinctEnrollmentCount',
                         render: function (data, type, row, meta) {
                             if (type === 'display') {
-                                return (data === 0) ? "-" : 
+                                return (data === 0) ? "-" :
                                     @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                     {
                                         @: createDrillDownLink(row.edOrgId, 0, row.orgType, data);
-                                    } 
-                                    else 
-                                    { 
+                                    }
+                                    else
+                                    {
                                         @:data
                                     }
                             } else {
@@ -182,7 +184,7 @@
                                     @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                     {
                                         @: createDrillDownLink(row.edOrgId, 1, row.orgType, data);
-                                    } else { 
+                                    } else {
                                         @: data
                                     }
                                 } else {
@@ -199,9 +201,9 @@
                                 @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                     {
                                         @: createDrillDownLink(row.edOrgId, 2, row.orgType, data);
-                                    } 
-                                else 
-                                { 
+                                    }
+                                else
+                                {
                                     @: data
                                 }
                             } else {
@@ -214,11 +216,11 @@
                         data: 'indianNativeCount',
                         render: function (data, type, row, meta) {
                             if (type === 'display') {
-                                return (data === 0) ? "-" : 
+                                return (data === 0) ? "-" :
                                 @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                 {
                                     @:createDrillDownLink(row.edOrgId, 3, row.orgType, data);
-                                } else { 
+                                } else {
                                     @: data
                                 }
                             } else {
@@ -231,11 +233,11 @@
                         data: 'migrantCount',
                         render: function (data, type, row, meta) {
                             if (type === 'display') {
-                                return (data === 0) ? "-" : 
+                                return (data === 0) ? "-" :
                                 @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                 {
                                     @:createDrillDownLink(row.edOrgId, 4, row.orgType, data);
-                                } else { 
+                                } else {
                                     @: data
                                 }
                             } else {
@@ -251,9 +253,9 @@
                                 return (data === 0) ? "-" :
                                 @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                 { @: createDrillDownLink(row.edOrgId, 5, row.orgType, data);
-                                } else { 
+                                } else {
                                     @:data
-                                } 
+                                }
                             } else {
                                 return data;
                             }
@@ -264,14 +266,14 @@
                         data: 'immigrantCount',
                         render: function (data, type, row, meta) {
                             if (type === 'display') {
-                                return (data === 0) ? "-" : 
+                                return (data === 0) ? "-" :
                                 @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
-                                { 
+                                {
                                     @: createDrillDownLink(row.edOrgId, 6, row.orgType, data);
-                                } 
+                                }
                                 else {
                                     @:data
-                                } 
+                                }
                             } else {
                                 return data;
                             }
@@ -282,10 +284,10 @@
                         data: 'recentEnglishCount',
                         render: function (data, type, row, meta) {
                             if (type === 'display') {
-                                return (data === 0) ? "-" : 
+                                return (data === 0) ? "-" :
                                 @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                 { @: createDrillDownLink(row.edOrgId, 7, row.orgType, data);
-                                } else { 
+                                } else {
                                     @:data
                                 }
                             } else {
@@ -298,12 +300,12 @@
                         data: 'slifeCount',
                         render: function (data, type, row, meta) {
                             if (type === 'display') {
-                                return (data === 0) ? "-" : 
+                                return (data === 0) ? "-" :
                                 @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                 { @: createDrillDownLink(row.edOrgId, 8, row.orgType, data);
                                 } else {
                                     @:data
-                                } 
+                                }
                             } else {
                                 return data;
                             }
@@ -369,7 +371,7 @@
                         data: 'englishLearnerIdentifiedCount',
                         render: function (data, type, row, meta) {
                             if (type === 'display') {
-                                return (data === 0) ? "-" : 
+                                return (data === 0) ? "-" :
                                     @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                 { @: createDrillDownLink(row.edOrgId, 9, row.orgType, data);
                                 } else {
@@ -385,7 +387,7 @@
                         data: 'englishLearnerServedCount',
                         render: function (data, type, row, meta) {
                             if (type === 'display') {
-                                return (data === 0) ? "-" : 
+                                return (data === 0) ? "-" :
                                     @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                 { @: createDrillDownLink(row.edOrgId, 10, row.orgType, data);
                                 } else {
@@ -401,7 +403,7 @@
                         data: 'independentStudyCount',
                         render: function (data, type, row, meta) {
                             if (type === 'display') {
-                                return (data === 0) ? "-" : 
+                                return (data === 0) ? "-" :
                                     @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                 { @: createDrillDownLink(row.edOrgId, 11, row.orgType, data);
                                 } else {
@@ -417,7 +419,7 @@
                         data: 'section504Count',
                         render: function (data, type, row, meta) {
                             if (type === 'display') {
-                                return (data === 0) ? "-" : 
+                                return (data === 0) ? "-" :
                                     @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                 { @: createDrillDownLink(row.edOrgId, 12, row.orgType, data);
                                 } else {
@@ -433,7 +435,7 @@
                         data: 'title1PartACount',
                         render: function (data, type, row, meta) {
                             if (type === 'display') {
-                                return (data === 0) ? "-" : 
+                                return (data === 0) ? "-" :
                                     @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                 { @: createDrillDownLink(row.edOrgId, 13, row.orgType, data);
                                 } else {
@@ -449,7 +451,7 @@
                         data: 'freeReducedCount',
                         render: function (data, type, row, meta) {
                             if (type === 'display') {
-                                return (data === 0) ? "-" : 
+                                return (data === 0) ? "-" :
                                     @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                 { @: createDrillDownLink(row.edOrgId, 14, row.orgType, data);
                                 } else {

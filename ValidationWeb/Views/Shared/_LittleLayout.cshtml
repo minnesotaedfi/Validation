@@ -10,7 +10,7 @@
 }
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
@@ -27,15 +27,15 @@
 <body>
     <div class="container-fluid layout">
         <div class="row ">
-            <div class="top-banner col-12">
-                <img src="~/Content/Images/mdelogo450.png" class="mdelogo" />
+            <header class="top-banner col-12" role="banner" aria-label="Minnesota Department of Education - Ed-Fi Data Validation Portal">
+                <img src="~/Content/Images/mdelogo450.png" class="mdelogo" alt="Minnesota Department of Education Logo" />
                 <p><a href="#skipnavigation">Skip navigation</a></p>
                 <div class="app-title clear-margin">Ed-Fi Data Validation Portal</div>
-            </div>
+            </header>
         </div>
         <div class="row noprint">
             <div class="col-12">
-                <nav id="layout-navbar" class="navbar navbar-expand-sm prime-blue">
+               <nav id="layout-navbar" role="navigation" aria-label="Main navigation" class="navbar navbar-expand-sm prime-blue">
                     <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#theNavBar" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
@@ -62,12 +62,12 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-12">
+            <nav class="col-12" role="navigation" aria-label="Breadcrumb navigation">
                 @Html.MvcSiteMap().SiteMapPath()
-            </div>
+            </nav>
         </div>
         <div class="row layout mainSection">
-            <div class="col-12">
+            <div class="col-12" role="main">
                 <a name="skipnavigation" id="skipNavigationAnchor" tabindex="-1"></a>
                 @RenderBody()
             </div>
@@ -75,7 +75,7 @@
         @Html.Partial("_LittleFooter")
     </div>
     <!-- Turn this overlay on and off when loading new data asynchronously or screens. -->
-    <div id="overlay"><span id="overlay-text">Loading ... <i class="fas fa-cog"></i></span></div>
+    <div id="overlay"><span id="overlay-text" role="status" aria-live="polite">Loading ... <i class="fas fa-cog fa-spin"></i></span></div>
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/bundles/jqueryUI")
@@ -137,7 +137,7 @@
                 $.get("@Url.Content("~/api/user-session/ed-org/get")")
                     .done((data) => {
                         dropDown.val(data.id);
-                        
+
                         dropDown.select2({
                             theme: 'bootstrap4',
                             containerCssClass: 'validation-dropdown-menu'

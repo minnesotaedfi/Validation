@@ -4,17 +4,17 @@
 <div class="row tbmargin10">
     @if (Model.IsStateMode)
     {
-        <div class="vp-body-header justify-content-start align-self-center">@(Model.ReportName) Student Details for All Minnesota Districts</div>
+        <h1 class="vp-body-header justify-content-start align-self-center">@(Model.ReportName) Student Details for All Minnesota Districts</h1>
     }
     else
     {
         if (Model.OrgType == OrgType.School)
         {
-            <div class="vp-body-header justify-content-start align-self-center">@(Model.ReportName) Student Details for @Model.SchoolName (@Model.SchoolId.ToString())</div>
+            <h1 class="vp-body-header justify-content-start align-self-center">@(Model.ReportName) Student Details for @Model.SchoolName (@Model.SchoolId.ToString())</h1>
         }
         else
         {
-            <div class="vp-body-header justify-content-start align-self-center">@(Model.ReportName) Student Details for @Model.EdOrgName (@Model.EdOrgId.ToString())</div>
+            <h1 class="vp-body-header justify-content-start align-self-center">@(Model.ReportName) Student Details for @Model.EdOrgName (@Model.EdOrgId.ToString())</h1>
         }
     }
 </div>
@@ -53,7 +53,7 @@
         $(function() {
 
             $('div.dataTables_scrollBody').css('min-height', '350px');
-            debugger;
+
             var dataTable = $('#reportsTable').DataTable({
                 paging: true,
                 pagingType: 'full_numbers',

@@ -12,11 +12,11 @@
 <div class="row tbmargin10">
     @if (Model.IsStateMode)
     {
-        <div class="vp-body-header justify-content-start align-self-center">Ancestry Ethnic Origin and Race Counts for All Minnesota Districts</div>
+        <h1 class="vp-body-header justify-content-start align-self-center">Ancestry Ethnic Origin and Race Counts for All Minnesota Districts</h1>
     }
     else
     {
-        <div class="vp-body-header justify-content-start align-self-center">Ancestry Ethnic Origin and Race Counts for District @Model.EdOrgName (@Model.EdOrgId.ToString())</div>
+        <h1 class="vp-body-header justify-content-start align-self-center">Ancestry Ethnic Origin and Race Counts for District @Model.EdOrgName (@Model.EdOrgId.ToString())</h1>
 
         if (Model.SchoolId.HasValue && !string.IsNullOrWhiteSpace(Model.SchoolName))
         {
@@ -126,12 +126,12 @@
                         data: 'enrollmentCount',
                         render: function (data, type, row, meta) {
                             if (type === 'display') {
-                                return (data === 0) ? "-" : 
+                                return (data === 0) ? "-" :
                                     @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                     {
                                         @:createDrillDownLink(row.edOrgId, 0, row.orgType, data);
                                     } else {
-                                        @:data 
+                                        @:data
                                     }
                             } else {
                                 return data;
@@ -143,12 +143,12 @@
                         data: 'demographicsCount',
                         render: function(data, type, row, meta) {
                             if (type === 'display') {
-                                return (data === 0) ? "-" : 
+                                return (data === 0) ? "-" :
                                 @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                 {
                                     @: createDrillDownLink(row.edOrgId, 1, row.orgType, data);
                                 } else {
-                                    @:data 
+                                    @:data
                                 }
                             } else {
                                 return data;
@@ -160,12 +160,12 @@
                         data: 'raceGivenCount',
                         render: function(data, type, row, meta) {
                             if (type === 'display') {
-                                return (data === 0) ? "-" : 
+                                return (data === 0) ? "-" :
                                 @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                 {
                                     @: createDrillDownLink(row.edOrgId, 2, row.orgType, data);
                                 } else {
-                                    @:data 
+                                    @:data
                                 }
                             } else {
                                 return data;
@@ -177,12 +177,12 @@
                         data: 'ancestryGivenCount',
                         render: function(data, type, row, meta) {
                             if (type === 'display') {
-                                return (data === 0) ? "-" : 
+                                return (data === 0) ? "-" :
                                 @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                 {
                                     @: createDrillDownLink(row.edOrgId, 3, row.orgType, data);
                                 } else {
-                                    @:data 
+                                    @:data
                                 }
                             } else {
                                 return data;
@@ -197,13 +197,14 @@
         });
     </script>
 }
-
-<div id="notes" class="row">
-    <div class="vp-body-header">Notes:</div>
+<div role="note">
+    <div id="notes" class="row">
+        <div class="vp-body-header">Notes:</div>
+    </div>
+    <div class="row">(1) A student enrolled in multiple schools within the district is only counted once.</div>
+    <div class="row">(2) A student is counted as enrolled if the student was enrolled at least once during the school year.</div>
+    <div class="row">(3) Students are counted only once per table cell for the particular school/district/state.</div>
 </div>
-<div class="row">(1) A student enrolled in multiple schools within the district is only counted once.</div>
-<div class="row">(2) A student is counted as enrolled if the student was enrolled at least once during the school year.</div>
-<div class="row">(3) Students are counted only once per table cell for the particular school/district/state.</div>
 <div class="row tbmargin10">
     <div class="col-md-2">
         <a href="#pagetop">Back to Top</a>
