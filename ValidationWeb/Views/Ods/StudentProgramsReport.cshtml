@@ -11,11 +11,11 @@
 
         @if (Model.IsStateMode)
         {
-            <h1 class="col-md-2"><a href="@Url.Action("StudentProgramsReport", "Ods", new { isStateMode = false })" class="show-data-loading">View Single District</a></h1>
+            <div class="col-md-3"><a href="@Url.Action("StudentProgramsReport", "Ods", new { isStateMode = false })" class="show-data-loading">View Single District</a></div>
         }
         else
         {
-            <h1 class="col-md-2"><a href="@Url.Action("StudentProgramsReport", "Ods", new { isStateMode = true })" class="show-data-loading">View All Districts</a></h1>
+            <div class="col-md-3"><a href="@Url.Action("StudentProgramsReport", "Ods", new { isStateMode = true })" class="show-data-loading">View All Districts</a></div>
 
             if (Model.SchoolId.HasValue && !string.IsNullOrWhiteSpace(Model.SchoolName))
             {
@@ -31,11 +31,11 @@
 <div class="row tbmargin10">
     @if (Model.IsStateMode)
     {
-        <div class="vp-body-header justify-content-start align-self-center">Students Characteristics and Programs for All Minnesota Districts</div>
+        <h2 class="vp-body-header justify-content-start align-self-center">Students Characteristics and Programs for All Minnesota Districts</h2>
     }
     else
     {
-        <div class="vp-body-header justify-content-start align-self-center">Students Characteristics and Programs for District @Model.EdOrgName (@Model.EdOrgId.ToString())</div>
+        <h2 class="vp-body-header justify-content-start align-self-center">Students Characteristics and Programs for District @Model.EdOrgName (@Model.EdOrgId.ToString())</h2>
     }
 </div>
 <div class="row tbmargin10">
