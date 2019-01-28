@@ -2,6 +2,8 @@
 {
     using System.Collections.Generic;
 
+    using ValidationWeb.Filters;
+
     public class OdsDemographicsReportViewModel
     {
         public ValidationPortalIdentity User { get; set; }

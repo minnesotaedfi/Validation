@@ -1,16 +1,12 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Web.Http;
-using System.Web.Http.ModelBinding;
-using ValidationWeb.Services;
-
-namespace ValidationWeb.ApiControllers
+﻿namespace ValidationWeb.ApiControllers
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Web.Http;
+
     using MoreLinq;
+
+    using ValidationWeb.Services;
 
     [RoutePrefix("api/validation")]
     public class ValidationController : ApiController

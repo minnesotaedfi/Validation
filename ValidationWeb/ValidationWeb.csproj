@@ -802,9 +802,14 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Database\EdFiLogDbContext.cs" />
+    <Compile Include="Models\ValidationPortalIdentity.cs" />
+    <Compile Include="Utility\IIdentityExtensions.cs" />
     <Compile Include="Models\Log.cs" />
+    <Compile Include="Models\PortalRoleNames.cs" />
     <Compile Include="Models\RecordsRequestFormData.cs" />
     <Compile Include="Models\RecordsResponseFormData.cs" />
+    <Compile Include="Models\RolePermissions.cs" />
+    <Compile Include="Models\SSORoleNames.cs" />
     <Compile Include="Services\Implementations\EdFiApiLogService.cs" />
     <Compile Include="Services\Interfaces\IEdFiApiLogService.cs" />
     <Compile Include="Utility\BoolConverter.cs" />
@@ -848,7 +853,7 @@
     <Compile Include="Filters\ProfilingFilter.cs" />
     <Compile Include="Filters\ValidationAuthenticationFilter.cs" />
     <Compile Include="Filters\ValidationExceptionLogger.cs" />
-    <Compile Include="Filters\ValidationPortalPrincipal.cs" />
+    <Compile Include="Models\ValidationPortalPrincipal.cs" />
     <Compile Include="Filters\ValidationWebExceptionFilterAttribute.cs" />
     <Compile Include="Models\Announcement.cs" />
     <Compile Include="Models\AppRole.cs" />
@@ -872,7 +877,7 @@
     <Compile Include="Models\ValidationReportSummary.cs" />
     <Compile Include="Services\Implementations\AnnouncementService.cs" />
     <Compile Include="Services\Implementations\AppUserService.cs" />
-    <Compile Include="Services\Implementations\ConfigurationValues.cs" />
+    <Compile Include="Services\Implementations\AppSettingsFileConfigurationValues.cs" />
     <Compile Include="Services\Implementations\EdOrgService.cs" />
     <Compile Include="Services\Implementations\EngineSchemaProvider.cs" />
     <Compile Include="Services\Implementations\HttpContextProvider.cs" />

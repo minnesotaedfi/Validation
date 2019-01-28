@@ -1,4 +1,6 @@
-﻿@model OdsMultipleEnrollmentsReportViewModel
+﻿@using ValidationWeb.Filters
+@using ValidationWeb.Utility
+@model OdsMultipleEnrollmentsReportViewModel
 @{
     var identity = (ValidationPortalIdentity)User.Identity;
     var appRoleName = identity.AppRole.Name;

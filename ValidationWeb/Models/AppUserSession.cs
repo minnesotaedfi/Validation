@@ -7,6 +7,8 @@ using System.Web;
 
 namespace ValidationWeb
 {
+    using ValidationWeb.Filters;
+
     [Table("validation.AppUserSession")]
     public class AppUserSession
     {

@@ -5,6 +5,8 @@ using System.Web;
 
 namespace ValidationWeb
 {
+    using ValidationWeb.Filters;
+
     public class OdsMultipleEnrollmentsReportViewModel
     {
         public ValidationPortalIdentity User { get; set; }

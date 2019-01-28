@@ -4,6 +4,8 @@
     using System.Data.Entity.Infrastructure;
     using System.Linq;
 
+    using ValidationWeb.Filters;
+
     public class AppUserService : IAppUserService
     {
         public const string SessionItemName = "Session";

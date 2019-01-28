@@ -13,6 +13,7 @@
 
     using Should;
 
+    using ValidationWeb.Filters;
     using ValidationWeb.Services;
     using ValidationWeb.Tests.Mocks;
 

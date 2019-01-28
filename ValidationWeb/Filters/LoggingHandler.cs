@@ -15,11 +15,12 @@ namespace ValidationWeb
         protected const string RequestStartTimeKeyName = "RequestStartTime";
         protected const string CorrelationIdKeyName = "CorrelationId";
         protected const string LogCorrelationIdKeyName = "LogCorrelationId";
-        protected readonly ILoggingService _logger;
+
+        protected readonly ILoggingService Logger;
 
         public LoggingHandler(ILoggingService logger)
         {
-            _logger = logger;
+            Logger = logger;
         }
 
         /// <summary>
@@ -29,7 +30,7 @@ namespace ValidationWeb
         /// <param name="request"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        protected async override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             #region Add Logging Context to the Request
             var newGuid = Guid.NewGuid();
@@ -37,7 +38,7 @@ namespace ValidationWeb
             var logCorrelationId = $"[API Request {newGuid.ToString("N")}] ";
             request.Properties.Add(CorrelationIdKeyName, newGuid);
             request.Properties.Add(LogCorrelationIdKeyName, logCorrelationId);
-            _logger.LogInfoMessage("BEGINNING OF REQUEST ------------------");
+            Logger.LogInfoMessage("BEGINNING OF REQUEST ------------------");
             #endregion Add Logging Context to the Request
 
             #region Add Performance Measuring Context to the Request

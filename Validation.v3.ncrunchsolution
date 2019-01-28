@@ -2,7 +2,7 @@
   <Settings>
     <AllowParallelTestExecution>True</AllowParallelTestExecution>
     <MetricsExclusionList>
-      <Value>ValidationWeb.Tests\ValidationWeb.Tests.csproj</Value>
+      <Value>Engine\Engine.csproj</Value>
     </MetricsExclusionList>
     <SolutionConfigured>True</SolutionConfigured>
   </Settings>

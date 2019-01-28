@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Web;
-using System.Web.Http.Filters;
-using ValidationWeb.Services;
-
-namespace ValidationWeb
+﻿namespace ValidationWeb.Filters
 {
+    using System;
+    using System.Net;
+    using System.Net.Http;
+    using System.Web;
+    using System.Web.Http.Filters;
+
+    using ValidationWeb.Services;
 
     /// <summary>
     /// Catches all unhandled exceptions and formats user message to be returned in the HTTP response.

@@ -15,6 +15,8 @@ namespace ValidationWeb
     using System.Data.Entity.Infrastructure;
     using System.Web.Routing;
 
+    using ValidationWeb.Filters;
+
     /// <summary>
     /// Register this class using GlobalFilters.Add() in Global.asax.
     /// </summary>

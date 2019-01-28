@@ -30,6 +30,7 @@
     using ValidationWeb.ApiControllers;
     using ValidationWeb.Database;
     using ValidationWeb.DataCache;
+    using ValidationWeb.Filters;
     using ValidationWeb.Services;
     using ValidationWeb.Services.Implementations;
     using ValidationWeb.Utility;

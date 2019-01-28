@@ -1,6 +1,8 @@
 ﻿@using MvcSiteMapProvider.Web.Html
 @using ValidationWeb
 @using ValidationWeb.ApiControllers
+@using ValidationWeb.Filters
+@using ValidationWeb.Utility
 @{ 
     var identity = (ValidationPortalIdentity)User.Identity;
     var appRoleName = identity.AppRole.Name;

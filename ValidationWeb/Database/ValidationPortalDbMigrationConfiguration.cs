@@ -6,6 +6,8 @@ using ValidationWeb.Services;
 
 namespace ValidationWeb
 {
+    using ValidationWeb.Services.Implementations;
+
     internal sealed class ValidationPortalDbMigrationConfiguration : DbMigrationsConfiguration<ValidationPortalDbContext>
     {
         private IConfigurationValues _config = new AppSettingsFileConfigurationValues();

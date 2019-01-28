@@ -1,4 +1,6 @@
-﻿@model OdsStudentProgramsReportViewModel
+﻿@using ValidationWeb.Filters
+@using ValidationWeb.Utility
+@model OdsStudentProgramsReportViewModel
 @{
     var identity = (ValidationPortalIdentity)User.Identity;
     var appRoleName = identity.AppRole.Name;

@@ -79,6 +79,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Mocks\EntityFrameworkMocks.cs" />
     <Compile Include="Services\AppUserServiceTests.cs" />
+    <Compile Include="Utility\GradeLevelComparerTests.cs" />
+    <Compile Include="Utility\IIdentityExtensionsTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -89,6 +91,9 @@
       <Project>{0748540c-3f9c-499a-a9c1-15cc5c9d9a30}</Project>
       <Name>ValidationWeb</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Filters\" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

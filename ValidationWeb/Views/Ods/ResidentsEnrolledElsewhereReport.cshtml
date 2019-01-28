@@ -1,4 +1,6 @@
-﻿@model OdsResidentsEnrolledElsewhereReportViewModel
+﻿@using ValidationWeb.Filters
+@using ValidationWeb.Utility
+@model OdsResidentsEnrolledElsewhereReportViewModel
 @{
     var identity = (ValidationPortalIdentity)User.Identity;
     var appRoleName = identity.AppRole.Name;

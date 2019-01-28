@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace ValidationWeb.Utility
+﻿namespace ValidationWeb.Utility
 {
+    using System;
+    using System.Collections.Generic;
+
     public class GradeLevelComparer : IComparer<string>
     {
         public int Compare(string left, string right)

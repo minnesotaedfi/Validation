@@ -12,6 +12,7 @@
     using System.Web.Http;
     using System.Web.Http.Filters;
 
+    using ValidationWeb.Filters;
     using ValidationWeb.Services;
 
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]

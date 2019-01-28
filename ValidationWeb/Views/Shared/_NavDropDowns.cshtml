@@ -1,4 +1,6 @@
-﻿@model NavMenusViewModel
+﻿@using ValidationWeb.Filters
+@using ValidationWeb.Utility
+@model NavMenusViewModel
 @{
     var identity = (ValidationPortalIdentity)User.Identity;
     var permissions = User.Identity.GetViewPermissions(identity.AppRole);

@@ -6,6 +6,8 @@ using System.Web;
 
 namespace ValidationWeb
 {
+    using ValidationWeb.Filters;
+
     public class ValidationReportsViewModel
     {
         public string DistrictName { get; set; }

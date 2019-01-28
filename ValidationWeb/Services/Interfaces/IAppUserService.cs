@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace ValidationWeb.Services
 {
+    using ValidationWeb.Filters;
+
     public interface IAppUserService
     {
         void DismissAnnouncement(int announcementId);

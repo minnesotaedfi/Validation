@@ -1,4 +1,6 @@
-﻿@model OdsDemographicsReportViewModel
+﻿@using ValidationWeb.Filters
+@using ValidationWeb.Utility
+@model OdsDemographicsReportViewModel
 @{
     var identity = (ValidationPortalIdentity)User.Identity;
     var appRoleName = identity.AppRole.Name;

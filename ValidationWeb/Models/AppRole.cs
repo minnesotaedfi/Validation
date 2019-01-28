@@ -5,6 +5,8 @@ using System.Web;
 
 namespace ValidationWeb
 {
+    using ValidationWeb.Filters;
+
     /// <summary>
     /// Role information and definitions are stored in the Minnesota SSO database. 
     /// </summary>
