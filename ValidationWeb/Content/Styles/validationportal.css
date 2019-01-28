@@ -626,7 +626,9 @@ th {
 .table-primary > th,
 .table-primary > td {
     color: rgb(255, 255, 255);
-    background-color: rgb(0, 56, 101);
+    background-color: #008EAA;
 }
+
+
 
 /***************************************************************************************/
