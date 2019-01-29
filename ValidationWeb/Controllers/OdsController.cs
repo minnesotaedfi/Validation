@@ -227,14 +227,10 @@ namespace ValidationWeb
 
 #if DEBUG
             System.Diagnostics.Debug.WriteLine($"GetStudentDrillDownData ({reportType}): {(DateTime.Now - startTime).Milliseconds}ms");
-#endif 
+#endif
 
-            IEnumerable<StudentDrillDownQuery> sortedResults = results as IQueryable<StudentDrillDownQuery>;
-            if (sortedResults == null)
-            {
-                throw new InvalidOperationException();
-            }
-
+            IEnumerable<StudentDrillDownQuery> sortedResults = new List<StudentDrillDownQuery>(results);
+            
             var sortColumn = request.Columns.FirstOrDefault(x => x.Sort != null);
             if (sortColumn != null)
             {
@@ -316,11 +312,6 @@ namespace ValidationWeb
                             sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
                                                 ? sortedResults.OrderBy(orderingFunctionString)
                                                 : sortedResults.OrderByDescending(orderingFunctionString);
-                            break;
-                        }
-                    default:
-                        {
-                            sortedResults = results;
                             break;
                         }
                 }
