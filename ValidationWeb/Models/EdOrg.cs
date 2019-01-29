@@ -56,5 +56,10 @@
         {
             return (obj as EdOrg)?.Id == Id;
         }
+
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode();
+        }
     }
 }

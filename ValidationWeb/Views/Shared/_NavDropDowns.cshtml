@@ -26,26 +26,29 @@
             }
         </div>
     </li>
-    <li class="nav-item dropdown pull-right">
-        @* TODO: put this displayed district name back for single-district users who don't get the dropdown *@
-        @*<span id="selectedOrg" class="white-heavy-text">@Model.FocusedEdOrg.OrganizationName</span>*@
-        @*todo: put this selectedOrg as the selected value *@
-        @if (Model.EdOrgs.Count() > 1)
-        {
-            <select id="edOrgNames" class="form-control validation-dropdown-menu district-dropdown">
-            </select>
-        }
-    </li>
-    <li class="nav-item dropdown pull-right">
-        <a class="nav-link dropdown-toggle validation-dropdown-toggle" href="#" id="actionDropdownYear" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            @Model.FocusedSchoolYear
-        </a>
-        <div class="dropdown-menu validation-dropdown-menu" style="left: initial;" aria-labelledby="actionDropdown">
-            @foreach (var schoolYear in Model.SchoolYears)
+    @if (!permissions.CanAccessAdminFeatures)
+    {
+        <li class="nav-item dropdown pull-right">
+            @* TODO: put this displayed district name back for single-district users who don't get the dropdown *@
+            @*<span id="selectedOrg" class="white-heavy-text">@Model.FocusedEdOrg.OrganizationName</span>*@
+            @*todo: put this selectedOrg as the selected value *@
+            @if (Model.EdOrgs.Count() > 1)
             {
-                <a class="nav-item nav-link select-school-year-link" href="#" data-year-id="@(schoolYear.Id.ToString())">@(schoolYear.ToString())</a>
+                <select id="edOrgNames" class="form-control validation-dropdown-menu district-dropdown">
+                </select>
             }
-        </div>
-    </li>
-</div>
+        </li>
 
+        <li class="nav-item dropdown pull-right">
+            <a class="nav-link dropdown-toggle validation-dropdown-toggle" href="#" id="actionDropdownYear" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                @Model.FocusedSchoolYear
+            </a>
+            <div class="dropdown-menu validation-dropdown-menu" style="left: initial;" aria-labelledby="actionDropdown">
+                @foreach (var schoolYear in Model.SchoolYears)
+                {
+                    <a class="nav-item nav-link select-school-year-link" href="#" data-year-id="@(schoolYear.Id.ToString())">@(schoolYear.ToString())</a>
+                }
+            </div>
+        </li>
+    }
+</div>

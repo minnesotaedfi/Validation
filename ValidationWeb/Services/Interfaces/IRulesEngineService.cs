@@ -10,11 +10,11 @@ namespace ValidationWeb.Services
 
     public interface IRulesEngineService
     {
-        ValidationReportSummary SetupValidationRun(string fourDigitOdsDbYear, string collectionId);
+        ValidationReportSummary SetupValidationRun(SubmissionCycle submissionCycle, string collectionId);
         List<Collection> GetCollections();
 
-        void RunValidation(string fourDigitOdsDbYear, long ruleValidationId);
+        void RunValidation(SubmissionCycle submissionCycle, long ruleValidationId);
 
-        Task RunValidationAsync(string fourDigitOdsDbYear, long ruleValidationId);
+        Task RunValidationAsync(SubmissionCycle submissionCycle, long ruleValidationId);
     }
 }

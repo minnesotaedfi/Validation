@@ -7,7 +7,7 @@
 <div class="row border border-dark tbmargin10">
     <div class="col-6">
         <div>Requested On: @Model.Details.ValidationReportSummary.RequestedWhen.ToShortDateString() @Model.Details.ValidationReportSummary.RequestedWhen.ToShortTimeString()</div>
-        <div>Rule Collection Used: @Model.Details.CollectionName</div>
+        <div>Rule Collection Used: @{ WriteLiteral($"{Model.Details.ValidationReportSummary.SchoolYear} / {Model.Details.CollectionName}"); }</div>
     </div>
     <div class="col-6">
         <div>Initiated By: @Model.Details.ValidationReportSummary.InitiatedBy</div>
@@ -40,13 +40,6 @@
     <span id="totalPageCount" class="margin4px"> 1 </span>
     <button id="nextPageButton" class="btn prime-blue white-heavy-text">&gt;</button>
     <button id="lastPageButton" class="btn prime-blue white-heavy-text">&gt;&gt;</button>
-    @*<div class="paging-offset-buttons">
-        <button id="pgoffset-2" class="page-button" data-offset="-2"></button>
-        <button id="pgoffset-1" class="page-button" data-offset="-1"></button>
-        <button id="searchButton" class="btn btn-sm prime-blue white-heavy-text" style="margin: 0">Go <i class="fas fa-arrow-right"></i></button>
-        <button id="pgoffset1" class="page-button" data-offset="1"></button>
-        <button id="pgoffset2" class="page-button" data-offset="2"></button>
-    </div>*@
 </div>
 
 <div id="errorGrid" class="row tbmargin10 error-grid">

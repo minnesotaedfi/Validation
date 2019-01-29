@@ -34,7 +34,6 @@
             IDbContextFactory<ValidationPortalDbContext> dbContextFactory,
             Model engineObjectModel)
         {
-            // _dbContext = dbContext;
             _appUserService = appUserService;
             _edOrgService = edOrgService;
             _schoolYearService = schoolYearService;
@@ -44,8 +43,11 @@
             _engineObjectModel = engineObjectModel;
         }
 
-        public ValidationReportSummary SetupValidationRun(string fourDigitOdsDbYear, string collectionId)
+        public ValidationReportSummary SetupValidationRun(SubmissionCycle submissionCycle, string collectionId)
         {
+            var schoolYear = _schoolYearService.GetSchoolYearById(submissionCycle.SchoolYearId.Value);
+            string fourDigitOdsDbYear = schoolYear.EndYear;
+
             ValidationReportSummary newReportSummary = null;
             using (var odsRawDbContext = new RawOdsDbContext(fourDigitOdsDbYear))
             {
@@ -69,14 +71,6 @@
 
                     #region Add a new execution of the Validation Engine to the Validation database, (required by the Portal) and get an ID back representing this execution.
 
-                    var schoolYear = _schoolYearService.GetSubmittableSchoolYears()
-                        .FirstOrDefault(sy => sy.EndYear == fourDigitOdsDbYear);
-
-                    if (schoolYear == null)
-                    {
-                        throw new InvalidOperationException($"Unable to find submittable school year {fourDigitOdsDbYear}");
-                    }
-
                     newReportSummary = new ValidationReportSummary
                                        {
                                            Collection = collectionId,
@@ -86,12 +80,12 @@
                                            TotalCount = 0,
                                            Id = newRuleValidationExecution.RuleValidationId,
                                            EdOrgId = _appUserService.GetSession().FocusedEdOrgId,
-                                           // SchoolYear = schoolYear,
                                            SchoolYearId = schoolYear.Id,
                                            InitiatedBy = _appUserService.GetUser().FullName,
                                            RequestedWhen = DateTime.UtcNow,
                                            Status = "In Progress - Starting"
                                        };
+
                     validationDbContext.ValidationReportSummaries.Add(newReportSummary);
                     validationDbContext.SaveChanges();
                     _loggingService.LogDebugMessage(
@@ -104,12 +98,15 @@
             return newReportSummary;
         }
 
-        public Task RunValidationAsync(string fourDigitOdsDbYear, long ruleValidationId)
+        public Task RunValidationAsync(SubmissionCycle submissionCycle, long ruleValidationId)
         {
+            var schoolYear = _schoolYearService.GetSchoolYearById(submissionCycle.SchoolYearId.Value);
+            string fourDigitOdsDbYear = schoolYear.EndYear;
+
             _loggingService.LogInfoMessage($"===== Starting validation run for year {fourDigitOdsDbYear}, ruleValidationId {ruleValidationId}");
 
             return Task.Factory
-                .StartNew(() => RunValidation(fourDigitOdsDbYear, ruleValidationId))
+                .StartNew(() => RunValidation(submissionCycle, ruleValidationId))
                 .ContinueWith(task =>
                     {
                         _loggingService.LogInfoMessage($"===== Completed validation run for year {fourDigitOdsDbYear}, ruleValidationId {ruleValidationId}");
@@ -121,10 +118,10 @@
                     });
         }
 
-        public void RunValidation(string fourDigitOdsDbYear, long ruleValidationId)
+        public void RunValidation(SubmissionCycle submissionCycle, long ruleValidationId)
         {
-            var schoolYear = _schoolYearService.GetSubmittableSchoolYears()
-                .FirstOrDefault(sy => sy.EndYear == fourDigitOdsDbYear);
+            var schoolYear = _schoolYearService.GetSchoolYearById(submissionCycle.SchoolYearId.Value);
+            string fourDigitOdsDbYear = schoolYear.EndYear;
 
             // todo: dependency inject the initialization of RawOdsDbContext with a year. introduce a factory for most simple implementation
             using (var odsRawDbContext = new RawOdsDbContext(fourDigitOdsDbYear))

@@ -249,9 +249,14 @@ namespace ValidationWeb
             // TODO: Validate the user's access to district, action, school year
             // todo: all security
 
-            // refactor: step 1 set up run, get id. step 2, queue background run engine in thread 
-            ValidationReportSummary summary = _rulesEngineService.SetupValidationRun(submissionCycle.StartDate.Year.ToString(), submissionCycle.CollectionId);
-            HostingEnvironment.QueueBackgroundWorkItem(cancellationToken => _rulesEngineService.RunValidationAsync(submissionCycle.StartDate.Year.ToString(), summary.Id));
+            ValidationReportSummary summary = _rulesEngineService.SetupValidationRun(
+                submissionCycle, 
+                submissionCycle.CollectionId);
+
+            HostingEnvironment.QueueBackgroundWorkItem(
+                cancellationToken => _rulesEngineService.RunValidationAsync(
+                    submissionCycle, 
+                    summary.Id));
 
             return Json(summary);
         }

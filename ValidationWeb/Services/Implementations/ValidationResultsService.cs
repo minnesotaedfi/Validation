@@ -37,8 +37,9 @@
             using (var portalDbContext = DbContextFactory.Create())
             {
                 var reportDetails = portalDbContext.ValidationReportDetails
-                    .Include(vrds => vrds.ValidationReportSummary)
-                    .FirstOrDefault(vrd => vrd.ValidationReportSummaryId == validationReportId);
+                    .Include(x => x.ValidationReportSummary)
+                    .Include(x => x.ValidationReportSummary.SchoolYear)
+                    .FirstOrDefault(x => x.ValidationReportSummaryId == validationReportId);
                 
                 reportDetails.CompletedWhen = reportDetails.CompletedWhen.HasValue
                                                   ? reportDetails.CompletedWhen.Value.ToLocalTime() // why!? 
@@ -46,8 +47,10 @@
                 
                 reportDetails.ValidationReportSummary.RequestedWhen =
                     reportDetails.ValidationReportSummary.RequestedWhen.ToLocalTime();
+
                 _loggingService.LogDebugMessage(
                     $"Successfully retrieved Validation Report Details for report with ID number: {validationReportId.ToString()}");
+
                 return reportDetails;
             }
         }

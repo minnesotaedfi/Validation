@@ -11,12 +11,13 @@
     [RoutePrefix("api/validation")]
     public class ValidationController : ApiController
     {
-        public readonly IValidationResultsService _validationResultsService;
+        public readonly IValidationResultsService ValidationResultsService;
+
         private readonly IEdOrgService _edOrgService;
 
         public ValidationController(IValidationResultsService validationResultsService, IEdOrgService edOrgService)
         {
-            _validationResultsService = validationResultsService;
+            ValidationResultsService = validationResultsService;
             _edOrgService = edOrgService;
         }
 
@@ -24,14 +25,14 @@
         [HttpPost]
         public FilteredValidationErrors GetValidationErrorSummaries(ValidationErrorFilter filter)
         {
-            return _validationResultsService.GetFilteredValidationErrorTableData(filter);
+            return ValidationResultsService.GetFilteredValidationErrorTableData(filter);
         }
 
         [Route("error-summaries/autocomplete")]
         [HttpPost]
         public List<string> GetValidationErrorAutocomplete(ValidationErrorFilter filter)
         {
-            return _validationResultsService.AutocompleteErrorFilter(filter);
+            return ValidationResultsService.AutocompleteErrorFilter(filter);
         }
 
         [Route("edorgs/autocomplete")]
