@@ -3,7 +3,7 @@
     function hideElement(elemId, announcementId)
     {
         $(elemId).fadeOut();
-        $.get('@(Url.Action("DismissAnnouncement", "Home"))?announcement=' + announcementId )
+        $.get('@(Url.Action("DismissAnnouncement", "Home"))?announcement=' + announcementId);
     }
 </script>
 

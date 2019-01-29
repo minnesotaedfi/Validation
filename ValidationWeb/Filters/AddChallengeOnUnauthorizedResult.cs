@@ -24,9 +24,9 @@ namespace ValidationWeb
             InnerResult = innerResult;
         }
 
-        public AuthenticationHeaderValue Challenge { get; private set; }
+        public AuthenticationHeaderValue Challenge { get; }
 
-        public IHttpActionResult InnerResult { get; private set; }
+        public IHttpActionResult InnerResult { get; }
 
         /// <summary>
         /// Prompts the browser's user or User Agent to provide credentials to access the resource that was requested and unauthorized by 

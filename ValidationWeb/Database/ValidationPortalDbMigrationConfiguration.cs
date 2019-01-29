@@ -10,7 +10,8 @@ namespace ValidationWeb
 
     internal sealed class ValidationPortalDbMigrationConfiguration : DbMigrationsConfiguration<ValidationPortalDbContext>
     {
-        private IConfigurationValues _config = new AppSettingsFileConfigurationValues();
+        private readonly IConfigurationValues _config = new AppSettingsFileConfigurationValues();
+
         public ValidationPortalDbMigrationConfiguration()
         {
             AutomaticMigrationsEnabled = true;
@@ -18,7 +19,7 @@ namespace ValidationWeb
             ContextKey = "ValidationWeb.ValidationPortalDbContext";
         }
 
-        public static EdOrgTypeLookup[] EdOrgTypeLookups = new EdOrgTypeLookup[]
+        public static EdOrgTypeLookup[] EdOrgTypeLookups = new[]
         {
             new EdOrgTypeLookup { Id = (int)EdOrgType.School, CodeValue = "School", Description = "School" },
             new EdOrgTypeLookup { Id = (int)EdOrgType.District, CodeValue = "District", Description = "District" },

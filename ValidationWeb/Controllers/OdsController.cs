@@ -159,7 +159,6 @@ namespace ValidationWeb
 #if DEBUG
             var startTime = DateTime.Now;
 #endif
-            IEnumerable<StudentDrillDownQuery> results;
             Func<IOdsDataService, OrgType, int?, int, int, string, IEnumerable<StudentDrillDownQuery>> queryFunction;
 
             switch (reportType)
@@ -180,7 +179,7 @@ namespace ValidationWeb
                     throw new InvalidOperationException($"reportType of {reportType} not supported");
             }
 
-            results = queryFunction(
+            var results = queryFunction(
                 OdsDataService,
                 orgType,
                 schoolId,
@@ -230,14 +229,17 @@ namespace ValidationWeb
             System.Diagnostics.Debug.WriteLine($"GetStudentDrillDownData ({reportType}): {(DateTime.Now - startTime).Milliseconds}ms");
 #endif 
 
-            var sortedResults = results;
+            IEnumerable<StudentDrillDownQuery> sortedResults = results as IQueryable<StudentDrillDownQuery>;
+            if (sortedResults == null)
+            {
+                throw new InvalidOperationException();
+            }
 
             var sortColumn = request.Columns.FirstOrDefault(x => x.Sort != null);
             if (sortColumn != null)
             {
                 Func<StudentDrillDownQuery, string> orderingFunctionString = null;
                 Func<StudentDrillDownQuery, int?> orderingFunctionNullableInt = null;
-                Func<StudentDrillDownQuery, int> orderingFunctionInt = null;
                 Func<StudentDrillDownQuery, DateTime?> orderingFunctionNullableDateTime = null;
 
                 switch (sortColumn.Name)
@@ -246,8 +248,8 @@ namespace ValidationWeb
                         {
                             orderingFunctionString = x => x.StudentId;
                             sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
-                                                ? results.OrderBy(orderingFunctionString)
-                                                : results.OrderByDescending(orderingFunctionString);
+                                                ? sortedResults.OrderBy(orderingFunctionString)
+                                                : sortedResults.OrderByDescending(orderingFunctionString);
                             break;
                         }
                     case "studentName":
@@ -255,48 +257,48 @@ namespace ValidationWeb
                             // watch this implementation detail! name is being stitched together in javascript now --pocky
                             orderingFunctionString = x => $"{x.StudentLastName}, {x.StudentFirstName} {x.StudentMiddleName}";
                             sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
-                                                ? results.OrderBy(orderingFunctionString)
-                                                : results.OrderByDescending(orderingFunctionString);
+                                                ? sortedResults.OrderBy(orderingFunctionString)
+                                                : sortedResults.OrderByDescending(orderingFunctionString);
                             break;
                         }
                     case "schoolId":
                         {
                             orderingFunctionNullableInt = x => x.SchoolId;
                             sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
-                                                ? results.OrderBy(orderingFunctionNullableInt)
-                                                : results.OrderByDescending(orderingFunctionNullableInt);
+                                                ? sortedResults.OrderBy(orderingFunctionNullableInt)
+                                                : sortedResults.OrderByDescending(orderingFunctionNullableInt);
                             break;
                         }
                     case "districtId":
                         {
                             orderingFunctionNullableInt = x => x.DistrictId;
                             sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
-                                                ? results.OrderBy(orderingFunctionNullableInt)
-                                                : results.OrderByDescending(orderingFunctionNullableInt);
+                                                ? sortedResults.OrderBy(orderingFunctionNullableInt)
+                                                : sortedResults.OrderByDescending(orderingFunctionNullableInt);
                             break;
                         }
                     case "schoolName":
                         {
                             orderingFunctionString = x => x.SchoolName;
                             sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
-                                                ? results.OrderBy(orderingFunctionString)
-                                                : results.OrderByDescending(orderingFunctionString);
+                                                ? sortedResults.OrderBy(orderingFunctionString)
+                                                : sortedResults.OrderByDescending(orderingFunctionString);
                             break;
                         }
                     case "enrolledDate":
                         {
                             orderingFunctionNullableDateTime = x => x.EnrolledDate;
                             sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
-                                                ? results.OrderBy(orderingFunctionNullableDateTime)
-                                                : results.OrderByDescending(orderingFunctionNullableDateTime);
+                                                ? sortedResults.OrderBy(orderingFunctionNullableDateTime)
+                                                : sortedResults.OrderByDescending(orderingFunctionNullableDateTime);
                             break;
                         }
                     case "withdrawDate":
                         {
                             orderingFunctionNullableDateTime = x => x.WithdrawDate;
                             sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
-                                                ? results.OrderBy(orderingFunctionNullableDateTime)
-                                                : results.OrderByDescending(orderingFunctionNullableDateTime);
+                                                ? sortedResults.OrderBy(orderingFunctionNullableDateTime)
+                                                : sortedResults.OrderByDescending(orderingFunctionNullableDateTime);
                             break;
                         }
                     case "grade":
@@ -324,8 +326,9 @@ namespace ValidationWeb
                 }
             }
 
-            var pagedResults = sortedResults.Skip(request.Start).Take(request.Length);
-            var response = DataTablesResponse.Create(request, results.Count(), results.Count(), pagedResults);
+            var resultList = sortedResults.ToList();
+            var pagedResults = resultList.Skip(request.Start).Take(request.Length);
+            var response = DataTablesResponse.Create(request, resultList.Count, resultList.Count, pagedResults);
             var jsonResult = new DataTablesJsonResult(response, JsonRequestBehavior.AllowGet);
             return jsonResult;
         }

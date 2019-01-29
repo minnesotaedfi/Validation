@@ -8,8 +8,8 @@ namespace ValidationWeb.Services
 {
     public class OdsConfigurationValues : IOdsConfigurationValues
     {
-        private static string _rawOdsConnectionStringTemplate;
-        private static string _validatedOdsConnectionStringTemplate;
+        private static readonly string _rawOdsConnectionStringTemplate;
+        private static readonly string _validatedOdsConnectionStringTemplate;
 
         static OdsConfigurationValues()
         {

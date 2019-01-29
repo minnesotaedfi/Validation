@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Web;
-
-namespace ValidationWeb.Services
+﻿namespace ValidationWeb.Services
 {
+    using System.Configuration;
+
     public class RulesEngineConfigurationValues : IRulesEngineConfigurationValues
     {
-        private static string _rulesFileFolder;
-        private static string _ruleEngineResultsSchema;
-        private static string _ruleEngineResultsConnectionString;
+        private static readonly string _rulesFileFolder;
+        private static readonly string _ruleEngineResultsSchema;
+        private static readonly string _ruleEngineResultsConnectionString;
 
         static RulesEngineConfigurationValues()
         {
@@ -19,28 +15,10 @@ namespace ValidationWeb.Services
             _ruleEngineResultsConnectionString = ConfigurationManager.ConnectionStrings["ValidationPortalDbContext"]?.ToString();
         }
 
-        public string RulesFileFolder
-        {
-            get
-            {
-                return _rulesFileFolder;
-            }
-        }
+        public string RulesFileFolder => _rulesFileFolder;
 
-        public string RuleEngineResultsSchema
-        {
-            get
-            {
-                return _ruleEngineResultsSchema;
-            }
-        }
+        public string RuleEngineResultsSchema => _ruleEngineResultsSchema;
 
-        public string RuleEngineResultsConnectionString
-        {
-            get
-            {
-                return _ruleEngineResultsConnectionString;
-            }
-        }
+        public string RuleEngineResultsConnectionString => _ruleEngineResultsConnectionString;
     }
 }

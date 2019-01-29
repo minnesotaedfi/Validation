@@ -6,12 +6,11 @@ namespace ValidationWeb
 {
     public class NavController : Controller
     {
-        private static string _version;
+        private static readonly string _version;
         private readonly IAppUserService _appUserService;
         private readonly IEdOrgService _edOrgService;
         private readonly ISchoolYearService _schoolYearService;
-        private readonly IValidatedDataSubmissionService _validatedDataSubmissionService;
-
+        
         private readonly IConfigurationValues _configurationValues;
 
         static NavController()
@@ -29,7 +28,6 @@ namespace ValidationWeb
             _appUserService = appUserService;
             _edOrgService = edOrgService;
             _schoolYearService = schoolYearService;
-            _validatedDataSubmissionService = validatedDataSubmissionService;
             _configurationValues = configurationValues;
         }
 

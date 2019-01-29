@@ -133,9 +133,10 @@
 
                 #region Filter on search texts
 
-                var columnNames = filterSpecification.filterColumns ?? new string[0];
-                var searchTexts = filterSpecification.filterTexts ?? new string[0];
-                for (int colIndex = 0; colIndex < columnNames.Length; colIndex++)
+                var columnNames = filterSpecification.filterColumns ?? Array.Empty<string>();
+                var searchTexts = filterSpecification.filterTexts ?? Array.Empty<string>();
+
+                for (var colIndex = 0; colIndex < columnNames.Length; colIndex++)
                 {
                     if (searchTexts.Length > colIndex && !string.IsNullOrWhiteSpace(searchTexts[colIndex]))
                     {

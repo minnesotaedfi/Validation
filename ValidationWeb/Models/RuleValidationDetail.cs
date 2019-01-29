@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Web;
-
-namespace ValidationWeb
+﻿namespace ValidationWeb
 {
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+
     /// <summary>
     /// Represents a single error or warning. The structure of this table is given by the Wells Rules Engine.
     /// </summary>
