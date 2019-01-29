@@ -1,22 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Web;
-
-namespace ValidationWeb
+﻿namespace ValidationWeb
 {
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+
     using ValidationWeb.Filters;
 
     [Table("validation.AppUserSession")]
     public class AppUserSession
     {
-        public AppUserSession()
-        {
-            DismissedAnnouncements = new HashSet<DismissedAnnouncement>();
-        }
-
         [Key]
         [StringLength(64)]
         public string Id { get; set; }
@@ -38,10 +31,5 @@ namespace ValidationWeb
         /// This is the SchoolYear that the user is acting on/viewing ... chosen in the application/website.
         /// </summary>
         public int FocusedSchoolYearId { get; set; }
-
-        /// <summary>
-        /// Announcements that have been dismissed by the user during this session.
-        /// </summary>
-        public ICollection<DismissedAnnouncement> DismissedAnnouncements { get; set; }
     }
 }

@@ -26,8 +26,6 @@
 
         public virtual DbSet<AppUserSession> AppUserSessions { get; set; }
 
-        public virtual DbSet<DismissedAnnouncement> DismissedAnnouncements { get; set; }
-
         public virtual DbSet<EdOrg> EdOrgs { get; set; }
 
         public virtual DbSet<EdOrgTypeLookup> EdOrgTypeLookup { get; set; }
@@ -59,22 +57,21 @@
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            //modelBuilder.Entity<Announcement>()
+            //    .HasMany<EdOrg>(ann => ann.LimitToEdOrgs)
+            //    .WithMany(eo => eo.Announcements)
+            //    .Map(cs =>
+            //    {
+            //        cs.MapLeftKey("AnnouncementId");
+            //        cs.MapRightKey("EdOrgId");
+            //        cs.ToTable("validation.AnnouncementEdOrg");
+            //    });
 
-            modelBuilder.Entity<Announcement>()
-                .HasMany<EdOrg>(ann => ann.LimitToEdOrgs)
-                .WithMany(eo => eo.Announcements)
-                .Map(cs =>
-                {
-                    cs.MapLeftKey("AnnouncementId");
-                    cs.MapRightKey("EdOrgId");
-                    cs.ToTable("validation.AnnouncementEdOrg");
-                });
-
-            modelBuilder.Entity<AppUserSession>()
-                .HasMany<DismissedAnnouncement>(aus => aus.DismissedAnnouncements)
-                .WithRequired(dann => dann.AppUserSession)
-                .HasForeignKey(aus => aus.AppUserSessionId)
-                .WillCascadeOnDelete();
+            //modelBuilder.Entity<AppUserSession>()
+            //    .HasMany<DismissedAnnouncement>(aus => aus.DismissedAnnouncements)
+            //    .WithRequired(dann => dann.AppUserSession)
+            //    .HasForeignKey(aus => aus.AppUserSessionId)
+            //    .WillCascadeOnDelete();
         }
     }
 }

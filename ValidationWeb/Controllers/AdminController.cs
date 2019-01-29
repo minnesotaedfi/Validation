@@ -8,6 +8,8 @@ using ValidationWeb.Services;
 
 namespace ValidationWeb
 {
+    using ValidationWeb.Utility;
+
     [PortalAuthorize(Roles = "Administrator")]
     public class AdminController : Controller
     {
@@ -40,16 +42,17 @@ namespace ValidationWeb
             var model = new AdminIndexViewModel
             {
                 AppUserSession = _appUserService.GetSession(),
-                AuthorizedEdOrgs = _edOrgService.GetAuthorizedEdOrgs(),
                 FocusedEdOrg = _edOrgService.GetEdOrgById(_appUserService.GetSession().FocusedEdOrgId, _schoolYearService.GetSchoolYearById(_appUserService.GetSession().FocusedSchoolYearId).Id),
                 YearsOpenForDataSubmission = _schoolYearService.GetSubmittableSchoolYears().OrderByDescending(x => x.EndYear),
                 RuleCollections = _rulesEngineService.GetCollections(),
                 SubmissionCycles = _submissionCycleService.GetSubmissionCycles(),
-                Announcements = _announcementService.GetAnnouncements(true)
+                Announcements = _announcementService.GetAnnouncements()
             };
 
             // Check user authorization, if user is admin then then return admin page if not return the error page.
-            return model.AppUserSession.UserIdentity.AppRole.Name == "Administrator" ? View(model) : View("Error");
+            return model.AppUserSession.UserIdentity.GetViewPermissions(model.AppUserSession.UserIdentity.AppRole).CanAccessAdminFeatures 
+                       ? View(model) 
+                       : View("Error");
         }
 
         public bool UpdateThresholdErrorValue(int id, decimal thresholdValue)
@@ -153,7 +156,7 @@ namespace ValidationWeb
                     _announcementService.SaveAnnouncement(announcement.Id, announcement.Priority, announcement.Message,
                         announcement.ContactInfo,
                         announcement.LinkUrl, announcement.Expiration);
-                    var announcements = _announcementService.GetAnnouncements(true);
+                    var announcements = _announcementService.GetAnnouncements();
                     return RedirectToAction("Index", new { tab = "announcements" });
                 }
                 catch (Exception ex)

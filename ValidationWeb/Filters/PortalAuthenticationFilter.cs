@@ -419,7 +419,6 @@ namespace ValidationWeb
                 var newCurrentSession = new AppUserSession
                                         {
                                             Id = Guid.NewGuid().ToString(),
-                                            DismissedAnnouncements = new HashSet<DismissedAnnouncement>(),
                                             ExpiresUtc = DateTime.UtcNow.AddMinutes(30),
                                             FocusedEdOrgId =
                                                 (previousSessionFocusedEdOrgId == 0)

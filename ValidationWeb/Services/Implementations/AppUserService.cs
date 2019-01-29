@@ -25,25 +25,7 @@
             HttpContextProvider = httpContextProvider;
             LoggingService = loggingService;
         }
-
-        // todo: refactor! why is this here? 
-        public void DismissAnnouncement(int announcementId)
-        {
-            using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
-            {
-                var session = GetSession();
-                session.DismissedAnnouncements.Add(
-                    new DismissedAnnouncement
-                    {
-                        AnnouncementId = announcementId,
-                        AppUserSessionId = session.Id
-                    });
-
-                validationPortalDataContext.SaveChanges();
-                UpdateUserSession(session);
-            }
-        }
-
+        
         public AppUserSession GetSession()
         {
             return HttpContextProvider.CurrentHttpContext.Items[SessionItemName] as AppUserSession;

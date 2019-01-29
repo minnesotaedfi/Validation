@@ -70,64 +70,8 @@ namespace ValidationWeb.Tests.Services
             DbContextFactoryMock.Reset();
             HttpContextProviderMock.Reset();
             LoggingServiceMock.Reset();
-            DefaultTestAppUserSession.DismissedAnnouncements = new List<DismissedAnnouncement>();
         }
-
-        [Test]
-        public void DismissAnnouncement_Should_AddToDismissedAnnouncements()
-        {
-            var authorizedEdOrgId = 12345;
-            DefaultTestAppUserSession.UserIdentity.AuthorizedEdOrgs.Add(new EdOrg { Id = authorizedEdOrgId });
-
-            var announcementIdToDismiss = 2345;
-            var announcementIdToKeep = 3456;
-
-            var announcements = new List<Announcement>(
-                new[]
-                {
-                    new Announcement
-                    {
-                        Id = announcementIdToKeep,
-                        Message = "test message",
-                        LimitToEdOrgs = new List<EdOrg>(new[] { new EdOrg { Id = authorizedEdOrgId } })
-                    },
-                    new Announcement
-                    {
-                        Id = announcementIdToDismiss,
-                        Message = "dismiss me",
-                        LimitToEdOrgs = new List<EdOrg>(new[] { new EdOrg { Id = authorizedEdOrgId } })
-                    }
-                });
-
-            EntityFrameworkMocks.SetupMockDbSet(
-                EntityFrameworkMocks.GetQueryableMockDbSet(announcements),
-                ValidationPortalDbContextMock,
-                x => x.Announcements,
-                x => x.Announcements = It.IsAny<DbSet<Announcement>>(),
-                announcements);
-
-            DbContextFactoryMock.Setup(x => x.Create()).Returns(ValidationPortalDbContextMock.Object);
-
-            var httpContext = new HttpContext(
-                new HttpRequest(string.Empty, "http://wearedoubleline.com", string.Empty),
-                new HttpResponse(new StringWriter()));
-
-            httpContext.Items[AppUserService.SessionItemName] = DefaultTestAppUserSession;
-
-            HttpContextProviderMock.SetupGet(x => x.CurrentHttpContext).Returns(httpContext);
-
-            var appUserService = new AppUserService(
-                DbContextFactoryMock.Object,
-                HttpContextProviderMock.Object,
-                LoggingServiceMock.Object);
-
-            appUserService.DismissAnnouncement(announcementIdToDismiss);
-
-            DefaultTestAppUserSession.DismissedAnnouncements.Count(x => x.AnnouncementId == announcementIdToDismiss).ShouldEqual(1);
-            ValidationPortalDbContextMock.Verify(x => x.SaveChanges(), Times.Once);
-        }
-
-
+        
         [Test]
         public void GetUser_Should_ReturnUser()
         {

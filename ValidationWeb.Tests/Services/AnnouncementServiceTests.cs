@@ -72,7 +72,7 @@
         }
 
         [Test]
-        public void GetAnnouncements_WithPreviousDismissedAnnouncementsTrue_Should_ReturnAll()
+        public void GetAnnouncements_Should_ReturnAll()
         {
             AppUserServiceMock.Setup(x => x.GetSession()).Returns(DefaultTestAppUserSession);
 
@@ -89,30 +89,15 @@
                     new Announcement
                     {
                         Id = announcementIdToKeep,
-                        Message = "test contact info",
-                        LimitToEdOrgs = new List<EdOrg>(new[] { new EdOrg { Id = authorizedEdOrgId } })
+                        Message = "test contact info"
                     },
                     new Announcement
                     {
                         Id = announcementIdToDismiss,
-                        Message = "dismiss me",
-                        LimitToEdOrgs = new List<EdOrg>(new[] { new EdOrg { Id = authorizedEdOrgId } })
+                        Message = "dismiss me"
                     }
                 });
-
-            var dismissedAnnouncements =
-                new List<DismissedAnnouncement>
-                {
-                    new DismissedAnnouncement
-                    {
-                        AppUserSession = DefaultTestAppUserSession,
-                        AnnouncementId = announcementIdToDismiss,
-                        AppUserSessionId = DefaultTestAppUserSession.Id
-                    }
-                };
-
-            DefaultTestAppUserSession.DismissedAnnouncements = dismissedAnnouncements;
-
+            
             EntityFrameworkMocks.SetupMockDbSet<ValidationPortalDbContext, Announcement>(
                 EntityFrameworkMocks.GetQueryableMockDbSet(announcements),
                 ValidationPortalDbContextMock,
@@ -124,74 +109,14 @@
 
             var announcementService = new AnnouncementService(DbContextFactoryMock.Object, AppUserServiceMock.Object, LoggingServiceMock.Object);
 
-            var result = announcementService.GetAnnouncements(true);
+            var result = announcementService.GetAnnouncements();
 
             result.ShouldNotBeNull();
             result.ShouldNotBeEmpty();
             result.ShouldContain(announcements.First(x => x.Id == announcementIdToKeep));
             result.ShouldContain(announcements.First(x => x.Id == announcementIdToDismiss));
         }
-
-        [Test]
-        public void GetAnnouncements_WithPreviousDismissedAnnouncementsFalse_Should_ReturnOnlyNotDismissed()
-        {
-            AppUserServiceMock.Setup(x => x.GetSession()).Returns(DefaultTestAppUserSession);
-
-            // authorized ed orgs should match limited-to ed orgs 
-            var authorizedEdOrgId = 12345;
-            DefaultTestAppUserSession.UserIdentity.AuthorizedEdOrgs.Add(new EdOrg { Id = authorizedEdOrgId });
-
-            var announcementIdToDismiss = 2345;
-            var announcementIdToKeep = 3456;
-
-            var announcements = new List<Announcement>(
-                new[]
-                {
-                    new Announcement
-                    {
-                        Id = announcementIdToKeep,
-                        Message = "test message",
-                        LimitToEdOrgs = new List<EdOrg>(new[] { new EdOrg { Id = authorizedEdOrgId } })
-                    },
-                    new Announcement
-                    {
-                        Id = announcementIdToDismiss,
-                        Message = "dismiss me",
-                        LimitToEdOrgs = new List<EdOrg>(new[] { new EdOrg { Id = authorizedEdOrgId } })
-                    }
-                });
-
-            var dismissedAnnouncements =
-                new List<DismissedAnnouncement>
-                {
-                    new DismissedAnnouncement
-                    {
-                        AppUserSession = DefaultTestAppUserSession,
-                        AnnouncementId = announcementIdToDismiss,
-                        AppUserSessionId = DefaultTestAppUserSession.Id
-                    }
-                };
-
-            DefaultTestAppUserSession.DismissedAnnouncements = dismissedAnnouncements;
-
-            EntityFrameworkMocks.SetupMockDbSet(
-                EntityFrameworkMocks.GetQueryableMockDbSet(announcements),
-                ValidationPortalDbContextMock,
-                x => x.Announcements,
-                x => x.Announcements = It.IsAny<DbSet<Announcement>>(),
-                announcements);
-            
-            DbContextFactoryMock.Setup(x => x.Create()).Returns(ValidationPortalDbContextMock.Object);
-            var announcementService = new AnnouncementService(DbContextFactoryMock.Object, AppUserServiceMock.Object, LoggingServiceMock.Object);
-
-            var result = announcementService.GetAnnouncements(false);
-
-            result.ShouldNotBeNull();
-            result.ShouldNotBeEmpty();
-            result.ShouldContain(announcements.First(x => x.Id == announcementIdToKeep));
-            result.ShouldNotContain(announcements.First(x => x.Id == announcementIdToDismiss));
-        }
-
+        
         [Test]
         public void GetAnnouncements_Should_LogCaughtException()
         {
@@ -223,13 +148,11 @@
                     {
                         Id = announcementIdToReturn,
                         Message = "return me",
-                        LimitToEdOrgs = new List<EdOrg>(new[] { new EdOrg { Id = authorizedEdOrgId } })
                     },
                     new Announcement
                     {
                         Id = announcementIdToNotReturn,
                         Message = "leave me out",
-                        LimitToEdOrgs = new List<EdOrg>(new[] { new EdOrg { Id = authorizedEdOrgId } })
                     }
                 });
 
@@ -270,14 +193,12 @@
                     new Announcement
                     {
                         Id = announcementIdToReturn,
-                        Message = "return me",
-                        LimitToEdOrgs = new List<EdOrg>(new[] { new EdOrg { Id = authorizedEdOrgId } })
+                        Message = "return me"
                     },
                     new Announcement
                     {
                         Id = announcementIdToNotReturn,
-                        Message = "leave me out",
-                        LimitToEdOrgs = new List<EdOrg>(new[] { new EdOrg { Id = authorizedEdOrgId } })
+                        Message = "leave me out"
                     }
                 });
 

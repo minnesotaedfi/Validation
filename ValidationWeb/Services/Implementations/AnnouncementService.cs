@@ -23,44 +23,21 @@
             LoggingService = loggingService;
         }
 
-        public List<Announcement> GetAnnouncements(bool includePreviouslyDismissedAnnouncements = false)
+        public List<Announcement> GetAnnouncements()
         {
             var announcements = new List<Announcement>();
             try
             {
                 using (var dbContext = DbContextFactory.Create())
                 {
-                    int[] dismissedAnnouncementIds;
-
-                    if (!includePreviouslyDismissedAnnouncements)
-                    {
-                        dismissedAnnouncementIds = AppUserService.GetSession().DismissedAnnouncements
-                            .Select(da => da.AnnouncementId).ToArray();
-                    }
-                    else
-                    {
-                        dismissedAnnouncementIds = Array.Empty<int>();
-                    }
-
-                    var edOrgIds = AppUserService.GetSession().UserIdentity.AuthorizedEdOrgs
-                        .Select(aeo => aeo.Id)
-                        .ToArray();
-                    
-                    var allAnnouncements = dbContext.Announcements.ToList();
-                    
-                    announcements = allAnnouncements
-                        .Where(
-                            ann => (ann.LimitToEdOrgs.Count == 0)
-                                   || (ann.LimitToEdOrgs.Select(lte => lte.Id).Intersect(edOrgIds).Count() > 0
-                                       && !dismissedAnnouncementIds.Contains(ann.Id)))
-
-                        .OrderByDescending(ann => ann.Priority).ToList();
+                    announcements = dbContext.Announcements.OrderByDescending(ann => ann.Priority).ToList();
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 LoggingService.LogErrorMessage($"An error occurred while retrieving announcements: {ex.ChainInnerExceptionMessages()}");
             }
+
             return announcements;
         }
 
@@ -72,14 +49,7 @@
             {
                 using (var dbContext = DbContextFactory.Create())
                 {
-                    var edOrgIds = AppUserService.GetSession().UserIdentity.AuthorizedEdOrgs
-                        .Select(aeo => aeo.Id)
-                        .ToArray();
-
-                    announcement = dbContext.Announcements.Where(
-                            ann => (ann.LimitToEdOrgs.Count == 0)
-                                   || (ann.LimitToEdOrgs.Select(lte => lte.Id).Intersect(edOrgIds).Count() > 0))
-                        .First(x => x.Id == id);
+                    announcement = dbContext.Announcements.First(x => x.Id == id);
                 }
             }
             catch (Exception ex)
@@ -87,6 +57,7 @@
                 LoggingService.LogErrorMessage($"An error occurred while retrieving announcement by id {id}: {ex.ChainInnerExceptionMessages()}");
                 throw new Exception($"An error occurred while retrieving announcement"); // why strip the exception? TODO: don't throw without attaching ex
             }
+
             return announcement;
         }
 
@@ -126,11 +97,11 @@
         }
 
         private void SaveExistingAnnouncement(
-            int announcementId, 
-            int priority, 
-            string message, 
-            string contactInfo, 
-            string linkUrl, 
+            int announcementId,
+            int priority,
+            string message,
+            string contactInfo,
+            string linkUrl,
             DateTime expirationDate)
         {
             using (var dbContext = DbContextFactory.Create())
@@ -153,23 +124,24 @@
         }
 
         private void SaveNewAnnouncement(
-            int priority, 
-            string message, 
-            string contactInfo, 
-            string linkUrl, 
+            int priority,
+            string message,
+            string contactInfo,
+            string linkUrl,
             DateTime expirationDate)
         {
             using (var dbContext = DbContextFactory.Create())
             {
-                Announcement announcement = new Announcement
-                                            {
-                                                Priority = priority,
-                                                Message = message,
-                                                ContactInfo = contactInfo,
-                                                LinkUrl = linkUrl,
-                                                IsEmergency = false,
-                                                Expiration = expirationDate
-                                            };
+                var announcement = new Announcement
+                {
+                    Priority = priority,
+                    Message = message,
+                    ContactInfo = contactInfo,
+                    LinkUrl = linkUrl,
+                    IsEmergency = false,
+                    Expiration = expirationDate
+                };
+
                 dbContext.Announcements.Add(announcement);
                 dbContext.SaveChanges();
             }

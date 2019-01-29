@@ -96,11 +96,5 @@ namespace ValidationWeb
             };
             return View(model);
         }
-
-        public string DismissAnnouncement(int announcement)
-        {
-            AppUserService.DismissAnnouncement(announcement);
-            return string.Empty;
-        }
     }
 }

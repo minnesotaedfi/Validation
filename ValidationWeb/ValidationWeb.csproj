@@ -858,7 +858,6 @@
     <Compile Include="Models\Announcement.cs" />
     <Compile Include="Models\AppRole.cs" />
     <Compile Include="Models\AppUserSession.cs" />
-    <Compile Include="Models\DismissedAnnouncement.cs" />
     <Compile Include="Models\EdOrgType.cs" />
     <Compile Include="Models\EdOrg.cs" />
     <Compile Include="Models\ErrorSeverity.cs" />
