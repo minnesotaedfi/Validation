@@ -71,6 +71,12 @@
 
                     #region Add a new execution of the Validation Engine to the Validation database, (required by the Portal) and get an ID back representing this execution.
 
+                    /* todo: using this (Id, SchoolYearId) as a PK - this isn't reliable because it comes from the ods's id. 
+                        we can stomp other execution runs from other districts etc. the ID is the identity column in another database. 
+                        it doesn't know about what we're doing ... change the ID to the ods's execution id and set up our own identity column
+                        that's independent (and change all references to this "id" 
+                    */
+
                     newReportSummary = new ValidationReportSummary
                                        {
                                            Collection = collectionId,

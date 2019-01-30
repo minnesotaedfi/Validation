@@ -1,11 +1,4 @@
 ﻿@model HomeIndexViewModel
-<script>
-    function hideElement(elemId, announcementId)
-    {
-        $(elemId).fadeOut();
-        $.get('@(Url.Action("DismissAnnouncement", "Home"))?announcement=' + announcementId);
-    }
-</script>
 
 <div class="container-fluid">
     <div class="row">
@@ -14,10 +7,6 @@
 
                 You are logged in as @(Model.AppUserSession.UserIdentity.FullName) with access level: @(Model.AppUserSession.UserIdentity.AppRole?.Name).
             </h1>
-            @*<div class="row vp-body-header">
-                    School year(s) available to validate:&nbsp;
-                    <span>@(string.Join(", ", Model.YearsOpenForDataSubmission.Select(yr => yr.ToString()).OrderBy(y => y).ToList()))</span>
-                </div>*@
 
             @if (Model.SubmissionCycles.Any())
             {
@@ -74,7 +63,7 @@
                             {
                                 <tr>
                                     <td>
-                                        Your district has unresolved Change of Enrollment Records Requests
+                                        Unresolved Records Request from @recordsRequest.RequestingDistrictName for student @recordsRequest.StudentId
                                     </td>
                                     <td>
                                         @Html.ActionLink(

@@ -148,8 +148,6 @@ namespace ValidationWeb.Tests.Services
         [Test]
         public void UpdateFocusedEdOrg_Should_LogException()
         {
-            var authorizedEdOrgId = 12345;
-
             var announcements = new List<Announcement>();
             EntityFrameworkMocks.SetupMockDbSet(
                 EntityFrameworkMocks.GetQueryableMockDbSet(announcements),
@@ -322,8 +320,6 @@ namespace ValidationWeb.Tests.Services
         [Test]
         public void UpdateFocusedSchoolYear_Should_LogException()
         {
-            var authorizedEdOrgId = 12345;
-
             var announcements = new List<Announcement>();
             EntityFrameworkMocks.SetupMockDbSet(
                 EntityFrameworkMocks.GetQueryableMockDbSet(announcements),

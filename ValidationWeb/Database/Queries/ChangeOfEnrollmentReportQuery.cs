@@ -31,25 +31,47 @@ namespace ValidationWeb
         public static string ChangeOfEnrollmentQuery = "rules.ChangeOfEnrollment";
 
         public bool IsCurrentDistrict { get; set; }
+
         public int CurrentDistEdOrgId { get; set; }
+
         public string CurrentDistrictName { get; set; }
+
         public int CurrentSchoolEdOrgId { get; set; }
+
         public string CurrentSchoolName { get; set; }
+
         public DateTime? CurrentEdOrgEnrollmentDate { get; set; }
+
         public DateTime? CurrentEdOrgExitDate { get; set; }
+
         public string CurrentGrade { get; set; }
+
         public int PastDistEdOrgId { get; set; }
+
         public string PastDistrictName { get; set; }
+
         public int PastSchoolEdOrgId { get; set; }
+
         public string PastSchoolName { get; set; }
+
         public DateTime? PastEdOrgEnrollmentDate { get; set; }
+
         public DateTime? PastEdOrgExitDate { get; set; }
+
         public string PastGrade { get; set; }
+
         public string StudentID { get; set; }
+
         public string StudentLastName { get; set; }
+
         public string StudentFirstName { get; set; }
+
         public string StudentMiddleName { get; set; }
+
         public DateTime? StudentBirthDate { get; set; }
+
         public bool HasRecordsRequest { get; set; }
+
+        public RecordsRequestStatus? RequestStatus { get; set; }
     }
 }

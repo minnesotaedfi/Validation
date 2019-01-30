@@ -15,5 +15,8 @@
 
     [Serializable]
     [Table("validation.RecordsRequestTypeLookup")]
-    public class RecordsRequestTypeLookup : EnumLookup { }
+    public class RecordsRequestTypeLookup : EnumLookup
+    {
+
+    }
 }

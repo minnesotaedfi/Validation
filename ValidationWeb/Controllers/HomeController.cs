@@ -8,6 +8,8 @@ using ValidationWeb.Services;
 
 namespace ValidationWeb
 {
+    using ValidationWeb.Services.Interfaces;
+
     [PortalAuthorize(Roles = "DataOwner,DistrictUser,HelpDesk")]
     public class HomeController : Controller
     {
@@ -18,7 +20,8 @@ namespace ValidationWeb
             ISchoolYearService schoolYearService,
             IOdsDataService odsDataService,
             IValidatedDataSubmissionService validatedDataSubmissionService,
-            ISubmissionCycleService submissionCycleService)
+            ISubmissionCycleService submissionCycleService,
+            IRecordsRequestService recordsRequestService)
         {
             AnnouncementService = announcementService;
             AppUserService = appUserService;
@@ -27,6 +30,7 @@ namespace ValidationWeb
             OdsDataService = odsDataService;
             ValidatedDataSubmissionService = validatedDataSubmissionService;
             SubmissionCycleService = submissionCycleService;
+            RecordsRequestService = recordsRequestService;
         }
 
         protected IAnnouncementService AnnouncementService { get; set; }
@@ -43,6 +47,8 @@ namespace ValidationWeb
 
         protected ISubmissionCycleService SubmissionCycleService { get; set; }
 
+        protected IRecordsRequestService RecordsRequestService { get; set; }
+
         public ActionResult Index()
         {
             var focusedSchoolYearId = AppUserService.GetSession().FocusedSchoolYearId;
@@ -51,11 +57,16 @@ namespace ValidationWeb
                 AppUserService.GetSession().FocusedEdOrgId,
                 SchoolYearService.GetSchoolYearById(focusedSchoolYearId).Id);
 
-            var recordsRequests = OdsDataService.GetAllRecordsRequests()
+            var recordsRequests = RecordsRequestService.GetAllRecordsRequests()
                 .Where(x => 
                     x.RespondingDistrict == focusedEdOrg.Id && 
                     x.SchoolYearId == focusedSchoolYearId &&
-                    string.IsNullOrEmpty(x.RespondingUser));
+                    (x.Status == RecordsRequestStatus.PartialResponse || x.Status == RecordsRequestStatus.Requested)).ToList();
+
+            foreach (var recordRequest in recordsRequests)
+            {
+                recordRequest.RequestingDistrictName = EdOrgService.GetEdOrgById(recordRequest.RequestingDistrict, focusedSchoolYearId).OrganizationName;
+            }
 
             var model = new HomeIndexViewModel
             {

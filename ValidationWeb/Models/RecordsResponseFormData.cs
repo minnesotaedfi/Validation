@@ -14,8 +14,8 @@
         [JsonProperty("responding-user-id")]
         public string RespondingUserId { get; set; }
 
-        [JsonProperty("responding-district-id")]
-        public int RespondingDistrictId { get; set; }
+        //[JsonProperty("responding-district-id")]
+        //public int RespondingDistrictId { get; set; }
 
         [JsonProperty("check-assessment-sent")]
         [JsonConverter(typeof(BoolConverter))]

@@ -19,6 +19,7 @@ namespace ValidationWeb
     using ValidationWeb.Models;
     using ValidationWeb.Services;
     using ValidationWeb.Services.Implementations;
+    using ValidationWeb.Services.Interfaces;
     using ValidationWeb.Utility;
     using ValidationWeb.ViewModels;
 
@@ -34,6 +35,7 @@ namespace ValidationWeb
             ISchoolYearService schoolYearService,
             ICacheManager cacheManager,
             IEdFiApiLogService apiLogService,
+            IRecordsRequestService recordsRequestService,
             Model engineObjectModel)
         {
             AppUserService = appUserService;
@@ -43,6 +45,7 @@ namespace ValidationWeb
             RulesEngineService = rulesEngineService;
             SchoolYearService = schoolYearService;
             CacheManager = cacheManager;
+            RecordsRequestService = recordsRequestService;
             ApiLogService = apiLogService;
         }
 
@@ -59,6 +62,8 @@ namespace ValidationWeb
         protected ICacheManager CacheManager { get; set; }
 
         protected IEdFiApiLogService ApiLogService { get; set; }
+
+        protected IRecordsRequestService RecordsRequestService { get; set; }
 
         protected Model EngineObjectModel { get; set; }
 
@@ -819,7 +824,7 @@ namespace ValidationWeb
         public JsonResult GetChangeOfEnrollmentReportData(
             int edOrgId,
             string fourDigitSchoolYear,
-            bool isCurrentDistrict,
+            bool isCurrentDistrict, // true for enrolling, false for withdrawing
             IDataTablesRequest request)
         {
 #if DEBUG
@@ -830,14 +835,37 @@ namespace ValidationWeb
                 edOrgId,
                 fourDigitSchoolYear);
 
-            var recordsRequestStudentIds = OdsDataService.GetAllRecordsRequests().Select(x => x.StudentId);
-            results.Where(x => recordsRequestStudentIds.Contains(x.StudentID)).ForEach(y => y.HasRecordsRequest = true);
+            results = results.Where(x => x.IsCurrentDistrict == isCurrentDistrict);
+
+            var allRecordsRequests = RecordsRequestService.GetAllRecordsRequests().ToList();
+            
+            foreach (var result in results)
+            {
+                if (isCurrentDistrict)
+                {
+                    var recordRequest = allRecordsRequests
+                        .FirstOrDefault(x => x.StudentId == result.StudentID && x.RequestingDistrict == edOrgId);
+
+                    if (recordRequest != null)
+                    {
+                        result.RequestStatus = recordRequest.Status;
+                    }
+                }
+                else
+                {
+                    var recordRequest = allRecordsRequests
+                        .FirstOrDefault(x => x.StudentId == result.StudentID && x.RespondingDistrict == edOrgId);
+
+                    if (recordRequest != null)
+                    {
+                        result.HasRecordsRequest = true;
+                    }
+                }
+            }
 
 #if DEBUG
             System.Diagnostics.Debug.WriteLine($"GetChangeOfEnrollmentReport: {(DateTime.Now - startTime).Milliseconds}ms");
 #endif
-            results = results.Where(x => x.IsCurrentDistrict == isCurrentDistrict);
-
             var filteredResults = results;
 
             var filterColumn = request.Columns.FirstOrDefault(x => x.Search != null && !string.IsNullOrWhiteSpace(x.Search.Value));
@@ -1166,11 +1194,50 @@ namespace ValidationWeb
             var results = ApiLogService.GetApiErrors();
             return SortAndFilterApiReportData(results, request);
         }
+        
+        // GET: Ods/Level1IssuesReport
+        public ActionResult Level1IssuesReport()
+        {
+            var model = new OdsLevel1IssuesReportViewModel
+            {
+                // todo: implement
+            };
+            return View(model);
+        }
+
+        public JsonResult GetRecordsRequestData(int edOrgId, string studentId)
+        {
+            var session = AppUserService.GetSession();
+            var result = RecordsRequestService.GetRecordsRequestData(session.FocusedSchoolYearId, edOrgId, studentId);
+
+            if (result.RequestingUser == null)
+            {
+                result.RequestingUser = session.UserIdentity.UserId;
+            }
+
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult SendRecordsRequest([ModelBinder(typeof(JsonNetModelBinder))]RecordsRequestFormData request)
+        {
+            var session = AppUserService.GetSession();
+            RecordsRequestService.SaveRecordsRequest(session.FocusedSchoolYearId, request);
+            return Json(new { }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult SendRecordsResponse([ModelBinder(typeof(JsonNetModelBinder))]RecordsResponseFormData response)
+        {
+            var session = AppUserService.GetSession();
+            response.RespondingUserId = AppUserService.GetUser().Name;
+            RecordsRequestService.SaveRecordsResponse(session.FocusedSchoolYearId, response);
+            return Json(new { }, JsonRequestBehavior.AllowGet);
+        }
 
         protected JsonResult SortAndFilterApiReportData(IEnumerable<Log> results, IDataTablesRequest request)
         {
             var session = AppUserService.GetSession();
-            //var edOrg = EdOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
             var schoolYear = SchoolYearService.GetSchoolYearById(session.FocusedSchoolYearId);
 
             results = results.Where(
@@ -1302,45 +1369,6 @@ namespace ValidationWeb
             var response = DataTablesResponse.Create(request, results.Count(), results.Count(), pagedResults);
             var jsonResult = new DataTablesJsonResult(response, JsonRequestBehavior.AllowGet);
             return jsonResult;
-        }
-
-        // GET: Ods/Level1IssuesReport
-        public ActionResult Level1IssuesReport()
-        {
-            var model = new OdsLevel1IssuesReportViewModel
-            {
-                // todo: implement
-            };
-            return View(model);
-        }
-
-        public JsonResult GetRecordsRequestData(int edOrgId, string studentId)
-        {
-            var session = AppUserService.GetSession();
-            var result = OdsDataService.GetRecordsRequestData(session.FocusedSchoolYearId, edOrgId, studentId);
-
-            if (result.RequestingUser == null)
-            {
-                result.RequestingUser = session.UserIdentity.UserId;
-            }
-
-            return Json(result, JsonRequestBehavior.AllowGet);
-        }
-
-        [HttpPost]
-        public JsonResult SendRecordsRequest([ModelBinder(typeof(JsonNetModelBinder))]RecordsRequestFormData request)
-        {
-            var session = AppUserService.GetSession();
-            OdsDataService.SaveRecordsRequest(session.FocusedSchoolYearId, request);
-            return Json(new { }, JsonRequestBehavior.AllowGet);
-        }
-
-        [HttpPost]
-        public JsonResult SendRecordsResponse([ModelBinder(typeof(JsonNetModelBinder))]RecordsResponseFormData response)
-        {
-            var session = AppUserService.GetSession();
-            OdsDataService.SaveRecordsResponse(session.FocusedSchoolYearId, response);
-            return Json(new { }, JsonRequestBehavior.AllowGet);
         }
     }
 }

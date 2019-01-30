@@ -33,6 +33,7 @@
     using ValidationWeb.Filters;
     using ValidationWeb.Services;
     using ValidationWeb.Services.Implementations;
+    using ValidationWeb.Services.Interfaces;
     using ValidationWeb.Utility;
 
     public class Global : System.Web.HttpApplication
@@ -86,6 +87,7 @@
         protected void AddAppServicesToContainer(Container container)
         {
             // Web Portal
+            // scoped
             container.Register<IAnnouncementService, AnnouncementService>(Lifestyle.Scoped);
             container.Register<IAppUserService, AppUserService>(Lifestyle.Scoped);
             container.RegisterInstance<IConfigurationValues>(new AppSettingsFileConfigurationValues());
@@ -96,13 +98,14 @@
             container.Register<IValidationResultsService, ValidationResultsService>(Lifestyle.Scoped);
             container.Register<ISubmissionCycleService, SubmissionCycleService>(Lifestyle.Scoped);
             container.Register<IEdFiApiLogService, EdFiApiLogService>(Lifestyle.Scoped);
-            container.Register<ICacheManager, CacheManager>(Lifestyle.Singleton);
+            container.Register<IRecordsRequestService, RecordsRequestService>(Lifestyle.Scoped);
             container.Register<IOdsConfigurationValues, OdsConfigurationValues>(Lifestyle.Scoped);
-
+            
+            // singletons
+            container.Register<ICacheManager, CacheManager>(Lifestyle.Singleton);
             container.Register<IDbContextFactory<ValidationPortalDbContext>, DbContextFactory<ValidationPortalDbContext>>(Lifestyle.Singleton);
             container.Register<IDbContextFactory<EdFiLogDbContext>, DbContextFactory<EdFiLogDbContext>>(Lifestyle.Singleton);
 
-            
             // Rules Engine
             container.Register<ISchemaProvider, EngineSchemaProvider>(Lifestyle.Scoped);
             container.Register<IRulesEngineService, RulesEngineService>(Lifestyle.Scoped);

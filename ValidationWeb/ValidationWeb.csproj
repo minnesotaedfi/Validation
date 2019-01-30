@@ -803,6 +803,8 @@
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Database\EdFiLogDbContext.cs" />
     <Compile Include="Models\ValidationPortalIdentity.cs" />
+    <Compile Include="Services\Implementations\RecordsRequestService.cs" />
+    <Compile Include="Services\Interfaces\IRecordsRequestService.cs" />
     <Compile Include="Utility\IIdentityExtensions.cs" />
     <Compile Include="Models\Log.cs" />
     <Compile Include="Models\PortalRoleNames.cs" />

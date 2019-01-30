@@ -141,18 +141,6 @@
                         data: 'studentID'
                     },
                     {
-                        title: 'Birthdate',
-                        name: 'studentBirthDate',
-                        data: 'studentBirthDate',
-                        render: function(data, type, row, meta) {
-                            if (type === 'display') {
-                                return data == null ? "Unknown" : new Date(data).toLocaleDateString("en-US");
-                            } else {
-                                return data;
-                            }
-                        }
-                    },
-                    {
                         title: 'Grade',
                         name: 'currentGrade',
                         data: 'currentGrade'
@@ -210,6 +198,17 @@
                         render: function(data, type, row) {
                             return '<a href="#" data-toggle="modal" data-target="#request-records-modal">Request&nbsp;Records</button>';
                         }
+                    },
+                    {
+                        title: 'Request Status',
+                        orderable: false,
+                        data: 'requestStatus',
+                        render: function(data, type, row) {
+                            if (data != null && data.length) {
+                                 return data.split(/[\s_\b]|(?=[A-Z])/).join(' ');
+                            }
+                            return null; 
+                        }
                     }
                 ],
             });
@@ -228,8 +227,6 @@
                     $('#request-records-studentName').text(studentName);
                     $('#request-records-form #responding-district-id').val(data.pastDistEdOrgId);
 
-                    debugger;
-
                     $.ajax({
                         type: 'GET',
                         url: '@Url.Action("GetRecordsRequestData", "Ods")',
@@ -240,13 +237,13 @@
                         },
                         datatype: "json",
                         success: function(data) {
-                            debugger;
-
+                            
                             $('#request-records-form #requestId').val(data.Id);
                             $('#request-records-form #studentId').val(data.StudentId);
                             $('#request-records-form #requesting-district-id').val(data.RequestingDistrict);
                             $('#request-records-form #requesting-user-id').val(data.RequestingUser);
 
+                            debugger;
                             var transmittalInstructions = data.TransmittalInstructions;
                             if (transmittalInstructions == null || transmittalInstructions.length == 0) {
                                 transmittalInstructions = "";
@@ -316,7 +313,6 @@
                 });
 
             function serializeFormToJson(form) {
-                debugger;
                 // they won't serialize if they're disabled!
                 form.find('input:checkbox').prop('disabled', false);
 
@@ -342,6 +338,7 @@
                         })
                         .done(function() {
                             $('#request-records-modal').modal('hide');
+                            $('#reportsTable1').DataTable().ajax.reload();
                         })
                         .fail(function () {
                             alert('An error occurred while saving records request data');
@@ -355,7 +352,7 @@
 
             var order;
             if (recordRequestStudentId != null) {
-                order = [[8, "desc"]];
+                order = [[7, "desc"]];
             } else {
                 order = [[0, "asc"]];
             }
@@ -383,7 +380,7 @@
                             debugger;
                         }
 
-                        data.columns[8].search.value = checkedValue.attr('id');
+                        data.columns[7].search.value = checkedValue.attr('id');
 
                     },
                     url: "@Html.Raw(Url.Action("GetChangeOfEnrollmentReportData", new
@@ -413,18 +410,6 @@
                         title: 'State Reporting Number',
                         name: 'studentID',
                         data: 'studentID'
-                    },
-                    {
-                        title: 'Birthdate',
-                        name: 'studentBirthDate',
-                        data: 'studentBirthDate',
-                        render: function(data, type, row, meta) {
-                            if (type === 'display') {
-                                return data == null ? "Unknown" : new Date(data).toLocaleDateString("en-US");
-                            } else {
-                                return data;
-                            }
-                        }
                     },
                     {
                         title: 'Prior Enrollment Grade',
@@ -461,11 +446,6 @@
                         name: 'currentDistrictName',
                         data: 'currentDistrictName',
                     },
-                    //{
-                    //    title: 'New School',
-                    //    name: 'currentSchoolName',
-                    //    data: 'currentSchoolName',
-                    //},
                     {
                         title: 'New Entry Date',
                         name: 'currentEdOrgEnrollmentDate',
@@ -501,11 +481,6 @@
                         $(row).addClass('selected');
                     }
                 },
-                //initComplete: function (settings, json) {
-                //    if (recordRequestStudentId != null) {
-                //        this.api().page.jumpToData(recordRequestStudentId, 1);
-                //    }
-                //},
                 order: order,
                 stripeClasses: ['']
             });
@@ -532,40 +507,44 @@
                         },
                         datatype: "json",
                         success: function(data) {
-
+                            debugger;
                             $('#view-request-form #requestId').val(data.Id);
                             $('#view-request-form #studentId').val(data.StudentId);
-                            $('#view-request-form #responding-district-id').val(data.RequestingDistrict);
-                            $('#view-request-form #responding-user-id').val(data.RequestingUser);
                             $('#view-request-form #transmittal-instructions').text(data.TransmittalInstructions);
 
                             // todo: turn all this into a function
                             $('#view-request-form #check-assessment').prop('checked', data.AssessmentResults.Requested);
+                            $('#view-request-form #check-assessment').prop('disabled', true);
                             $('#view-request-form #check-assessment-sent').prop('checked', data.AssessmentResults.Sent ? true : false);
                             $('#view-request-form #check-assessment-sent').prop('disabled', data.AssessmentResults.Sent ? true : false);
                             $('#view-request-form #status-assessment-requester').text(data.AssessmentResults.RequestingUserId);
 
                             $('#view-request-form #check-cumulative').prop('checked', data.CumulativeFiles.Requested);
+                            $('#view-request-form #check-cumulative').prop('disabled', true);
                             $('#view-request-form #check-cumulative-sent').prop('checked', data.CumulativeFiles.Sent ? true : false);
                             $('#view-request-form #check-cumulative-sent').prop('disabled', data.CumulativeFiles.Sent ? true : false);
                             $('#view-request-form #status-cumulative-requester').text(data.CumulativeFiles.RequestingUserId);
 
                             $('#view-request-form #check-discipline').prop('checked', data.DisciplineRecords.Requested);
+                            $('#view-request-form #check-discipline').prop('disabled', true);
                             $('#view-request-form #check-discipline-sent').prop('checked', data.DisciplineRecords.Sent ? true : false);
                             $('#view-request-form #check-discipline-sent').prop('disabled', data.DisciplineRecords.Sent ? true : false);
                             $('#view-request-form #status-discipline-requester').text(data.DisciplineRecords.RequestingUserId);
 
                             $('#view-request-form #check-iep').prop('checked', data.IEP.Requested);
+                            $('#view-request-form #check-iep').prop('disabled', true);
                             $('#view-request-form #check-iep-sent').prop('checked', data.IEP.Sent ? true : false);
                             $('#view-request-form #check-iep-sent').prop('disabled', data.IEP.Sent ? true : false);
                             $('#view-request-form #status-iep-requester').text(data.IEP.RequestingUserId);
 
                             $('#view-request-form #check-evaluation').prop('checked', data.EvaluationSummary.Requested);
+                            $('#view-request-form #check-evaluation').prop('disabled', true);
                             $('#view-request-form #check-evaluation-sent').prop('checked', data.EvaluationSummary.Sent ? true : false);
                             $('#view-request-form #check-evaluation-sent').prop('disabled', data.EvaluationSummary.Sent ? true : false);
                             $('#view-request-form #status-evaluation-requester').text(data.EvaluationSummary.RequestingUserId);
 
                             $('#view-request-form #check-immunization').prop('checked', data.Immunizations.Requested);
+                            $('#view-request-form #check-immunization').prop('disabled', true);
                             $('#view-request-form #check-immunization-sent').prop('checked', data.Immunizations.Sent ? true : false);
                             $('#view-request-form #check-immunization-sent').prop('disabled', data.Immunizations.Sent ? true : false);
                             $('#view-request-form #status-immunization-requester').text(data.Immunizations.RequestingUserId);
@@ -578,7 +557,6 @@
 
             $("#view-request-form").on("submit",
                 function (event) {
-                    debugger;
                     var $this = $(this);
                     var formValues = JSON.stringify(serializeFormToJson($this));
                     $.ajax({
@@ -590,6 +568,7 @@
                     })
                         .done(function () {
                             $('#view-request-modal').modal('hide');
+                            $('#reportsTable2').DataTable().ajax.reload();
                         })
                         .fail(function () {
                             alert('An error occurred while saving records request data');
