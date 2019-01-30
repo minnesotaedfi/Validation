@@ -1,2 +1,0 @@
-﻿-- The scripts in this folder are for reference only - these SQL Scripts are already a part of the ODS deployment (for the State of Minnesota). 
--- \Ed-Fi-ODS-Implementation\Database\Structure\EdFi\*.sql
