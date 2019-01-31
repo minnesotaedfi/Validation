@@ -140,7 +140,6 @@
                 }
             });
 
-        // TODO: Puts the table into a downloadable CSV - unfortunately, it doesn't support dates
         $(document).ready(function() {
             $("#export").click(function(e) {
                 e.preventDefault();
@@ -203,12 +202,12 @@
                         data: 'collection',
                         render: function(data, type, row, meta) {
                             var collectionNameWithYear =
-                                `${row.schoolYear.startYear}-${row.schoolYear.endYear} / ${data}`;
+                                `${row.schoolYear.startYear}-${row.schoolYear.endYear} / ${data.replace(/_/g, ' ')}`;
 
                             if (row.status.indexOf("In Progress") >= 0) {
                                 return collectionNameWithYear;
                             } else {
-                                return createReportLink(row.id, collectionNameWithYear);
+                                return createReportLink(row.validationReportSummaryId, collectionNameWithYear);
                             }
                         }
                     },

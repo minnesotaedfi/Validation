@@ -47,8 +47,11 @@
             using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
             {
                 var submissionCyclesOpenToday =
-                    validationPortalDataContext.SubmissionCycles.Where(
-                        s => s.StartDate <= DateTime.Now && s.EndDate >= DateTime.Now);
+                    validationPortalDataContext.SubmissionCycles
+                        .ToList()
+                        .Where(s => 
+                            s.StartDate.Date <= DateTime.Now.Date && 
+                            s.EndDate.Date >= DateTime.Now.Date);
 
                 foreach (var submissionCycle in submissionCyclesOpenToday)
                 {

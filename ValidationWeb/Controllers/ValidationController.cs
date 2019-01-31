@@ -256,7 +256,7 @@ namespace ValidationWeb
             HostingEnvironment.QueueBackgroundWorkItem(
                 cancellationToken => _rulesEngineService.RunValidationAsync(
                     submissionCycle, 
-                    summary.Id));
+                    summary.ValidationReportSummaryId));
 
             return Json(summary);
         }

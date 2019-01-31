@@ -84,7 +84,7 @@
                                            ErrorCount = null,
                                            WarningCount = null,
                                            TotalCount = 0,
-                                           Id = newRuleValidationExecution.RuleValidationId,
+                                           RuleValidationId = newRuleValidationExecution.RuleValidationId,
                                            EdOrgId = _appUserService.GetSession().FocusedEdOrgId,
                                            SchoolYearId = schoolYear.Id,
                                            InitiatedBy = _appUserService.GetUser().FullName,
@@ -95,7 +95,7 @@
                     validationDbContext.ValidationReportSummaries.Add(newReportSummary);
                     validationDbContext.SaveChanges();
                     _loggingService.LogDebugMessage(
-                        $"Successfully submitted Validation Report Summary ID {newReportSummary.Id} to the Validation Portal database for Rules Validation Run {newRuleValidationExecution.RuleValidationId.ToString()}.");
+                        $"Successfully submitted Validation Report Summary ID {newReportSummary.ValidationReportSummaryId} to the Validation Portal database for Rules Validation Run {newRuleValidationExecution.RuleValidationId.ToString()}.");
 
                     #endregion Add a new execution of the Validation Engine to the Validation database, (required by the Portal) and get an ID back representing this execution.
                 }
@@ -134,15 +134,15 @@
             {
                 using (var validationDbContext = DbContextFactory.Create())
                 {
-                    var newRuleValidationExecution =
-                        odsRawDbContext.RuleValidations.FirstOrDefault(x => x.RuleValidationId == ruleValidationId);
-                    
                     var newReportSummary = validationDbContext
                         .ValidationReportSummaries
                         .Include(x => x.SchoolYear)
                         .FirstOrDefault(x => 
-                            x.Id == newRuleValidationExecution.RuleValidationId && 
+                            x.ValidationReportSummaryId == ruleValidationId && 
                             x.SchoolYearId == schoolYear.Id);
+
+                    var newRuleValidationExecution =
+                        odsRawDbContext.RuleValidations.FirstOrDefault(x => x.RuleValidationId == newReportSummary.RuleValidationId);                  
 
                     var collectionId = newRuleValidationExecution.CollectionId;
 
@@ -186,7 +186,7 @@
                         CollectionName = collectionId,
                         SchoolYearId = newReportSummary.SchoolYear.Id,
                         DistrictName = $"{_edOrgService.GetEdOrgById(newReportSummary.EdOrgId, newReportSummary.SchoolYear.Id).OrganizationName} ({newReportSummary.EdOrgId.ToString()})",
-                        ValidationReportSummaryId = newReportSummary.Id
+                        ValidationReportSummaryId = newReportSummary.ValidationReportSummaryId
                     };
                     validationDbContext.ValidationReportDetails.Add(newReportDetails);
                     try
@@ -277,13 +277,13 @@
 
                     var hasExecutionErrors = rulesEngineExecutionExceptions.Count > 0;
                     newReportSummary.Status = hasExecutionErrors
-                                                  ? $"Completed - {rulesEngineExecutionExceptions.Count} rules did not execute, ask an administrator to check the log for errors, Report Summary Number {newReportSummary.Id.ToString()}"
+                                                  ? $"Completed - {rulesEngineExecutionExceptions.Count} rules did not execute, ask an administrator to check the log for errors, Report Summary Number {newReportSummary.ValidationReportSummaryId.ToString()}"
                                                   : "Completed";
                     _loggingService.LogDebugMessage($"Saving status {newReportSummary.Status}.");
 
                     // Log Execution Errors
                     _loggingService.LogErrorMessage(
-                        GetLogExecutionErrorsMessage(rulesEngineExecutionExceptions, newReportSummary.Id));
+                        GetLogExecutionErrorsMessage(rulesEngineExecutionExceptions, newReportSummary.ValidationReportSummaryId));
 
                     newReportDetails.CompletedWhen = newReportDetails.CompletedWhen ?? DateTime.UtcNow;
                     validationDbContext.SaveChanges();
