@@ -523,7 +523,7 @@
                 window.location.href = "@Html.Raw(Url.Action(
                                             "DownloadReportCsv",
                                             "Validation",
-                                            new { Id = Model.Details.Id, ReportSummaryId = Model.Details.ValidationReportSummary.Id }))";
+                                            new { Id = Model.Details.Id, ReportSummaryId = Model.Details.ValidationReportSummary.ValidationReportSummaryId }))";
             });
 
             // Trigger autocomplete when user has typed at least two characters.

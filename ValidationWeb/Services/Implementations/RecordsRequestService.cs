@@ -191,7 +191,7 @@
             {
                 recordsRequest.Status = RecordsRequestStatus.Requested;
 
-                if (details.Any(x => x.Requested && !x.Sent))
+                if (details.Any(x => x.Requested && !x.Sent) && details.Any(x => x.Requested && x.Sent))
                 {
                     recordsRequest.Status = RecordsRequestStatus.PartialResponse;
                 }
