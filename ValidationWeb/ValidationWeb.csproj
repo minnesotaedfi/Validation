@@ -799,6 +799,7 @@
     <Compile Include="App_Start\JsonNetFormatter.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Database\CustomDbContextFactory.cs" />
     <Compile Include="Database\EdFiLogDbContext.cs" />
     <Compile Include="Models\ValidationPortalIdentity.cs" />
     <Compile Include="Services\Implementations\RecordsRequestService.cs" />
@@ -821,7 +822,7 @@
     <Compile Include="Controllers\ValidationController.cs" />
     <Compile Include="Database\DbContextFactory.cs" />
     <Compile Include="Database\EnumLookup.cs" />
-    <Compile Include="Database\IDbContextFactory.cs" />
+    <Compile Include="Database\ICustomDbContextFactory.cs" />
     <Compile Include="Database\IValidationPortalDbContext.cs" />
     <Compile Include="Database\Queries\ChangeOfEnrollmentReportQuery.cs" />
     <Compile Include="Database\Queries\DemographicsCountReportQuery.cs" />

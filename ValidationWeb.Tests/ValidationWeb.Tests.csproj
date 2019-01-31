@@ -81,6 +81,7 @@
     <Compile Include="Services\AnnouncementServiceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Mocks\EntityFrameworkMocks.cs" />
+    <Compile Include="Services\EdOrgServiceTests.cs" />
     <Compile Include="Services\AppUserServiceTests.cs" />
     <Compile Include="Utility\GradeLevelComparerTests.cs" />
     <Compile Include="Utility\BoolConverterTests.cs" />

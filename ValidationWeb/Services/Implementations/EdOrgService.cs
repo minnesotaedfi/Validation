@@ -8,22 +8,28 @@
     using System.Data.SqlClient;
     using System.Linq;
 
+    using ValidationWeb.Database;
+
     public class EdOrgService : IEdOrgService
     {
         public EdOrgService(
             IDbContextFactory<ValidationPortalDbContext> validationPortalDataContextFactory,
+            ICustomDbContextFactory<RawOdsDbContext> odsDataContextFactory,
             IAppUserService appUserService,
             ISchoolYearService schoolYearService,
             ILoggingService loggingService)
         {
             ValidationPortalDataContextFactory = validationPortalDataContextFactory;
+            OdsDataContextFactory = odsDataContextFactory;
             AppUserService = appUserService;
             SchoolYearService = schoolYearService;
             LoggingService = loggingService;
         }
 
         protected IDbContextFactory<ValidationPortalDbContext> ValidationPortalDataContextFactory { get; set; }
-
+        
+        protected ICustomDbContextFactory<RawOdsDbContext> OdsDataContextFactory { get; set; }
+        
         protected IAppUserService AppUserService { get; set; }
 
         protected ILoggingService LoggingService { get; set; }

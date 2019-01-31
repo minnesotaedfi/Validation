@@ -1,11 +1,9 @@
-﻿using System;
-using System.Data.Entity;
-using System.Data.Entity.Migrations;
-using System.Linq;
-using ValidationWeb.Services;
-
-namespace ValidationWeb
+﻿namespace ValidationWeb
 {
+    using System.Data.Entity.Migrations;
+    using System.Linq;
+
+    using ValidationWeb.Services;
     using ValidationWeb.Services.Implementations;
 
     internal sealed class ValidationPortalDbMigrationConfiguration : DbMigrationsConfiguration<ValidationPortalDbContext>
@@ -65,30 +63,6 @@ namespace ValidationWeb
                     }
                 }
             }
-#if DEBUG
-            if (context.Announcements != null && !context.Announcements.Any())
-            {
-                context.Announcements.AddOrUpdate(
-                    new Announcement
-                    {
-                        Priority = 0,
-                        Message = "This message is stored in the application database.",
-                        ContactInfo = "info@education.mn.gov",
-                        IsEmergency = false,
-                        LinkUrl = "http://education.mn.gov/",
-                        Expiration = new DateTime(2019, 4, 1)
-                    },
-                    new Announcement
-                    {
-                        Priority = 0,
-                        Message = "Another message.",
-                        ContactInfo = "info@education.mn.gov",
-                        IsEmergency = false,
-                        LinkUrl = "http://education.mn.gov/",
-                        Expiration = new DateTime(2019, 4, 1)
-                    });
-            }
-#endif
         }
     }
 }
