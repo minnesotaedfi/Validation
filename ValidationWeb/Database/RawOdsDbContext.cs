@@ -1,7 +1,10 @@
 ﻿namespace ValidationWeb
 {
     using System;
+    using System.Data;
+    using System.Data.Common;
     using System.Data.Entity;
+    using System.Data.Entity.Migrations;
 
     using ValidationWeb.Services;
 
@@ -15,13 +18,35 @@
         
         public RawOdsDbContext()
         {
-            throw new InvalidOperationException("Specify a four-digit year to connect to the correct ODS database");
         }
 
         // Use of connection string ensures that a new database won't be created by default.
         public RawOdsDbContext(string fourDigitYear)
             : base(new OdsConfigurationValues().GetRawOdsConnectionString(fourDigitYear))
         {
+        }
+
+        public virtual IDbConnection Connection => Database.Connection;
+
+        public virtual IDbCommand CreateCommand()
+        {
+            return Database.Connection.CreateCommand();
+        }
+
+        public virtual void AddOrUpdate<T>(T item)
+        {
+            if (typeof(T) == typeof(RuleValidation))
+            {
+                RuleValidations.AddOrUpdate(item as RuleValidation);
+            }
+            if (typeof(T) == typeof(RuleValidationDetail))
+            {
+                RuleValidationDetails.AddOrUpdate(item as RuleValidationDetail);
+            }
+            if (typeof(T) == typeof(RuleValidation))
+            {
+                RuleValidationRuleComponents.AddOrUpdate(item as RuleValidationRuleComponent);
+            }
         }
 
         public virtual DbSet<RuleValidation> RuleValidations { get; set; }

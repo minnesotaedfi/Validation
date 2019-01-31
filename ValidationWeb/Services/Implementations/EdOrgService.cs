@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Data;
     using System.Data.Common;
     using System.Data.Entity.Infrastructure;
     using System.Data.Entity.Migrations;
@@ -120,13 +121,14 @@
         {
             string fourDigitOdsDbYear = schoolYear.EndYear;
             var edOrgsExtractedFromODS = new List<EdOrg>();
-            using (var odsRawDbContext = new RawOdsDbContext(fourDigitOdsDbYear))
+
+            using (var odsRawDbContext = OdsDataContextFactory.Create(schoolYear.EndYear))
             {
-                var conn = odsRawDbContext.Database.Connection;
+                var conn = odsRawDbContext.Connection;
                 try
                 {
                     conn.Open();
-                    var edOrgQueryCmd = conn.CreateCommand();
+                    var edOrgQueryCmd = odsRawDbContext.CreateCommand();
                     edOrgQueryCmd.CommandType = System.Data.CommandType.Text;
                     edOrgQueryCmd.CommandText = EdOrgQuery.AllEdOrgQuery;
                     edOrgsExtractedFromODS.AddRange(ReadEdOrgs(edOrgQueryCmd, schoolYear.Id).ToList());
@@ -152,7 +154,7 @@
             {
                 foreach (var singleEdOrg in edOrgsExtractedFromODS)
                 {
-                    validationPortalDataContext.EdOrgs.AddOrUpdate(singleEdOrg);
+                    validationPortalDataContext.AddOrUpdate(singleEdOrg);
                 }
 
                 LoggingService.LogDebugMessage($"EdOrgCache: saving changes");
@@ -165,7 +167,8 @@
             SingleEdOrgByIdQuery result = null;
 
             var schoolYear = SchoolYearService.GetSchoolYearById(schoolYearId);
-            using (var odsRawDbContext = new RawOdsDbContext(schoolYear.EndYear))
+            
+            using (var odsRawDbContext = OdsDataContextFactory.Create(schoolYear.EndYear))
             {
                 var conn = odsRawDbContext.Database.Connection;
                 try
@@ -214,7 +217,7 @@
             return result;
         }
 
-        private List<EdOrg> ReadEdOrgs(DbCommand edOrgQueryCmd, int schoolYearId)
+        private List<EdOrg> ReadEdOrgs(IDbCommand edOrgQueryCmd, int schoolYearId)
         {
             var result = new List<EdOrg>();
             try
@@ -241,7 +244,7 @@
                             OrgTypeCodeValue = reader[EdOrgQuery.OrganizationShortNameColumnName].ToString(),
                             OrgTypeShortDescription = reader[EdOrgQuery.OrganizationShortNameColumnName].ToString(),
                             EdOrgTypeLookupId = isStateAgency ? (int)EdOrgType.State : (int)EdOrgType.District
-                        });
+                        });  
 
                         LoggingService.LogDebugMessage($"Adding {theId}");
                     }

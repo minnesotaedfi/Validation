@@ -1,6 +1,7 @@
 ﻿namespace ValidationWeb
 {
     using System.Data.Entity;
+    using System.Data.Entity.Migrations;
 
     public class ValidationPortalDbContext : DbContext //, IValidationPortalDbContext
     {
@@ -22,6 +23,14 @@
             #endif
         }
 
+        public virtual void AddOrUpdate<T>(T item)
+        {
+            if (typeof(T) == typeof(EdOrg))
+            {
+                EdOrgs.AddOrUpdate(item as EdOrg);
+            }
+        }
+        
         public virtual DbSet<Announcement> Announcements { get; set; }
 
         public virtual DbSet<AppUserSession> AppUserSessions { get; set; }
