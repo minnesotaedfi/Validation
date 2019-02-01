@@ -72,17 +72,21 @@
                     return result;
                 }
 
-                using (var _odsRawDbContext = new RawOdsDbContext(schoolYear.EndYear))
+                using (var odsRawDbContext = OdsDataContextFactory.Create(schoolYear.EndYear))
                 {
-                    var conn = _odsRawDbContext.Database.Connection;
+                    var conn = odsRawDbContext.Connection;
                     try
                     {
                         conn.Open();
-                        var edOrgQueryCmd = conn.CreateCommand();
+                        var edOrgQueryCmd = odsRawDbContext.CreateCommand();
                         edOrgQueryCmd.CommandType = System.Data.CommandType.Text;
                         edOrgQueryCmd.CommandText = EdOrgQuery.SingleEdOrgsQuery;
-                        edOrgQueryCmd.Parameters.Add(new SqlParameter("@lea_id", System.Data.SqlDbType.Int));
-                        edOrgQueryCmd.Parameters["@lea_id"].Value = edOrgId;
+
+                        var parameter = edOrgQueryCmd.CreateParameter();
+                        parameter.DbType = DbType.Int32;
+                        parameter.ParameterName = "@lea_id";
+                        parameter.Value = edOrgId;
+
                         result = ReadEdOrgs(edOrgQueryCmd, schoolYearId).FirstOrDefault();
                     }
                     catch (Exception ex)

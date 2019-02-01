@@ -201,28 +201,28 @@ namespace ValidationWeb.Tests.Services
             connectionMock.SetupGet(x => x.State).Returns(ConnectionState.Closed);
             connectionMock.Setup(x => x.Open());
 
-            var commandMock = MockRepository.Create<IDbCommand>();
-            commandMock.SetupSet(x => x.CommandType = CommandType.Text);
-            commandMock.SetupSet(x => x.CommandText = EdOrgQuery.AllEdOrgQuery);
+            var allEdOrgQueryCommandMock = MockRepository.Create<IDbCommand>();
+            allEdOrgQueryCommandMock.SetupSet(x => x.CommandType = CommandType.Text);
+            allEdOrgQueryCommandMock.SetupSet(x => x.CommandText = EdOrgQuery.AllEdOrgQuery);
 
-            var readerMock = MockRepository.Create<IDataReader>();
-            readerMock.Setup(x => x.Dispose());
+            var allEdOrgReaderMock = MockRepository.Create<IDataReader>();
+            allEdOrgReaderMock.Setup(x => x.Dispose());
             
-            var readerIndex = 0;
-            readerMock
+            var allEdOrgReaderIndex = 0;
+            allEdOrgReaderMock
                 .Setup(x => x.Read())
-                .Returns(() => readerIndex <= odsEdOrgs.Length)
-                .Callback(() => readerIndex++);
+                .Returns(() => allEdOrgReaderIndex <= odsEdOrgs.Length)
+                .Callback(() => allEdOrgReaderIndex++);
 
-            readerMock.SetupGet(x => x[EdOrgQuery.IdColumnName]).Returns(odsEdOrgs[readerIndex].Id);
-            readerMock.SetupGet(x => x[EdOrgQuery.OrganizationNameColumnName]).Returns(odsEdOrgs[readerIndex].OrganizationName);
-            readerMock.SetupGet(x => x[EdOrgQuery.StateOrganizationIdColumnName]).Returns(null);
-            readerMock.SetupGet(x => x[EdOrgQuery.StateLevelOrganizationIdColumnName]).Returns(null);
-            readerMock.SetupGet(x => x[EdOrgQuery.OrganizationShortNameColumnName]).Returns(string.Empty);
-            readerMock.SetupGet(x => x[EdOrgQuery.ParentIdColumnName]).Returns(null);
-            commandMock.Setup(x => x.ExecuteReader()).Returns(readerMock.Object);
+            allEdOrgReaderMock.SetupGet(x => x[EdOrgQuery.IdColumnName]).Returns(odsEdOrgs[allEdOrgReaderIndex].Id);
+            allEdOrgReaderMock.SetupGet(x => x[EdOrgQuery.OrganizationNameColumnName]).Returns(odsEdOrgs[allEdOrgReaderIndex].OrganizationName);
+            allEdOrgReaderMock.SetupGet(x => x[EdOrgQuery.StateOrganizationIdColumnName]).Returns(null);
+            allEdOrgReaderMock.SetupGet(x => x[EdOrgQuery.StateLevelOrganizationIdColumnName]).Returns(null);
+            allEdOrgReaderMock.SetupGet(x => x[EdOrgQuery.OrganizationShortNameColumnName]).Returns(string.Empty);
+            allEdOrgReaderMock.SetupGet(x => x[EdOrgQuery.ParentIdColumnName]).Returns(null);
+            allEdOrgQueryCommandMock.Setup(x => x.ExecuteReader()).Returns(allEdOrgReaderMock.Object);
             
-            RawOdsDbContextMock.Setup(x => x.CreateCommand()).Returns(commandMock.Object);
+            RawOdsDbContextMock.Setup(x => x.CreateCommand()).Returns(allEdOrgQueryCommandMock.Object);
             RawOdsDbContextMock.Setup(x => x.Connection).Returns(connectionMock.Object);
             
             CustomDbContextFactoryMock
