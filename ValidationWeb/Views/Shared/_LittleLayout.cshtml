@@ -16,11 +16,11 @@
     <meta name="viewport" content="width=device-width" />
     <title>Ed-Fi Data Validation Portal</title>
     <link rel="SHORTCUT ICON" href="~/favicon.ico" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     @Styles.Render("~/Content/Styles/css")
     @Styles.Render("~/Content/jqueryUICSS")
     @Styles.Render("~/Content/datePickerCSS")
     @Styles.Render("~/Content/DataTables/css/DataTablesCSS")
-    @Styles.Render("~/Content/Styles/BootstrapSelectCSS")
     @Styles.Render("~/Content/Styles/Select2CSS")
     @Styles.Render("~/Content/ValidationPortal")
 </head>
@@ -80,7 +80,6 @@
     @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/bundles/jqueryUI")
     @Scripts.Render("~/bundles/datePickerJS")
-    @Scripts.Render("~/bundles/BootstrapSelect")
     @Scripts.Render("~/bundles/Select2")
     @Scripts.Render("~/bundles/DataTables")
     <script>
@@ -89,6 +88,21 @@
         function overlayOn() { $("#overlay").fadeIn(100); }
         function overlayDelayedOn() { $("#overlay").delay(1000).fadeIn(100); }
         function overlayOff() { $("#overlay").hide(); }
+
+        // IE11 polyfill for String.includes
+        if (!String.prototype.includes) {
+            String.prototype.includes = function(search, start) {
+                if (typeof start !== 'number') {
+                    start = 0;
+                }
+
+                if (start + search.length > this.length) {
+                    return false;
+                } else {
+                    return this.indexOf(search, start) !== -1;
+                }
+            };
+        }
 
         $(document).ready(function () {
             // Eliminate any lingering overlay effect. Show it hen leaving page.
@@ -113,29 +127,29 @@
                         }
                         // If looking at any other reports, get the listing for the new district.
                         //if (location.pathname.toLowerCase().indexOf("report") !== -1) {
-                        console.log(`changing to ${orgId}`);
+                        console.log('changing to '+orgId);
                         location.reload();
                         return;
                         //}
                     },
                     error: function () {
-                        console.log(`An error occurred when attempting to change Ed Org to ${orgId}.`);
+                        console.log('An error occurred when attempting to change Ed Org to '+orgId);
                     }
                 });
             }
 
         $.get("@Url.Content("~/api/validation/edorgs/autocomplete")")
-            .done((data) => {
+            .done(function(data) {
                 var dropDown = $('#edOrgNames');
 
-                let availableEdOrgs = data.map(x => {
+                var availableEdOrgs = data.map(function(x) {
                     dropDown.append($("<option></option>")
                         .attr("value", x.Id)
                         .text(x.OrganizationName));
                 });
 
                 $.get("@Url.Content("~/api/user-session/ed-org/get")")
-                    .done((data) => {
+                    .done(function(data) {
                         dropDown.val(data.id);
 
                         dropDown.select2({
@@ -145,10 +159,12 @@
 
                         dropDown.on('select2:select', changeEdOrg);
                     })
-                    .fail(() =>
-                        console.log(`An error occurred when attempting to get current EdOrg`));
-            }).fail(() =>
-                console.log(`An error occurred when attempting to get EdOrgs`));
+                    .fail(function () {
+                        console.log('An error occurred when attempting to get current EdOrg');
+                    });
+            }).fail(function () {
+                console.log('An error occurred when attempting to get EdOrgs')
+            });
 
             // Supports NavDropDowns, School Year selection menu dropdown
             $(".select-school-year-link").on('click', function (e) {
@@ -163,11 +179,12 @@
                         $("#actionDropdownYear").html(chosenLink.text());
                         $(".school-year-option").prop("selected", false);
                         try {
-                            $(`#syopt${chosenLink.text().substring(0, 4)}`).prop("selected", true);
+                            $('#syopt'+chosenLink.text().substring(0, 4)).prop("selected", true);
                         }
                         catch (e) { }
 
-                        console.log(`setting school year to ${chosenLink.text()}`);
+                        console.log('setting school year to '+chosenLink.text());
+
                         // If looking at detailed errors, go back to main reports listing for the new ODS School Year.
                         if (location.pathname.toLowerCase().indexOf("validation/report/") !== -1) {
                             location.replace("@Url.Action("Reports","Validation")");
@@ -180,7 +197,7 @@
                         //}
                     },
                     error: function () {
-                        console.log(`An error occurred when attempting to change School Year to ${yearId}.`);
+                        console.log('An error occurred when attempting to change School Year to '+yearId);
                     }
                 });
             });

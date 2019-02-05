@@ -83,7 +83,7 @@
       <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="CsvHelper, Version=12.0.0.0, Culture=neutral, PublicKeyToken=8c4959082be5c823, processorArchitecture=MSIL">
-      <HintPath>..\packages\CsvHelper.12.1.1\lib\net45\CsvHelper.dll</HintPath>
+      <HintPath>..\packages\CsvHelper.12.1.2\lib\net45\CsvHelper.dll</HintPath>
     </Reference>
     <Reference Include="DataTables.AspNet.Core, Version=2.0.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\DataTables.AspNet.Core.2.0.2\lib\net45\DataTables.AspNet.Core.dll</HintPath>
@@ -199,6 +199,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\bootstrap-grid.css" />
+    <Content Include="Content\bootstrap-grid.min.css" />
+    <Content Include="Content\bootstrap-reboot.css" />
+    <Content Include="Content\bootstrap-reboot.min.css" />
+    <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\font-awesome.css" />
+    <Content Include="Content\font-awesome.min.css" />
     <Content Include="Content\Styles\select2.css" />
     <Content Include="Content\Styles\select2.min.css">
       <DependentUpon>select2.css</DependentUpon>
@@ -417,6 +425,7 @@
     <Content Include="Content\Styles\semantic-ui\tabulator_semantic-ui.min.css" />
     <Content Include="Deployment\SQLScripts\ValPortal\AddASchoolYear.sql" />
     <Content Include="Deployment\SQLScripts\ValPortal\CreateEmptyRulesSchema.sql" />
+    <Content Include="fonts\fontawesome-webfont.svg" />
     <Content Include="packages.config">
       <SubType>Designer</SubType>
     </Content>
@@ -426,6 +435,20 @@
     <Content Include="Scripts\bootstrap-select.js" />
     <Content Include="Scripts\bootstrap-select.min.js">
       <DependentUpon>bootstrap-select.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\bootstrap.bundle.js">
+      <DependentUpon>bootstrap.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\bootstrap.bundle.min.js" />
+    <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\bootstrap.js.map">
+      <DependentUpon>bootstrap.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\bootstrap.min.js">
+      <DependentUpon>bootstrap.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\bootstrap.min.js.map">
+      <DependentUpon>bootstrap.js</DependentUpon>
     </Content>
     <Content Include="Scripts\DataTables\autoFill.bootstrap.js" />
     <Content Include="Scripts\DataTables\autoFill.bootstrap.min.js" />
@@ -506,11 +529,11 @@
     <Content Include="Scripts\DataTables\responsive.semanticui.min.js" />
     <Content Include="Scripts\esm\popper-utils.js" />
     <Content Include="Scripts\esm\popper-utils.min.js" />
+    <Content Include="Scripts\esm\popper-utils.min.js.map" />
+    <Content Include="Scripts\esm\popper.js.map" />
     <Content Include="Scripts\esm\popper.js" />
     <Content Include="Scripts\esm\popper.min.js" />
     <Content Include="Scripts\esm\popper.min.js.map" />
-    <Content Include="Scripts\esm\popper.js.map" />
-    <Content Include="Scripts\esm\popper-utils.min.js.map" />
     <Content Include="Scripts\esm\popper-utils.js.map" />
     <Content Include="Scripts\bootstrap-select.js.map">
       <DependentUpon>bootstrap-select.js</DependentUpon>
@@ -518,6 +541,19 @@
     <Content Include="Content\Styles\bootstrap-select.css.map">
       <DependentUpon>bootstrap-select.css</DependentUpon>
     </Content>
+    <Content Include="Scripts\bootstrap.bundle.min.js.map" />
+    <Content Include="Scripts\bootstrap.bundle.js.map" />
+    <Content Include="Content\bootstrap.min.css.map" />
+    <Content Include="Content\bootstrap.css.map" />
+    <Content Include="Content\bootstrap-reboot.min.css.map" />
+    <Content Include="Content\bootstrap-reboot.css.map" />
+    <Content Include="Content\bootstrap-grid.min.css.map" />
+    <Content Include="Content\bootstrap-grid.css.map" />
+    <Content Include="fonts\FontAwesome.otf" />
+    <Content Include="fonts\fontawesome-webfont.woff2" />
+    <Content Include="fonts\fontawesome-webfont.woff" />
+    <Content Include="fonts\fontawesome-webfont.ttf" />
+    <Content Include="fonts\fontawesome-webfont.eot" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js">
       <DependentUpon>jquery-3.3.1.js</DependentUpon>
     </None>
@@ -586,9 +622,7 @@
       <DependentUpon>jquery-3.3.1.slim.js</DependentUpon>
     </Content>
     <Content Include="Scripts\popper-utils.js" />
-    <Content Include="Scripts\popper-utils.min.js">
-      <DependentUpon>popper-utils.js</DependentUpon>
-    </Content>
+    <Content Include="Scripts\popper-utils.min.js" />
     <Content Include="Scripts\popper.js" />
     <Content Include="Scripts\popper.min.js">
       <DependentUpon>popper.js</DependentUpon>
@@ -665,9 +699,6 @@
     <Content Include="Scripts\umd\popper-utils.min.js.map" />
     <Content Include="Scripts\umd\popper-utils.js.map" />
     <Content Include="Scripts\README.md" />
-    <Content Include="Scripts\popper.js.map">
-      <DependentUpon>popper.js</DependentUpon>
-    </Content>
     <Content Include="Scripts\popper-utils.min.js.map">
       <DependentUpon>popper-utils.min.js</DependentUpon>
     </Content>
@@ -679,17 +710,8 @@
     <None Include="Scripts\popper-utils.js.map">
       <DependentUpon>popper-utils.js</DependentUpon>
     </None>
-    <None Include="Scripts\popper-utils.js.map">
-      <DependentUpon>popper-utils.js</DependentUpon>
-    </None>
     <None Include="Scripts\popper-utils.min.js.map">
       <DependentUpon>popper-utils.min.js</DependentUpon>
-    </None>
-    <None Include="Scripts\popper-utils.min.js.map">
-      <DependentUpon>popper-utils.min.js</DependentUpon>
-    </None>
-    <None Include="Scripts\popper.js.map">
-      <DependentUpon>popper.js</DependentUpon>
     </None>
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -701,10 +723,6 @@
   <ItemGroup>
     <Content Include="Content\Images\mdelogo450.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Scripts\bootstrap.js" />
-    <Content Include="Content\Scripts\bootstrap.min.js">
-      <DependentUpon>bootstrap.js</DependentUpon>
     </Content>
     <None Include="Content\Scripts\jquery-3.2.1.intellisense.js">
       <DependentUpon>jquery-3.2.1.js</DependentUpon>
@@ -740,17 +758,6 @@
     </Content>
     <None Include="Content\Scripts\_references.js" />
     <Content Include="Content\Styles\bootstrap-grid.css" />
-    <Content Include="Content\Styles\bootstrap-grid.min.css">
-      <DependentUpon>bootstrap-grid.css</DependentUpon>
-    </Content>
-    <Content Include="Content\Styles\bootstrap-reboot.css" />
-    <Content Include="Content\Styles\bootstrap-reboot.min.css">
-      <DependentUpon>bootstrap-reboot.css</DependentUpon>
-    </Content>
-    <Content Include="Content\Styles\bootstrap.css" />
-    <Content Include="Content\Styles\bootstrap.min.css">
-      <DependentUpon>bootstrap.css</DependentUpon>
-    </Content>
     <Content Include="Content\Styles\validationportal.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
@@ -762,24 +769,6 @@
     </Content>
     <Content Include="Content\Scripts\jquery-3.2.1.slim.min.map">
       <DependentUpon>jquery-3.2.1.slim.min.js</DependentUpon>
-    </Content>
-    <Content Include="Content\Styles\bootstrap-grid.css.map">
-      <DependentUpon>bootstrap-grid.css</DependentUpon>
-    </Content>
-    <Content Include="Content\Styles\bootstrap-grid.min.css.map">
-      <DependentUpon>bootstrap-grid.min.css</DependentUpon>
-    </Content>
-    <Content Include="Content\Styles\bootstrap-reboot.css.map">
-      <DependentUpon>bootstrap-reboot.css</DependentUpon>
-    </Content>
-    <Content Include="Content\Styles\bootstrap-reboot.min.css.map">
-      <DependentUpon>bootstrap-reboot.min.css</DependentUpon>
-    </Content>
-    <Content Include="Content\Styles\bootstrap.css.map">
-      <DependentUpon>bootstrap.css</DependentUpon>
-    </Content>
-    <Content Include="Content\Styles\bootstrap.min.css.map">
-      <DependentUpon>bootstrap.min.css</DependentUpon>
     </Content>
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />

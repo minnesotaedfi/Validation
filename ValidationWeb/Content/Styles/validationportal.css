@@ -619,7 +619,7 @@ th {
     -ms-hyphens: auto;
     -moz-hyphens: auto;
     -webkit-hyphens: auto;
-    hyphens: auto;
+
 }
 
 .table-primary,
@@ -649,3 +649,7 @@ a {
     color: #196486;
 }
     /***************************************************************************************/
+
+button.btn {
+    white-space: nowrap;
+}
