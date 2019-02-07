@@ -75,7 +75,8 @@
 
 
 @section scripts {
-<script>
+    <script>
+
         $(function() {
             var urlParams = new URLSearchParams(window.location.search);
             var recordRequestStudentId = null;
@@ -205,9 +206,9 @@
                         data: 'requestStatus',
                         render: function(data, type, row) {
                             if (data != null && data.length) {
-                                 return data.split(/[\s_\b]|(?=[A-Z])/).join(' ');
+                                return data.split(/[\s_\b]|(?=[A-Z])/).join(' ');
                             }
-                            return null; 
+                            return null;
                         }
                     }
                 ],
@@ -237,7 +238,7 @@
                         },
                         datatype: "json",
                         success: function(data) {
-                            
+
                             $('#request-records-form #requestId').val(data.Id);
                             $('#request-records-form #studentId').val(data.StudentId);
                             $('#request-records-form #requesting-district-id').val(data.RequestingDistrict);
@@ -560,12 +561,12 @@
                     var $this = $(this);
                     var formValues = JSON.stringify(serializeFormToJson($this));
                     $.ajax({
-                        type: $this.attr('method'),
-                        url: $this.attr('action'),
-                        contentType: 'application/json; charset=utf-8',
-                        dataType: "json",
-                        data: formValues
-                    })
+                            type: $this.attr('method'),
+                            url: $this.attr('action'),
+                            contentType: 'application/json; charset=utf-8',
+                            dataType: "json",
+                            data: formValues
+                        })
                         .done(function () {
                             $('#view-request-modal').modal('hide');
                             $('#reportsTable2').DataTable().ajax.reload();
@@ -586,5 +587,5 @@
 
             $('.jumpToNotes').html('<a href="#notes">View Report notes</a>');
         });
-</script>
+    </script>
 }

@@ -13,8 +13,8 @@
         $(function() {
 
             function getDateTimeString(serverDateTime) {
-                let dateTime = new Date(serverDateTime);
-                return `${dateTime.toLocaleDateString("en-US")}&nbsp;${dateTime.toLocaleTimeString("en-US")}`;
+                var dateTime = new Date(serverDateTime);
+                return dateTime.toLocaleDateString("en-US")+'&nbsp;'+dateTime.toLocaleTimeString("en-US");
             }
 
             var dataTable = $('#reportsTable').DataTable({

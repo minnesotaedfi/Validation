@@ -641,6 +641,7 @@
     <Content Include="Scripts\umd\popper-utils.min.js" />
     <Content Include="Scripts\umd\popper.js" />
     <Content Include="Scripts\umd\popper.min.js" />
+    <Content Include="Scripts\url-search-params-polyfill.js" />
     <Content Include="Views\Validation\Report.cshtml" />
     <Content Include="Views\Shared\_LittleFooter.cshtml" />
     <Content Include="Views\Validation\Submissions.cshtml" />

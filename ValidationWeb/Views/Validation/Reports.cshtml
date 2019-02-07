@@ -101,10 +101,13 @@
         // This callback records those choices on the second popup (a confirmation dialog/modal).
         $('#NewValidationModal').on('hidden.bs.modal',
             function(e) {
-                let cycleId = $('#cycleIdSelect').val();
-                let cycleIdSelection = $('#cycleIdSelect').find("option:selected").text();
-                let schoolYearDisplayName, collectionId;
-                [schoolYearDisplayName, collectionId] = cycleIdSelection.split(" / ");
+                var cycleId = $('#cycleIdSelect').val();
+                var cycleIdSelection = $('#cycleIdSelect').find("option:selected").text();
+                var schoolYearDisplayName, collectionId;
+                var selection = cycleIdSelection.split(" / ");
+                schoolYearDisplayName = selection[0];
+                collectionId = selection[1];
+
                 $('.schoolYearDisplayName').text(schoolYearDisplayName);
                 $('.collectionDisplayName').text(collectionId.replace(/_/g, ' '));
                 $('#confirm-validation').attr("data-id", cycleId);
@@ -119,7 +122,7 @@
                 if (lastModalExitButton == 'launch') {
                     overlayOn();
 
-                    let cycleId = $('#confirm-validation').attr("data-id");
+                    var cycleId = $('#confirm-validation').attr("data-id");
                     $.ajax({
                         url: '@(Url.Action("RunEngine", "Validation"))',
                         type: "POST",
@@ -202,7 +205,7 @@
                         data: 'collection',
                         render: function(data, type, row, meta) {
                             var collectionNameWithYear =
-                                `${row.schoolYear.startYear}-${row.schoolYear.endYear} / ${data.replace(/_/g, ' ')}`;
+                                row.schoolYear.startYear+'-'+row.schoolYear.endYear+' / '+data.replace(/_/g, ' ');
 
                             if (row.status.indexOf("In Progress") >= 0) {
                                 return collectionNameWithYear;
@@ -267,7 +270,6 @@
 
                 dataTable.rows().every(function(rowIdx, tableLoop, rowLoop) {
                     var data = this.data();
-                    console.log(`checking row ${rowIdx}`);
                     if (data.status.indexOf('In Progress') >= 0) {
                         foundInProgress = true;
                         return false; // break out of this every() loop
@@ -281,12 +283,6 @@
 
                 return true;
             }
-
-            // hook up some reload event and polling
-            //$("input[name=date-filter]").change(function(e) {
-            //    $('#reportsTable1').DataTable().ajax.reload();
-            //    $('#reportsTable2').DataTable().ajax.reload();
-            //});
         });
     </script>
 }
