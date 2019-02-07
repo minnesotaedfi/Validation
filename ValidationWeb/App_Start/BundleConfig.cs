@@ -1,5 +1,4 @@
-﻿using System.Web;
-using System.Web.Optimization;
+﻿using System.Web.Optimization;
 
 namespace ValidationWeb
 {
@@ -7,9 +6,11 @@ namespace ValidationWeb
     {
         public static void RegisterBundles(BundleCollection bundles)
         {
-            // STYLE
-            bundles.Add(new StyleBundle("~/Content/Styles/css").Include(
-                      "~/Content/fontawesome.css",
+            bundles.Add(new StyleBundle("~/Content/Fonts/FontAwesomeCSS").Include(
+                "~/Content/Fonts/fa-solid.css",
+                "~/Content/Styles/fontawesome.css"));
+
+            bundles.Add(new StyleBundle("~/Content/BootstrapCSS").Include(
                       "~/Content/bootstrap.css"));
 
             bundles.Add(new StyleBundle("~/Content/ValidationPortal")
@@ -36,8 +37,8 @@ namespace ValidationWeb
             bundles.Add(new ScriptBundle("~/bundles/datePickerJS").Include("~/Content/Scripts/moment.js", "~/Content/Scripts/bootstrap-datetimepicker.min.js"));
 
             bundles.Add(new StyleBundle("~/Content/DataTables/css/DataTablesCSS").Include(
-                "~/Content/DataTables/css/dataTables.bootstrap4.css")); 
-            
+                "~/Content/DataTables/css/dataTables.bootstrap4.css"));
+
             bundles.Add(
                 new StyleBundle("~/Content/Styles/Select2CSS")
                     .Include("~/Content/Styles/select2.css")
