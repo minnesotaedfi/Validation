@@ -318,6 +318,23 @@ ul.navbar-nav {
     padding: 0;
 }
 
+    .navbar-nav a:focus {
+        color: #003865;
+        border-radius: 5px;
+        background-color: #A4BCC2;
+    }
+
+footer a:focus {
+    color: #003865 !important;
+    border-radius: 5px;
+    background-color: #A4BCC2;
+}
+
+.table-primary th:focus {
+    color: #003865;
+    /*border-radius: 5px;*/
+    background-color: #A4BCC2;
+}
 
 .validation-dropdown-menu {
     padding-top: 0;
@@ -626,7 +643,7 @@ th {
 .table-primary > th,
 .table-primary > td {
     color: rgb(255, 255, 255);
-    background-color: #008EAA;
+    background-color: #003865;
 }
 
 a {
