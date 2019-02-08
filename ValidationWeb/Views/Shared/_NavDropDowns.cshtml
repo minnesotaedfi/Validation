@@ -7,7 +7,7 @@
 }
 
 <div class="ml-auto justify-content-end">
-    <li class="nav-item dropdown pull-right">       
+    <li class="nav-item dropdown pull-right" style="padding-left: 10px;">
         <i class="fas fa-user-circle white-heavy-text"></i> <span class="white-heavy-text">@Model.AppUserSession.UserIdentity.UserId</span>
     </li>
     @if (!permissions.CanAccessAdminFeatures)
@@ -18,21 +18,27 @@
             @*todo: put this selectedOrg as the selected value *@
             @if (Model.EdOrgs.Count() > 1)
             {
-                <select id="edOrgNames" class="form-control validation-dropdown-menu district-dropdown">
-                </select>
+                <select id="edOrgNames" class="form-control validation-dropdown-menu district-dropdown" style="visibility: hidden"></select>
             }
         </li>
 
         <li class="nav-item dropdown pull-right">
-            <a class="nav-link dropdown-toggle validation-dropdown-toggle" href="#" id="actionDropdownYear" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                @Model.FocusedSchoolYear
-            </a>
-            <div class="dropdown-menu validation-dropdown-menu" style="left: initial;">
-                @foreach (var schoolYear in Model.SchoolYears)
-                {
-                    <a class="nav-item nav-link select-school-year-link" href="#" data-year-id="@(schoolYear.Id.ToString())">@(schoolYear.ToString())</a>
-                }
-            </div>
+
+            @*replace with a standard select for accessibility *@
+            
+            @Html.DropDownList(
+                "newActionDropdownYear",
+                new SelectList(Model.SchoolYears
+                    .OrderBy(x => x.ToString())
+                    .Select(x => new SelectListItem
+                    {
+                        Text = x.ToString(),
+                        Value = x.Id.ToString()
+                    }),
+                    "Value", 
+                    "Text",
+                    Model.FocusedSchoolYear.Id),
+                new { @class= "form-control", style="visibility: hidden" })
         </li>
     }
 </div>

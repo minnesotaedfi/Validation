@@ -53,7 +53,7 @@
     <script type="text/javascript">
         $(function() {
             var drillDownLinkTemplate =
-                '<a href="@Html.Raw(Url.Action("DemographicsReport", "Ods", new { schoolId = "_EdOrgId_", drillDownColumnIndex = "_DrillDownIndex_", isStateMode = Model.IsStateMode, districtToDisplay = "_EdOrgId_", isStudentDrillDown = true, orgType = "_OrgType_" }))" target="_blank">_LinkText_</a>';
+                '<a href="@Html.Raw(Url.Action("DemographicsReport", "Ods", new { schoolId = "_EdOrgId_", drillDownColumnIndex = "_DrillDownIndex_", isStateMode = Model.IsStateMode, districtToDisplay = "_EdOrgId_", isStudentDrillDown = true, orgType = "_OrgType_" }))">_LinkText_</a>';
 
             function createDrillDownLink(edOrgId, drillDownIndex, orgType, linkText) {
                 return drillDownLinkTemplate

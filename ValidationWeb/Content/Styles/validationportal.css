@@ -4,6 +4,45 @@
     font-family: Calibri, Arial, sans-serif;
 }
 
+/*
+    Hyperlink: #0563c1; underline
+Hover: #196486; underline
+Focus: color: #003865; border-radius: 5px; background-color: #A4BCC2
+
+*/
+
+.mainSection a {
+    color: #0563c1;
+    text-decoration: underline;
+}
+
+    .mainSection a:hover {
+        color: #196486;
+        text-decoration: underline;
+    }
+
+    .mainSection a:focus {
+        color: #003865;
+        border-radius: 5px;
+        background-color: #A4BCC2
+    }
+
+nav#breadcrumb a {
+    color: #0563c1;
+    text-decoration: underline;
+}
+
+    nav#breadcrumb a:hover {
+        color: #196486;
+        text-decoration: underline;
+    }
+
+    nav#breadcrumb a:focus {
+        color: #003865;
+        border-radius: 5px;
+        background-color: #A4BCC2
+    }
+
 /* Set padding to keep content from hitting the edges */
 .body-content {
     padding-left: 15px;
@@ -50,7 +89,6 @@ div#notes {
     color: white;
     transform: translate(-50%,-50%);
     -ms-transform: translate(-50%,-50%);
-
     width: 100%;
     padding-top: 20px;
     padding-bottom: 20px;
@@ -188,11 +226,24 @@ div#NewValidationModal select {
         background-color: rgb(164, 188, 194);
         border-color: rgb(120, 190, 33);
     }
-/***************************************************************************************/
 
+nav select.form-control {
+    height: unset;
+    padding: 0px 10px;
+    margin: 0 10px;
+    width: unset;
+}
+
+nav span.select2 {
+    height: unset;
+    padding: 0px 10px;
+    margin: 0 10px;
+    width: unset;
+}
+
+/***************************************************************************************/
 /***************************************************************************************/
 /* Bootstrap Overrides */
-
 /*
     (width & margin) Ensure container rows (especially colored bars) touch the left and right sides of screen.
                      Override the evil -15px Margin
@@ -346,15 +397,15 @@ footer a:focus {
     left: initial;
 }
 
-.validation-dropdown-menu > a:hover, .validation-dropdown-toggle:hover, .validation-nav-link:hover {
-    padding-top: 0;
-    padding-bottom: 0;
-    margin-top: 0;
-    margin-bottom: 0;
-    border-color: rgb(120, 190, 33);
-    background-color: rgb(164, 188, 194);
-    color: rgb(0, 0, 0);
-}
+    .validation-dropdown-menu > a:hover, .validation-dropdown-toggle:hover, .validation-nav-link:hover {
+        padding-top: 0;
+        padding-bottom: 0;
+        margin-top: 0;
+        margin-bottom: 0;
+        border-color: rgb(120, 190, 33);
+        background-color: rgb(164, 188, 194);
+        color: rgb(0, 0, 0);
+    }
 
 li.dropdown.nav-item.pull-right, li.dropdown-toggle.nav-item.pull-right {
     float: right !important;
@@ -631,12 +682,10 @@ th {
 .card {
     overflow-wrap: break-word;
     word-wrap: break-word;
-
     /* Adds a hyphen where the word breaks, if supported (No Blink) */
     -ms-hyphens: auto;
     -moz-hyphens: auto;
     -webkit-hyphens: auto;
-
 }
 
 .table-primary,
@@ -662,11 +711,63 @@ a {
     color: #0563c1;
 }
 
-.page-link:hover {
-    color: #196486;
-}
-    /***************************************************************************************/
+    .page-link:hover {
+        color: #196486;
+    }
+/***************************************************************************************/
 
 button.btn {
     white-space: nowrap;
+}
+
+.select2-container--default .select2-selection--single {
+    padding: 6px;
+    height: 37px;
+    position: relative;
+    line-height: unset;
+}
+
+
+.nav-item :focus {
+    color: #003865;
+    border-radius: 5px;
+    background-color: #A4BCC2;
+}
+
+.newActionDropdownYear {
+    min-width: 115px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: unset;
+}
+
+select :focus {
+    color: #003865;
+    border-radius: 5px;
+    background-color: #A4BCC2
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    width: 40px;
+    color: #fff;
+    padding: 4px 12px;
+    height: 27px;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 20px;
+}
+
+.select2-container--default .select2-selection--single {
+    padding: unset;
+    height: unset;
+}
+
+.select2-selection__arrow {
+    padding: 0 12px !important;
+}
+
+.navbar-text {
+    padding: unset;
 }

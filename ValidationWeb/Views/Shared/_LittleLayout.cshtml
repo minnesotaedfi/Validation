@@ -3,7 +3,7 @@
 @using ValidationWeb.ApiControllers
 @using ValidationWeb.Filters
 @using ValidationWeb.Utility
-@{ 
+@{
     var identity = (ValidationPortalIdentity)User.Identity;
     var appRoleName = identity.AppRole.Name;
     var permissions = User.Identity.GetViewPermissions(identity.AppRole);
@@ -36,7 +36,7 @@
         </div>
         <div class="row noprint">
             <div class="col-12">
-               <nav id="layout-navbar" role="navigation" aria-label="Main navigation" class="navbar navbar-expand-sm prime-blue">
+                <nav id="layout-navbar" role="navigation" aria-label="Main navigation" class="navbar navbar-expand-sm prime-blue">
                     <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#theNavBar" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
@@ -63,7 +63,7 @@
             </div>
         </div>
         <div class="row">
-            <nav class="col-12" role="navigation" aria-label="Breadcrumb navigation">
+            <nav class="col-12" id="breadcrumb" role="navigation" aria-label="Breadcrumb navigation">
                 @Html.MvcSiteMap().SiteMapPath()
             </nav>
         </div>
@@ -139,70 +139,66 @@
                 });
             }
 
-        $.get("@Url.Content("~/api/validation/edorgs/autocomplete")")
-            .done(function(data) {
-                var dropDown = $('#edOrgNames');
+            $('#newActionDropdownYear').select2({
+                containerCssClass: 'newActionDropdownYear',
+                minimumResultsForSearch: Infinity,
+            });
 
-                var availableEdOrgs = data.map(function(x) {
-                    dropDown.append($("<option></option>")
-                        .attr("value", x.Id)
-                        .text(x.OrganizationName));
-                });
+            $.get("@Url.Content("~/api/validation/edorgs/autocomplete")")
+                .done(function(data) {
+                    var dropDown = $('#edOrgNames');
 
-                $.get("@Url.Content("~/api/user-session/ed-org/get")")
-                    .done(function(data) {
-                        dropDown.val(data.id);
-
-                        dropDown.select2({
-                            theme: 'bootstrap4',
-                            containerCssClass: 'validation-dropdown-menu'
-                        });
-
-                        dropDown.on('select2:select', changeEdOrg);
-                    })
-                    .fail(function () {
-                        console.log('An error occurred when attempting to get current EdOrg');
+                    var availableEdOrgs = data.map(function(x) {
+                        dropDown.append($("<option></option>")
+                            .attr("value", x.Id)
+                            .text(x.OrganizationName));
                     });
-            }).fail(function () {
-                console.log('An error occurred when attempting to get EdOrgs')
-            });
 
-            // Supports NavDropDowns, School Year selection menu dropdown
-            $(".select-school-year-link").on('click', function (e) {
-                var chosenLink = $(this);
-                var yearId = (chosenLink.attr("data-year-id"));
-                $.ajax({
-                    url: "@Url.Content("~/api/user-session/school-year/select")",
-                    type: "Post",
-                    data: yearId,
-                    contentType: 'application/json; charset=utf-8',
-                    success: function (data) {
-                        $("#actionDropdownYear").html(chosenLink.text());
-                        $(".school-year-option").prop("selected", false);
-                        try {
-                            $('#syopt'+chosenLink.text().substring(0, 4)).prop("selected", true);
-                        }
-                        catch (e) { }
+                    $.get("@Url.Content("~/api/user-session/ed-org/get")")
+                        .done(function(data) {
+                            dropDown.val(data.id);
 
-                        console.log('setting school year to '+chosenLink.text());
+                            dropDown.select2({
+                                // theme: 'bootstrap4',
+                                containerCssClass: 'validation-dropdown-menu'
+                            });
 
-                        // If looking at detailed errors, go back to main reports listing for the new ODS School Year.
-                        if (location.pathname.toLowerCase().indexOf("validation/report/") !== -1) {
-                            location.replace("@Url.Action("Reports","Validation")");
-                            return;
-                        }
-                        // If looking at any other reports, get the listing for the new ODS School Year.
-                        // if (location.pathname.toLowerCase().indexOf("report") !== -1) {
+                            dropDown.on('select2:select', changeEdOrg);
+                        })
+                        .fail(function () {
+                            console.log('An error occurred when attempting to get current EdOrg');
+                        });
+                }).fail(function () {
+                    console.log('An error occurred when attempting to get EdOrgs');
+                });
+
+                // Supports NavDropDowns, School Year selection menu dropdown
+                $("#newActionDropdownYear").change(function (e) {
+                    var chosenLink = $(this);
+                    var yearId = $(this).val();
+                    $.ajax({
+                        url: "@Url.Content("~/api/user-session/school-year/select")",
+                        type: "Post",
+                        data: yearId,
+                        contentType: 'application/json; charset=utf-8',
+                        success: function (data) {
+                            console.log('setting school year to '+chosenLink.text());
+
+                            // If looking at detailed errors, go back to main reports listing for the new ODS School Year.
+                            if (location.pathname.toLowerCase().indexOf("validation/report/") !== -1) {
+                                location.replace("@Url.Action("Reports","Validation")");
+                                return;
+                            }
+
+                            // If looking at any other reports, get the listing for the new ODS School Year.
                             location.reload();
-                            return;
-                        //}
-                    },
-                    error: function () {
-                        console.log('An error occurred when attempting to change School Year to '+yearId);
-                    }
+                        },
+                        error: function () {
+                            console.log('An error occurred when attempting to change School Year to '+yearId);
+                        }
+                    });
                 });
             });
-        });
     </script>
 
     @RenderSection("scripts", required: false)
