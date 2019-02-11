@@ -639,7 +639,6 @@
     <Content Include="Scripts\url-search-params-polyfill.js" />
     <Content Include="Views\Validation\Report.cshtml" />
     <Content Include="Views\Shared\_LittleFooter.cshtml" />
-    <Content Include="Views\Validation\Submissions.cshtml" />
     <Content Include="Content\Styles\bootstrap\tabulator_bootstrap.min.css.map" />
     <Content Include="Content\Styles\bootstrap\tabulator_bootstrap4.min.css.map" />
     <Content Include="Content\Styles\semantic-ui\tabulator_semantic-ui.min.css.map" />

@@ -164,6 +164,24 @@ button.white-heavy-text:hover {
     text-decoration: none;
 }
 
+.close {
+    background-color: transparent;
+    color: rgb(255, 255, 255);
+    font-weight: bold;
+    text-decoration: none;
+    opacity: 1.0;
+}
+
+    .close:hover,
+    .close:focus {
+        color: #003865;
+        background-color: #a4bcc2;
+        font-weight: bold;
+        text-decoration: none;
+        opacity: 1.0 !important;
+    }
+
+
 .scrollable-row {
     overflow-y: auto;
 }
