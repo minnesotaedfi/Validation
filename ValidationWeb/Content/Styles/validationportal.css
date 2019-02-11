@@ -138,6 +138,32 @@ div#notes {
     font-weight: bold;
 }
 
+a.white-heavy-text {
+    color: rgb(255, 255, 255);
+    font-weight: bold;
+    text-decoration: none;
+}
+
+    a.white-heavy-text:hover {
+        color: #003865;
+        background-color: #a4bcc2;
+        text-decoration: none;
+    }
+
+button.white-heavy-text:focus {
+    color: #003865;
+    border-radius: 5px;
+    background-color: #A4BCC2;
+    text-decoration: none;
+}
+
+button.white-heavy-text:hover {
+    color: #003865;
+    font-weight: bold;
+    background-color: #a4bcc2;
+    text-decoration: none;
+}
+
 .scrollable-row {
     overflow-y: auto;
 }
