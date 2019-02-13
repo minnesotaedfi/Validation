@@ -105,6 +105,16 @@
             };
         }
 
+        // IE11 polyfill for String.startsWith
+        if (!String.prototype.startsWith) {
+            Object.defineProperty(String.prototype, 'startsWith', {
+                value: function(search, pos) {
+                    pos = !pos || pos < 0 ? 0 : +pos;
+                    return this.substring(pos, pos + search.length) === search;
+                }
+            });
+        }
+
         $(document).ready(function () {
             // Eliminate any lingering overlay effect. Show it hen leaving page.
             overlayOff();

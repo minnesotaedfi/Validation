@@ -710,6 +710,7 @@
     <None Include="Scripts\popper-utils.min.js.map">
       <DependentUpon>popper-utils.min.js</DependentUpon>
     </None>
+    <Content Include="Views\Validation\ViewReport.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

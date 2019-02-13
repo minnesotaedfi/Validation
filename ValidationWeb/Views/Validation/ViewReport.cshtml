@@ -18,31 +18,18 @@
 <div id="errorGridControls" class="row grid-controls">
     <span id="pageSizeLabel">Rows: </span>
     <input class="form-control form-control-sm" id="pageSizeInput" placeholder="30 (records per page)">
-    @*<div class="dropdown d-inline-block">
-        <button id="componentViewFilter" class="btn dropdown-toggle validation-drowdown-toggle prime-blue white-heavy-text" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Component: All
-            <span class="caret"></span>
-        </button>
-        <div class="dropdown-menu validation-dropdown-menu" style="margin-top: 0;" aria-labelledby="actionDropdown">
-            <div id="showAllGrid" class="collectionFilter" aria-labelledby="actionDropdown"><a href="#" class="white-heavy-text lrmargin10">All</a></div>
-            <div id="showEnrollment" class=" collectionFilter" aria-labelledby="actionDropdown"><a href="#" class="white-heavy-text lrmargin10">Enrollment</a></div>
-            <div id="showDemographics" class=" collectionFilter" aria-labelledby="actionDropdown"><a href="#" class="white-heavy-text lrmargin10">Demographics</a></div>
-        </div>
-        <input id="componentViewSelected" type="hidden" value="All">
-    </div>*@
     <div class="dropdown d-inline-block">
         <button id="componentViewFilter" class="btn dropdown-toggle validation-drowdown-toggle prime-blue white-heavy-text" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Component: All
             <span class="caret"></span>
         </button>
         <div class="dropdown-menu validation-dropdown-menu" style="margin-top: 0;" aria-labelledby="actionDropdown">
-            <a href="#" id="showAllGrid" aria-labelledby="actionDropdown" class="white-heavy-text prime-blue dropdown-item">All</a>
-            <a href="#" id="showEnrollment" aria-labelledby="actionDropdown" class="white-heavy-text prime-blue dropdown-item">Enrollment</a>
-            <a href="#" id="showDemographics" aria-labelledby="actionDropdown" class="white-heavy-text prime-blue dropdown-item">Demographics</a>
+            <div id="showAllGrid" class="collectionFilter" aria-labelledby="actionDropdown"><a href="#" class="white-heavy-text lrmargin10">All</a></div>
+            <div id="showEnrollment" class="collectionFilter" aria-labelledby="actionDropdown"><a href="#" class="white-heavy-text lrmargin10">Enrollment</a></div>
+            <div id="showDemographics" class="collectionFilter" aria-labelledby="actionDropdown"><a href="#" class="white-heavy-text lrmargin10">Demographics</a></div>
         </div>
         <input id="componentViewSelected" type="hidden" value="All">
     </div>
-
     <button id="clearButton" class="btn prime-blue white-heavy-text">Clear Filters</button>
     <button id="downloadAsCSV" type="button" class="btn prime-blue white-heavy-text lrmargin10">Export</button>
     <button id="firstPageButton" class="btn prime-blue white-heavy-text ml-auto">&lt;&lt;</button>
@@ -349,7 +336,6 @@
 
         function Autocomplete(targetElement) {
             var wrappedElement = $(targetElement);
-            debugger;
 
             // Dispose of any old autocomplete lists
             $(".autocomplete-suggestions").remove();
