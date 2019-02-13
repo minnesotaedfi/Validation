@@ -579,11 +579,19 @@ th {
     }
 
 .ui-autocomplete {
-    max-height: 100px;
-    overflow-y: auto;
+    max-height: 400px;
+    max-width: 250px;
+    overflow-y: scroll;
     /* prevent horizontal scrollbar */
     overflow-x: hidden;
+    text-overflow: ellipsis;
 }
+
+.ui-menu-item {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 /* IE 6 doesn't support max-height
    * we use height instead, but this forces the menu to always be this tall
    */
@@ -825,4 +833,8 @@ select :focus {
 
 .navbar-text {
     padding: unset;
+}
+
+::-ms-clear {
+    display: none;
 }

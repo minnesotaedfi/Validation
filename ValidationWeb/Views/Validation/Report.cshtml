@@ -18,18 +18,6 @@
 <div id="errorGridControls" class="row grid-controls">
     <span id="pageSizeLabel">Rows: </span>
     <input class="form-control form-control-sm" id="pageSizeInput" placeholder="30 (records per page)">
-    @*<div class="dropdown d-inline-block">
-        <button id="componentViewFilter" class="btn dropdown-toggle validation-drowdown-toggle prime-blue white-heavy-text" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Component: All
-            <span class="caret"></span>
-        </button>
-        <div class="dropdown-menu validation-dropdown-menu" style="margin-top: 0;" aria-labelledby="actionDropdown">
-            <div id="showAllGrid" class="collectionFilter" aria-labelledby="actionDropdown"><a href="#" class="white-heavy-text lrmargin10">All</a></div>
-            <div id="showEnrollment" class=" collectionFilter" aria-labelledby="actionDropdown"><a href="#" class="white-heavy-text lrmargin10">Enrollment</a></div>
-            <div id="showDemographics" class=" collectionFilter" aria-labelledby="actionDropdown"><a href="#" class="white-heavy-text lrmargin10">Demographics</a></div>
-        </div>
-        <input id="componentViewSelected" type="hidden" value="All">
-    </div>*@
     <div class="dropdown d-inline-block">
         <button id="componentViewFilter" class="btn dropdown-toggle validation-drowdown-toggle prime-blue white-heavy-text" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Component: All
@@ -311,7 +299,7 @@
             newTableRowHtml = newTableRowHtml + '<td>' + gradesContent+'</td>';
             newTableRowHtml = newTableRowHtml + '<td>' + severity + '</td>';
             newTableRowHtml = newTableRowHtml + '<td>' + errorRecord.errorCode + '</td>';
-            newTableRowHtml = newTableRowHtml + '<td style="text-decoration: none; color: inherit;" tabindex="0" data-toggle="popover" data-content="'+errorRecord.errorText+'">'+errorRecord.errorText.substring(0, 40)+'...</a></td>';
+            newTableRowHtml = newTableRowHtml + '<td style="text-decoration: none; color: inherit;" tabindex="0" data-toggle="popover" data-content="' + errorRecord.errorText + '" aria-label="'+errorRecord.errorText+'">'+errorRecord.errorText.substring(0, 40)+'...</a></td>';
             newTableRowHtml = newTableRowHtml + '</tr>';
             $(gridIdWithHash+' tr:last').after(newTableRowHtml);
         }
@@ -321,7 +309,7 @@
             $("#totalPageCount").text(" " + dataObj.totalPagesCount.toString() + " ");
             $("#pageSizeInput").val(dataObj.pageSize.toString());
             $("#pageNumberInput").val(dataObj.pageNumber.toString());
-            
+
             var recordOffset = dataObj.recordOffset;
             if (!recordOffset) // 0-based
             {
@@ -349,8 +337,11 @@
 
         function Autocomplete(targetElement) {
             var wrappedElement = $(targetElement);
-            debugger;
 
+            // ************ new jqueryUI autocomplete **********************
+
+
+            // *********** old handbuilt way **************
             // Dispose of any old autocomplete lists
             $(".autocomplete-suggestions").remove();
 
@@ -370,22 +361,37 @@
                     }
                     // Create a container for the suggestions
                     var suggestionsBoxId = filter.autocompleteColumn+'Suggestions';
-                    wrappedElement.after('<div id=\"'+suggestionsBoxId+'\" class=\"autocomplete-suggestions\"></div>');
-                    
+                    wrappedElement.after('<ul id=\"'+suggestionsBoxId+'\" class=\"autocomplete-suggestions\"></ul>');
+
                     var wrappedSuggestionsBox = $('#'+suggestionsBoxId);
                     for (var suggIndex = 0; suggIndex < data.length; suggIndex++) {
-                        wrappedSuggestionsBox.append('<div id=\"'+suggestionsBoxId+suggIndex+'\" class=\"auto-suggestion\">'+data[suggIndex]+'</div>');
+                        wrappedSuggestionsBox.append('<li><a id=\"'+suggestionsBoxId+suggIndex+'\" class=\"auto-suggestion\">'+data[suggIndex]+'</a></li>');
                     }
                     wrappedSuggestionsBox.css({
                         top: wrappedElement.outerHeight() + "px",
                         width: "auto"
                     }).show();
-                    $(".auto-suggestion").on('mousedown', function(e){
-                        wrappedElement.val($(this).text());
-                        // No refresh needed, because Blur on the Input element refreshes the grid
-                        // $("#searchButton").trigger("click");
-                        $(".autocomplete-suggestions").remove();
-                    });
+
+                    //$(".auto-suggestion").on('mousedown', function(e){
+                    //    wrappedElement.val($(this).text());
+                    //    // No refresh needed, because Blur on the Input element refreshes the grid
+                    //    // $("#searchButton").trigger("click");
+                    //    $(".autocomplete-suggestions").remove();
+                    //});
+
+                    wrappedElement.on('keydown',
+                        function (e) {
+                            /*  left = 37
+                                up = 38
+                                right = 39
+                                down = 40 */
+                            if (e.keyCode === 40) {
+                                $('#suggestionsBoxId' + 0).focus();
+                            }
+                            else if (e.keyCode == 38) {
+                                $('#suggestionsBoxId' + (data.length-1)).focus();
+                            }
+                        });
                 },
                 error: function () {
                     console.log('An error occurred when attempting to load autocomplete suggestions from server.');
@@ -529,7 +535,7 @@
                 let currentFilter = SetFilter();
                 RefreshGrid("errorGrid", currentFilter);
             });
-            $("input.form-control, #pageSizeInput").blur(function() {
+            $("#pageSizeInput").blur(function() {
                 $(".autocomplete-suggestions").remove();
                 let currentFilter = SetFilter();
                 RefreshGrid("errorGrid", currentFilter);
@@ -543,6 +549,7 @@
                                             new { Id = Model.Details.Id, ReportSummaryId = Model.Details.ValidationReportSummary.ValidationReportSummaryId }))";
             });
 
+            /*
             // Trigger autocomplete when user has typed at least two characters.
             $('input.autocomplete').bind('keyup', function(e) {
                 let currentValue = $(this).val();
@@ -555,6 +562,44 @@
             $(document).bind('mouseup', function(){
                 $(".autocomplete-suggestions").remove();
             });
+            */
+
+            $('.autocomplete').autocomplete({
+                source: function(request, response) {
+                    var wrappedElement = $(this.element);
+                    var filter = SetFilter();
+                    filter.autocompleteColumn = wrappedElement.attr("data-autocomplete-column-name");
+                    filter.autocompleteText = wrappedElement.val();
+                    wrappedElement.addClass('ui-autocomplete-loading');
+
+                    var term = request.term;
+                    $.ajax({
+                        dataType: "json",
+                        type : 'POST',
+                        url: '@Url.Content("~/api/validation/error-summaries/autocomplete")',
+                        data: JSON.stringify(filter),
+                        success: function(data) {
+                            wrappedElement.removeClass('ui-autocomplete-loading');
+                            response(data);
+                        },
+                        error: function(data) {
+                            wrappedElement.removeClass('ui-autocomplete-loading');
+                        }
+                    });
+                },
+                select: function(event, ui) {
+                    debugger;
+                    console.log(event.target.id + ' / ' + ui.item.value);
+                    $(event.target).val(ui.item.value);
+
+                    var filter = SetFilter();
+                    filter.autocompleteColumn = $(event.target).attr("data-autocomplete-column-name");
+                    filter.autocompleteText = ui.item.value;
+                    RefreshGrid("errorGrid", filter);
+                },
+                minLength: 3
+            });
+
         });
 
 
