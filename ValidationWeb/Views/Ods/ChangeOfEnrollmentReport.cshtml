@@ -197,7 +197,7 @@
                         }
                         data: 'null',
                         render: function(data, type, row) {
-                            return '<a href="#" data-toggle="modal" data-target="#request-records-modal">Request&nbsp;Records</button>';
+                            return '<a href="#" data-toggle="modal" data-target="#request-records-modal" aria-label="Request records for ' + row.studentLastName + ", " + row.studentFirstName + " " + row.studentMiddleName+'">Request&nbsp;Records</button>';
                         }
                     },
                     {
@@ -470,7 +470,7 @@
                         data: 'hasRecordsRequest',
                         render: function(data, type, row) {
                             if (row.hasRecordsRequest) {
-                                return '<a href="#" data-toggle="modal" data-target="#view-request-modal">View&nbsp;Request</button>';
+                                return '<a href="#" data-toggle="modal" data-target="#view-request-modal" aria-label="View records request for ' + row.studentLastName + ", " + row.studentFirstName + " " + row.studentMiddleName +'">View&nbsp;Request</button>';
                             } else {
                                 return '&nbsp;';
                             }

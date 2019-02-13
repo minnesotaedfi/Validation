@@ -71,13 +71,14 @@
                                     districtToDisplay = "_EdOrgId_",
                                     isStudentDrillDown = true,
                                     orgType = "_OrgType_"
-                                }))">_LinkText_</a>';
+                                }))" aria-label="_Label_">_LinkText_</a>';
 
-            function createDrillDownLink(edOrgId, drillDownIndex, orgType, linkText) {
+            function createDrillDownLink(edOrgId, drillDownIndex, orgType, label, linkText) {
                 return drillDownLinkTemplate
                     .replace(/_EdOrgId_/g, edOrgId)
                     .replace(/_DrillDownIndex_/g, drillDownIndex)
                     .replace(/_OrgType_/g, orgType)
+                    .replace(/_Label_/g, label)
                     .replace(/_LinkText_/g, linkText);
             }
 
@@ -160,7 +161,7 @@
                                 return (data === 0) ? "-" :
                                 @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                 {
-                                    @:createDrillDownLink(row.edOrgId, 0, row.orgType, data);
+                                    @:createDrillDownLink(row.edOrgId, 0, row.orgType, 'Cumulative Enrollments Drilldown for ' + data + ' students at ' + row.leaSchool, data);
                                 }
                                 else
                                 {
@@ -179,7 +180,7 @@
                                 return (data === 0) ? "-" :
                                     @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                 {
-                                    @:createDrillDownLink(row.edOrgId, 1, row.orgType, data);
+                                    @:createDrillDownLink(row.edOrgId, 1, row.orgType, 'Enrolled in Multiple Schools Drilldown for ' + data + ' students at ' + row.leaSchool, data);
                                 }
                                 else
                                 {
@@ -198,7 +199,7 @@
                                 return (data === 0) ? "-" :
                                     @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                 {
-                                    @:createDrillDownLink(row.edOrgId, 2, row.orgType, data);
+                                    @:createDrillDownLink(row.edOrgId, 2, row.orgType, 'Enrolled at Other Districts Drilldown for ' + data + ' students at ' + row.leaSchool, data);
                                 }
                                 else
                                 {
