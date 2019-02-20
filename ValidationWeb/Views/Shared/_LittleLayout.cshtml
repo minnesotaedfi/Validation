@@ -26,11 +26,18 @@
     @Styles.Render("~/Content/ValidationPortal")
 </head>
 <body>
+    <form name="submitLogout" method="post" action="/MIDMSWEB/mdeLogout/index">
+        <input type="submit" style="visibility: hidden; width: 5em;"/>
+    </form>
     <div class="container-fluid layout">
         <div class="row ">
             <header class="top-banner col-12" role="banner" aria-label="Minnesota Department of Education - Ed-Fi Data Validation Portal">
                 <img src="~/Content/Images/mdelogo450.png" class="mdelogo" alt="Minnesota Department of Education Logo" />
-                <p><a href="#skipnavigation">Skip navigation</a></p>
+                <p>
+                    <a href="#skipnavigation">Skip navigation</a>
+                    &nbsp;
+                    <a href="javascript:document.submitLogout.submit()">Log Out</a>
+                </p>
                 <div role="heading" aria-level="1" class="app-title clear-margin">Ed-Fi Data Validation Portal</div>
             </header>
         </div>
@@ -69,9 +76,9 @@
         </div>
         <div class="row layout mainSection">
             <div class="col-12" role="main">
-                <a name="skipnavigation" id="skipNavigationAnchor" tabindex="-1"></a>
+                <a name="skipnavigation" id="skipNavigationAnchor" tabindex="-1"></a>       
                 @RenderBody()
-            </div>
+        </div>
         </div>
         @Html.Partial("_LittleFooter")
     </div>
@@ -80,7 +87,7 @@
     <div id="overlay"><span id="overlay-text" role="status" aria-live="polite">Loading ... <i class="fas fa-cog fa-spin"></i></span></div>
     
     @{
-        Html.RenderAction("Environment", "Home");
+        Html.RenderAction("Environment", "Nav");
     }
     
     @Scripts.Render("~/bundles/jquery")

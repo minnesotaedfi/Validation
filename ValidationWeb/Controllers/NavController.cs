@@ -4,13 +4,14 @@ using ValidationWeb.Services;
 
 namespace ValidationWeb
 {
+    using ValidationWeb.ViewModels;
+
     public class NavController : Controller
     {
         private static readonly string _version;
         private readonly IAppUserService _appUserService;
         private readonly IEdOrgService _edOrgService;
         private readonly ISchoolYearService _schoolYearService;
-        
         private readonly IConfigurationValues _configurationValues;
 
         static NavController()
@@ -56,6 +57,12 @@ namespace ValidationWeb
         public string ProductVersion()
         {
             return _version;
+        }
+
+        public PartialViewResult Environment()
+        {
+            var viewModel = new EnvironmentViewModel { EnvironmentName = _configurationValues.EnvironmentName };
+            return PartialView("~/Views/Shared/_Environment.cshtml", viewModel);
         }
     }
 }

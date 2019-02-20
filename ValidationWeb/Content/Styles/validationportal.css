@@ -705,10 +705,16 @@ th {
 }
 
 .list-group-item.active:before {
-    content: "\2b9a";
+    content: ">";
     width: 20px;
     margin-left: -15px;
     display: inline-block;
+    text-decoration: underline;
+}
+
+/* to prevent IE11 from underlining the arrow (known bug) */
+.list-group-item.active:before {
+    text-decoration: none;
 }
 
 .list-group-item:before {

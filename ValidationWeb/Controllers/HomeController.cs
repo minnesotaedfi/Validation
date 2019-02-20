@@ -112,11 +112,5 @@ namespace ValidationWeb
             };
             return View(model);
         }
-
-        public PartialViewResult Environment()
-        {
-            var viewModel = new EnvironmentViewModel { EnvironmentName = ConfigurationValues.EnvironmentName };
-            return PartialView("~/Views/Shared/_Environment.cshtml", viewModel);
-        }
     }
 }
