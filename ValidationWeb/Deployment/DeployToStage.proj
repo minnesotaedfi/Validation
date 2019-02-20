@@ -11,6 +11,7 @@
 		<RulesFileFolder Condition=" '$(RulesFileFolder)'==''">~/Content/Rules</RulesFileFolder>
 		<RuleEngineResultsSchema Condition=" '$(RuleEngineResultsSchema)'==''">rules</RuleEngineResultsSchema>
 		<UseFakeViewModelData Condition=" '$(UseFakeViewModelData)'==''">false</UseFakeViewModelData>
+		<EnvironmentName Condition="'$(EnvironmentName)' == ''">EDVPTest</EnvironmentName>
 		<SessionState Condition=" '$(SessionState)'==''">data source=EDU-EDFIODSS01;integrated security=True;MultipleActiveResultSets=True;</SessionState>
 		<ValidationPortalDbContext Condition=" '$(ValidationPortalDbContext)'==''">Data Source=EDU-EDFIODSS01;Initial Catalog=ValidationPortal;Integrated Security=True;MultipleActiveResultSets=True;Application Name=EntityFramework</ValidationPortalDbContext>
 		<SingleSignOnDatabase Condition="'$(SingleSignOnDatabase)'==''">Data Source=EDU-SQL2014PROD;Initial Catalog=MidmsAudit_10g;Integrated Security=True;MultipleActiveResultSets=True;App=EntityFramework</SingleSignOnDatabase>
@@ -36,6 +37,8 @@
 			<RuleEngineResultsSchemaParamValue>rules</RuleEngineResultsSchemaParamValue>
 			<UseFakeViewModelDataParamName>UseFakeViewModelData</UseFakeViewModelDataParamName>
 			<UseFakeViewModelDataParamValue>false</UseFakeViewModelDataParamValue>
+			<EnvironmentNameParamName>EnvironmentName</EnvironmentNameParamName>
+			<EnvironmentNameParamValue>EDVPTest</EnvironmentNameParamValue>
 			<SessionStateConnectionString>$(SessionState.Replace(";","%3b"))</SessionStateConnectionString>
 			<!-- These are the string values that get added to the Web.Config file - not to determine where the DB is actually deployed. -->
 			<ValidationPortalDbContextName>ValidationPortalDbContext-Web.config Connection String</ValidationPortalDbContextName>
@@ -91,6 +94,11 @@
 				Query="//parameters/setParameter[@name='%(PublishPackages.UseFakeViewModelDataParamName)']/@value"
 				Value="%(PublishPackages.UseFakeViewModelDataParamValue)"
 				Condition =" '%(PublishPackages.UseFakeViewModelDataParamValue)'!=''" />
+		<XmlPoke
+				XmlInputPath="%(PublishPackages.ParametersXml)"
+				Query="//parameters/setParameter[@name='%(PublishPackages.EnvironmentNameParamName)']/@value"
+				Value="%(PublishPackages.EnvironmentNameParamValue)"
+				Condition =" '%(PublishPackages.EnvironmentNameParamValue)'!=''" />
 		<XmlPoke
 				XmlInputPath="%(PublishPackages.ParametersXml)"
 				Query="//parameters/setParameter [@name='%(PublishPackages.ValidationPortalDbContextName)']/@value"

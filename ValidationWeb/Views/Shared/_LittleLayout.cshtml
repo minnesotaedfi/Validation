@@ -75,8 +75,14 @@
         </div>
         @Html.Partial("_LittleFooter")
     </div>
+
     <!-- Turn this overlay on and off when loading new data asynchronously or screens. -->
     <div id="overlay"><span id="overlay-text" role="status" aria-live="polite">Loading ... <i class="fas fa-cog fa-spin"></i></span></div>
+    
+    @{
+        Html.RenderAction("Environment", "Home");
+    }
+    
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/bundles/jqueryUI")

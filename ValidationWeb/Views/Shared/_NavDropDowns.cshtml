@@ -5,7 +5,6 @@
     var identity = (ValidationPortalIdentity)User.Identity;
     var permissions = User.Identity.GetViewPermissions(identity.AppRole);
 }
-
 <div class="ml-auto justify-content-end">
     <li class="nav-item dropdown pull-right" style="padding-left: 10px;">
         <i class="fas fa-user-circle white-heavy-text"></i> <span class="white-heavy-text">@Model.AppUserSession.UserIdentity.UserId</span>
@@ -25,7 +24,7 @@
         <li class="nav-item dropdown pull-right">
 
             @*replace with a standard select for accessibility *@
-            
+
             @Html.DropDownList(
                 "newActionDropdownYear",
                 new SelectList(Model.SchoolYears
@@ -35,7 +34,7 @@
                         Text = x.ToString(),
                         Value = x.Id.ToString()
                     }),
-                    "Value", 
+                    "Value",
                     "Text",
                     Model.FocusedSchoolYear.Id),
                 new { @class= "form-control", style="visibility: hidden" })

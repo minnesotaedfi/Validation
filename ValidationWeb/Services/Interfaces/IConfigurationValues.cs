@@ -20,5 +20,7 @@ namespace ValidationWeb.Services
         bool UseSimulatedSSO { get; }
         string SimulatedUserName { get; }
         List<SchoolYear> SeedSchoolYears { get; }
+
+        string EnvironmentName { get; }
     }
 }

@@ -1,0 +1,10 @@
+﻿@model ValidationWeb.ViewModels.EnvironmentViewModel
+
+@if(@Model.EnvironmentName != "Production")
+{ 
+    <div style="position: absolute; left: 50%; top: 0px; margin-top: 15px; ">
+        <div class="app-title" style="position: relative; left: -50%;">
+            Environment: @Model.EnvironmentName
+        </div>
+    </div>
+}

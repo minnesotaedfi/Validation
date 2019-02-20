@@ -9,6 +9,7 @@ using ValidationWeb.Services;
 namespace ValidationWeb
 {
     using ValidationWeb.Services.Interfaces;
+    using ValidationWeb.ViewModels;
 
     [PortalAuthorize(Roles = "DataOwner,DistrictUser,HelpDesk")]
     public class HomeController : Controller
@@ -21,7 +22,8 @@ namespace ValidationWeb
             IOdsDataService odsDataService,
             IValidatedDataSubmissionService validatedDataSubmissionService,
             ISubmissionCycleService submissionCycleService,
-            IRecordsRequestService recordsRequestService)
+            IRecordsRequestService recordsRequestService, 
+            IConfigurationValues configurationValues)
         {
             AnnouncementService = announcementService;
             AppUserService = appUserService;
@@ -31,6 +33,7 @@ namespace ValidationWeb
             ValidatedDataSubmissionService = validatedDataSubmissionService;
             SubmissionCycleService = submissionCycleService;
             RecordsRequestService = recordsRequestService;
+            ConfigurationValues = configurationValues;
         }
 
         protected IAnnouncementService AnnouncementService { get; set; }
@@ -48,7 +51,9 @@ namespace ValidationWeb
         protected ISubmissionCycleService SubmissionCycleService { get; set; }
 
         protected IRecordsRequestService RecordsRequestService { get; set; }
-
+        
+        protected IConfigurationValues ConfigurationValues { get; set; }
+        
         public ActionResult Index()
         {
             var focusedSchoolYearId = AppUserService.GetSession().FocusedSchoolYearId;
@@ -106,6 +111,12 @@ namespace ValidationWeb
                 Announcements = AnnouncementService.GetAnnouncements()
             };
             return View(model);
+        }
+
+        public PartialViewResult Environment()
+        {
+            var viewModel = new EnvironmentViewModel { EnvironmentName = ConfigurationValues.EnvironmentName };
+            return PartialView("~/Views/Shared/_Environment.cshtml", viewModel);
         }
     }
 }

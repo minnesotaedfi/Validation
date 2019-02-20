@@ -734,6 +734,7 @@
       <DependentUpon>popper-utils.min.js</DependentUpon>
     </None>
     <Content Include="Views\Validation\ViewReport.cshtml" />
+    <Content Include="Views\Shared\_Environment.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -809,6 +810,7 @@
     <Compile Include="App_Start\JsonNetFormatter.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Database\EdFiLogDbContext.cs" />
     <Compile Include="Models\ValidationPortalIdentity.cs" />
     <Compile Include="Services\Implementations\RecordsRequestService.cs" />
@@ -850,6 +852,7 @@
     <Compile Include="Utility\GradeLevelComparer.cs" />
     <Compile Include="Utility\ImportPropertySelectionBehavior.cs" />
     <Compile Include="Utility\SimpleInjectorExtension.cs" />
+    <Compile Include="ViewModels\EnvironmentViewModel.cs" />
     <Compile Include="ViewModels\StudentDrillDownReportType.cs" />
     <Compile Include="Database\ValidatedOdsDbContext.cs" />
     <Compile Include="Database\ValidationPortalDbContext.cs" />
@@ -943,6 +946,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Base\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Engine\Engine.csproj">
