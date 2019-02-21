@@ -5,39 +5,39 @@
     var identity = (ValidationPortalIdentity)User.Identity;
     var permissions = User.Identity.GetViewPermissions(identity.AppRole);
 }
-<div class="ml-auto justify-content-end">
-    <li class="nav-item dropdown pull-right" style="padding-left: 10px;">
-        <i class="fas fa-user-circle white-heavy-text"></i> <span class="white-heavy-text">@Model.AppUserSession.UserIdentity.UserId</span>
-    </li>
-    @if (!permissions.CanAccessAdminFeatures)
-    {
-        <li class="nav-item navbar-text pull-right">
-            @* TODO: put this displayed district name back for single-district users who don't get the dropdown *@
-            @*<span id="selectedOrg" class="white-heavy-text">@Model.FocusedEdOrg.OrganizationName</span>*@
-            @*todo: put this selectedOrg as the selected value *@
-            @if (Model.EdOrgs.Count() > 1)
-            {
-                <select id="edOrgNames" class="form-control validation-dropdown-menu district-dropdown" style="visibility: hidden"></select>
-            }
+
+<div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+    <ul class="navbar-nav ml-auto">
+
+        @if (!permissions.CanAccessAdminFeatures)
+        {
+            @*dropdown pull-right *@
+            <li class="nav-item dropdown">
+                @if (Model.EdOrgs.Count() > 1)
+                {
+                    <select id="edOrgNames" class="form-control validation-dropdown-menu district-dropdown" style="visibility: hidden"></select>
+                }
+            </li>
+
+            <li class="nav-item">
+                @Html.DropDownList(
+                    "newActionDropdownYear",
+                    new SelectList(Model.SchoolYears
+                        .OrderBy(x => x.ToString())
+                        .Select(x => new SelectListItem
+                                     {
+                                         Text = x.ToString(),
+                                         Value = x.Id.ToString()
+                                     }),
+                        "Value",
+                        "Text",
+                        Model.FocusedSchoolYear.Id),
+                    new { @class= "form-control", style="visibility: hidden" })
+            </li>
+        }
+
+        <li class="nav-item" style="padding-left: 10px;" tabindex="0">
+            <i class="fas fa-user-circle white-heavy-text"></i> <span class="white-heavy-text">@Model.AppUserSession.UserIdentity.UserId</span>
         </li>
-
-        <li class="nav-item dropdown pull-right">
-
-            @*replace with a standard select for accessibility *@
-
-            @Html.DropDownList(
-                "newActionDropdownYear",
-                new SelectList(Model.SchoolYears
-                    .OrderBy(x => x.ToString())
-                    .Select(x => new SelectListItem
-                    {
-                        Text = x.ToString(),
-                        Value = x.Id.ToString()
-                    }),
-                    "Value",
-                    "Text",
-                    Model.FocusedSchoolYear.Id),
-                new { @class= "form-control", style="visibility: hidden" })
-        </li>
-    }
+    </ul>
 </div>
