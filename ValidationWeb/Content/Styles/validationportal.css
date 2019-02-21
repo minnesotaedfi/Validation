@@ -43,6 +43,7 @@ nav#breadcrumb a {
         background-color: #A4BCC2
     }
 
+
 /* Set padding to keep content from hitting the edges */
 .body-content {
     padding-left: 15px;
@@ -295,6 +296,23 @@ nav span.select2 {
     width: unset;
 }
 
+select.form-control:focus {
+    /*border-width: 5px;*/
+    box-shadow: 0 0 5px #A4BCC2 !important;
+    color: #003865;
+    border-radius: 5px;
+    background-color: #A4BCC2;
+    border-color: #A4BCC2;
+}
+
+select.form-control:focus > option {
+    box-shadow: 0 0 5px #A4BCC2 !important;
+    color: #003865;
+    border-radius: 5px;
+    background-color: white;
+    border-color: #A4BCC2;
+}
+
 /***************************************************************************************/
 /***************************************************************************************/
 /* Bootstrap Overrides */
@@ -384,6 +402,23 @@ table.dataTable tbody th, table.dataTable tbody td {
     margin-right: 15px;
     max-width: 1280px;
 }
+
+    .top-banner a {
+        color: #0563c1;
+        text-decoration: underline;
+    }
+
+        .top-banner a:hover {
+            color: #196486;
+            text-decoration: underline;
+        }
+
+        .top-banner a:focus {
+            color: #003865;
+            border-radius: 5px;
+            background-color: #A4BCC2
+        }
+
 
 /* Makes the blue nav bar exactly 50 pixels which is the same as the MinnesotaDOE site */
 #layout-navbar {
@@ -587,6 +622,13 @@ th {
     text-overflow: ellipsis;
 }
 
+.ui-autocomplete-input:focus {
+    color: #003865;
+    border-radius: 5px;
+    background-color: #A4BCC2;
+    border-color: #A4BCC2;
+}
+
 .ui-menu-item {
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -729,7 +771,8 @@ th {
     background-color: #b8daff;
 }
 
-    .list-group-item-primary.list-group-item-action:hover, .list-group-item-primary.list-group-item-action:focus {
+    .list-group-item-primary.list-group-item-action:hover, 
+    .list-group-item-primary.list-group-item-action:focus {
         color: #004085;
         background-color: #9fcdff;
     }
@@ -775,6 +818,11 @@ a {
 .page-item.active .page-link {
     background-color: #0563c1;
 }
+
+.page-item.disabled :focus {
+    background-color: #A4BCC2;
+}
+
 
 .page-link {
     color: #0563c1;
