@@ -175,7 +175,7 @@
                 .done(function(data) {
                     var dropDown = $('#edOrgNames');
 
-                    var availableEdOrgs = data.map(function(x) {
+                    data.map(function(x) {
                         dropDown.append($("<option></option>")
                             .attr("value", x.Id)
                             .text(x.OrganizationName));
@@ -186,9 +186,10 @@
                             dropDown.val(data.id);
 
                             dropDown.select2({
-                                // theme: 'bootstrap4',
-                                containerCssClass: 'validation-dropdown-menu'
+                                // containerCssClass: 'validation-dropdown-menu'
                             });
+
+                            setupSelectKeyHandling(); 
 
                             dropDown.on('select2:select', changeEdOrg);
                         })
@@ -197,35 +198,62 @@
                         });
                 }).fail(function () {
                     console.log('An error occurred when attempting to get EdOrgs');
-                });
+            });
 
-                // Supports NavDropDowns, School Year selection menu dropdown
-                $("#newActionDropdownYear").change(function (e) {
-                    var chosenLink = $(this);
-                    var yearId = $(this).val();
-                    $.ajax({
-                        url: "@Url.Content("~/api/user-session/school-year/select")",
-                        type: "Post",
-                        data: yearId,
-                        contentType: 'application/json; charset=utf-8',
-                        success: function (data) {
-                            console.log('setting school year to '+chosenLink.text());
+            // Supports NavDropDowns, School Year selection menu dropdown
+            $("#newActionDropdownYear").change(function (e) {
+                var chosenLink = $(this);
+                var yearId = $(this).val();
+                $.ajax({
+                    url: "@Url.Content("~/api/user-session/school-year/select")",
+                    type: "Post",
+                    data: yearId,
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (data) {
+                        console.log('setting school year to '+chosenLink.text());
 
-                            // If looking at detailed errors, go back to main reports listing for the new ODS School Year.
-                            if (location.pathname.toLowerCase().indexOf("validation/report/") !== -1) {
-                                location.replace("@Url.Action("Reports","Validation")");
-                                return;
-                            }
-
-                            // If looking at any other reports, get the listing for the new ODS School Year.
-                            location.reload();
-                        },
-                        error: function () {
-                            console.log('An error occurred when attempting to change School Year to '+yearId);
+                        // If looking at detailed errors, go back to main reports listing for the new ODS School Year.
+                        if (location.pathname.toLowerCase().indexOf("validation/report/") !== -1) {
+                            location.replace("@Url.Action("Reports","Validation")");
+                            return;
                         }
-                    });
+
+                        // If looking at any other reports, get the listing for the new ODS School Year.
+                        location.reload();
+                    },
+                    error: function () {
+                        console.log('An error occurred when attempting to change School Year to '+yearId);
+                    }
                 });
             });
+        });
+
+        function setupSelectKeyHandling() {
+            $(document).on('focus', '.select2.select2-container', function (e) {
+                // console.log("%c Focus Event ", "background:green; color:white", e);
+
+                var initialFocusEvent = e.originalEvent; //don't re-open on close focus event
+                var targetIsInput = e.target && $(e.target).is("input"); // don't open when focused from input 
+                var relTargetIsInput = e.relatedTarget && $(e.relatedTarget).is("input");
+                var anyTargetIsInput = targetIsInput || relTargetIsInput;
+  
+                // only open on original attempt - close focus event should not fire open
+                if (initialFocusEvent && !anyTargetIsInput) {
+                    // console.log("%c Call Select2 Open ", "background:orange; color:white");
+                    $(this).siblings('select').select2('open');
+                } 
+            });
+
+            //$(document).on('click', '.select2.select2-container', function (e) {
+            //    console.log("%c Click Event ", "background:blue; color:white", e);
+            //});
+
+            //$(document).on('keyup', '.select2.select2-container', function (e) {
+            //    if (e.which == 9) {
+            //        console.log("%c Tab Event ", "background:blue; color:white", e);
+            //    } 
+            //});
+        }
     </script>
 
     @RenderSection("scripts", required: false)
