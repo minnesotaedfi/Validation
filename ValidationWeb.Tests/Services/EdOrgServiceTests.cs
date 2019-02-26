@@ -8,6 +8,7 @@ namespace ValidationWeb.Tests.Services
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     using System.Data.Entity.Migrations;
+    using System.Data.SqlClient;
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
@@ -203,7 +204,11 @@ namespace ValidationWeb.Tests.Services
 
             var allEdOrgQueryCommandMock = MockRepository.Create<IDbCommand>();
             allEdOrgQueryCommandMock.SetupSet(x => x.CommandType = CommandType.Text);
+            allEdOrgQueryCommandMock.SetupSet(x => x.CommandText = EdOrgQuery.SingleEdOrgsQuery);
             allEdOrgQueryCommandMock.SetupSet(x => x.CommandText = EdOrgQuery.AllEdOrgQuery);
+
+            var sqlParameter = new SqlParameter();
+            allEdOrgQueryCommandMock.Setup(x => x.CreateParameter()).Returns(sqlParameter);
 
             var allEdOrgReaderMock = MockRepository.Create<IDataReader>();
             allEdOrgReaderMock.Setup(x => x.Dispose());
@@ -214,7 +219,7 @@ namespace ValidationWeb.Tests.Services
                 .Returns(() => allEdOrgReaderIndex <= odsEdOrgs.Length)
                 .Callback(() => allEdOrgReaderIndex++);
 
-            allEdOrgReaderMock.SetupGet(x => x[EdOrgQuery.IdColumnName]).Returns(odsEdOrgs[allEdOrgReaderIndex].Id);
+            allEdOrgReaderMock.SetupGet(x => x[EdOrgQuery.IdColumnName]).Returns(() => odsEdOrgs[allEdOrgReaderIndex].Id);
             allEdOrgReaderMock.SetupGet(x => x[EdOrgQuery.OrganizationNameColumnName]).Returns(odsEdOrgs[allEdOrgReaderIndex].OrganizationName);
             allEdOrgReaderMock.SetupGet(x => x[EdOrgQuery.StateOrganizationIdColumnName]).Returns(null);
             allEdOrgReaderMock.SetupGet(x => x[EdOrgQuery.StateLevelOrganizationIdColumnName]).Returns(null);

@@ -104,6 +104,7 @@
             // singletons
             container.Register<ICacheManager, CacheManager>(Lifestyle.Singleton);
             container.Register<IDbContextFactory<ValidationPortalDbContext>, DbContextFactory<ValidationPortalDbContext>>(Lifestyle.Singleton);
+            container.Register<ICustomDbContextFactory<RawOdsDbContext>, CustomDbContextFactory<RawOdsDbContext>>(Lifestyle.Singleton);
             container.Register<IDbContextFactory<EdFiLogDbContext>, DbContextFactory<EdFiLogDbContext>>(Lifestyle.Singleton);
 
             // Rules Engine
