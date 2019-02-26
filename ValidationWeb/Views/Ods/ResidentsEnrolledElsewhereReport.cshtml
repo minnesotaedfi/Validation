@@ -9,22 +9,22 @@
 <div id="pagetop" class="row tbmargin10">
     @if (Model.IsStateMode)
     {
-        <h1 class="vp-body-header col-md-6 justify-content-start align-self-center">Residents Enrolled Elsewhere for All Minnesota Districts</h1>
+        <h2 class="vp-body-header col-md-8 justify-content-start align-self-center">Residents Enrolled Elsewhere for All Minnesota Districts</h2>
     }
     else
     {
-        <h1 class="vp-body-header col-md-6 justify-content-start align-self-center">Residents Enrolled Elsewhere for District @Model.EdOrgName (@Model.EdOrgId.ToString())</h1>
+        <h2 class="vp-body-header col-md-8 justify-content-start align-self-center">Residents Enrolled Elsewhere for District @Model.EdOrgName (@Model.EdOrgId.ToString())</h2>
     }
 
     @if (permissions.CanAccessAllDistrictsMode)
     {
         if(Model.IsStateMode)
         {
-            @:<div class="col-md-3"><a href="@Url.Action("ResidentsEnrolledElsewhereReport", "Ods", new { isStateMode = false })" class="show-data-loading">View Single District</a></div>
+            @:<div class="col-md-4"><a href="@Url.Action("ResidentsEnrolledElsewhereReport", "Ods", new { isStateMode = false })" class="show-data-loading">View Single District</a></div>
         }
         else
         {
-            @:<div class="col-md-3"><a href="@Url.Action("ResidentsEnrolledElsewhereReport", "Ods", new { isStateMode = true })" class="show-data-loading">View All Districts</a></div>
+            @:<div class="col-md-4"><a href="@Url.Action("ResidentsEnrolledElsewhereReport", "Ods", new { isStateMode = true })" class="show-data-loading">View All Districts</a></div>
         }
     }
 </div>
@@ -62,7 +62,6 @@
                                 }))" aria-label="_Label_">_LinkText_</a>';
 
             function createDrillDownLink(edOrgId, schoolId, drillDownIndex, orgType, label, linkText) {
-                debugger;
                 return drillDownLinkTemplate
                     .replace(/_EdOrgId_/g, edOrgId)
                     .replace(/_SchoolId_/g, schoolId)
@@ -138,7 +137,6 @@
                         data: 'residentsEnrolled',
                         render: function (data, type, row, meta) {
                             if (type === 'display') {
-                                debugger;
                                 return (data === 0) ? "-" :
                                     @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                     {

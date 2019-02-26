@@ -892,3 +892,7 @@ select :focus {
 ::-ms-clear {
     display: none;
 }
+
+h3, .h3 {
+    font-size: 1.2em;
+}

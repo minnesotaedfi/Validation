@@ -11,11 +11,11 @@
 
     @if (Model.IsStateMode)
     {
-        <h1 class="vp-body-header justify-content-start align-self-center">Students with Multiple Open Enrollment for All Minnesota Districts</h1>
+        <h2 class="vp-body-header justify-content-start align-self-center">Students with Multiple Open Enrollment for All Minnesota Districts</h2>
     }
     else
     {
-        <h1 class="vp-body-header justify-content-start align-self-center">Students with Multiple Open Enrollments for District @Model.EdOrgName (@Model.EdOrgId.ToString())</h1>
+        <h2 class="vp-body-header justify-content-start align-self-center">Students with Multiple Open Enrollments for District @Model.EdOrgName (@Model.EdOrgId.ToString())</h2>
 
         if (Model.SchoolId.HasValue && !string.IsNullOrWhiteSpace(Model.SchoolName))
         {
