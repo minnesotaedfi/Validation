@@ -107,6 +107,16 @@
          />
 	</parameter>
 	<parameter
+		name="EnvironmentName"
+		description="Displays at the top of all pages; hidden if set to 'Production'."
+		defaultValue="Production">
+		<parameterEntry
+			kind="XmlFile"
+			scope="Web.config"
+			match="/configuration/appSettings/add[@key='EnvironmentName']/@value"
+		/>
+	</parameter>
+	<parameter
 	    name="SessionStateConnectionString"
 	    description="Connection string to use for ASP session state server"
 	    defaultValue="localhost">

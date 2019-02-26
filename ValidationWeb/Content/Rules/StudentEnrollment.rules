@@ -140,17 +140,17 @@ rule 10.10.6617
 	else '6. The field given contains an invalid value as defined in the MARSS Manual. Note: Fields are edited only if they are required in that reporting cycle (fall or end-of-year).'
 
 rule 20.10.6525 
-	when collection is Fall then
+	when collection is Fall_Enrollment_And_Demographic then
 	expect that {StudentEnrollment}.[StatusEndDate] <= 30-June
 	else '112. This message indicates that the student\'s Status End Date falls after June 30. In a regular school, any membership that occurs after June 30 is considered summer school which is not reported on MARSS. This edit ignores ALCs, other Learning Year Programs, public alternative schools and extended school year (ESY) records.'
 
 rule 30.10.6170 
-	when collection is EOY then
+	when collection is EOY_Enrollment_And_Demographic then
 	require that {StudentEnrollment}.[StatusEndDate] exists
 	else '6. The field given contains an invalid value as defined in the MARSS Manual. Note: Fields are edited only if they are required in that reporting cycle (fall or end-of-year).'
 
 rule 30.10.6429 
-	when collection is EOY 
+	when collection is EOY_Enrollment_And_Demographic 
 	and {StudentEnrollment}.[StudentGradeLevel] = 'EC' 
 	and years since {StudentDemographic}.[BirthDate] as of 30-June >= 3
 	and years since {StudentDemographic}.[BirthDate] as of {StudentEnrollment}.[StatusEndDate] < 3 then

@@ -16,7 +16,8 @@
         private static readonly bool _isSsoSimulated;
         private static readonly string _ssoSimulatedUserName;
         private static readonly List<SchoolYear> _seedSchoolYears = new List<SchoolYear>();
-
+        private static readonly string _environmentName; 
+        
         static AppSettingsFileConfigurationValues()
         {
             _appId = ConfigurationManager.AppSettings["SsoAppId"]?.ToString();
@@ -44,6 +45,8 @@
                     }
                 }
             }
+
+            _environmentName = ConfigurationManager.AppSettings["EnvironmentName"];
         }
 
         public string AppId => _appId;
@@ -67,5 +70,7 @@
         public string SimulatedUserName => _ssoSimulatedUserName;
 
         public List<SchoolYear> SeedSchoolYears => _seedSchoolYears;
+
+        public string EnvironmentName => _environmentName;
     }
 }

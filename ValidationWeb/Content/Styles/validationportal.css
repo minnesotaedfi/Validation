@@ -4,6 +4,46 @@
     font-family: Calibri, Arial, sans-serif;
 }
 
+/*
+    Hyperlink: #0563c1; underline
+Hover: #196486; underline
+Focus: color: #003865; border-radius: 5px; background-color: #A4BCC2
+
+*/
+
+.mainSection a {
+    color: #0563c1;
+    text-decoration: underline;
+}
+
+    .mainSection a:hover {
+        color: #196486;
+        text-decoration: underline;
+    }
+
+    .mainSection a:focus {
+        color: #003865;
+        border-radius: 5px;
+        background-color: #A4BCC2
+    }
+
+nav#breadcrumb a {
+    color: #0563c1;
+    text-decoration: underline;
+}
+
+    nav#breadcrumb a:hover {
+        color: #196486;
+        text-decoration: underline;
+    }
+
+    nav#breadcrumb a:focus {
+        color: #003865;
+        border-radius: 5px;
+        background-color: #A4BCC2
+    }
+
+
 /* Set padding to keep content from hitting the edges */
 .body-content {
     padding-left: 15px;
@@ -50,7 +90,6 @@ div#notes {
     color: white;
     transform: translate(-50%,-50%);
     -ms-transform: translate(-50%,-50%);
-
     width: 100%;
     padding-top: 20px;
     padding-bottom: 20px;
@@ -99,6 +138,60 @@ div#notes {
     color: rgb(255, 255, 255);
     font-weight: bold;
 }
+
+a.white-heavy-text {
+    color: rgb(255, 255, 255);
+    font-weight: bold;
+    text-decoration: none;
+}
+
+    a.white-heavy-text:hover {
+        color: #003865;
+        background-color: #a4bcc2;
+        text-decoration: none;
+    }
+
+button.white-heavy-text:focus,
+a.white-heavy-text:focus {
+    color: #003865;
+    border-radius: 5px;
+    background-color: #A4BCC2;
+    text-decoration: none;
+}
+
+button.white-heavy-text:hover,
+a.white-heavy-text:hover
+{
+    color: #003865;
+    font-weight: bold;
+    background-color: #a4bcc2;
+    text-decoration: none;
+}
+
+.dropdown-item:hover, .dropdown-item:focus {
+    color: #003865;
+    font-weight: bold;
+    background-color: #a4bcc2;
+    text-decoration: none;
+}
+
+.close {
+    background-color: transparent;
+    color: rgb(255, 255, 255);
+    font-weight: bold;
+    text-decoration: none;
+    opacity: 1.0;
+}
+
+    .close:hover,
+    .close:focus {
+        color: #003865;
+        background-color: #a4bcc2;
+        font-weight: bold;
+        text-decoration: none;
+        opacity: 1.0 !important;
+    }
+
 
 .scrollable-row {
     overflow-y: auto;
@@ -188,11 +281,41 @@ div#NewValidationModal select {
         background-color: rgb(164, 188, 194);
         border-color: rgb(120, 190, 33);
     }
-/***************************************************************************************/
 
+nav select.form-control {
+    height: unset;
+    padding: 0px 10px;
+    margin: 0 10px;
+    width: unset;
+}
+
+nav span.select2 {
+    height: unset;
+    padding: 0px 10px;
+    margin: 0 10px;
+    width: unset;
+}
+
+select.form-control:focus {
+    /*border-width: 5px;*/
+    box-shadow: 0 0 5px #A4BCC2 !important;
+    color: #003865;
+    border-radius: 5px;
+    background-color: #A4BCC2;
+    border-color: #A4BCC2;
+}
+
+select.form-control:focus > option {
+    box-shadow: 0 0 5px #A4BCC2 !important;
+    color: #003865;
+    border-radius: 5px;
+    background-color: white;
+    border-color: #A4BCC2;
+}
+
+/***************************************************************************************/
 /***************************************************************************************/
 /* Bootstrap Overrides */
-
 /*
     (width & margin) Ensure container rows (especially colored bars) touch the left and right sides of screen.
                      Override the evil -15px Margin
@@ -280,6 +403,23 @@ table.dataTable tbody th, table.dataTable tbody td {
     max-width: 1280px;
 }
 
+    .top-banner a {
+        color: #0563c1;
+        text-decoration: underline;
+    }
+
+        .top-banner a:hover {
+            color: #196486;
+            text-decoration: underline;
+        }
+
+        .top-banner a:focus {
+            color: #003865;
+            border-radius: 5px;
+            background-color: #A4BCC2
+        }
+
+
 /* Makes the blue nav bar exactly 50 pixels which is the same as the MinnesotaDOE site */
 #layout-navbar {
     padding: 13px;
@@ -308,36 +448,54 @@ table.dataTable tbody th, table.dataTable tbody td {
     color: rgb(0, 56, 101);
 }
 
-ul.navbar-nav {
-    width: 100%;
-}
-
 .navbar-nav a {
     color: rgb(255, 255, 255);
     background-color: rgb(0, 56, 101);
     padding: 0;
 }
 
+    .navbar-nav a:focus {
+        color: #003865;
+        border-radius: 5px;
+        background-color: #A4BCC2;
+    }
+
+footer a:focus {
+    color: #003865 !important;
+    border-radius: 5px;
+    background-color: #A4BCC2;
+}
+
+.table-primary th {
+    border-color: #003865;
+}
+
+.table-primary th:focus {
+    color: #003865;
+    /*border-radius: 5px;*/
+    background-color: #A4BCC2;
+}
 
 .validation-dropdown-menu {
-    padding-top: 0;
+    /*padding-top: 0;
     padding-bottom: 0;
     margin-top: 0;
-    margin-bottom: 0;
+    margin-bottom: 0;*/
+    padding: 0px;
     border-color: rgb(120, 190, 33);
     background-color: white;
-    left: initial;
+    /*left: initial;*/
 }
 
-.validation-dropdown-menu > a:hover, .validation-dropdown-toggle:hover, .validation-nav-link:hover {
-    padding-top: 0;
-    padding-bottom: 0;
-    margin-top: 0;
-    margin-bottom: 0;
-    border-color: rgb(120, 190, 33);
-    background-color: rgb(164, 188, 194);
-    color: rgb(0, 0, 0);
-}
+    .validation-dropdown-menu > a:hover, .validation-dropdown-toggle:hover, .validation-nav-link:hover {
+        /*padding-top: 0;
+        padding-bottom: 0;
+        margin-top: 0;
+        margin-bottom: 0;*/
+        border-color: rgb(120, 190, 33);
+        background-color: rgb(164, 188, 194);
+        color: rgb(0, 0, 0);
+    }
 
 li.dropdown.nav-item.pull-right, li.dropdown-toggle.nav-item.pull-right {
     float: right !important;
@@ -456,11 +614,26 @@ th {
     }
 
 .ui-autocomplete {
-    max-height: 100px;
-    overflow-y: auto;
+    max-height: 400px;
+    max-width: 250px;
+    overflow-y: scroll;
     /* prevent horizontal scrollbar */
     overflow-x: hidden;
+    text-overflow: ellipsis;
 }
+
+.ui-autocomplete-input:focus {
+    color: #003865;
+    border-radius: 5px;
+    background-color: #A4BCC2;
+    border-color: #A4BCC2;
+}
+
+.ui-menu-item {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 /* IE 6 doesn't support max-height
    * we use height instead, but this forces the menu to always be this tall
    */
@@ -574,10 +747,16 @@ th {
 }
 
 .list-group-item.active:before {
-    content: "\2b9a";
+    content: ">";
     width: 20px;
     margin-left: -15px;
     display: inline-block;
+    text-decoration: underline;
+}
+
+/* to prevent IE11 from underlining the arrow (known bug) */
+.list-group-item.active:before {
+    text-decoration: none;
 }
 
 .list-group-item:before {
@@ -592,7 +771,8 @@ th {
     background-color: #b8daff;
 }
 
-    .list-group-item-primary.list-group-item-action:hover, .list-group-item-primary.list-group-item-action:focus {
+    .list-group-item-primary.list-group-item-action:hover, 
+    .list-group-item-primary.list-group-item-action:focus {
         color: #004085;
         background-color: #9fcdff;
     }
@@ -614,19 +794,17 @@ th {
 .card {
     overflow-wrap: break-word;
     word-wrap: break-word;
-
     /* Adds a hyphen where the word breaks, if supported (No Blink) */
     -ms-hyphens: auto;
     -moz-hyphens: auto;
     -webkit-hyphens: auto;
-    hyphens: auto;
 }
 
 .table-primary,
 .table-primary > th,
 .table-primary > td {
     color: rgb(255, 255, 255);
-    background-color: #008EAA;
+    background-color: #003865;
 }
 
 a {
@@ -641,11 +819,76 @@ a {
     background-color: #0563c1;
 }
 
+.page-item.disabled :focus {
+    background-color: #A4BCC2;
+}
+
+
 .page-link {
     color: #0563c1;
 }
 
-.page-link:hover {
-    color: #196486;
+    .page-link:hover {
+        color: #196486;
+    }
+/***************************************************************************************/
+
+button.btn {
+    white-space: nowrap;
 }
-    /***************************************************************************************/
+
+.select2-container--default .select2-selection--single {
+    padding: 6px;
+    height: 37px;
+    position: relative;
+    line-height: unset;
+}
+
+
+.nav-item :focus {
+    color: #003865;
+    border-radius: 5px;
+    background-color: #A4BCC2;
+}
+
+.newActionDropdownYear {
+    min-width: 115px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: unset;
+}
+
+select :focus {
+    color: #003865;
+    border-radius: 5px;
+    background-color: #A4BCC2
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    width: 40px;
+    color: #fff;
+    padding: 4px 12px;
+    height: 27px;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 20px;
+}
+
+.select2-container--default .select2-selection--single {
+    padding: unset;
+    height: unset;
+}
+
+.select2-selection__arrow {
+    padding: 0 12px !important;
+}
+
+.navbar-text {
+    padding: unset;
+}
+
+::-ms-clear {
+    display: none;
+}

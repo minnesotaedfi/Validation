@@ -86,13 +86,14 @@
                                     districtToDisplay = "_EdOrgId_",
                                     isStudentDrillDown = true,
                                     orgType = "_OrgType_"
-                                }))" target="_blank">_LinkText_</a>';
+                                }))" aria-label="_Label_">_LinkText_</a>';
 
-            function createDrillDownLink(edOrgId, drillDownIndex, orgType, linkText) {
+            function createDrillDownLink(edOrgId, drillDownIndex, orgType, label, linkText) {
                 return drillDownLinkTemplate
                     .replace(/_EdOrgId_/g, edOrgId)
                     .replace(/_DrillDownIndex_/g, drillDownIndex)
                     .replace(/_OrgType_/g, orgType)
+                    .replace(/_Label_/g, label)
                     .replace(/_LinkText_/g, linkText);
             }
 
@@ -124,7 +125,7 @@
                 },
                 dom: "<'row'<'col-md-3'l><'col-md-3 offset-6 text-right jumpToNotes'>>" +
                     "<'row'<'col-sm-12'tr>>" +
-                    "<'row'<'col-md-3'i><'col-md-5 offset-4 pull-right'p>>",
+                    "<'row'<'col-md-3'i><'col-md-9 pull-right'p>>",
                 ajax: {
                     url: "@Html.Raw(Url.Action("GetStudentProgramsReportData", new
                      {
@@ -164,7 +165,7 @@
                                 return (data === 0) ? "-" :
                                     @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                     {
-                                        @: createDrillDownLink(row.edOrgId, 0, row.orgType, data);
+                                        @: createDrillDownLink(row.edOrgId, 0, row.orgType, 'Cumulative Enrollments Drilldown for ' + data + ' students at ' + row.leaSchool, data);
                                     }
                                     else
                                     {
@@ -183,7 +184,7 @@
                                 return (data === 0) ? "-" :
                                     @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                     {
-                                        @: createDrillDownLink(row.edOrgId, 1, row.orgType, data);
+                                        @: createDrillDownLink(row.edOrgId, 1, row.orgType, 'Demographic Records Drilldown for ' + data + ' students at ' + row.leaSchool, data);
                                     } else {
                                         @: data
                                     }
@@ -200,7 +201,7 @@
                                 return (data === 0) ? "-" :
                                 @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                     {
-                                        @: createDrillDownLink(row.edOrgId, 2, row.orgType, data);
+                                        @: createDrillDownLink(row.edOrgId, 2, row.orgType, 'Active Duty Parents (ADP) Drilldown for ' + data + ' students at ' + row.leaSchool, data);
                                     }
                                 else
                                 {
@@ -219,7 +220,7 @@
                                 return (data === 0) ? "-" :
                                 @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                 {
-                                    @:createDrillDownLink(row.edOrgId, 3, row.orgType, data);
+                                    @:createDrillDownLink(row.edOrgId, 3, row.orgType, 'American Indian - Alaska Native (Minnesota) Drilldown for ' + data + ' students at ' + row.leaSchool, data);
                                 } else {
                                     @: data
                                 }
@@ -236,7 +237,7 @@
                                 return (data === 0) ? "-" :
                                 @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                 {
-                                    @:createDrillDownLink(row.edOrgId, 4, row.orgType, data);
+                                    @:createDrillDownLink(row.edOrgId, 4, row.orgType, 'Migrant Drilldown for ' + data + ' students at ' + row.leaSchool, data);
                                 } else {
                                     @: data
                                 }
@@ -252,7 +253,7 @@
                             if (type === 'display') {
                                 return (data === 0) ? "-" :
                                 @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
-                                { @: createDrillDownLink(row.edOrgId, 5, row.orgType, data);
+                                { @: createDrillDownLink(row.edOrgId, 5, row.orgType, 'Homeless Drilldown for ' + data + ' students at ' + row.leaSchool, data);
                                 } else {
                                     @:data
                                 }
@@ -269,7 +270,7 @@
                                 return (data === 0) ? "-" :
                                 @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                 {
-                                    @: createDrillDownLink(row.edOrgId, 6, row.orgType, data);
+                                    @: createDrillDownLink(row.edOrgId, 6, row.orgType, 'Immigrant Drilldown for ' + data + ' students at ' + row.leaSchool, data);
                                 }
                                 else {
                                     @:data
@@ -286,7 +287,7 @@
                             if (type === 'display') {
                                 return (data === 0) ? "-" :
                                 @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
-                                { @: createDrillDownLink(row.edOrgId, 7, row.orgType, data);
+                                { @: createDrillDownLink(row.edOrgId, 7, row.orgType, 'Recently Arrived English Learner Drilldown for ' + data + ' students at ' + row.leaSchool, data);
                                 } else {
                                     @:data
                                 }
@@ -302,7 +303,7 @@
                             if (type === 'display') {
                                 return (data === 0) ? "-" :
                                 @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
-                                { @: createDrillDownLink(row.edOrgId, 8, row.orgType, data);
+                                { @: createDrillDownLink(row.edOrgId, 8, row.orgType, 'SLIFE Drilldown for ' + data + ' students at ' + row.leaSchool, data);
                                 } else {
                                     @:data
                                 }
@@ -331,7 +332,7 @@
                 },
                 dom: "<'row'<'col-md-3'l><'col-md-3 offset-6 text-right jumpToNotes'>>"+
                     "<'row'<'col-sm-12'tr>>" +
-                    "<'row'<'col-md-3'i><'col-md-5 offset-4 pull-right'p>>",
+                    "<'row'<'col-md-3'i><'col-md-9 pull-right'p>>",
                 fnInitComplete: function() {
                     $('div.dataTables_scrollBody').css('min-height', 0);
                 },
@@ -373,7 +374,7 @@
                             if (type === 'display') {
                                 return (data === 0) ? "-" :
                                     @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
-                                { @: createDrillDownLink(row.edOrgId, 9, row.orgType, data);
+                                { @: createDrillDownLink(row.edOrgId, 9, row.orgType, 'English Learner Identified Drilldown for ' + data + ' students at ' + row.leaSchool, data);
                                 } else {
                                     @:data
                                 }
@@ -389,7 +390,7 @@
                             if (type === 'display') {
                                 return (data === 0) ? "-" :
                                     @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
-                                { @: createDrillDownLink(row.edOrgId, 10, row.orgType, data);
+                                { @: createDrillDownLink(row.edOrgId, 10, row.orgType, 'English Learner Served Drilldown for ' + data + ' students at ' + row.leaSchool, data);
                                 } else {
                                     @:data
                                 }
@@ -405,7 +406,7 @@
                             if (type === 'display') {
                                 return (data === 0) ? "-" :
                                     @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
-                                { @: createDrillDownLink(row.edOrgId, 11, row.orgType, data);
+                                { @: createDrillDownLink(row.edOrgId, 11, row.orgType, 'Independent Study Drilldown for ' + data + ' students at ' + row.leaSchool, data);
                                 } else {
                                     @: data
                                 }
@@ -421,7 +422,7 @@
                             if (type === 'display') {
                                 return (data === 0) ? "-" :
                                     @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
-                                { @: createDrillDownLink(row.edOrgId, 12, row.orgType, data);
+                                { @: createDrillDownLink(row.edOrgId, 12, row.orgType, 'Section 504 Drilldown for ' + data + ' students at ' + row.leaSchool, data);
                                 } else {
                                     @:data
                                 }
@@ -437,7 +438,7 @@
                             if (type === 'display') {
                                 return (data === 0) ? "-" :
                                     @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
-                                { @: createDrillDownLink(row.edOrgId, 13, row.orgType, data);
+                                { @: createDrillDownLink(row.edOrgId, 13, row.orgType, 'Title I Part A Drilldown for ' + data + ' students at ' + row.leaSchool, data);
                                 } else {
                                     @:data
                                 }
@@ -453,7 +454,7 @@
                             if (type === 'display') {
                                 return (data === 0) ? "-" :
                                     @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
-                                { @: createDrillDownLink(row.edOrgId, 14, row.orgType, data);
+                                { @: createDrillDownLink(row.edOrgId, 14, row.orgType, 'Free and Reduced Meals Drilldown for ' + data + ' students at ' + row.leaSchool, data);
                                 } else {
                                     @:data
                                 }

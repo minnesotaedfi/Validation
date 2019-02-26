@@ -24,12 +24,13 @@
             <span class="caret"></span>
         </button>
         <div class="dropdown-menu validation-dropdown-menu" style="margin-top: 0;" aria-labelledby="actionDropdown">
-            <div id="showAllGrid" class="collectionFilter" aria-labelledby="actionDropdown"><a href="#" class="white-heavy-text lrmargin10">All</a></div>
-            <div id="showEnrollment" class="collectionFilter" aria-labelledby="actionDropdown"><a href="#" class="white-heavy-text lrmargin10">Enrollment</a></div>
-            <div id="showDemographics" class="collectionFilter" aria-labelledby="actionDropdown"><a href="#" class="white-heavy-text lrmargin10">Demographics</a></div>
+            <a href="#" id="showAllGrid" aria-labelledby="actionDropdown" class="white-heavy-text prime-blue dropdown-item">All</a>
+            <a href="#" id="showEnrollment" aria-labelledby="actionDropdown" class="white-heavy-text prime-blue dropdown-item">Enrollment</a>
+            <a href="#" id="showDemographics" aria-labelledby="actionDropdown" class="white-heavy-text prime-blue dropdown-item">Demographics</a>
         </div>
         <input id="componentViewSelected" type="hidden" value="All">
     </div>
+
     <button id="clearButton" class="btn prime-blue white-heavy-text">Clear Filters</button>
     <button id="downloadAsCSV" type="button" class="btn prime-blue white-heavy-text lrmargin10">Export</button>
     <button id="firstPageButton" class="btn prime-blue white-heavy-text ml-auto">&lt;&lt;</button>
@@ -67,7 +68,7 @@
             <th></th>
             <th><input id="gradeFilter" class="form-control form-control-sm autocomplete" aria-label="grade filter" placeholder="filter" data-autocomplete-column-name="grade"></th>
             <th>
-                <select id="errorTypeFilter" class="form-control form-control-sm" >
+                <select id="errorTypeFilter" class="form-control form-control-sm">
                     <option value="all">All</option>
                     <option value="error">Errors</option>
                     <option value="warning">Warnings</option>
@@ -107,13 +108,13 @@
         }
 
         function ClearGrid(gridId) {
-            let gridIdWithHash = `#${gridId}`;
+            var gridIdWithHash = '#'+gridId;
             $('tr.datarow').remove();
         }
 
         // Switch between grids - hide all but the one whose ID is passed here.
         function ShowGrid(gridId) {
-            let gridIdWithHash = `#${gridId}`;
+            var gridIdWithHash = '#'+gridId;
             $(".error-grid").hide();
             $(gridIdWithHash).show();
             RefreshGrid(gridId, SetFilter());
@@ -143,7 +144,7 @@
                 dataType: 'json',
                 contentType: 'application/json; charset=utf-8',
                 success: function (data) { ClearGrid(gridId); ProcessGridDataForDisplay(gridId, data); overlayOff();},
-                error: function () { console.log(`An error occurred when attempting to load error listing from server.`); }
+                error: function () { console.log('An error occurred when attempting to load error listing from server.'); }
             });
         }
 
@@ -151,7 +152,7 @@
         // The returned object will represent the user's choices that constrain the query.
         function SetFilter() {
             // Establish the defaults
-            let filter = {
+            var filter = {
                 reportDetailsId: @(Model.Details.Id),
                 filterColumns: [],
                 filterTexts: [],
@@ -210,7 +211,7 @@
 
             // Set paging.
             if ($("#pageSizeInput").val()) {
-                let pageSizeInt = parseInt($("#pageSizeInput").val());
+                var pageSizeInt = parseInt($("#pageSizeInput").val());
                 if (pageSizeInt)
                 {
                     filter.pageSize = pageSizeInt;
@@ -221,8 +222,8 @@
                 }
             }
             // Calculate record offset
-            let desiredPageNumber = 1;
-            let candidatePageNumber = $("#pageNumberInput").val();
+            var desiredPageNumber = 1;
+            var candidatePageNumber = $("#pageNumberInput").val();
             if (candidatePageNumber)
             {
                 let candidatePageNumberInt = parseInt(candidatePageNumber);
@@ -249,58 +250,58 @@
         }
 
         function AddSingleBlankRow(gridId) {
-            let gridIdWithHash = `#${gridId}`;
-            $(`${gridIdWithHash} tr:last`).after(`<tr class=\"datarow\"><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>`);
+            var gridIdWithHash = '#'+gridId;
+            $(gridIdWithHash+' tr:last').after('<tr class=\"datarow\"><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>');
         }
 
         function AddSingleDataRow(gridId, errorRecord, recordNumberInFullSet) {
-            let gridIdWithHash = `#${gridId}`;
-            let severity = (errorRecord.severityId == 0) ? "Error" : "Warning";
-            let newTableRowHtml = '<tr class=\"datarow\">';
-            newTableRowHtml = newTableRowHtml + `<td>${recordNumberInFullSet.toString()}</td>`;
-            newTableRowHtml = newTableRowHtml + `<td>${errorRecord.studentUniqueId}</td>`;
-            newTableRowHtml = newTableRowHtml + `<td>${errorRecord.studentFullName}</td>`;
-            let schoolsContent = "";
-            let schoolidsContent = "";
-            let enrollmentDatesContent = "";
-            let withdrawnDatesContent = "";
-            let gradesContent = "";
+            var gridIdWithHash = '#'+gridId;
+            var severity = (errorRecord.severityId == 0) ? "Error" : "Warning";
+            var newTableRowHtml = '<tr class=\"datarow\">';
+            newTableRowHtml = newTableRowHtml + '<td>'+recordNumberInFullSet.toString()+'</td>';
+            newTableRowHtml = newTableRowHtml + '<td>'+errorRecord.studentUniqueId+'</td>';
+            newTableRowHtml = newTableRowHtml + '<td>'+errorRecord.studentFullName+'</td>';
+            var schoolsContent = "";
+            var schoolidsContent = "";
+            var enrollmentDatesContent = "";
+            var withdrawnDatesContent = "";
+            var gradesContent = "";
             if (!errorRecord.errorEnrollmentDetails) {
                 errorRecord.errorEnrollmentDetails = [];
             }
-            for (let enrollmentDetailIndex = 0; enrollmentDetailIndex < errorRecord.errorEnrollmentDetails.length; enrollmentDetailIndex++)
+            for (var enrollmentDetailIndex = 0; enrollmentDetailIndex < errorRecord.errorEnrollmentDetails.length; enrollmentDetailIndex++)
             {
-                let lastRecord = (enrollmentDetailIndex + 1 === errorRecord.errorEnrollmentDetails.length);
-                let lineBreakIfNeeded = lastRecord ? "" : "<br />";
-                let schoolDetail = errorRecord.errorEnrollmentDetails[enrollmentDetailIndex].school + lineBreakIfNeeded;
-                let schoolidDetail = errorRecord.errorEnrollmentDetails[enrollmentDetailIndex].schoolId + lineBreakIfNeeded;
-                let enrolledDateDetail = errorRecord.errorEnrollmentDetails[enrollmentDetailIndex].dateEnrolled;
-                let enrolledDateDetailString = "Unknown" + lineBreakIfNeeded;
+                var lastRecord = (enrollmentDetailIndex + 1 === errorRecord.errorEnrollmentDetails.length);
+                var lineBreakIfNeeded = lastRecord ? "" : "<br />";
+                var schoolDetail = errorRecord.errorEnrollmentDetails[enrollmentDetailIndex].school + lineBreakIfNeeded;
+                var schoolidDetail = errorRecord.errorEnrollmentDetails[enrollmentDetailIndex].schoolId + lineBreakIfNeeded;
+                var enrolledDateDetail = errorRecord.errorEnrollmentDetails[enrollmentDetailIndex].dateEnrolled;
+                var enrolledDateDetailString = "Unknown" + lineBreakIfNeeded;
                 if (enrolledDateDetail) {
                     enrolledDateDetailString = FormatDate(enrolledDateDetail) + lineBreakIfNeeded;
                 }
-                let withdrawnDateDetail = errorRecord.errorEnrollmentDetails[enrollmentDetailIndex].dateWithdrawn;
-                let withdrawnDateDetailString = "Present" + lineBreakIfNeeded;
+                var withdrawnDateDetail = errorRecord.errorEnrollmentDetails[enrollmentDetailIndex].dateWithdrawn;
+                var withdrawnDateDetailString = "Present" + lineBreakIfNeeded;
                 if (withdrawnDateDetail) {
                     withdrawnDateDetailString = FormatDate(withdrawnDateDetail) + lineBreakIfNeeded;
                 }
-                let gradeDetail = errorRecord.errorEnrollmentDetails[enrollmentDetailIndex].grade + lineBreakIfNeeded;
+                var gradeDetail = errorRecord.errorEnrollmentDetails[enrollmentDetailIndex].grade + lineBreakIfNeeded;
                 schoolsContent = schoolsContent + schoolDetail;
                 schoolidsContent = schoolidsContent + schoolidDetail;
                 enrollmentDatesContent = enrollmentDatesContent + enrolledDateDetailString;
                 withdrawnDatesContent = withdrawnDatesContent + withdrawnDateDetailString;
                 gradesContent = gradesContent + gradeDetail;
             }
-            newTableRowHtml = newTableRowHtml + `<td>${schoolsContent}</td>`;
-            newTableRowHtml = newTableRowHtml + `<td>${schoolidsContent}</td>`;
-            newTableRowHtml = newTableRowHtml + `<td>${enrollmentDatesContent}</td>`;
-            newTableRowHtml = newTableRowHtml + `<td>${withdrawnDatesContent}</td>`;
-            newTableRowHtml = newTableRowHtml + `<td>${gradesContent}</td>`;
-            newTableRowHtml = newTableRowHtml + `<td>${severity}</td>`;
-            newTableRowHtml = newTableRowHtml + `<td>${errorRecord.errorCode}</td>`;
-            newTableRowHtml = newTableRowHtml + `<td><a style="text-decoration: none; color: inherit;" tabindex="0" data-toggle="popover" data-content="${errorRecord.errorText}">${errorRecord.errorText.substring(0, 40)}...</a></td>`;
-            newTableRowHtml = newTableRowHtml + `</tr>`;
-            $(`${gridIdWithHash} tr:last`).after(newTableRowHtml);
+            newTableRowHtml = newTableRowHtml + '<td>'+schoolsContent+'</td>';
+            newTableRowHtml = newTableRowHtml + '<td>' + schoolidsContent+'</td>';
+            newTableRowHtml = newTableRowHtml + '<td>' + enrollmentDatesContent+'</td>';
+            newTableRowHtml = newTableRowHtml + '<td>' + withdrawnDatesContent+'</td>';
+            newTableRowHtml = newTableRowHtml + '<td>' + gradesContent+'</td>';
+            newTableRowHtml = newTableRowHtml + '<td>' + severity + '</td>';
+            newTableRowHtml = newTableRowHtml + '<td>' + errorRecord.errorCode + '</td>';
+            newTableRowHtml = newTableRowHtml + '<td style="text-decoration: none; color: inherit;" tabindex="0" data-toggle="popover" data-content="' + errorRecord.errorText + '" aria-label="'+errorRecord.errorText+'">'+errorRecord.errorText.substring(0, 40)+'...</a></td>';
+            newTableRowHtml = newTableRowHtml + '</tr>';
+            $(gridIdWithHash+' tr:last').after(newTableRowHtml);
         }
 
         // Populates the grid (gridID) with data received (dataObj)
@@ -308,13 +309,13 @@
             $("#totalPageCount").text(" " + dataObj.totalPagesCount.toString() + " ");
             $("#pageSizeInput").val(dataObj.pageSize.toString());
             $("#pageNumberInput").val(dataObj.pageNumber.toString());
-            //////////////////////////////////////////////////////
-            let recordOffset = dataObj.recordOffset;
+
+            var recordOffset = dataObj.recordOffset;
             if (!recordOffset) // 0-based
             {
                 recordOffset = 0;
             }
-            for (let errorRecordIndex = 0; errorRecordIndex < dataObj.filteredErrorSummariesPage.length; errorRecordIndex++) {
+            for (var errorRecordIndex = 0; errorRecordIndex < dataObj.filteredErrorSummariesPage.length; errorRecordIndex++) {
                 // Add 1 to make the first record appear as "1"
                 AddSingleDataRow(gridId, dataObj.filteredErrorSummariesPage[errorRecordIndex], recordOffset + 1);
                 // And the next record would be 2, etc.
@@ -335,11 +336,17 @@
         }
 
         function Autocomplete(targetElement) {
-            let wrappedElement = $(targetElement);
+            var wrappedElement = $(targetElement);
+
+            // ************ new jqueryUI autocomplete **********************
+
+
+            // *********** old handbuilt way **************
             // Dispose of any old autocomplete lists
             $(".autocomplete-suggestions").remove();
+
             // Prepare ajax call - scope results to the current filtered query.
-            let filter = SetFilter();
+            var filter = SetFilter();
             filter.autocompleteColumn = wrappedElement.attr("data-autocomplete-column-name");
             filter.autocompleteText = wrappedElement.val();
             $.ajax({
@@ -353,25 +360,41 @@
                         return;
                     }
                     // Create a container for the suggestions
-                    let suggestionsBoxId = `${filter.autocompleteColumn}Suggestions`;
-                    wrappedElement.after(`<div id=\"${suggestionsBoxId}\" class=\"autocomplete-suggestions\"></div>`);
-                    let wrappedSuggestionsBox = $(`#${suggestionsBoxId}`);
+                    var suggestionsBoxId = filter.autocompleteColumn+'Suggestions';
+                    wrappedElement.after('<ul id=\"'+suggestionsBoxId+'\" class=\"autocomplete-suggestions\"></ul>');
+
+                    var wrappedSuggestionsBox = $('#'+suggestionsBoxId);
                     for (var suggIndex = 0; suggIndex < data.length; suggIndex++) {
-                        wrappedSuggestionsBox.append(`<div id=\"${suggestionsBoxId}${suggIndex}\" class=\"auto-suggestion\">${data[suggIndex]}</div>`);
+                        wrappedSuggestionsBox.append('<li><a id=\"'+suggestionsBoxId+suggIndex+'\" class=\"auto-suggestion\">'+data[suggIndex]+'</a></li>');
                     }
                     wrappedSuggestionsBox.css({
                         top: wrappedElement.outerHeight() + "px",
                         width: "auto"
                     }).show();
-                    $(".auto-suggestion").on('mousedown', function(e){
-                        wrappedElement.val($(this).text());
-                        // No refresh needed, because Blur on the Input element refreshes the grid
-                        // $("#searchButton").trigger("click");
-                        $(".autocomplete-suggestions").remove();
-                    });
+
+                    //$(".auto-suggestion").on('mousedown', function(e){
+                    //    wrappedElement.val($(this).text());
+                    //    // No refresh needed, because Blur on the Input element refreshes the grid
+                    //    // $("#searchButton").trigger("click");
+                    //    $(".autocomplete-suggestions").remove();
+                    //});
+
+                    wrappedElement.on('keydown',
+                        function (e) {
+                            /*  left = 37
+                                up = 38
+                                right = 39
+                                down = 40 */
+                            if (e.keyCode === 40) {
+                                $('#suggestionsBoxId' + 0).focus();
+                            }
+                            else if (e.keyCode == 38) {
+                                $('#suggestionsBoxId' + (data.length-1)).focus();
+                            }
+                        });
                 },
                 error: function () {
-                    console.log(`An error occurred when attempting to load autocomplete suggestions from server.`);
+                    console.log('An error occurred when attempting to load autocomplete suggestions from server.');
                 }
             });
         }
@@ -512,7 +535,7 @@
                 let currentFilter = SetFilter();
                 RefreshGrid("errorGrid", currentFilter);
             });
-            $("input.form-control, #pageSizeInput").blur(function() {
+            $("#pageSizeInput").blur(function() {
                 $(".autocomplete-suggestions").remove();
                 let currentFilter = SetFilter();
                 RefreshGrid("errorGrid", currentFilter);
@@ -526,6 +549,7 @@
                                             new { Id = Model.Details.Id, ReportSummaryId = Model.Details.ValidationReportSummary.ValidationReportSummaryId }))";
             });
 
+            /*
             // Trigger autocomplete when user has typed at least two characters.
             $('input.autocomplete').bind('keyup', function(e) {
                 let currentValue = $(this).val();
@@ -538,6 +562,44 @@
             $(document).bind('mouseup', function(){
                 $(".autocomplete-suggestions").remove();
             });
+            */
+
+            $('.autocomplete').autocomplete({
+                source: function(request, response) {
+                    var wrappedElement = $(this.element);
+                    var filter = SetFilter();
+                    filter.autocompleteColumn = wrappedElement.attr("data-autocomplete-column-name");
+                    filter.autocompleteText = wrappedElement.val();
+                    wrappedElement.addClass('ui-autocomplete-loading');
+
+                    var term = request.term;
+                    $.ajax({
+                        dataType: "json",
+                        type : 'POST',
+                        url: '@Url.Content("~/api/validation/error-summaries/autocomplete")',
+                        data: JSON.stringify(filter),
+                        success: function(data) {
+                            wrappedElement.removeClass('ui-autocomplete-loading');
+                            response(data);
+                        },
+                        error: function(data) {
+                            wrappedElement.removeClass('ui-autocomplete-loading');
+                        }
+                    });
+                },
+                select: function(event, ui) {
+                    debugger;
+                    console.log(event.target.id + ' / ' + ui.item.value);
+                    $(event.target).val(ui.item.value);
+
+                    var filter = SetFilter();
+                    filter.autocompleteColumn = $(event.target).attr("data-autocomplete-column-name");
+                    filter.autocompleteText = ui.item.value;
+                    RefreshGrid("errorGrid", filter);
+                },
+                minLength: 3
+            });
+
         });
 
 

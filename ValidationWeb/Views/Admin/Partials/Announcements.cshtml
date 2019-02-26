@@ -25,27 +25,31 @@
             <th></th>
         </tr>
         @foreach (var announcement in Model.OrderBy(x => x.Priority))
-        {   
+        {
             <tr>
                 <td class="id-hide-column">@announcement.Id</td>
                 <td>@announcement.Priority</td>
-                <td>@announcement.Message</td>
+                <td>
+                    <span style="overflow-wrap: break-word; word-wrap: break-word; -ms-hyphens: auto; hyphens: auto;">@announcement.Message</span>
+                </td>
                 <td>@announcement.ContactInfo</td>
-                <td>@announcement.LinkUrl</td>
+                <td>
+                    <span style="overflow-wrap: break-word; word-wrap: break-word; -ms-hyphens: auto; hyphens: auto;">@announcement.LinkUrl</span>
+                </td>
                 <td>@announcement.Expiration.ToShortDateString()</td>
                 <td>
-                        <a href="javascript:void(0);"
-                           class="announcement-edit btn btn-sm prime-blue white-heavy-text" data-id="@announcement.Id">Edit</a>
+                    <a href="javascript:void(0);"
+                       class="announcement-edit btn btn-sm prime-blue white-heavy-text" data-id="@announcement.Id">Edit</a>
                 </td>
                 <td>
-                        <a href="javascript:void(0);" data-id="@announcement.Id" class="announcement-delete btn btn-sm prime-blue white-heavy-text">Delete</a>
+                    <a href="javascript:void(0);" data-id="@announcement.Id" class="announcement-delete btn btn-sm prime-blue white-heavy-text">Delete</a>
                 </td>
             </tr>
         }
     </table>
 </div>
 
-<div id='announcementModal' class="modal fade" role="dialog">
+<div id='announcementModal' class="modal fade" role="dialog" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div id='announcement-modal-content'></div>

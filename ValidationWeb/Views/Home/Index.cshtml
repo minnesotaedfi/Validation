@@ -3,15 +3,14 @@
 <div class="container-fluid">
     <div class="row">
         <div class="tbmargin10 col-8">
-            <h1 class="row vp-body-header">
-
-                You are logged in as @(Model.AppUserSession.UserIdentity.FullName) with access level: @(Model.AppUserSession.UserIdentity.AppRole?.Name).
-            </h1>
+            <div class="row vp-body-header">
+                <p>You are logged in as @(Model.AppUserSession.UserIdentity.FullName) with access level: @(Model.AppUserSession.UserIdentity.AppRole?.Name).</p>
+            </div>
 
             @if (Model.SubmissionCycles.Any())
             {
                 <div class="row vp-body-header">
-                    Collection Cycles open for Validation:&nbsp;
+                    <h2>Collection Cycles open for Validation:</h2>
                 </div>
                 <div class="row">
                     <table class="table table-bordered table-sm table-responsive-md">
@@ -46,15 +45,18 @@
             <!-- see Home Page - Notification tab in spec worksheet -->
             @if (Model.RecordsRequests.Any())
             {
-                <div class="row vp-body-header">
-                    Notifications:
+                <div class="row">
+                    <h2>Notifications:</h2>
                 </div>
                 <div class="row">
                     <table class="table table-bordered table-sm table-responsive-md" id="notificationsTable">
                         <thead>
                             <tr class="table-primary">
-                                <th colspan="2">
+                                <th>
                                     Message
+                                </th>
+                                <th>
+                                    Action
                                 </th>
                             </tr>
                         </thead>
@@ -71,7 +73,7 @@
                                             "ChangeOfEnrollmentReport",
                                             "Ods",
                                             new { recordRequestStudentId = recordsRequest.StudentId },
-                                            new {})
+                                            new { aria_label = $"View Records Request from {recordsRequest.RequestingDistrictName} for student {recordsRequest.StudentId}" })
                                     </td>
                                 </tr>
                             }
@@ -106,10 +108,6 @@
                         @if (!string.IsNullOrWhiteSpace(announcement.ContactInfo))
                         {
                             <p>@(announcement.ContactInfo)</p>
-
-                            @* todo... dismissing announcements seems to not be implemented
-                                <!-- <button type="button" onclick="hideElement('#@(cardId)',  @(announcement.Id))" class="btn btn-sm btn-primary btn-light float-right">Dismiss</button>-->
-                            *@
                         }
                     </div>
                     <br />

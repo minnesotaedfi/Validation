@@ -83,7 +83,7 @@
       <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="CsvHelper, Version=12.0.0.0, Culture=neutral, PublicKeyToken=8c4959082be5c823, processorArchitecture=MSIL">
-      <HintPath>..\packages\CsvHelper.12.1.1\lib\net45\CsvHelper.dll</HintPath>
+      <HintPath>..\packages\CsvHelper.12.1.2\lib\net45\CsvHelper.dll</HintPath>
     </Reference>
     <Reference Include="DataTables.AspNet.Core, Version=2.0.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\DataTables.AspNet.Core.2.0.2\lib\net45\DataTables.AspNet.Core.dll</HintPath>
@@ -199,6 +199,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\bootstrap-grid.css" />
+    <Content Include="Content\bootstrap-grid.min.css" />
+    <Content Include="Content\bootstrap-reboot.css" />
+    <Content Include="Content\bootstrap-reboot.min.css" />
+    <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\Styles\select2.css" />
     <Content Include="Content\Styles\select2.min.css">
       <DependentUpon>select2.css</DependentUpon>
@@ -367,17 +373,10 @@
     <Content Include="Content\DataTables\images\sort_desc.png" />
     <Content Include="Content\DataTables\images\sort_desc_disabled.png" />
     <Content Include="Content\DataTables\swf\flashExport.swf" />
-    <Content Include="Content\Fonts\fa-solid-900.svg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Content\Scripts\bootstrap-datetimepicker.min.js" />
     <Content Include="Content\Scripts\jquery-3.3.1.js" />
     <Content Include="Content\Scripts\jquery-3.3.1.min.js">
       <DependentUpon>jquery-3.3.1.js</DependentUpon>
-    </Content>
-    <Content Include="Content\Scripts\jquery-ui.js" />
-    <Content Include="Content\Scripts\jquery-ui.min.js">
-      <DependentUpon>jquery-ui.js</DependentUpon>
     </Content>
     <Content Include="Content\Scripts\moment.js" />
     <Content Include="Content\Scripts\tabulator.js" />
@@ -390,33 +389,59 @@
     <Content Include="Content\Styles\bootstrap\tabulator_bootstrap.min.css" />
     <Content Include="Content\Styles\bootstrap\tabulator_bootstrap4.css" />
     <Content Include="Content\Styles\bootstrap\tabulator_bootstrap4.min.css" />
-    <Content Include="Content\Styles\fa-solid-900.svg" />
-    <Content Include="Content\Styles\fa-solid.css" />
+    <Content Include="Content\Fonts\fa-solid-900.svg" />
+    <Content Include="Content\Fonts\fa-solid.css" />
     <Content Include="Content\Styles\fontawesome.css" />
-    <Content Include="Content\Styles\jquery-ui.css" />
-    <Content Include="Content\Styles\jquery-ui.min.css">
-      <DependentUpon>jquery-ui.css</DependentUpon>
-    </Content>
-    <Content Include="Content\Styles\jquery-ui.structure.css">
-      <DependentUpon>jquery-ui.css</DependentUpon>
-    </Content>
-    <Content Include="Content\Styles\jquery-ui.structure.min.css">
-      <DependentUpon>jquery-ui.structure.css</DependentUpon>
-    </Content>
-    <Content Include="Content\Styles\jquery-ui.theme.css">
-      <DependentUpon>jquery-ui.css</DependentUpon>
-    </Content>
-    <Content Include="Content\Styles\jquery-ui.theme.min.css">
-      <DependentUpon>jquery-ui.theme.css</DependentUpon>
-    </Content>
     <Content Include="Content\Styles\select2-bootstrap4.css" />
     <Content Include="Content\Styles\select2-bootstrap4.min.css">
       <DependentUpon>select2-bootstrap4.css</DependentUpon>
     </Content>
     <Content Include="Content\Styles\semantic-ui\tabulator_semantic-ui.css" />
     <Content Include="Content\Styles\semantic-ui\tabulator_semantic-ui.min.css" />
+    <Content Include="Content\themes\base\accordion.css" />
+    <Content Include="Content\themes\base\all.css" />
+    <Content Include="Content\themes\base\autocomplete.css" />
+    <Content Include="Content\themes\base\base.css" />
+    <Content Include="Content\themes\base\button.css" />
+    <Content Include="Content\themes\base\core.css" />
+    <Content Include="Content\themes\base\datepicker.css" />
+    <Content Include="Content\themes\base\dialog.css" />
+    <Content Include="Content\themes\base\draggable.css" />
+    <Content Include="Content\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
+    <Content Include="Content\themes\base\images\ui-bg_flat_75_ffffff_40x100.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_55_fbf9ee_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_65_ffffff_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_75_dadada_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_75_e6e6e6_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_95_fef1ec_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_highlight-soft_75_cccccc_1x100.png" />
+    <Content Include="Content\themes\base\images\ui-icons_222222_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_2e83ff_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_444444_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_454545_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_555555_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_777620_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_777777_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_888888_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_cc0000_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_ffffff_256x240.png" />
+    <Content Include="Content\themes\base\jquery-ui.css" />
+    <Content Include="Content\themes\base\jquery-ui.min.css" />
+    <Content Include="Content\themes\base\menu.css" />
+    <Content Include="Content\themes\base\progressbar.css" />
+    <Content Include="Content\themes\base\resizable.css" />
+    <Content Include="Content\themes\base\selectable.css" />
+    <Content Include="Content\themes\base\selectmenu.css" />
+    <Content Include="Content\themes\base\slider.css" />
+    <Content Include="Content\themes\base\sortable.css" />
+    <Content Include="Content\themes\base\spinner.css" />
+    <Content Include="Content\themes\base\tabs.css" />
+    <Content Include="Content\themes\base\theme.css" />
+    <Content Include="Content\themes\base\tooltip.css" />
     <Content Include="Deployment\SQLScripts\ValPortal\AddASchoolYear.sql" />
     <Content Include="Deployment\SQLScripts\ValPortal\CreateEmptyRulesSchema.sql" />
+    <Content Include="fonts\fontawesome-webfont.svg" />
     <Content Include="packages.config">
       <SubType>Designer</SubType>
     </Content>
@@ -426,6 +451,20 @@
     <Content Include="Scripts\bootstrap-select.js" />
     <Content Include="Scripts\bootstrap-select.min.js">
       <DependentUpon>bootstrap-select.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\bootstrap.bundle.js">
+      <DependentUpon>bootstrap.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\bootstrap.bundle.min.js" />
+    <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\bootstrap.js.map">
+      <DependentUpon>bootstrap.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\bootstrap.min.js">
+      <DependentUpon>bootstrap.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\bootstrap.min.js.map">
+      <DependentUpon>bootstrap.js</DependentUpon>
     </Content>
     <Content Include="Scripts\DataTables\autoFill.bootstrap.js" />
     <Content Include="Scripts\DataTables\autoFill.bootstrap.min.js" />
@@ -506,11 +545,11 @@
     <Content Include="Scripts\DataTables\responsive.semanticui.min.js" />
     <Content Include="Scripts\esm\popper-utils.js" />
     <Content Include="Scripts\esm\popper-utils.min.js" />
+    <Content Include="Scripts\esm\popper-utils.min.js.map" />
+    <Content Include="Scripts\esm\popper.js.map" />
     <Content Include="Scripts\esm\popper.js" />
     <Content Include="Scripts\esm\popper.min.js" />
     <Content Include="Scripts\esm\popper.min.js.map" />
-    <Content Include="Scripts\esm\popper.js.map" />
-    <Content Include="Scripts\esm\popper-utils.min.js.map" />
     <Content Include="Scripts\esm\popper-utils.js.map" />
     <Content Include="Scripts\bootstrap-select.js.map">
       <DependentUpon>bootstrap-select.js</DependentUpon>
@@ -518,6 +557,21 @@
     <Content Include="Content\Styles\bootstrap-select.css.map">
       <DependentUpon>bootstrap-select.css</DependentUpon>
     </Content>
+    <Content Include="Scripts\bootstrap.bundle.min.js.map" />
+    <Content Include="Scripts\bootstrap.bundle.js.map" />
+    <Content Include="Content\bootstrap.min.css.map" />
+    <Content Include="Content\bootstrap.css.map" />
+    <Content Include="Content\bootstrap-reboot.min.css.map" />
+    <Content Include="Content\bootstrap-reboot.css.map" />
+    <Content Include="Content\bootstrap-grid.min.css.map" />
+    <Content Include="Content\bootstrap-grid.css.map" />
+    <Content Include="fonts\FontAwesome.otf" />
+    <Content Include="fonts\fontawesome-webfont.woff2" />
+    <Content Include="fonts\fontawesome-webfont.woff" />
+    <Content Include="fonts\fontawesome-webfont.ttf" />
+    <Content Include="fonts\fontawesome-webfont.eot" />
+    <Content Include="Deployment\DeployToStage.proj" />
+    <Content Include="Deployment\DeployToProd.proj" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js">
       <DependentUpon>jquery-3.3.1.js</DependentUpon>
     </None>
@@ -585,10 +639,10 @@
     <Content Include="Scripts\jquery-3.3.1.slim.min.js">
       <DependentUpon>jquery-3.3.1.slim.js</DependentUpon>
     </Content>
+    <Content Include="Scripts\jquery-ui-1.12.1.js" />
+    <Content Include="Scripts\jquery-ui-1.12.1.min.js" />
     <Content Include="Scripts\popper-utils.js" />
-    <Content Include="Scripts\popper-utils.min.js">
-      <DependentUpon>popper-utils.js</DependentUpon>
-    </Content>
+    <Content Include="Scripts\popper-utils.min.js" />
     <Content Include="Scripts\popper.js" />
     <Content Include="Scripts\popper.min.js">
       <DependentUpon>popper.js</DependentUpon>
@@ -607,9 +661,9 @@
     <Content Include="Scripts\umd\popper-utils.min.js" />
     <Content Include="Scripts\umd\popper.js" />
     <Content Include="Scripts\umd\popper.min.js" />
+    <Content Include="Scripts\url-search-params-polyfill.js" />
     <Content Include="Views\Validation\Report.cshtml" />
     <Content Include="Views\Shared\_LittleFooter.cshtml" />
-    <Content Include="Views\Validation\Submissions.cshtml" />
     <Content Include="Content\Styles\bootstrap\tabulator_bootstrap.min.css.map" />
     <Content Include="Content\Styles\bootstrap\tabulator_bootstrap4.min.css.map" />
     <Content Include="Content\Styles\semantic-ui\tabulator_semantic-ui.min.css.map" />
@@ -621,16 +675,16 @@
     <Content Include="Views\Admin\Partials\SubmissionCycleList.cshtml" />
     <Content Include="Views\Admin\Partials\SubmissionCycleEditModal.cshtml" />
     <Content Include="Views\Admin\Partials\SubmissionCycles.cshtml" />
-    <Content Include="Content\Styles\fa-solid-900.eot">
+    <Content Include="Content\Fonts\fa-solid-900.eot">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\Styles\fa-solid-900.ttf">
+    <Content Include="Content\Fonts\fa-solid-900.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\Styles\fa-solid-900.woff">
+    <Content Include="Content\Fonts\fa-solid-900.woff">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\Styles\fa-solid-900.woff2">
+    <Content Include="Content\Fonts\fa-solid-900.woff2">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\Ods\Reports.cshtml" />
@@ -665,9 +719,6 @@
     <Content Include="Scripts\umd\popper-utils.min.js.map" />
     <Content Include="Scripts\umd\popper-utils.js.map" />
     <Content Include="Scripts\README.md" />
-    <Content Include="Scripts\popper.js.map">
-      <DependentUpon>popper.js</DependentUpon>
-    </Content>
     <Content Include="Scripts\popper-utils.min.js.map">
       <DependentUpon>popper-utils.min.js</DependentUpon>
     </Content>
@@ -679,18 +730,11 @@
     <None Include="Scripts\popper-utils.js.map">
       <DependentUpon>popper-utils.js</DependentUpon>
     </None>
-    <None Include="Scripts\popper-utils.js.map">
-      <DependentUpon>popper-utils.js</DependentUpon>
-    </None>
     <None Include="Scripts\popper-utils.min.js.map">
       <DependentUpon>popper-utils.min.js</DependentUpon>
     </None>
-    <None Include="Scripts\popper-utils.min.js.map">
-      <DependentUpon>popper-utils.min.js</DependentUpon>
-    </None>
-    <None Include="Scripts\popper.js.map">
-      <DependentUpon>popper.js</DependentUpon>
-    </None>
+    <Content Include="Views\Validation\ViewReport.cshtml" />
+    <Content Include="Views\Shared\_Environment.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -701,10 +745,6 @@
   <ItemGroup>
     <Content Include="Content\Images\mdelogo450.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Scripts\bootstrap.js" />
-    <Content Include="Content\Scripts\bootstrap.min.js">
-      <DependentUpon>bootstrap.js</DependentUpon>
     </Content>
     <None Include="Content\Scripts\jquery-3.2.1.intellisense.js">
       <DependentUpon>jquery-3.2.1.js</DependentUpon>
@@ -740,17 +780,6 @@
     </Content>
     <None Include="Content\Scripts\_references.js" />
     <Content Include="Content\Styles\bootstrap-grid.css" />
-    <Content Include="Content\Styles\bootstrap-grid.min.css">
-      <DependentUpon>bootstrap-grid.css</DependentUpon>
-    </Content>
-    <Content Include="Content\Styles\bootstrap-reboot.css" />
-    <Content Include="Content\Styles\bootstrap-reboot.min.css">
-      <DependentUpon>bootstrap-reboot.css</DependentUpon>
-    </Content>
-    <Content Include="Content\Styles\bootstrap.css" />
-    <Content Include="Content\Styles\bootstrap.min.css">
-      <DependentUpon>bootstrap.css</DependentUpon>
-    </Content>
     <Content Include="Content\Styles\validationportal.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
@@ -762,24 +791,6 @@
     </Content>
     <Content Include="Content\Scripts\jquery-3.2.1.slim.min.map">
       <DependentUpon>jquery-3.2.1.slim.min.js</DependentUpon>
-    </Content>
-    <Content Include="Content\Styles\bootstrap-grid.css.map">
-      <DependentUpon>bootstrap-grid.css</DependentUpon>
-    </Content>
-    <Content Include="Content\Styles\bootstrap-grid.min.css.map">
-      <DependentUpon>bootstrap-grid.min.css</DependentUpon>
-    </Content>
-    <Content Include="Content\Styles\bootstrap-reboot.css.map">
-      <DependentUpon>bootstrap-reboot.css</DependentUpon>
-    </Content>
-    <Content Include="Content\Styles\bootstrap-reboot.min.css.map">
-      <DependentUpon>bootstrap-reboot.min.css</DependentUpon>
-    </Content>
-    <Content Include="Content\Styles\bootstrap.css.map">
-      <DependentUpon>bootstrap.css</DependentUpon>
-    </Content>
-    <Content Include="Content\Styles\bootstrap.min.css.map">
-      <DependentUpon>bootstrap.min.css</DependentUpon>
     </Content>
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
@@ -800,6 +811,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Database\CustomDbContextFactory.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Database\EdFiLogDbContext.cs" />
     <Compile Include="Models\ValidationPortalIdentity.cs" />
     <Compile Include="Services\Implementations\RecordsRequestService.cs" />
@@ -841,6 +853,7 @@
     <Compile Include="Utility\GradeLevelComparer.cs" />
     <Compile Include="Utility\ImportPropertySelectionBehavior.cs" />
     <Compile Include="Utility\SimpleInjectorExtension.cs" />
+    <Compile Include="ViewModels\EnvironmentViewModel.cs" />
     <Compile Include="ViewModels\StudentDrillDownReportType.cs" />
     <Compile Include="Database\ValidatedOdsDbContext.cs" />
     <Compile Include="Database\ValidationPortalDbContext.cs" />
@@ -934,6 +947,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Base\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Engine\Engine.csproj">

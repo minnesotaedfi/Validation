@@ -3,7 +3,6 @@
 @model OdsResidentsEnrolledElsewhereReportViewModel
 @{
     var identity = (ValidationPortalIdentity)User.Identity;
-    var appRoleName = identity.AppRole.Name;
     var permissions = User.Identity.GetViewPermissions(identity.AppRole);
 }
 
@@ -60,15 +59,16 @@
                                     districtToDisplay = "_EdOrgId_",
                                     isStudentDrillDown = true,
                                     orgType = "_OrgType_"
-                                }))" target="_blank">_LinkText_</a>';
+                                }))" aria-label="_Label_">_LinkText_</a>';
 
-            function createDrillDownLink(edOrgId, schoolId, drillDownIndex, orgType, linkText) {
+            function createDrillDownLink(edOrgId, schoolId, drillDownIndex, orgType, label, linkText) {
                 debugger;
                 return drillDownLinkTemplate
                     .replace(/_EdOrgId_/g, edOrgId)
                     .replace(/_SchoolId_/g, schoolId)
                     .replace(/_DrillDownIndex_/g, drillDownIndex)
                     .replace(/_OrgType_/g, orgType)
+                    .replace(/_Label_/g, label)
                     .replace(/_LinkText_/g, linkText);
             }
 
@@ -100,7 +100,7 @@
                 },
                 dom: "<'row'<'col-md-3'l><'col-md-3 offset-6 text-right jumpToNotes'>>" +
                     "<'row'<'col-sm-12'tr>>" +
-                    "<'row'<'col-md-3'i><'col-md-5 offset-4 pull-right'p>>",
+                    "<'row'<'col-md-3'i><'col-md-9 pull-right'p>>",
                 ajax: {
                     url: "@Html.Raw(Url.Action("GetResidentsEnrolledElsewhereData", new
                      {
@@ -142,7 +142,7 @@
                                 return (data === 0) ? "-" :
                                     @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                                     {
-                                        @:createDrillDownLink(row.edOrgId, row.districtOfEnrollmentId, 0, row.orgType, data);
+                                        @:createDrillDownLink(row.edOrgId, row.districtOfEnrollmentId, 0, row.orgType, 'Drilldown for ' + data + ' students at ' + row.districtOfEnrollmentName, data);
                                     }
                                     else
                                     {

@@ -1,5 +1,4 @@
-﻿using System.Web;
-using System.Web.Optimization;
+﻿using System.Web.Optimization;
 
 namespace ValidationWeb
 {
@@ -7,42 +6,38 @@ namespace ValidationWeb
     {
         public static void RegisterBundles(BundleCollection bundles)
         {
-            // STYLE
-            bundles.Add(new StyleBundle("~/Content/Styles/css").Include(
-                      "~/Content/Styles/fa-solid.css",
-                      "~/Content/Styles/fontawesome.css",
-                      "~/Content/Styles/bootstrap.css"));
+            bundles.Add(new StyleBundle("~/Content/Fonts/FontAwesomeCSS").Include(
+                "~/Content/Fonts/fa-solid.css",
+                "~/Content/Styles/fontawesome.css"));
+
+            bundles.Add(new StyleBundle("~/Content/BootstrapCSS").Include(
+                      "~/Content/bootstrap.css"));
 
             bundles.Add(new StyleBundle("~/Content/ValidationPortal")
                 .Include("~/Content/Styles/validationportal.css"));
 
             // SCRIPTS
             bundles.Add(new ScriptBundle("~/bundles/modernizr").Include("~/Content/Scripts/modernizr-*"));
-            bundles.Add(new ScriptBundle("~/bundles/jquery").Include("~/Content/Scripts/jquery-{version}.js"));
-            // Use the development version of Modernizr to develop with and learn from. Then, when you're
-            // ready for production, use the build tool at http://modernizr.com to pick only the tests you need.
+
+            bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
+                "~/Content/Scripts/jquery-{version}.js",
+                "~/Scripts/url-search-params-polyfill.js"));
+
             bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
-                      "~/Content/Scripts/popper.min.js",
-                      "~/Content/Scripts/bootstrap.js",
+                      "~/Scripts/umd/popper.js",
+                      "~/Scripts/umd/popper-utils,js",
+                      "~/Scripts/bootstrap.js",
                       "~/Content/Scripts/respond.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/table2CSV").Include("~/Content/Scripts/table2csv.js"));
-            bundles.Add(new ScriptBundle("~/bundles/jqueryUI").Include("~/Content/Scripts/jquery-ui.js"));
-            bundles.Add(new StyleBundle("~/Content/jqueryUICSS").Include("~/Content/Styles/jquery-ui.css"));
+            bundles.Add(new ScriptBundle("~/bundles/jqueryUI").Include("~/Scripts/jquery-ui-{version}.js"));
+            bundles.Add(new StyleBundle("~/Content/jqueryUICSS").Include("~/Content/themes/base/jquery-ui.css"));
 
             bundles.Add(new StyleBundle("~/Content/datePickerCSS").Include("~/Content/Styles/bootstrap-datetimepicker.min.css"));
             bundles.Add(new ScriptBundle("~/bundles/datePickerJS").Include("~/Content/Scripts/moment.js", "~/Content/Scripts/bootstrap-datetimepicker.min.js"));
 
             bundles.Add(new StyleBundle("~/Content/DataTables/css/DataTablesCSS").Include(
-                "~/Content/DataTables/css/dataTables.bootstrap4.css")); 
-            
-            bundles.Add(
-                new StyleBundle("~/Content/Styles/BootstrapSelectCSS")
-                    .Include("~/Content/Styles/bootstrap-select.css"));
-
-            bundles.Add(
-                new ScriptBundle("~/bundles/BootstrapSelect")
-                    .Include("~/Scripts/bootstrap-select.js"));
+                "~/Content/DataTables/css/dataTables.bootstrap4.css"));
 
             bundles.Add(
                 new StyleBundle("~/Content/Styles/Select2CSS")

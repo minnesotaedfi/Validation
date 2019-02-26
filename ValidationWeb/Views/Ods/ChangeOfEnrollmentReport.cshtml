@@ -75,7 +75,8 @@
 
 
 @section scripts {
-<script>
+    <script>
+
         $(function() {
             var urlParams = new URLSearchParams(window.location.search);
             var recordRequestStudentId = null;
@@ -102,7 +103,7 @@
                 },
                 dom: "<'row'<'col-md-3'l><'col-md-3 offset-6 text-right jumpToNotes'>>" +
                     "<'row'<'col-sm-12'tr>>" +
-                    "<'row'<'col-md-3'i><'col-md-5 offset-4 pull-right'p>>",
+                    "<'row'<'col-md-3'i><'col-md-9 pull-right'p>>",
                 ajax: {
                     data: function(data) {
                         var checkedValue = $('input[name=date-filter]:checked');
@@ -196,7 +197,7 @@
                         }
                         data: 'null',
                         render: function(data, type, row) {
-                            return '<a href="#" data-toggle="modal" data-target="#request-records-modal">Request&nbsp;Records</button>';
+                            return '<a href="#" data-toggle="modal" data-target="#request-records-modal" aria-label="Request records for ' + row.studentLastName + ", " + row.studentFirstName + " " + row.studentMiddleName+'">Request&nbsp;Records</button>';
                         }
                     },
                     {
@@ -205,9 +206,9 @@
                         data: 'requestStatus',
                         render: function(data, type, row) {
                             if (data != null && data.length) {
-                                 return data.split(/[\s_\b]|(?=[A-Z])/).join(' ');
+                                return data.split(/[\s_\b]|(?=[A-Z])/).join(' ');
                             }
-                            return null; 
+                            return null;
                         }
                     }
                 ],
@@ -237,7 +238,7 @@
                         },
                         datatype: "json",
                         success: function(data) {
-                            
+
                             $('#request-records-form #requestId').val(data.Id);
                             $('#request-records-form #studentId').val(data.StudentId);
                             $('#request-records-form #requesting-district-id').val(data.RequestingDistrict);
@@ -372,7 +373,7 @@
                 },
                 dom: "<'row'<'col-md-3'l><'col-md-3 offset-6 text-right jumpToNotes'>>" +
                     "<'row'<'col-sm-12'tr>>" +
-                    "<'row'<'col-md-3'i><'col-md-5 offset-4 pull-right'p>>",
+                    "<'row'<'col-md-3'i><'col-md-9 pull-right'p>>",
                 ajax: {
                     data: function(data) {
                         var checkedValue = $('input[name=date-filter]:checked');
@@ -469,7 +470,7 @@
                         data: 'hasRecordsRequest',
                         render: function(data, type, row) {
                             if (row.hasRecordsRequest) {
-                                return '<a href="#" data-toggle="modal" data-target="#view-request-modal">View&nbsp;Request</button>';
+                                return '<a href="#" data-toggle="modal" data-target="#view-request-modal" aria-label="View records request for ' + row.studentLastName + ", " + row.studentFirstName + " " + row.studentMiddleName +'">View&nbsp;Request</button>';
                             } else {
                                 return '&nbsp;';
                             }
@@ -560,12 +561,12 @@
                     var $this = $(this);
                     var formValues = JSON.stringify(serializeFormToJson($this));
                     $.ajax({
-                        type: $this.attr('method'),
-                        url: $this.attr('action'),
-                        contentType: 'application/json; charset=utf-8',
-                        dataType: "json",
-                        data: formValues
-                    })
+                            type: $this.attr('method'),
+                            url: $this.attr('action'),
+                            contentType: 'application/json; charset=utf-8',
+                            dataType: "json",
+                            data: formValues
+                        })
                         .done(function () {
                             $('#view-request-modal').modal('hide');
                             $('#reportsTable2').DataTable().ajax.reload();
@@ -586,5 +587,5 @@
 
             $('.jumpToNotes').html('<a href="#notes">View Report notes</a>');
         });
-</script>
+    </script>
 }
