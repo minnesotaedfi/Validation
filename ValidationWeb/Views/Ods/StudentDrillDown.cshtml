@@ -4,17 +4,17 @@
 <div class="row tbmargin10">
     @if (Model.IsStateMode)
     {
-        <h1 class="vp-body-header justify-content-start align-self-center">@(Model.ReportName) Student Details for All Minnesota Districts</h1>
+        <h2 class="vp-body-header justify-content-start align-self-center">@(Model.ReportName) Student Details for All Minnesota Districts</h2>
     }
     else
     {
         if (Model.OrgType == OrgType.School)
         {
-            <h1 class="vp-body-header justify-content-start align-self-center">@(Model.ReportName) Student Details for @Model.SchoolName (@Model.SchoolId.ToString())</h1>
+            <h2 class="vp-body-header justify-content-start align-self-center">@(Model.ReportName) Student Details for @Model.SchoolName (@Model.SchoolId.ToString())</h2>
         }
         else
         {
-            <h1 class="vp-body-header justify-content-start align-self-center">@(Model.ReportName) Student Details for @Model.EdOrgName (@Model.EdOrgId.ToString())</h1>
+            <h2 class="vp-body-header justify-content-start align-self-center">@(Model.ReportName) Student Details for @Model.EdOrgName (@Model.EdOrgId.ToString())</h2>
         }
     }
 </div>

@@ -47,14 +47,19 @@
     <div class="tab-pane row fade show active" id="enrollmentsPane">
         <div id="requestedReportContent">
             <div class="row">
-                <table class="table table-bordered" id="reportsTable1" style="width: 100%;"></table>
+                <table class="table table-bordered" id="reportsTable1" style="width: 100%;" role="grid">
+                    <caption style="display:none">Click header to sort by Student Name, State Reporting Number, Grade, Entry Date, Prior District, Prior Entry Date, Prior Exit Date, Records Requested, or Request Status</caption>
+                </table>
             </div>
         </div>
     </div>
     <div class="tab-pane row fade" id="withdrawalsPane">
         <div id="requestedReportContent2">
             <div class="row">
-                <table class="table table-bordered" id="reportsTable2" style="width: 100%;"></table>
+                <table class="table table-bordered" id="reportsTable2" style="width: 100%;" role="grid">
+                    <caption style="display:none">Click header to sort by 
+                        Student Name, State Reporting Number, Prior Enrollment Grade, Prior Entry Date, Prior Exit Date, New District, New Entry Date, or Records Requested</caption>
+                </table>
             </div>
         </div>
     </div>
@@ -118,7 +123,11 @@
                                                                                       edOrgId = Model.EdOrgId,
                                                                                       fourDigitSchoolYear = Model.FourDigitSchoolYear,
                                                                                       isCurrentDistrict = true
-                                                                                  }))"
+                                                                                  }))",
+                    complete: function () {
+                        var dataTable = $($("#reportsTable1").DataTable().table().header());
+                        dataTable.find('th').removeAttr('aria-label');
+                    }
                 },
                 columns: [
                     {
@@ -389,7 +398,11 @@
                                                                                       edOrgId = Model.EdOrgId,
                                                                                       fourDigitSchoolYear = Model.FourDigitSchoolYear,
                                                                                       isCurrentDistrict = false
-                                                                                  }))"
+                                                                                  }))", 
+                    complete: function () {
+                        var dataTable = $($("#reportsTable2").DataTable().table().header());
+                        dataTable.find('th').removeAttr('aria-label');
+                    }
                 },
                 columns: [
                     {

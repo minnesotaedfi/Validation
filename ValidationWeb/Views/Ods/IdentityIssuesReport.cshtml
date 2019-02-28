@@ -6,7 +6,9 @@
 </div>
 
 <div class="row" id="requestedReportContent">
-    <table class="table table-bordered" id="reportsTable"></table>
+    <table class="table table-bordered" id="reportsTable" role="grid">
+        <caption style="display:none">Click header to sort by District, Date/Time, API Endpoint, Response Code, or Response</caption>
+    </table>
 </div>
 
 @section scripts {
@@ -35,7 +37,11 @@
                     "<'row'<'col-sm-12'tr>>" +
                     "<'row'<'col-md-3'i><'col-md-9 pull-right'p>>",
                 ajax: {
-                    url: "@Html.Raw(Url.Action("GetIdentityIssuesReportData", new { }))"
+                    url: "@Html.Raw(Url.Action("GetIdentityIssuesReportData", new { }))",
+                    complete: function () {
+                        var dataTable = $($("#reportsTable").DataTable().table().header());
+                        dataTable.find('th').removeAttr('aria-label');
+                    }
                 },
                 columns: [
                     {

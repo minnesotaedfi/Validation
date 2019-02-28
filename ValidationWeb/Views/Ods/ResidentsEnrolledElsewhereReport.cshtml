@@ -29,7 +29,9 @@
     }
 </div>
 <div id="requestedReportContent" class="row">
-    <table class="table table-bordered" id="reportsTable"></table>
+    <table class="table table-bordered" id="reportsTable" role="grid">
+        <caption>Click header to sort by District of Enrollment ID, or District of Enrollment, or Residents Enrolled</caption>
+    </table>
 </div>
 <div role="note">
     <div id="notes" class="row">
@@ -106,7 +108,12 @@
                          isStateMode = Model.IsStateMode,
                          edOrgId = Model.EdOrgId,
                          fourDigitSchoolYear = Model.FourDigitSchoolYear
-                     }))"
+                     }))",
+                    complete: function () {
+                        var dataTable = $($("#reportsTable").DataTable().table().header());
+                        dataTable.find('th').removeAttr('aria-label');
+                    }
+
                 },
                 columns: [
                     @if (Model.IsStateMode)

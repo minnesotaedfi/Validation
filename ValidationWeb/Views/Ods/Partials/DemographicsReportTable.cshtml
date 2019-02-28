@@ -3,7 +3,9 @@
 
 <div class="col-md-12 nopadding">
     <!-- style="table-layout: fixed; width: 98% !important;" -->
-    <table class="table table-bordered" id="reportsTable"></table>
+    <table class="table table-bordered" id="reportsTable" role="grid">
+        <caption style="display:none">Click to sort by ID, District/School, Cumulative Enrollments, Demographics Records, Students with Race Submitted, or Students with AEO Submitted</caption>
+    </table>
 </div>
 
 @if (Model.Results != null && Model.Results.Count == 0)

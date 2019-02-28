@@ -9,11 +9,11 @@
 
             @if (Model.SubmissionCycles.Any())
             {
-                <div class="row vp-body-header">
-                    <h2>Collection Cycles open for Validation:</h2>
-                </div>
+                <h2 class="row vp-body-header">
+                    Collection Cycles open for Validation:
+                </h2>
                 <div class="row">
-                    <table class="table table-bordered table-sm table-responsive-md">
+                    <table class="table table-bordered table-sm" role="grid">
                         <thead>
                             <tr class="table-primary">
                                 <th>School Year</th>
@@ -45,11 +45,11 @@
             <!-- see Home Page - Notification tab in spec worksheet -->
             @if (Model.RecordsRequests.Any())
             {
+                <h2 class="row vp-body-header">
+                    Notifications:
+                </h2>
                 <div class="row">
-                    <h2>Notifications:</h2>
-                </div>
-                <div class="row">
-                    <table class="table table-bordered table-sm table-responsive-md" id="notificationsTable">
+                    <table class="table table-bordered table-sm" id="notificationsTable" role="grid">
                         <thead>
                             <tr class="table-primary">
                                 <th>

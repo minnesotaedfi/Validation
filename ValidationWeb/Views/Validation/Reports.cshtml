@@ -42,7 +42,7 @@
                                                 {
                                                     schoolYearAndCollectionName = $"{cycle.SchoolYearDisplay} / {coll.ToFriendlyName()}";
                                                     <option value="@(cycle.Id)"
-                                                            @if (cycle.SchoolYearId == Model.FocusedSchoolYearId) { <text> selected </text>  }>
+                                                            @if (cycle.SchoolYearId == Model.FocusedSchoolYearId) { <text> selected </text> }>
                                                         @(schoolYearAndCollectionName)
                                                     </option>
                                                 }
@@ -61,7 +61,7 @@
             </div>
 
             <!-- Confirm Validation Modal -->
-            <div id="ConfirmNewValidationModal" class="modal fade" role="dialog" aria-label="Confirm: Run Validation" aria-modal="true"  tabindex="-1">
+            <div id="ConfirmNewValidationModal" class="modal fade" role="dialog" aria-label="Confirm: Run Validation" aria-modal="true" tabindex="-1">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header prime-blue white-heavy-text">
@@ -91,7 +91,9 @@
 
 <div class="row tbmargin10">
     <div id="requestedReportContent" class="col-md-12">
-        <table class="table table-bordered" id="reportsTable"></table>
+        <table class="table table-bordered" id="reportsTable">
+            <caption style="display:none">Select a heading to sort by Request Date/Time, Collection, Initiated By, Status, Completion Date/Time, Error Count, or Warning Count.</caption>
+        </table>
     </div>
 </div>
 
@@ -280,6 +282,8 @@
                     console.log('found "In Progress", checking back in 5s');
                     setTimeout(dataTable.ajax.reload, 5000);
                 }
+
+                $(dataTable.table().header()).find('th').removeAttr('aria-label');
 
                 return true;
             }

@@ -101,14 +101,18 @@
                                   edOrgId = Model.EdOrgId,
                                   fourDigitSchoolYear = Model.FourDigitSchoolYear,
                                   isStateMode = Model.IsStateMode,
-                              }))"
+                              }))",
+                    complete: function() {
+                        var dataTable = $($("#reportsTable").DataTable().table().header()); 
+                        dataTable.find('th').removeAttr('aria-label');
+                    }
                 },
                 columns: [
                     {
                         title: 'ID',
                         data: 'edOrgId',
                         width: '100px',
-                    @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
+                        @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
                     {
                         <text>
                         render: function(data, type, row, meta) {

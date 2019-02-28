@@ -40,7 +40,9 @@
     }
 </div>
 <div id="requestedReportContent" class="row">
-    <table class="table table-bordered nowrap" id="reportsTable" style="table-layout: fixed; width: 98% !important;"></table>
+    <table class="table table-bordered nowrap" id="reportsTable" style="table-layout: fixed; width: 98% !important;" role="grid">
+        <caption style="">Click to sort by ID, District/School, Cumulative Enrollments, Enrolled in Multiple Schools, or Enrolled at Other Districts</caption>
+    </table>
 </div>
 <div role="note">
     <div id="notes" class="row">
@@ -120,7 +122,11 @@
                          isStateMode = Model.IsStateMode,
                          edOrgId = Model.EdOrgId,
                          fourDigitSchoolYear = Model.FourDigitSchoolYear
-                     }))"
+                     }))",
+                    complete: function () {
+                        var dataTable = $($("#reportsTable").DataTable().table().header());
+                        dataTable.find('th').removeAttr('aria-label');
+                    }
                 },
                 columns: [
                     {

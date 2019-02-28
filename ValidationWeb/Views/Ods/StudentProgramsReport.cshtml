@@ -46,7 +46,9 @@
 </div>
 
 <div id="requestedReportContent1">
-    <table class="table table-bordered" id="reportsTable1"></table>
+    <table class="table table-bordered" id="reportsTable1" role="grid">
+        <caption>click headings to sort by ID, District/School, Cumulative Enrollments, Demographic Records, Active Duty Parents (ADP), American Indian - Alaska Native (Minnesota)	Migrant	Homeless, Immigrant	Recently Arrived, English Learner, or SLIFE</caption>
+    </table>
 </div>
 
 <div class="row tbmargin10">
@@ -55,7 +57,9 @@
 </div>
 
 <div id="requestedReportContent2" class="tbmargin10">
-    <table class="table table-bordered" id="reportsTable2"></table>
+    <table class="table table-bordered" id="reportsTable2" role="grid">
+        <caption>click headings to sort by ID, District/School, English Learner, Identified English Learner Served, Independent Study, Section 504, Title I Part A, or Free and Reduced Meals</caption>
+    </table>
 </div>
 
 <div role="note">
@@ -132,7 +136,11 @@
                          isStateMode = Model.IsStateMode,
                          edOrgId = Model.EdOrgId,
                          fourDigitSchoolYear = Model.FourDigitSchoolYear
-                     }))"
+                     }))",
+                    complete: function () {
+                        var dataTable = $($("#reportsTable1").DataTable().table().header());
+                        dataTable.find('th').removeAttr('aria-label');
+                    }
                 },
                 columns: [
                     {
@@ -342,7 +350,11 @@
                          isStateMode = Model.IsStateMode,
                          edOrgId = Model.EdOrgId,
                          fourDigitSchoolYear = Model.FourDigitSchoolYear
-                     }))"
+                     }))",
+                    complete: function () {
+                        var dataTable = $($("#reportsTable2").DataTable().table().header());
+                        dataTable.find('th').removeAttr('aria-label');
+                    }
                 },
                 columns: [
                     {
