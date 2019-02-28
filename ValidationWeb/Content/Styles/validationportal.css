@@ -896,3 +896,31 @@ select :focus {
 h3, .h3 {
     font-size: 1.2em;
 }
+
+table.dataTable thead .sorting :focus :before,
+table.dataTable thead .sorting :focus :after,
+table.dataTable thead .sorting_asc :focus :before,
+table.dataTable thead .sorting_asc :focus :after,
+table.dataTable thead .sorting_desc :focus :before,
+table.dataTable thead .sorting_desc :focus :after,
+table.dataTable thead .sorting_asc_disabled :focus :before,
+table.dataTable thead .sorting_asc_disabled :focus :after,
+table.dataTable thead .sorting_desc_disabled :focus :before,
+table.dataTable thead .sorting_desc_disabled :focus :after {
+    position: absolute;
+    bottom: 0.9em;
+    display: block;
+    font-size: 24px !important;
+    opacity: 1.0 !important;
+    color: white;
+}
+
+table.dataTable thead .sorting:before:focus,
+table.dataTable thead .sorting_asc:before:focus,
+table.dataTable thead .sorting_desc:before:focus,
+table.dataTable thead .sorting_asc_disabled:before:focus,
+table.dataTable thead .sorting_desc_disabled:before:focus {
+    right: 1em;
+    content: "\2191";
+    color: whitesmoke;
+}

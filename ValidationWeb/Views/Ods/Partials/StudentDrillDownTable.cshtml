@@ -1,6 +1,8 @@
 ﻿@model StudentDrillDownViewModel
 
-    <table class="table table-bordered" id="reportsTable"></table>
+<table class="table table-bordered" id="reportsTable" role="grid">
+    <caption style="display:none">Click column header to sort</caption>
+</table>
 
 @if (Model.Results != null && Model.Results.Count == 0)
 {
