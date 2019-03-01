@@ -151,22 +151,21 @@ a.white-heavy-text {
         text-decoration: none;
     }
 
-button.white-heavy-text:focus,
-a.white-heavy-text:focus {
-    color: #003865;
-    border-radius: 5px;
-    background-color: #A4BCC2;
-    text-decoration: none;
-}
+    button.white-heavy-text:focus,
+    a.white-heavy-text:focus {
+        color: #003865;
+        border-radius: 5px;
+        background-color: #A4BCC2;
+        text-decoration: none;
+    }
 
-button.white-heavy-text:hover,
-a.white-heavy-text:hover
-{
-    color: #003865;
-    font-weight: bold;
-    background-color: #a4bcc2;
-    text-decoration: none;
-}
+    button.white-heavy-text:hover,
+    a.white-heavy-text:hover {
+        color: #003865;
+        font-weight: bold;
+        background-color: #a4bcc2;
+        text-decoration: none;
+    }
 
 .dropdown-item:hover, .dropdown-item:focus {
     color: #003865;
@@ -305,13 +304,13 @@ select.form-control:focus {
     border-color: #A4BCC2;
 }
 
-select.form-control:focus > option {
-    box-shadow: 0 0 5px #A4BCC2 !important;
-    color: #003865;
-    border-radius: 5px;
-    background-color: white;
-    border-color: #A4BCC2;
-}
+    select.form-control:focus > option {
+        box-shadow: 0 0 5px #A4BCC2 !important;
+        color: #003865;
+        border-radius: 5px;
+        background-color: white;
+        border-color: #A4BCC2;
+    }
 
 /***************************************************************************************/
 /***************************************************************************************/
@@ -470,11 +469,11 @@ footer a:focus {
     border-color: #003865;
 }
 
-.table-primary th:focus {
-    color: #003865;
-    /*border-radius: 5px;*/
-    background-color: #A4BCC2;
-}
+    .table-primary th:focus {
+        color: #003865;
+        /*border-radius: 5px;*/
+        background-color: #A4BCC2;
+    }
 
 .validation-dropdown-menu {
     /*padding-top: 0;
@@ -771,7 +770,7 @@ th {
     background-color: #b8daff;
 }
 
-    .list-group-item-primary.list-group-item-action:hover, 
+    .list-group-item-primary.list-group-item-action:hover,
     .list-group-item-primary.list-group-item-action:focus {
         color: #004085;
         background-color: #9fcdff;
@@ -831,6 +830,7 @@ a {
     .page-link:hover {
         color: #196486;
     }
+
 /***************************************************************************************/
 
 button.btn {
@@ -843,7 +843,6 @@ button.btn {
     position: relative;
     line-height: unset;
 }
-
 
 .nav-item :focus {
     color: #003865;
@@ -923,4 +922,13 @@ table.dataTable thead .sorting_desc_disabled:before:focus {
     right: 1em;
     content: "\2191";
     color: whitesmoke;
+}
+
+.hidden {
+    position: absolute;
+    left: -10000px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
 }

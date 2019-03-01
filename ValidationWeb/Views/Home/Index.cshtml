@@ -14,24 +14,24 @@
                 </h2>
                 <div class="row">
                     <table class="table table-bordered table-sm" role="grid">
-                        <thead>
-                            <tr class="table-primary">
-                                <th>School Year</th>
-                                <th>Date Range</th>
-                                <th>Collection</th>
+                        <thead role="rowgroup">
+                            <tr class="table-primary" role="row">
+                                <th role="columnheader">School Year</th>
+                                <th role="columnheader">Date Range</th>
+                                <th role="columnheader">Collection</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody role="rowgroup">
                             @foreach (var submissionCycle in Model.SubmissionCycles.OrderBy(x => x.SchoolYearDisplay).ThenBy(x => x.StartDate).ThenBy(x => x.CollectionId))
                             {
-                                <tr>
-                                    <td>
+                                <tr role="row">
+                                    <td role="gridcell">
                                         @submissionCycle.SchoolYearDisplay
                                     </td>
-                                    <td>
+                                    <td role="gridcell">
                                         @submissionCycle.StartDate.ToShortDateString() &ndash; @submissionCycle.EndDate.ToShortDateString()
                                     </td>
-                                    <td>
+                                    <td role="gridcell">
                                         @submissionCycle.CollectionId
                                     </td>
                                 </tr>
@@ -50,24 +50,24 @@
                 </h2>
                 <div class="row">
                     <table class="table table-bordered table-sm" id="notificationsTable" role="grid">
-                        <thead>
-                            <tr class="table-primary">
-                                <th>
+                        <thead role="rowgroup">
+                            <tr class="table-primary" role="row">
+                                <th role="columnheader" aria-sort="none">
                                     Message
                                 </th>
-                                <th>
+                                <th role="columnheader" aria-sort="none">
                                     Action
                                 </th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody role="rowgroup">
                             @foreach (var recordsRequest in Model.RecordsRequests)
                             {
-                                <tr>
-                                    <td>
+                                <tr role="row">
+                                    <td role="gridcell">
                                         Unresolved Records Request from @recordsRequest.RequestingDistrictName for student @recordsRequest.StudentId
                                     </td>
-                                    <td>
+                                    <td role="gridcell">
                                         @Html.ActionLink(
                                             "view",
                                             "ChangeOfEnrollmentReport",
