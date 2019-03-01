@@ -47,7 +47,7 @@
 
 <div id="requestedReportContent1">
     <table class="table table-bordered" id="reportsTable1" role="grid">
-        <caption>click headings to sort by ID, District/School, Cumulative Enrollments, Demographic Records, Active Duty Parents (ADP), American Indian - Alaska Native (Minnesota)	Migrant	Homeless, Immigrant	Recently Arrived, English Learner, or SLIFE</caption>
+        <caption class="hidden">click headings to sort by ID, District/School, Cumulative Enrollments, Demographic Records, Active Duty Parents (ADP), American Indian - Alaska Native (Minnesota), Migrant, Homeless, Immigrant Recently Arrived, English Learner, or SLIFE</caption>
     </table>
 </div>
 
@@ -58,7 +58,7 @@
 
 <div id="requestedReportContent2" class="tbmargin10">
     <table class="table table-bordered" id="reportsTable2" role="grid">
-        <caption>click headings to sort by ID, District/School, English Learner, Identified English Learner Served, Independent Study, Section 504, Title I Part A, or Free and Reduced Meals</caption>
+        <caption class="hidden">click headings to sort by ID, District/School, English Learner, Identified English Learner Served, Independent Study, Section 504, Title I Part A, or Free and Reduced Meals</caption>
     </table>
 </div>
 
@@ -125,7 +125,15 @@
                 processing: true,
                 language: {
                     loadingRecords: 'Loading...',
-                    processing: "Loading..."
+                    processing: "Loading...",
+                    aria: {
+                        paginate: {
+                            first: 'First page',
+                            previous: 'Previous page',
+                            next: 'Next page',
+                            last: 'Last page'
+                        }
+                    }
                 },
                 dom: "<'row'<'col-md-3'l><'col-md-3 offset-6 text-right jumpToNotes'>>" +
                     "<'row'<'col-sm-12'tr>>" +
@@ -336,7 +344,15 @@
                 processing: true,
                 language: {
                     loadingRecords: 'Loading...',
-                    processing: "Loading..."
+                    processing: "Loading...",
+                    aria: {
+                        paginate: {
+                            first: 'First page',
+                            previous: 'Previous page',
+                            next: 'Next page',
+                            last: 'Last page'
+                        }
+                    }
                 },
                 dom: "<'row'<'col-md-3'l><'col-md-3 offset-6 text-right jumpToNotes'>>"+
                     "<'row'<'col-sm-12'tr>>" +

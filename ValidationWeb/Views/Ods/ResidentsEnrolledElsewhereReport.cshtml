@@ -30,7 +30,7 @@
 </div>
 <div id="requestedReportContent" class="row">
     <table class="table table-bordered" id="reportsTable" role="grid">
-        <caption>Click header to sort by District of Enrollment ID, or District of Enrollment, or Residents Enrolled</caption>
+        <caption class="hidden">Click header to sort by District of Enrollment ID, or District of Enrollment, or Residents Enrolled</caption>
     </table>
 </div>
 <div role="note">
@@ -97,7 +97,15 @@
                 processing: true,
                 language: {
                     loadingRecords: 'Loading...',
-                    processing: "Loading..."
+                    processing: "Loading...",
+                    aria: {
+                        paginate: {
+                            first: 'First page',
+                            previous: 'Previous page',
+                            next: 'Next page',
+                            last: 'Last page'
+                        }
+                    }
                 },
                 dom: "<'row'<'col-md-3'l><'col-md-3 offset-6 text-right jumpToNotes'>>" +
                     "<'row'<'col-sm-12'tr>>" +

@@ -65,7 +65,15 @@
                 processing: true,
                 language: {
                     loadingRecords: 'Loading...',
-                    processing: "Loading..."
+                    processing: 'Loading...', 
+                    aria: {
+                        paginate: {
+                            first:    'First page',
+                            previous: 'Previous page',
+                            next:     'Next page',
+                            last:     'Last page'
+                        }
+                    }
                 },
                 dom:"<'row'<'col-md-2'l>>"+
                     "<'row'<'col-sm-12'tr>>" +
@@ -117,8 +125,8 @@
                             {
                                 <text>
                                     title: 'District School ID',
-                                name: 'schoolId',
-                                data: 'schoolId',
+                                    name: 'schoolId',
+                                    data: 'schoolId',
                                 </text>
                             }
                             else

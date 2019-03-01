@@ -91,7 +91,7 @@
 
 <div class="row tbmargin10">
     <div id="requestedReportContent" class="col-md-12">
-        <table class="table table-bordered" id="reportsTable">
+        <table class="table table-bordered" id="reportsTable" role="grid">
             <caption class="hidden">Select a heading to sort by Request Date/Time, Collection, Initiated By, Status, Completion Date/Time, Error Count, or Warning Count.</caption>
         </table>
     </div>
@@ -177,7 +177,15 @@
                 processing: true,
                 language: {
                     loadingRecords: 'Loading...',
-                    processing: "Loading..."
+                    processing: "Loading...", 
+                    aria: {
+                        paginate: {
+                            first: 'First page',
+                            previous: 'Previous page',
+                            next: 'Next page',
+                            last: 'Last page'
+                        }
+                    }
                 },
                 dom: "<'row'<'col-md-3'l><'col-md-3 offset-6 text-right jumpToNotes'>>" +
                     "<'row'<'col-sm-12'tr>>" +
