@@ -119,19 +119,20 @@
                     {
                         title: 'ID',
                         data: 'edOrgId',
-                        width: '100px',
-                        @if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
-                    {
-                        <text>
-                        render: function(data, type, row, meta) {
-                            if (data != null && type === 'display' && row.orgType === 200) {
-                                return createStateLink(data);
-                            } else {
-                                return data;
+                        width: '100px'
+                        @* taking out these district view links for now *@
+                        @*@if (!Model.IsStateMode && permissions.CanViewStudentDrilldownReports)
+                        {
+                            <text>
+                            render: function(data, type, row, meta) {
+                                if (data != null && type === 'display' && row.orgType === 200) {
+                                    return createStateLink(data);
+                                } else {
+                                    return data;
+                                }
                             }
-                        }
-                        </text>
-                    }
+                            </text>
+                        }*@
                     },
                     {
                         title: 'District/School',

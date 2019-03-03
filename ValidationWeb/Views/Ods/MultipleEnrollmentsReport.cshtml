@@ -141,26 +141,27 @@
                         title: 'ID',
                         data: 'edOrgId',
                         width: '100px',
-                        @if (!Model.IsStateMode)
+                        @* taking out these district view links for now *@
+                        @*@if (!Model.IsStateMode)
                         {
                             <text>
-                        render: function(data, type, row, meta) {
-                            //debugger;
-                            if (data != null && type === 'display' && row.orgType === 200) {
-                                @if (permissions.CanAccessAllDistrictsMode)
-                                {
-                                    @:return createStateLink(data);
+                            render: function(data, type, row, meta) {
+                            
+                                if (data != null && type === 'display' && row.orgType === 200) {
+                                    @if (permissions.CanAccessAllDistrictsMode)
+                                    {
+                                        @:return createStateLink(data);
+                                    }
+                                    else
+                                    {
+                                        @:return data;
+                                    }
+                                } else {
+                                    return data;
                                 }
-                                else
-                                {
-                                    @:return data;
-                                }
-                            } else {
-                                return data;
                             }
-                        }
                             </text>
-                        }
+                        }*@
                     },
                     {
                         title: 'District/School',
