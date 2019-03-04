@@ -880,11 +880,72 @@ h3, .h3 {
     font-size: 1.2em;
 }
 
+table {
+    border-top: 1px solid #000;
+    width: 100%;
+}
+
+/*tr, th, td {
+    border-bottom: 1px solid #000;
+}
+
+th {
+    padding: 30px;
+    position: relative;
+    text-align: left;
+    width: 30%;
+}
+
+th:after {
+    background: #000;
+    bottom: 10px;
+    margin-bottom: 5px;
+    content: '';
+    display: block;
+    position: absolute;
+    right: 0;
+    width: 1px;
+ }
+
+
+th + td::before {
+    background: #000;
+    bottom: 30px;
+    content: '';
+    display: block;
+    position: absolute;
+    left: -3px;
+    top: 30px;
+    width: 1px;
+}
+
+td {
+    padding: 30px;
+    position: relative;
+}*/
+
 /*.edge--table-fix::after,
 .edge--table-fix::before,
 .edge--table-fix:focus::after,
 .edge--table-fix:focus::before {
     bottom: 12px !important;
+}*/
+
+/* dataTables CSS modification & positioning */
+
+/*table.dataTable thead .sorting:before,
+table.dataTable thead .sorting:after,
+table.dataTable thead .sorting_asc:before,
+table.dataTable thead .sorting_asc:after,
+table.dataTable thead .sorting_desc:before,
+table.dataTable thead .sorting_desc:after,
+table.dataTable thead .sorting_asc_disabled:before,
+table.dataTable thead .sorting_asc_disabled:after,
+table.dataTable thead .sorting_desc_disabled:before,
+table.dataTable thead .sorting_desc_disabled:after {
+    height: 0%;
+    margin-bottom: 1.5rem;
+    bottom: 0px !important;
 }*/
 
 table.dataTable thead .sorting::before,
@@ -949,6 +1010,18 @@ table.dataTable thead.table-primary th.sorting_desc:focus {
     .table-primary th:focus {
         /*color: #003865;*/
         background-color: #A4BCC2;
+    }
+
+table.dataTable thead th div.DataTables_sort_wrapper {
+    position: relative;
+    padding-right: 20px;
+}
+
+    table.dataTable thead th div.DataTables_sort_wrapper span {
+        position: absolute;
+        top: 50%;
+        margin-top: -8px;
+        right: 0;
     }
 
 .hidden {
