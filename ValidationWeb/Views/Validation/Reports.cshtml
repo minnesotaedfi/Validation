@@ -148,10 +148,10 @@
         $(document).ready(function() {
             $("#export").click(function(e) {
                 e.preventDefault();
-                window.location.href = "@Html.Raw(Url.Action(
-                                            "DownloadReportSummariesCsv",
-                                            "Validation",
-                                            new { edOrgId = Model.FocusedEdOrgId }))";
+                window.location.href = "@Html.Raw(Url.Action("DownloadReportSummariesCsv", "Validation", new
+                                                                                                         {
+                                                                                                             edOrgId = Model.FocusedEdOrgId
+                                                                                                         }))";
             });
 
             var reportLinkTemplate =
@@ -177,7 +177,7 @@
                 processing: true,
                 language: {
                     loadingRecords: 'Loading...',
-                    processing: "Loading...", 
+                    processing: "Loading...",
                     aria: {
                         paginate: {
                             first: 'First page',
@@ -187,6 +187,16 @@
                         }
                     }
                 },
+                //drawCallback: function(settings) {
+                //    var that = $(this);
+                //    that.find('th').addClass('edge--table-fix');
+
+                //    setTimeout(function () {
+                //        console.log(that);
+                //        that.find('th').removeClass('edge--table-fix');
+                //    }, 100);
+
+                //},
                 dom: "<'row'<'col-md-3'l><'col-md-3 offset-6 text-right jumpToNotes'>>" +
                     "<'row'<'col-sm-12'tr>>" +
                     "<'row'<'col-md-3'i><'col-md-9 pull-right'p>>",
@@ -215,7 +225,11 @@
                         data: 'collection',
                         render: function(data, type, row, meta) {
                             var collectionNameWithYear =
-                                row.schoolYear.startYear+'-'+row.schoolYear.endYear+' / '+data.replace(/_/g, ' ');
+                                row.schoolYear.startYear +
+                                    '-' +
+                                    row.schoolYear.endYear +
+                                    ' / ' +
+                                    data.replace(/_/g, ' ');
 
                             if (row.status.indexOf("In Progress") >= 0) {
                                 return collectionNameWithYear;
@@ -272,10 +286,8 @@
             $(dataTable.table().header()).addClass('table-primary');
 
             function tableDataRefreshed() {
-                console.log('ajax completed');
                 var dataTable = $('#reportsTable').DataTable();
                 overlayOff();
-                console.log(dataTable.rows());
                 var foundInProgress = false;
 
                 dataTable.rows().every(function(rowIdx, tableLoop, rowLoop) {
