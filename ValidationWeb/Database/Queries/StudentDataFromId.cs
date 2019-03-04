@@ -11,13 +11,14 @@ namespace ValidationWeb
         public static string StudentDataQueryFromId =
 @"SELECT s.[FirstName], s.[MiddleName], s.[LastSurname], 
     eorg.NameOfInstitution, ssa.SchoolId, ssa.EntryDate, ssa.ExitWithdrawDate, 
-	d.CodeValue AS GradeLevel
+    d.CodeValue AS GradeLevel
     FROM edfi.Student s 
     LEFT OUTER JOIN edfi.StudentSchoolAssociation ssa ON ssa.StudentUSI = s.StudentUSI
     LEFT OUTER JOIN edfi.School sch ON sch.SchoolId = ssa.SchoolId
     LEFT OUTER JOIN edfi.EducationOrganization eorg ON eorg.EducationOrganizationId = sch.SchoolId 
     LEFT OUTER JOIN edfi.Descriptor d ON d.DescriptorId = ssa.EntryGradeLevelDescriptorId
     WHERE s.StudentUniqueId=@student_unique_id";
+
         public const string FirstNameColumnName = "FirstName";
         public const string MiddleNameColumnName = "MiddleName";
         public const string LastSurnameColumnName = "LastSurname";

@@ -347,7 +347,8 @@
 
                     foreach (var queryResult in queryResults.ToArray())
                     {
-                        studentQueryCmd.Parameters["@student_unique_id"].Value = queryResult.Id.ToString();
+                        // here too!! 
+                        studentQueryCmd.Parameters["@student_unique_id"].Value = queryResult.Id.ToString("D13");
                         var singleStudentData = new List<StudentDataFromId>();
                         using (var reader = studentQueryCmd.ExecuteReader())
                         {
@@ -376,7 +377,9 @@
                         #region Record the error (warning) with additional details taken from the ODS database.
                         errorSummaries.Add(new ValidationErrorSummary
                         {
-                            StudentUniqueId = queryResult.Id.ToString(),
+                            // select this out as left-0 padded 13 chars ... AND use that in subsequent joins? 
+
+                            StudentUniqueId = queryResult.Id.ToString("D13"),
                             StudentFullName = StudentDataFromId.GetStudentFullName(singleStudentData),
                             SeverityId = (queryResult.IsError ? (int)ErrorSeverity.Error : (int)ErrorSeverity.Warning),
                             Component = rule.Components[0],
@@ -395,7 +398,7 @@
                                 )
                             ),
                         });
-                        _loggingService.LogDebugMessage($"A record was added to the Validational Portal, but not yet committed.");
+                        _loggingService.LogDebugMessage($"A record was added to the Validation Portal, but not yet committed.");
 
                         #endregion Record the error (warning) with additional details taken from the ODS database.
                     }
