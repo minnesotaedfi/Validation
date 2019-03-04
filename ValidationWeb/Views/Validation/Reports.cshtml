@@ -158,11 +158,12 @@
                 '<a href="@Html.Raw(Url.Action("Report", "Validation", new
                                                                        {
                                                                            id = "_id_"
-                                                                       }))" class="show-data-loading">_collection_</a>';
+                                                                       }))" class="show-data-loading"  aria-label="_Label_">_collection_</a>';
 
-            function createReportLink(id, collection) {
+            function createReportLink(id, collection, label) {
                 return reportLinkTemplate
                     .replace(/_id_/g, id)
+                    .replace(/_Label_/g, label)
                     .replace(/_collection_/g, collection);
             }
 
@@ -234,7 +235,13 @@
                             if (row.status.indexOf("In Progress") >= 0) {
                                 return collectionNameWithYear;
                             } else {
-                                return createReportLink(row.validationReportSummaryId, collectionNameWithYear);
+                                return createReportLink(
+                                    row.validationReportSummaryId, 
+                                    collectionNameWithYear,
+                                    'View Report initiated by ' 
+                                        + row.initiatedBy + ' on ' 
+                                        + new Date(row.requestedWhen).toLocaleString("en-US") 
+                                        + ' for collection ' + collectionNameWithYear);
                             }
                         }
                     },
