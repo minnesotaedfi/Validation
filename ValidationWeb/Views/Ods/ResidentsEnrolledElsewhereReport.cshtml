@@ -121,7 +121,6 @@
                         var dataTable = $($("#reportsTable").DataTable().table().header());
                         dataTable.find('th').removeAttr('aria-label');
                     }
-
                 },
                 columns: [
                     @if (Model.IsStateMode)
@@ -129,7 +128,7 @@
                         <text>
                             {
                                 title: 'District of Residence ID',
-                                data: 'edOrgId',
+                                data: 'edOrgId'
                             },
                             {
                                 title: 'District of Residence',
