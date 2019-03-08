@@ -70,11 +70,11 @@ rule 10.10.6239
 	else '230. Status End Code 23 (Kindergarten Withdrawal) requires that the grade level be Kindergarten or EC. Check the grade level or the Status End code.'
 
 rule 10.10.6386
-	when {StudentEnrollment}.[DistrictType] = '7' 
+	when {StudentEnrollment}.[StudentResidentDistrictType] = '1'
+	and {StudentEnrollment}.[StudentResidentDistrictNumber] = '0001'
 	and {StudentEnrollment}.[DistrictNumber] is not in ['4150','4177','4082','4012','4198'] 
 	and {StudentEnrollment}.[SchoolClassification] <> '46' then
-	require that {StudentEnrollment}.[StudentResidentDistrictType] <> '1'
-	and {StudentEnrollment}.[StudentResidentDistrictNumber] <> '0001'
+	require that {StudentEnrollment}.[DistrictType] <> '7' 
 	else '288. Student has resident district number 0001 and type of 01 (Aitkin) which is an invalid resident district number and type for charter school.'
 	
 rule 10.10.6428 
@@ -121,7 +121,7 @@ rule 10.10.64763
 	
 rule 10.10.6516 
 	when {StudentEnrollment}.[StudentResidentDistrictNumber] exists and {StudentEnrollment}.[StudentResidentDistrictNumber] <> '9998' then
-	require that {StudentEnrollment}.[DistrictType] is in ['1','2','3','38']
+	require that {StudentEnrollment}.[StudentResidentDistrictType] is in ['1','2','3','38']
 	else '24. The resident district number and/or type reported in the student\'s enrollment record is not a valid district number and/or type. Only district types 1, 2, 3 and 38 are valid resident district types.'
 
 rule 10.10.6521 
