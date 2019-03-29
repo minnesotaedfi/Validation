@@ -735,6 +735,7 @@
     </None>
     <Content Include="Views\Validation\ViewReport.cshtml" />
     <Content Include="Views\Shared\_Environment.cshtml" />
+    <Content Include="Views\Shared\_MarssLink.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

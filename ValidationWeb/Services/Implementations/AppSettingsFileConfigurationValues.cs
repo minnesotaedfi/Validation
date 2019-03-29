@@ -16,7 +16,8 @@
         private static readonly bool _isSsoSimulated;
         private static readonly string _ssoSimulatedUserName;
         private static readonly List<SchoolYear> _seedSchoolYears = new List<SchoolYear>();
-        private static readonly string _environmentName; 
+        private static readonly string _environmentName;
+        private static readonly string _marssComparisonUrl;
         
         static AppSettingsFileConfigurationValues()
         {
@@ -47,6 +48,7 @@
             }
 
             _environmentName = ConfigurationManager.AppSettings["EnvironmentName"];
+            _marssComparisonUrl = ConfigurationManager.AppSettings["MarssComparisonUrl"];
         }
 
         public string AppId => _appId;
@@ -72,5 +74,7 @@
         public List<SchoolYear> SeedSchoolYears => _seedSchoolYears;
 
         public string EnvironmentName => _environmentName;
+
+        public string MarssComparisonUrl => _marssComparisonUrl;
     }
 }

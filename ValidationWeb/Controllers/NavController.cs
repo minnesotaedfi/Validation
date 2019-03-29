@@ -64,5 +64,10 @@ namespace ValidationWeb
             var viewModel = new EnvironmentViewModel { EnvironmentName = _configurationValues.EnvironmentName };
             return PartialView("~/Views/Shared/_Environment.cshtml", viewModel);
         }
+
+        public PartialViewResult MarssLink()
+        {
+            return PartialView("~/Views/Shared/_MarssLink.cshtml", _configurationValues.MarssComparisonUrl);
+        }
     }
 }

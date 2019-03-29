@@ -22,5 +22,7 @@ namespace ValidationWeb.Services
         List<SchoolYear> SeedSchoolYears { get; }
 
         string EnvironmentName { get; }
+
+        string MarssComparisonUrl { get; }
     }
 }
