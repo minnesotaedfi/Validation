@@ -65,10 +65,14 @@
                                     @Html.Raw(Html.ActionLink("LinkText", "Reports", "Ods", new { area = "" }, new { @class = "nav-link validation-nav-link show-page-loading" }).ToHtmlString().Replace("LinkText", "Reports"))
                                 </li>
                             }
+                            
+                            <li class="nav-item">
+                                <a class="nav-link validation-nav-link mr-auto show-page-loading" href="https://w1.education.state.mn.us/MIDMSWEB/MDELogin.html">MARSS WES</a>
+                            </li>
 
-                                <li class="nav-item">
+                            <li class="nav-item">
                                     @{Html.RenderAction("MarssLink", "Nav");}
-                                </li>
+                            </li>
                         </ul>
                     </div>
                     @Html.Action("NavDropDowns", "Nav")
