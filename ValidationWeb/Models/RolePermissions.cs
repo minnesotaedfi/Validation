@@ -15,5 +15,7 @@
         public bool CanRunValidationReports { get; set; }
 
         public bool CanAccessAllDistrictsMode { get; set; }
+
+        public bool CanViewMarssComparisonLink { get; set; }
     }
 }

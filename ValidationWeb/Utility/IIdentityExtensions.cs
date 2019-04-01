@@ -29,7 +29,8 @@
                     rolePermissions.CanViewOdsReports = true;
                     rolePermissions.CanViewStudentDrilldownReports = true;
                     rolePermissions.CanViewValidationReports = true;
-                    rolePermissions.CanAccessAllDistrictsMode = true; 
+                    rolePermissions.CanAccessAllDistrictsMode = true;
+                    rolePermissions.CanViewMarssComparisonLink = true;
                     break; 
                 case PortalRoleNames.DataOwner:
                     rolePermissions.CanViewOdsReports = true;
@@ -41,13 +42,15 @@
                     rolePermissions.CanViewStudentDrilldownReports = true;
                     rolePermissions.CanViewValidationReports = true;
                     rolePermissions.CanRunValidationReports = true;
+                    rolePermissions.CanViewMarssComparisonLink = true;
                     break;
                 case PortalRoleNames.RegionUser:
                     rolePermissions.CanViewOdsReports = true;
                     rolePermissions.CanModifyRecordsRequests = true;
                     rolePermissions.CanViewStudentDrilldownReports = true;
                     rolePermissions.CanViewValidationReports = true;
-                    rolePermissions.CanRunValidationReports = true; 
+                    rolePermissions.CanRunValidationReports = true;
+                    rolePermissions.CanViewMarssComparisonLink = true;
                     break; 
             }
 

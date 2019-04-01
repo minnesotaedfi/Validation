@@ -67,12 +67,15 @@
                             }
                             
                             <li class="nav-item">
-                                <a class="nav-link validation-nav-link mr-auto show-page-loading" href="https://w1.education.state.mn.us/MIDMSWEB/MDELogin.html">MARSS WES</a>
+                                <a class="nav-link validation-nav-link mr-auto" href="https://w1.education.state.mn.us/MIDMSWEB/MDELogin.html">MARSS WES</a>
                             </li>
 
-                            <li class="nav-item">
-                                    @{Html.RenderAction("MarssLink", "Nav");}
-                            </li>
+                            @if (permissions.CanViewMarssComparisonLink)
+                            {
+                                <li class="nav-item">
+                                    @{ Html.RenderAction("MarssLink", "Nav"); }
+                                </li>
+                            }
                         </ul>
                     </div>
                     @Html.Action("NavDropDowns", "Nav")
