@@ -1,0 +1,92 @@
+﻿@using ValidationWeb.Filters
+@using ValidationWeb.Utility
+@model OdsChangeOfEnrollmentReportViewModel
+@{
+    var identity = (ValidationPortalIdentity)User.Identity;
+    var appRoleName = identity.AppRole.Name;
+    var permissions = User.Identity.GetViewPermissions(identity.AppRole);
+}
+
+
+<div class="row">
+    <h2 class="vp-body-header col-8 justify-content-start align-self-center">Dynamic Reports</h2>
+</div>
+
+<form>
+    <div class="form-group row">
+        <label for="selectDataView" class="text-right col-sm-2 col-form-label col-form-label-sm">Select Data View</label>
+        <div class="col-sm-8">
+            <select class="form-control form-control-sm" id="selectDataView" name="selectDataView">
+                <option selected="selected" value="">- make a selection -</option>
+                <option value="StudentDemographic">StudentDemographic</option>
+                <option value="SSDC">SSDC</option>
+                <option value="StudentEnrollment">StudentEnrollment</option>
+                <option value="MultipleEnrollment">MultipleEnrollment</option>
+            </select>
+        </div>
+    </div>
+    <div class="row" style="margin-top:15px">
+        <div class="col-md-6">
+            <select multiple="multiple" size="10" class="form-control form-control-sm" id="fieldSelect" name="fieldSelect[]"></select>
+        </div>
+    </div>
+</form>
+
+@section scripts
+{
+    <script type="text/javascript">
+
+        var fakeData =
+            {
+                'StudentDemographic': [
+                    'MARSSNumber',
+                    'DistrictId',
+                    'SchoolId',
+                    'FirstName',
+                    'MiddleName',
+                    'LastName',
+                    'Suffix',
+                    'BirthDate',
+                    'Gender',
+                    'HispanicIndicator',
+                    'AsianIndicator',
+                    'BlackIndicator',
+                    'IndianIndicator',
+                    'PacificIslanderIndicator',
+                    'WhiteIndicator',
+                    'EthnicCode',
+                    'AncestryEthnicOrigin',
+                    'HomePrimaryLanguage',
+                    'EnglishLearner',
+                    'LocalUseData'
+                    ]
+            };
+
+        $(document).ready(function() {
+            
+            $('#selectDataView').select2({
+                minimumResultsForSearch: Infinity,
+            });
+
+            $("#selectDataView").change(function(e) {
+                var dataView = $(this).val();
+                if (dataView.length > 0) {
+                    console.log(dataView);
+                    $.each(fakeData[dataView], function (index, value) {
+                        console.log(index + ": " + value);
+                        $('#fieldSelect').append($('<option>', { 
+                            value: value,
+                            text : value 
+                        }));
+                    });
+                    var fieldSelect = $('select[name="fieldSelect[]"]').bootstrapDualListbox({
+                        nonSelectedListLabel: 'Available Fields',
+                        selectedListLabel: 'Selected Fields',
+                        //preserveSelectionOnMove: 'moved',
+                        moveOnSelect: false
+                    });
+                }
+            });
+        });
+    </script>
+}

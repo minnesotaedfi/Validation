@@ -205,6 +205,10 @@
     <Content Include="Content\bootstrap-reboot.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\Styles\bootstrap-duallistbox.css" />
+    <Content Include="Content\Styles\bootstrap-duallistbox.min.css">
+      <DependentUpon>bootstrap-duallistbox.css</DependentUpon>
+    </Content>
     <Content Include="Content\Styles\select2.css" />
     <Content Include="Content\Styles\select2.min.css">
       <DependentUpon>select2.css</DependentUpon>
@@ -641,6 +645,10 @@
     </Content>
     <Content Include="Scripts\jquery-ui-1.12.1.js" />
     <Content Include="Scripts\jquery-ui-1.12.1.min.js" />
+    <Content Include="Scripts\jquery.bootstrap-duallistbox.js" />
+    <Content Include="Scripts\jquery.bootstrap-duallistbox.min.js">
+      <DependentUpon>jquery.bootstrap-duallistbox.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\popper-utils.js" />
     <Content Include="Scripts\popper-utils.min.js" />
     <Content Include="Scripts\popper.js" />
@@ -736,6 +744,7 @@
     <Content Include="Views\Validation\ViewReport.cshtml" />
     <Content Include="Views\Shared\_Environment.cshtml" />
     <Content Include="Views\Shared\_MarssLink.cshtml" />
+    <Content Include="Views\Dynamic\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -812,6 +821,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\DynamicController.cs" />
     <Compile Include="Database\EdFiLogDbContext.cs" />
     <Compile Include="Models\ValidationPortalIdentity.cs" />
     <Compile Include="Services\Implementations\RecordsRequestService.cs" />
