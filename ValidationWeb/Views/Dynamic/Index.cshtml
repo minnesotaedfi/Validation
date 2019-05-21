@@ -25,9 +25,9 @@
             </select>
         </div>
     </div>
-    <div class="row" style="margin-top:15px">
+    <div class="row" style="margin-top: 15px; display:none" id="selectWrapper">
         <div class="col-md-6">
-            <select multiple="multiple" size="10" class="form-control form-control-sm" id="fieldSelect" name="fieldSelect[]"></select>
+            <select multiple="multiple" size="15" class="form-control form-control-sm" id="fieldSelect" name="fieldSelect[]"></select>
         </div>
     </div>
 </form>
@@ -37,54 +37,132 @@
     <script type="text/javascript">
 
         var fakeData =
-            {
-                'StudentDemographic': [
-                    'MARSSNumber',
-                    'DistrictId',
-                    'SchoolId',
-                    'FirstName',
-                    'MiddleName',
-                    'LastName',
-                    'Suffix',
-                    'BirthDate',
-                    'Gender',
-                    'HispanicIndicator',
-                    'AsianIndicator',
-                    'BlackIndicator',
-                    'IndianIndicator',
-                    'PacificIslanderIndicator',
-                    'WhiteIndicator',
-                    'EthnicCode',
-                    'AncestryEthnicOrigin',
-                    'HomePrimaryLanguage',
-                    'EnglishLearner',
-                    'LocalUseData'
-                    ]
-            };
+        {
+            'StudentDemographic': [
+                'MARSSNumber',
+                'DistrictId',
+                'SchoolId',
+                'FirstName',
+                'MiddleName',
+                'LastName',
+                'Suffix',
+                'BirthDate',
+                'Gender',
+                'HispanicIndicator',
+                'AsianIndicator',
+                'BlackIndicator',
+                'IndianIndicator',
+                'PacificIslanderIndicator',
+                'WhiteIndicator',
+                'EthnicCode',
+                'AncestryEthnicOrigin',
+                'HomePrimaryLanguage',
+                'EnglishLearner',
+                'LocalUseData'
+            ],
+            'SSDC': [
+                'MARSSNumber',
+                'DistrictId',
+                'DistrictIdLeft',
+                'DistrictIdRight',
+                'SchoolId',
+                'ActiveDutyParentIndicator',
+                'ImmigrantIndicator',
+                'RecentlyArrivedEnglishLearner',
+                'SLIFE'
+            ],
+            'StudentEnrollment': [
+                'MARSSNumber',
+                'DistrictId',
+                'DistrictIdLeft',
+                'DistrictIdRight',
+                'SchoolId',
+                'DistrictType',
+                'DistrictNumber',
+                'SchoolNumber',
+                'StatusBeginDate',
+                'EnrollmentSequence',
+                'LastLocationOfAttendance',
+                'StatusEndDate',
+                'StatusEnd',
+                'StudentGradeLevel',
+                'EconomicIndicatorCode',
+                'HomeboundServiceIndicator',
+                'HomelessStudentFlag',
+                'COEMigrantIndicator',
+                'IndependentStudyIndicator',
+                'Section504Placement',
+                'Section504PlacementBeginDate',
+                'Section504PlacementEndDate',
+                'Title1Indicator',
+                'SpecialEducationEvaluationStatus',
+                'EnglishLearnerStartDate',
+                'StudentResidentDistrictNumber',
+                'StudentResidentDistrictType',
+                'SchoolClassification',
+            ],
+            'MultipleEnrollment': [
+                'MARSSNumber',
+                'EnrollmentSequenceLeft',
+                'DistrictId',
+                'DistrictIdLeft',
+                'SchoolIdLeft',
+                'SchoolClassificationLeft',
+                'ResidentDistrictLeft',
+                'StatusBeginDateLeft',
+                'StatusEndDateLeft',
+                'LastLocationOfAttendanceLeft',
+                'StudentGradeLevelLeft',
+                'SpecialEducationEvaluationStatusLeft',
+                'EnrollmentSequenceRight',
+                'DistrictIdRight',
+                'SchoolIdRight',
+                'SchoolClassificationRight',
+                'ResidentDistrictRight',
+                'StatusBeginDateRight',
+                'StatusEndDateRight',
+                'LastLocationOfAttendanceRight',
+                'StudentGradeLevelRight',
+                'SpecialEducationEvaluationStatusRight',
+                'IsNextEnrollment',
+                'EnrollmentOverlap',
+                'DualEnrolledIndicator',
+                'ValidSameSchoolOverlap'
+            ]
+        };
 
-        $(document).ready(function() {
-            
+        $(document).ready(function () {
             $('#selectDataView').select2({
                 minimumResultsForSearch: Infinity,
             });
 
-            $("#selectDataView").change(function(e) {
+            var fieldSelect = $('select[name="fieldSelect[]"]').hide().bootstrapDualListbox({
+                nonSelectedListLabel: 'Available Fields',
+                selectedListLabel: 'Selected Fields',
+                //preserveSelectionOnMove: 'moved',
+                moveOnSelect: false,
+                selectorMinimalHeight: 200
+            });
+
+            var dualListContainer = fieldSelect.bootstrapDualListbox('getContainer');
+            dualListContainer.find('.moveall').text('').addClass('fa fa-angle-double-right');
+            dualListContainer.find('.removeall').text('').addClass('fa fa-angle-double-left');
+            dualListContainer.find('.move').text('').addClass('fa fa-angle-right');
+            dualListContainer.find('.remove').text('').addClass('fa fa-angle-left');
+            dualListContainer.find('.btn').addClass('prime-blue white-heavy-text');
+
+            $("#selectDataView").change(function (e) {
+
                 var dataView = $(this).val();
+                $('#selectWrapper').show();
                 if (dataView.length > 0) {
-                    console.log(dataView);
+                    var select = $('#fieldSelect');
+                    select.empty();
                     $.each(fakeData[dataView], function (index, value) {
-                        console.log(index + ": " + value);
-                        $('#fieldSelect').append($('<option>', { 
-                            value: value,
-                            text : value 
-                        }));
+                        select.append($('<option>', { value: value, text: value }));
                     });
-                    var fieldSelect = $('select[name="fieldSelect[]"]').bootstrapDualListbox({
-                        nonSelectedListLabel: 'Available Fields',
-                        selectedListLabel: 'Selected Fields',
-                        //preserveSelectionOnMove: 'moved',
-                        moveOnSelect: false
-                    });
+
+                    fieldSelect.bootstrapDualListbox('refresh');
                 }
             });
         });
