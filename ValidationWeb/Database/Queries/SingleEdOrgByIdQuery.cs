@@ -2,14 +2,14 @@
 {
     public class SingleEdOrgByIdQuery
     {
-        public static string EdOrgQuery =
+        public const string EdOrgQuery =
 @"select 
-	Id = eo.EducationOrganizationId,
-	OrganizationShortName = eo.ShortNameOfInstitution,
-	OrganizationName = eo.NameOfInstitution,
-	StateOrganizationId = eo.StateOrganizationId
-	from edfi.EducationOrganization eo
-	where eo.EducationOrganizationId = @edOrgId;";
+    Id = eo.EducationOrganizationId,
+    OrganizationShortName = eo.ShortNameOfInstitution,
+    OrganizationName = eo.NameOfInstitution,
+    StateOrganizationId = eo.StateOrganizationId
+    from edfi.EducationOrganization eo
+    where eo.EducationOrganizationId = @edOrgId;";
         
         public const string IdColumnName = "Id";
         public const string OrganizationShortNameColumnName = "OrganizationShortName";

@@ -1,8 +1,9 @@
-﻿namespace ValidationWeb
-{
-    using System.Data.Entity;
+﻿using System;
+using System.Data.Entity;
 
-    public class ValidationPortalDbContext : DbContext //, IValidationPortalDbContext
+namespace ValidationWeb.Database
+{
+    public class ValidationPortalDbContext : DbContext
     {
         static ValidationPortalDbContext()
         {
@@ -44,12 +45,12 @@
 
         public virtual DbSet<ValidationReportSummary> ValidationReportSummaries { get; set; }
 
-        public new void Dispose()
-        {
-            base.Dispose();
-        }
+        //public new void Dispose()
+        //{
+        //    base.Dispose();
+        //}
 
-        public new void Dispose(bool disposing)
+        protected new virtual void Dispose(bool disposing)
         {
             base.Dispose(disposing);
         }

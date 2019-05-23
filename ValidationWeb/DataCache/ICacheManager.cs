@@ -1,9 +1,9 @@
-﻿namespace ValidationWeb.DataCache
+﻿using System.Collections.Generic;
+using ValidationWeb.Database.Queries;
+using ValidationWeb.Services;
+
+namespace ValidationWeb.DataCache
 {
-    using System.Collections.Generic;
-
-    using ValidationWeb.Services;
-
     public interface ICacheManager
     {
         IEnumerable<DemographicsCountReportQuery> GetDistrictAncestryRaceCounts(

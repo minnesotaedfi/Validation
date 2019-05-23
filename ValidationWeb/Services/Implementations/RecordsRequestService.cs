@@ -1,4 +1,6 @@
-﻿namespace ValidationWeb.Services.Implementations
+﻿using ValidationWeb.Database;
+
+namespace ValidationWeb.Services.Implementations
 {
     using System;
     using System.Collections.Generic;

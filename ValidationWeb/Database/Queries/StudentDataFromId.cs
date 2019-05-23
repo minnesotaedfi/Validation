@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Web;
 
-namespace ValidationWeb
+namespace ValidationWeb.Database.Queries
 {
     public class StudentDataFromId
     {
-        public static string StudentDataQueryFromId =
+        public const string StudentDataQueryFromId =
 @"SELECT s.[FirstName], s.[MiddleName], s.[LastSurname], 
     eorg.NameOfInstitution, ssa.SchoolId, ssa.EntryDate, ssa.ExitWithdrawDate, 
     d.CodeValue AS GradeLevel
@@ -29,13 +27,21 @@ namespace ValidationWeb
         public const string GradeLevelColumnName = "GradeLevel";
 
         public string FirstName { get; set; } = string.Empty;
+
         public string MiddleName { get; set; } = string.Empty;
+
         public string LastSurname { get; set; } = string.Empty;
+
         public string NameOfInstitution { get; set; } = string.Empty;
+
         public string SchoolId { get; set; } = string.Empty;
+
         public DateTime? EntryDate { get; set; } = null;
+
         public DateTime? ExitWithdrawDate { get; set; } = null;
+
         public string GradeLevel { get; set; } = string.Empty;
+
         public static string GetStudentFullName(IList<StudentDataFromId> singleStudentDataList)
         {
             if (singleStudentDataList.Count == 0)
@@ -47,12 +53,14 @@ namespace ValidationWeb
                 : $"{singleStudentDataList[0].FirstName} {singleStudentDataList[0].MiddleName} {singleStudentDataList[0].LastSurname}")
                 .Trim();
         }
+
         public static List<string> GetSchools(IList<StudentDataFromId> singleStudentDataList)
         {
             if (singleStudentDataList.Count == 0)
             {
                 return new List<string>();
             }
+
             return singleStudentDataList.Select(ssd => ssd.NameOfInstitution).ToList();
         }
 
@@ -62,6 +70,7 @@ namespace ValidationWeb
             {
                 return new List<string>();
             }
+
             return singleStudentDataList.Select(ssd => ssd.SchoolId).ToList();
         }
 
@@ -91,6 +100,7 @@ namespace ValidationWeb
             {
                 return new List<string>();
             }
+
             return singleStudentDataList.Select(ssd => ssd.GradeLevel).ToList();
         }
     }

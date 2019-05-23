@@ -1,20 +1,18 @@
-﻿namespace ValidationWeb
+﻿using System;
+using System.Collections.Generic;
+using System.Data.Entity.Infrastructure;
+using System.Linq;
+using System.Net.Http.Headers;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Web;
+using System.Web.Http;
+using System.Web.Http.Filters;
+using ValidationWeb.Database;
+using ValidationWeb.Services;
+
+namespace ValidationWeb.Filters
 {
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel.Composition;
-    using System.Data.Entity.Infrastructure;
-    using System.Linq;
-    using System.Net.Http.Headers;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using System.Web;
-    using System.Web.Http;
-    using System.Web.Http.Filters;
-
-    using ValidationWeb.Filters;
-    using ValidationWeb.Services;
-
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public sealed class ValidationAuthenticationFilter : Attribute, IAuthenticationFilter
     {

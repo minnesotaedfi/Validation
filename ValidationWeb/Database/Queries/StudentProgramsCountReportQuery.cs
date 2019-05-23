@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace ValidationWeb
+﻿namespace ValidationWeb.Database.Queries
 {
     public class StudentProgramsCountReportQuery
     {
-        public static string StudentProgramsCountQuery = "rules.StudentProgramsReport";
-        public static string StudentProgramsStudentDetailsReport = "rules.StudentProgramsStudentDetailsReport";
+        public const string StudentProgramsCountQuery = "rules.StudentProgramsReport";
+        public const string StudentProgramsStudentDetailsReport = "rules.StudentProgramsStudentDetailsReport";
 
         public const string OrgTypeColumnName = "OrgType";
         public const string EdOrgIdColumnName = "EdOrgId";
@@ -32,23 +27,41 @@ namespace ValidationWeb
         public const string FreeReducedColumnName = "FreeReducedCount";
 
         public OrgType OrgType { get; set; }
+
         public int? EdOrgId { get; set; }
+
         public string LEASchool { get; set; }
+
         public int DistinctEnrollmentCount { get; set; }
+
         public int DistinctDemographicsCount { get; set; }
+
         public int DemographicsCount { get; set; }
+
         public int ADParentCount { get; set; }
+
         public int IndianNativeCount { get; set; }
+
         public int MigrantCount { get; set; }
+
         public int HomelessCount { get; set; }
+
         public int ImmigrantCount { get; set; }
+
         public int RecentEnglishCount { get; set; }
+
         public int SLIFECount { get; set; }
+
         public int EnglishLearnerIdentifiedCount { get; set; }
+
         public int EnglishLearnerServedCount { get; set; }
+
         public int IndependentStudyCount { get; set; }
+
         public int Section504Count { get; set; }
+
         public int Title1PartACount { get; set; }
+
         public int FreeReducedCount { get; set; }
     }
 }

@@ -9,6 +9,7 @@ using System.Web.Mvc;
 using System.Web.Mvc.Filters;
 using ValidationWeb.Services;
 using MoreLinq;
+using ValidationWeb.Database;
 
 namespace ValidationWeb
 {
@@ -95,7 +96,11 @@ namespace ValidationWeb
         /// <summary>
         /// Goal: set the HttpContext.User with a System.Security.Principal.IPrincipal
         /// </summary>
-        /// <param name="filterContext"></param>
+        /// <param name="filterContext">The <see cref="AuthenticationContext"/></param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage(
+            "Microsoft.Security", 
+            "CA2100:Review SQL queries for security vulnerabilities",
+            Justification = "Values are read from the config file")]
         public void OnAuthentication(AuthenticationContext filterContext)
         {
             if (IsAnonymousAction(filterContext.ActionDescriptor))
@@ -248,8 +253,8 @@ namespace ValidationWeb
                                 });
                         }
                     }
-                    ssoReader.Close();
-                    ssoDatabaseConnection.Close();
+                    //ssoReader.Close();
+                    //ssoDatabaseConnection.Close();
                 }
             }
             catch(Exception ex)

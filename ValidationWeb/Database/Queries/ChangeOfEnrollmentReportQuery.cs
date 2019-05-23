@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
-namespace ValidationWeb
+namespace ValidationWeb.Database.Queries
 {
     public class ChangeOfEnrollmentReportQuery
     {
@@ -28,7 +25,7 @@ namespace ValidationWeb
         public const string StudentMiddleNameColumnName = "StudentMiddleName";
         public const string StudentBirthDateColumnName = "StudentBirthDate";
         
-        public static string ChangeOfEnrollmentQuery = "rules.ChangeOfEnrollment";
+        public const string ChangeOfEnrollmentQuery = "rules.ChangeOfEnrollment";
 
         public bool IsCurrentDistrict { get; set; }
 

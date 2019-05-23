@@ -1,9 +1,9 @@
-﻿namespace ValidationWeb
+﻿using System.Collections.Generic;
+using ValidationWeb.Database.Queries;
+using ValidationWeb.Filters;
+
+namespace ValidationWeb.ViewModels
 {
-    using System.Collections.Generic;
-
-    using ValidationWeb.Filters;
-
     public class OdsDemographicsReportViewModel
     {
         public ValidationPortalIdentity User { get; set; }

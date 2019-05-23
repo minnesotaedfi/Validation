@@ -1,4 +1,6 @@
-﻿namespace ValidationWeb.DataCache
+﻿using ValidationWeb.Database.Queries;
+
+namespace ValidationWeb.DataCache
 {
     using System;
     using System.Collections.Generic;

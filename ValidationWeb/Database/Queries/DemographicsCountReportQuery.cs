@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace ValidationWeb
+﻿namespace ValidationWeb.Database.Queries
 {
     public class DemographicsCountReportQuery
     {
-        public static string DistrictAncestryRaceCountsQuery = "rules.RaceAEOReport";
-        public static string DistrictAncestryRaceCountsStudentDetailsQuery = "rules.RaceAEOStudentDetailsReport";
+        public const string DistrictAncestryRaceCountsQuery = "rules.RaceAEOReport";
+        public const string DistrictAncestryRaceCountsStudentDetailsQuery = "rules.RaceAEOStudentDetailsReport";
         public const string OrgTypeColumnName = "OrgType";
         public const string EdOrgIdColumnName = "EdOrgId";
         public const string LEASchoolColumnName = "SchoolName";
@@ -18,18 +13,17 @@ namespace ValidationWeb
         public const string AncestryGivenCountColumnName = "AncestryGivenCount";
 
         public OrgType OrgType { get; set; }
-        public int? EdOrgId { get; set; }
-        public string LEASchool { get; set; }
-        public int EnrollmentCount { get; set; }
-        public int DemographicsCount { get; set; }
-        public int RaceGivenCount { get; set; }
-        public int AncestryGivenCount { get; set; }
-    }
 
-    public enum OrgType
-    {
-        School = 100,
-        District = 200,
-        State = 300
+        public int? EdOrgId { get; set; }
+
+        public string LEASchool { get; set; }
+
+        public int EnrollmentCount { get; set; }
+
+        public int DemographicsCount { get; set; }
+
+        public int RaceGivenCount { get; set; }
+
+        public int AncestryGivenCount { get; set; }
     }
 }

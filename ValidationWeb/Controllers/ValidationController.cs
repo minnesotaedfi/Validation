@@ -1,20 +1,18 @@
-﻿using System;
+﻿using Engine.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
-using Engine.Models;
 using ValidationWeb.Filters;
 using ValidationWeb.Services;
 
 namespace ValidationWeb
 {
-    using System.IO;
-    using System.Web.Hosting;
-
     using CsvHelper;
-
     using DataTables.AspNet.Core;
     using DataTables.AspNet.Mvc5;
+    using System.IO;
+    using System.Web.Hosting;
     [PortalAuthorize(Roles = "DistrictUser,HelpDesk")]
     public class ValidationController : Controller
     {
@@ -250,12 +248,12 @@ namespace ValidationWeb
             // todo: all security
 
             ValidationReportSummary summary = _rulesEngineService.SetupValidationRun(
-                submissionCycle, 
+                submissionCycle,
                 submissionCycle.CollectionId);
 
             HostingEnvironment.QueueBackgroundWorkItem(
                 cancellationToken => _rulesEngineService.RunValidationAsync(
-                    submissionCycle, 
+                    submissionCycle,
                     summary.ValidationReportSummaryId));
 
             return Json(summary);
@@ -263,17 +261,15 @@ namespace ValidationWeb
 
         protected byte[] WriteCsvToMemory<T>(IEnumerable<T> records)
         {
-            using (var memoryStream = new MemoryStream())
+            var memoryStream = new MemoryStream();
+            var streamWriter = new StreamWriter(memoryStream);
+
+            CsvWriter csvWriter = null;
+            using (csvWriter = new CsvWriter(streamWriter))
             {
-                using (var streamWriter = new StreamWriter(memoryStream))
-                {
-                    using (var csvWriter = new CsvWriter(streamWriter))
-                    {
-                        csvWriter.WriteRecords(records);
-                        streamWriter.Flush();
-                        return memoryStream.ToArray();
-                    }
-                }
+                csvWriter.WriteRecords(records);
+                streamWriter.Flush();
+                return memoryStream.ToArray();
             }
         }
 
