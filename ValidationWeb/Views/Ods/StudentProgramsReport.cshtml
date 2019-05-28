@@ -1,9 +1,9 @@
-﻿@using ValidationWeb.Filters
+﻿@using ValidationWeb.Models
 @using ValidationWeb.Utility
 @model OdsStudentProgramsReportViewModel
 @{
     var identity = (ValidationPortalIdentity)User.Identity;
-    var appRoleName = identity.AppRole.Name;
+    // var appRoleName = identity.AppRole.Name;
     var permissions = User.Identity.GetViewPermissions(identity.AppRole);
 }
 
@@ -83,14 +83,14 @@
                               "StudentProgramsReport",
                               "Ods",
                               new
-                                {
-                                    schoolId = "_EdOrgId_",
-                                    drillDownColumnIndex = "_DrillDownIndex_",
-                                    isStateMode = Model.IsStateMode,
-                                    districtToDisplay = "_EdOrgId_",
-                                    isStudentDrillDown = true,
-                                    orgType = "_OrgType_"
-                                }))" aria-label="_Label_">_LinkText_</a>';
+                              {
+                                  schoolId = "_EdOrgId_",
+                                  drillDownColumnIndex = "_DrillDownIndex_",
+                                  isStateMode = Model.IsStateMode,
+                                  districtToDisplay = "_EdOrgId_",
+                                  isStudentDrillDown = true,
+                                  orgType = "_OrgType_"
+                              }))" aria-label="_Label_">_LinkText_</a>';
 
             function createDrillDownLink(edOrgId, drillDownIndex, orgType, label, linkText) {
                 return drillDownLinkTemplate
@@ -106,7 +106,7 @@
                               "StudentProgramsReport",
                               "Ods",
                               new
-                                { isStateMode = false, districtToDisplay = "_EdOrgId_" }))" class="show-data-loading">_EdOrgId_</a>';
+                              { isStateMode = false, districtToDisplay = "_EdOrgId_" }))" class="show-data-loading">_EdOrgId_</a>';
 
             function createStateLink(edOrgId) {
                 return stateLinkTemplate.replace(/_EdOrgId_/g, edOrgId);

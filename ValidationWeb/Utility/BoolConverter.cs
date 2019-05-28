@@ -1,9 +1,8 @@
-﻿namespace ValidationWeb
+﻿using System;
+using Newtonsoft.Json;
+
+namespace ValidationWeb.Utility
 {
-    using System;
-
-    using Newtonsoft.Json;
-
     public class BoolConverter : JsonConverter
     {
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)

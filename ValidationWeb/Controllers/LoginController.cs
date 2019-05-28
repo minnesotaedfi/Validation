@@ -1,16 +1,14 @@
-﻿namespace ValidationWeb.Controllers
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Web;
+using System.Web.Mvc;
+using System.Web.UI;
+using ValidationWeb.Services.Interfaces;
+
+namespace ValidationWeb.Controllers
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Data;
-    using System.Data.SqlClient;
-    using System.Web;
-    using System.Web.Mvc;
-    using System.Web.Security;
-    using System.Web.UI;
-
-    using ValidationWeb.Services;
-
     public class LoginController : Controller
     {
         public LoginController(IConfigurationValues configurationValues)
@@ -81,7 +79,14 @@
             return RedirectToAction(
                 "Index", 
                 "Login", 
-                new { returnUrl = Url.Action("Index", "Home", new { }, Request.Url.Scheme) });
+                new
+                {
+                    returnUrl = Url.Action(
+                        "Index", 
+                        "Home", 
+                        new { }, 
+                        Request.Url?.Scheme)
+                });
         }
 
         [AllowAnonymous]

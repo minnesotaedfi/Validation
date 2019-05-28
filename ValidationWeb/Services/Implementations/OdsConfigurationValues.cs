@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Web;
+﻿using System.Configuration;
+using ValidationWeb.Services.Interfaces;
 
-namespace ValidationWeb.Services
+namespace ValidationWeb.Services.Implementations
 {
     public class OdsConfigurationValues : IOdsConfigurationValues
     {

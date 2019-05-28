@@ -28,7 +28,7 @@
     </parameter>
     <parameter
         name="AuthenticationServerRedirectUrl"
-        description="URL to sign in with the Single Sign On autorization server. Redirect users here when not authenticated."
+        description="URL to sign in with the Single Sign On authorization server. Redirect users here when not authenticated."
         defaultValue="http://www.wearedoubleline.com/">
         <parameterEntry
               kind="XmlFile"

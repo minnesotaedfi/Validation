@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Http;
 
-namespace ValidationWeb
+namespace ValidationWeb.Filters
 {
     // Copied from Microsoft example.
+
     /// <summary>
     /// Copied from a Microsoft example, this code adds a request for the user or User Agent to provide credentials
     /// to request the resource that was unauthorized by adding the WWW-Authenticate Header to the response.
@@ -32,8 +30,8 @@ namespace ValidationWeb
         /// Prompts the browser's user or User Agent to provide credentials to access the resource that was requested and unauthorized by 
         /// adding the WWW-Authenticate Header to the response.
         /// </summary>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
+        /// <param name="cancellationToken">cancellation token</param>
+        /// <returns><see cref="HttpResponseMessage"/></returns>
         public async Task<HttpResponseMessage> ExecuteAsync(CancellationToken cancellationToken)
         {
             HttpResponseMessage response = await InnerResult.ExecuteAsync(cancellationToken);
@@ -41,7 +39,7 @@ namespace ValidationWeb
             if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
                 // Only add one challenge per authentication scheme.
-                if (!response.Headers.WwwAuthenticate.Any((h) => h.Scheme == Challenge.Scheme))
+                if (response.Headers.WwwAuthenticate.All(h => h.Scheme != Challenge.Scheme))
                 {
                     response.Headers.WwwAuthenticate.Add(Challenge);
                 }

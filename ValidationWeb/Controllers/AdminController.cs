@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using ValidationWeb.Filters;
-using ValidationWeb.Services;
+using ValidationWeb.Models;
+using ValidationWeb.Services.Interfaces;
+using ValidationWeb.Utility;
+using ValidationWeb.ViewModels;
 
-namespace ValidationWeb
+namespace ValidationWeb.Controllers
 {
-    using ValidationWeb.Utility;
-
     [PortalAuthorize(Roles = "Administrator")]
     public class AdminController : Controller
     {
@@ -50,8 +50,8 @@ namespace ValidationWeb
             };
 
             // Check user authorization, if user is admin then then return admin page if not return the error page.
-            return model.AppUserSession.UserIdentity.GetViewPermissions(model.AppUserSession.UserIdentity.AppRole).CanAccessAdminFeatures 
-                       ? View(model) 
+            return model.AppUserSession.UserIdentity.GetViewPermissions(model.AppUserSession.UserIdentity.AppRole).CanAccessAdminFeatures
+                       ? View(model)
                        : View("Error");
         }
 
@@ -121,7 +121,6 @@ namespace ValidationWeb
                 try
                 {
                     _submissionCycleService.SaveSubmissionCycle(submissionCycle);
-                    var submissionCycles = _submissionCycleService.GetSubmissionCycles();
                     return RedirectToAction("Index", new { tab = "submissioncycles" });
                 }
                 catch (Exception ex)
@@ -153,10 +152,14 @@ namespace ValidationWeb
             {
                 try
                 {
-                    _announcementService.SaveAnnouncement(announcement.Id, announcement.Priority, announcement.Message,
+                    _announcementService.SaveAnnouncement(
+                        announcement.Id, 
+                        announcement.Priority, 
+                        announcement.Message,
                         announcement.ContactInfo,
-                        announcement.LinkUrl, announcement.Expiration);
-                    var announcements = _announcementService.GetAnnouncements();
+                        announcement.LinkUrl, 
+                        announcement.Expiration);
+
                     return RedirectToAction("Index", new { tab = "announcements" });
                 }
                 catch (Exception ex)

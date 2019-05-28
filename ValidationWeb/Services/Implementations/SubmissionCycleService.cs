@@ -1,13 +1,15 @@
-﻿using ValidationWeb.Database;
+﻿using System;
+using System.Collections.Generic;
+using System.Data.Entity.Infrastructure;
+using System.Linq;
+using System.Web.Mvc;
+using ValidationWeb.Database;
+using ValidationWeb.Models;
+using ValidationWeb.Services.Interfaces;
+using ValidationWeb.Utility;
 
-namespace ValidationWeb.Services
+namespace ValidationWeb.Services.Implementations
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Data.Entity.Infrastructure;
-    using System.Linq;
-    using System.Web.Mvc;
-
     public class SubmissionCycleService : ISubmissionCycleService
     {
 
@@ -50,7 +52,6 @@ namespace ValidationWeb.Services
             {
                 var submissionCyclesOpenToday =
                     validationPortalDataContext.SubmissionCycles
-                        .ToList()
                         .Where(s => 
                             s.StartDate.Date <= DateTime.Now.Date && 
                             s.EndDate.Date >= DateTime.Now.Date);
@@ -117,7 +118,7 @@ namespace ValidationWeb.Services
                 {
                     if (submissionCycle == null)
                     {
-                        throw new Exception($"Attempted to save a null SubmissionCycle.");
+                        throw new Exception("Attempted to save a null SubmissionCycle.");
                     }
 
                     if (submissionCycle.Id == 0)

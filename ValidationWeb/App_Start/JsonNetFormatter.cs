@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
-using System.Net.Http.Formatting;
-using System.Threading.Tasks;
 using System.IO;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Formatting;
+using System.Net.Http.Headers;
+using System.Threading;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
-using System.Net.Http;
-using System.Threading;
 
 namespace ValidationWeb
 {
@@ -19,62 +20,102 @@ namespace ValidationWeb
     {
         public JsonNetFormatter()
         {
-            SupportedMediaTypes.Add(new System.Net.Http.Headers.MediaTypeHeaderValue("application/json"));
+            SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/json"));
         }
 
         public override bool CanWriteType(Type type) => true;
 
         public override bool CanReadType(Type type) => true;
 
-        public override Task<object> ReadFromStreamAsync(Type type, Stream stream, HttpContent content, IFormatterLogger formatterLogger)
+        public override Task<object> ReadFromStreamAsync(
+            Type type,
+            Stream stream,
+            HttpContent content,
+            IFormatterLogger formatterLogger)
         {
             var token = new CancellationToken();
-            return ReadFromStreamAsync(type, stream, content, formatterLogger, token);
+
+            return ReadFromStreamAsync(
+                type,
+                stream,
+                content,
+                formatterLogger,
+                token);
         }
 
-        public override Task<object> ReadFromStreamAsync(Type type, Stream stream, HttpContent content, IFormatterLogger formatterLogger, CancellationToken token)
+        public override Task<object> ReadFromStreamAsync(
+            Type type, 
+            Stream stream, 
+            HttpContent content, 
+            IFormatterLogger formatterLogger, 
+            CancellationToken token)
         {
-            var task = Task<object>.Factory.StartNew(() =>
-            {
-                var sr = new StreamReader(stream);
-                var jreader = new JsonTextReader(sr);
+            var task = Task<object>.Factory.StartNew(
+                () =>
+                {
+                    var sr = new StreamReader(stream);
+                    var reader = new JsonTextReader(sr);
 
-                var ser = new JsonSerializer();
-                ser.Converters.Add(new IsoDateTimeConverter());
+                    var ser = new JsonSerializer();
+                    ser.Converters.Add(new IsoDateTimeConverter());
 
-                object val = ser.Deserialize(jreader, type);
-                return val;
-            });
+                    object val = ser.Deserialize(reader, type);
+                    return val;
+                }, 
+                token);
 
             return task;
         }
 
-        public override System.Threading.Tasks.Task WriteToStreamAsync(Type type, object value, Stream stream, HttpContent content, TransportContext transportContext)
+        public override Task WriteToStreamAsync(
+            Type type, 
+            object value, 
+            Stream stream,
+            HttpContent content,
+            TransportContext transportContext)
         {
             var token = new CancellationToken();
-            return WriteToStreamAsync(type, value, stream, content, transportContext, token);
+            return WriteToStreamAsync(
+                type, 
+                value, 
+                stream, 
+                content, 
+                transportContext, 
+                token);
         }
 
-        public override Task WriteToStreamAsync(Type type, object value, Stream stream, HttpContent content, TransportContext transportContext, CancellationToken token)
+        public override Task WriteToStreamAsync(
+            Type type,
+            object value,
+            Stream stream,
+            HttpContent content,
+            TransportContext transportContext,
+            CancellationToken token)
         {
-            var task = Task.Factory.StartNew(() =>
-            {
-                var settings = new JsonSerializerSettings()
+            var task = Task.Factory.StartNew(
+                () =>
                 {
-                    ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                    Converters = new List<JsonConverter> { new StringEnumConverter { NamingStrategy = new CamelCaseNamingStrategy() }, new IsoDateTimeConverter() },
-                    NullValueHandling = NullValueHandling.Ignore,
-                    Formatting = Formatting.Indented,
-                    TypeNameHandling = TypeNameHandling.None,
-                    ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
-                };
+                    var settings = new JsonSerializerSettings()
+                    {
+                        ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                        Converters = new List<JsonConverter>
+                        {
+                            new StringEnumConverter { NamingStrategy = new CamelCaseNamingStrategy() }, 
+                            new IsoDateTimeConverter()
+                        },
+                        NullValueHandling = NullValueHandling.Ignore,
+                        Formatting = Formatting.Indented,
+                        TypeNameHandling = TypeNameHandling.None,
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                    };
 
-                string json = JsonConvert.SerializeObject(value, Formatting.Indented, settings);
+                    string json = JsonConvert.SerializeObject(value, Formatting.Indented, settings);
 
-                byte[] buf = System.Text.Encoding.Default.GetBytes(json);
-                stream.Write(buf, 0, buf.Length);
-                stream.Flush();
-            });
+                    byte[] buf = System.Text.Encoding.Default.GetBytes(json);
+                    stream.Write(buf, 0, buf.Length);
+                    stream.Flush();
+                },
+                token);
 
             return task;
         }

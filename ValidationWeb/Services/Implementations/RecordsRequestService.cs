@@ -1,15 +1,14 @@
-﻿using ValidationWeb.Database;
+﻿using System;
+using System.Collections.Generic;
+using System.Data.Entity.Infrastructure;
+using System.Linq;
+using ValidationWeb.Database;
+using ValidationWeb.Models;
+using ValidationWeb.Services.Interfaces;
+using ValidationWeb.Utility;
 
 namespace ValidationWeb.Services.Implementations
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Data.Entity.Infrastructure;
-    using System.Linq;
-
-    using ValidationWeb.Models;
-    using ValidationWeb.Services.Interfaces;
-
     public class RecordsRequestService : IRecordsRequestService
     {
         public readonly ILoggingService LoggingService;
@@ -139,9 +138,6 @@ namespace ValidationWeb.Services.Implementations
                     {
                         throw new InvalidOperationException($"Unable to find record request for student ID {formData.StudentId}");
                     }
-
-                    // studentRecord.RespondingDistrict = formData.RespondingDistrictId;
-                    // studentRecord.RespondingUser = formData.RespondingUserId;
 
                     var responses = new List<KeyValuePair<RecordsRequestDetail, bool>>
                                     {

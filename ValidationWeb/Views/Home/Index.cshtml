@@ -89,7 +89,7 @@
             @foreach (var announcement in Model.Announcements.OrderBy(a => a.Priority))
             {
                 var cardHeader = announcement.IsEmergency ? "Urgent!" : "Announcement";
-                var announcementParagraphs = (announcement.Message ?? string.Empty).Replace("\r", "").Split(new char[] { '\n' });
+                var announcementParagraphs = (announcement.Message ?? string.Empty).Replace("\r", "").Split('\n');
                 var cardColor = announcement.IsEmergency ? "danger-red" : "accent-minnesota-light-gray";
                 var cardId = $"card{rnd.Next(int.MaxValue)}";
 

@@ -1,9 +1,8 @@
-﻿namespace ValidationWeb.Utility
+﻿using System.Security.Principal;
+using ValidationWeb.Models;
+
+namespace ValidationWeb.Utility
 {
-    using System.Security.Principal;
-
-    using ValidationWeb.Filters;
-
     /// <summary>
     /// Extensions for IIdentity
     /// </summary>

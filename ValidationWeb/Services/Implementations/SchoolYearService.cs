@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
-using System.Web;
 using ValidationWeb.Database;
-using static System.Int32;
+using ValidationWeb.Models;
+using ValidationWeb.Services.Interfaces;
 
-namespace ValidationWeb.Services
+namespace ValidationWeb.Services.Implementations
 {
-    using System.Data.Entity.Infrastructure;
-
     public class SchoolYearService : ISchoolYearService
     {
 
@@ -92,7 +91,7 @@ namespace ValidationWeb.Services
         public bool ValidateYears(string startDate, string endDate)
         {
             int startDateCheck;
-            var didParse = TryParse(startDate, out startDateCheck);
+            var didParse = Int32.TryParse(startDate, out startDateCheck);
 
             if (!didParse)
             {

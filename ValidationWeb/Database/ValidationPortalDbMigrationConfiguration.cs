@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
-using ValidationWeb.Database;
-using ValidationWeb.Services;
+using ValidationWeb.Models;
+using ValidationWeb.Services.Implementations;
+using ValidationWeb.Services.Interfaces;
 
-namespace ValidationWeb
+namespace ValidationWeb.Database
 {
-    using ValidationWeb.Services.Implementations;
-
     internal sealed class ValidationPortalDbMigrationConfiguration : DbMigrationsConfiguration<ValidationPortalDbContext>
     {
         private readonly IConfigurationValues _config = new AppSettingsFileConfigurationValues();
@@ -20,7 +18,7 @@ namespace ValidationWeb
             ContextKey = "ValidationWeb.ValidationPortalDbContext";
         }
 
-        public static EdOrgTypeLookup[] EdOrgTypeLookups = new[]
+        public static EdOrgTypeLookup[] EdOrgTypeLookups = 
         {
             new EdOrgTypeLookup { Id = (int)EdOrgType.School, CodeValue = "School", Description = "School" },
             new EdOrgTypeLookup { Id = (int)EdOrgType.District, CodeValue = "District", Description = "District" },
@@ -53,7 +51,6 @@ namespace ValidationWeb
             context.EdOrgTypeLookup.AddOrUpdate(EdOrgTypeLookups);
             context.ErrorSeverityLookup.AddOrUpdate(ErrorSeverityLookups);
             
-            // why would it be < 0 ? todo 
             if (_config.SeedSchoolYears != null && !context.SchoolYears.Any()) 
             {
                 foreach (var schoolYearToSeedIfMissing in _config.SeedSchoolYears)

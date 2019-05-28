@@ -1,11 +1,12 @@
-﻿namespace ValidationWeb.Services.Implementations
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Configuration;
-    using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Collections.Generic;
+using System.Configuration;
+using ValidationWeb.Models;
+using ValidationWeb.Services.Interfaces;
 
-    internal class AppSettingsFileConfigurationValues : IConfigurationValues
+namespace ValidationWeb.Services.Implementations
+{
+    public class AppSettingsFileConfigurationValues : IConfigurationValues
     {
         private static readonly string _appId;
         private static readonly string _authenticationServerRedirectUrl;
@@ -21,13 +22,13 @@
         
         static AppSettingsFileConfigurationValues()
         {
-            _appId = ConfigurationManager.AppSettings["SsoAppId"]?.ToString();
-            _authenticationServerRedirectUrl = ConfigurationManager.AppSettings["AuthenticationServerRedirectUrl"]?.ToString();
-            _authorizationStoredProcedureName = ConfigurationManager.AppSettings["AuthorizationStoredProcedureName"]?.ToString();
+            _appId = ConfigurationManager.AppSettings["SsoAppId"];
+            _authenticationServerRedirectUrl = ConfigurationManager.AppSettings["AuthenticationServerRedirectUrl"];
+            _authorizationStoredProcedureName = ConfigurationManager.AppSettings["AuthorizationStoredProcedureName"];
             _singleSignOnDatabaseConnectionString = ConfigurationManager.ConnectionStrings["SingleSignOnDatabase"]?.ConnectionString;
             _useFakeViewModelData = ConfigurationManager.AppSettings["UseFakeViewModelData"] == "true";
             _isSsoSimulated = ConfigurationManager.AppSettings["UseSimulatedSSO"] == "true";
-            _ssoSimulatedUserName = ConfigurationManager.AppSettings["SimulatedUserName"]?.ToString();
+            _ssoSimulatedUserName = ConfigurationManager.AppSettings["SimulatedUserName"];
             if (!int.TryParse(ConfigurationManager.AppSettings["SessionTimeoutInMinutes"], out _sessionTimeoutInMinutes))
             {
                 _sessionTimeoutInMinutes = 30; // Default to 30 minutes.
@@ -36,7 +37,7 @@
             var seedSchoolYears = ConfigurationManager.AppSettings["SeedSchoolYears"];
             if (!string.IsNullOrWhiteSpace(seedSchoolYears))
             {
-                var seedSchoolYearsCandidates = seedSchoolYears.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                var seedSchoolYearsCandidates = seedSchoolYears.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
                 foreach(var schoolYearCandidate in seedSchoolYearsCandidates)
                 {
                     int schoolYearInteger;

@@ -1,9 +1,8 @@
-﻿@using ValidationWeb.Filters
+﻿@using ValidationWeb.Models
 @using ValidationWeb.Utility
 @model ValidationReportsViewModel
 @{
     var identity = (ValidationPortalIdentity)User.Identity;
-    var appRoleName = identity.AppRole.Name;
     var permissions = User.Identity.GetViewPermissions(identity.AppRole);
 }
 
@@ -28,7 +27,7 @@
                             <div class="modal-body">
                                 <div class="row">
                                     <div class="col-md-10">
-                                        <label for="collectionIdSelect">Select a collection of rules to validate:</label>
+                                        <label for="cycleIdSelect">Select a collection of rules to validate:</label>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -36,11 +35,10 @@
                                         <select id="cycleIdSelect" name="cycleIdSelect" class="form-control">
                                             @foreach (var cycle in Model.SubmissionCycles)
                                             {
-                                                var schoolYearAndCollectionName = "";
                                                 var coll = Model.RulesCollections.FirstOrDefault(c => c.CollectionId == cycle.CollectionId);
                                                 if (coll != null)
                                                 {
-                                                    schoolYearAndCollectionName = $"{cycle.SchoolYearDisplay} / {coll.ToFriendlyName()}";
+                                                    var schoolYearAndCollectionName = $"{cycle.SchoolYearDisplay} / {coll.ToFriendlyName()}";
                                                     <option value="@(cycle.Id)"
                                                             @if (cycle.SchoolYearId == Model.FocusedSchoolYearId) { <text> selected </text> }>
                                                         @(schoolYearAndCollectionName)

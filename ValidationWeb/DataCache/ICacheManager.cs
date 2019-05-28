@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using ValidationWeb.Database.Queries;
-using ValidationWeb.Services;
+using ValidationWeb.Services.Interfaces;
 
 namespace ValidationWeb.DataCache
 {

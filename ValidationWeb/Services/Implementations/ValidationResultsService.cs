@@ -1,30 +1,31 @@
-﻿using ValidationWeb.Database;
+﻿using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
+using System.Linq;
+using ValidationWeb.Database;
+using ValidationWeb.Models;
+using ValidationWeb.Services.Interfaces;
 
-namespace ValidationWeb.Services
+namespace ValidationWeb.Services.Implementations
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Data.Entity;
-    using System.Data.Entity.Infrastructure;
-    using System.Linq;
-
     public class ValidationResultsService : IValidationResultsService
     {
-        private ErrorSeverityLookup anError = ValidationPortalDbMigrationConfiguration.ErrorSeverityLookups.First(sev => sev.CodeValue == ErrorSeverity.Error.ToString());
-        private ErrorSeverityLookup aWarning = ValidationPortalDbMigrationConfiguration.ErrorSeverityLookups.First(sev => sev.CodeValue == ErrorSeverity.Warning.ToString());
+        //private ErrorSeverityLookup anError = ValidationPortalDbMigrationConfiguration.ErrorSeverityLookups.First(sev => sev.CodeValue == ErrorSeverity.Error.ToString());
+        //private ErrorSeverityLookup aWarning = ValidationPortalDbMigrationConfiguration.ErrorSeverityLookups.First(sev => sev.CodeValue == ErrorSeverity.Warning.ToString());
         
-        protected readonly ILoggingService _loggingService;
-
         protected const int MaxPageSize = 10000;
 
         protected const int AutocompleteSuggestionCount = 8;
 
-        protected IDbContextFactory<ValidationPortalDbContext> DbContextFactory;
+        protected readonly ILoggingService LoggingService;
+        
+        protected readonly IDbContextFactory<ValidationPortalDbContext> DbContextFactory;
         
         public ValidationResultsService(ILoggingService loggingService, IDbContextFactory<ValidationPortalDbContext> dbContextFactory)
         {
 
-            _loggingService = loggingService;
+            LoggingService = loggingService;
             DbContextFactory = dbContextFactory;
 
 #if DEBUG
@@ -35,23 +36,25 @@ namespace ValidationWeb.Services
 
         public ValidationReportDetails GetValidationReportDetails(int validationReportId)
         {
-            _loggingService.LogDebugMessage($"Retrieving Validation Report Details for report with ID number: {validationReportId.ToString()}");
+            LoggingService.LogDebugMessage($"Retrieving Validation Report Details for report with ID number: {validationReportId.ToString()}");
             using (var portalDbContext = DbContextFactory.Create())
             {
                 var reportDetails = portalDbContext.ValidationReportDetails
                     .Include(x => x.ValidationReportSummary)
                     .Include(x => x.ValidationReportSummary.SchoolYear)
                     .FirstOrDefault(x => x.ValidationReportSummaryId == validationReportId);
-                
-                reportDetails.CompletedWhen = reportDetails.CompletedWhen.HasValue
-                                                  ? reportDetails.CompletedWhen.Value.ToLocalTime() // why!? 
-                                                  : reportDetails.CompletedWhen;
-                
-                reportDetails.ValidationReportSummary.RequestedWhen =
-                    reportDetails.ValidationReportSummary.RequestedWhen.ToLocalTime();
 
-                _loggingService.LogDebugMessage(
-                    $"Successfully retrieved Validation Report Details for report with ID number: {validationReportId.ToString()}");
+                if (reportDetails != null)
+                {
+                    reportDetails.CompletedWhen =
+                        reportDetails.CompletedWhen?.ToLocalTime() ?? reportDetails.CompletedWhen;
+
+                    reportDetails.ValidationReportSummary.RequestedWhen =
+                        reportDetails.ValidationReportSummary.RequestedWhen.ToLocalTime();
+
+                    LoggingService.LogDebugMessage(
+                        $"Successfully retrieved Validation Report Details for report with ID number: {validationReportId.ToString()}");
+                }
 
                 return reportDetails;
             }
@@ -59,23 +62,24 @@ namespace ValidationWeb.Services
 
         public List<ValidationReportSummary> GetValidationReportSummaries(int edOrgId)
         {
-            _loggingService.LogDebugMessage($"Retrieving a list of Validation Reports for the Ed Org ID number: {edOrgId.ToString()}");
+            LoggingService.LogDebugMessage($"Retrieving a list of Validation Reports for the Ed Org ID number: {edOrgId.ToString()}");
             using (var portalDbContext = DbContextFactory.Create())
             {
                 var reportSummaryList = portalDbContext.ValidationReportSummaries
-                    .Where(vrs => vrs.EdOrgId == edOrgId)
+                    .Where(x => x.EdOrgId == edOrgId)
                     .Include(x => x.SchoolYear)
                     .ToList();
 
                 reportSummaryList.ForEach(
-                    rsum =>
+                    x =>
                         {
-                            rsum.CompletedWhen = rsum.CompletedWhen?.ToLocalTime();
-                            rsum.RequestedWhen = rsum.RequestedWhen.ToLocalTime();
+                            x.CompletedWhen = x.CompletedWhen?.ToLocalTime();
+                            x.RequestedWhen = x.RequestedWhen.ToLocalTime();
                         });
 
-                _loggingService.LogDebugMessage(
+                LoggingService.LogDebugMessage(
                     $"Successfully retrieved a list of Validation Reports for the Ed Org ID number: {edOrgId.ToString()}");
+
                 return reportSummaryList;
             }
         }
@@ -86,8 +90,8 @@ namespace ValidationWeb.Services
             {
                 // First limit to errors/warnings of one execution of the rules engine.
                 var filteredErrorQuery = portalDbContext.ValidationErrorSummaries
-                    .Include(ves0 => ves0.ErrorEnrollmentDetails).Where(
-                        er0 => er0.ValidationReportDetailsId == filterSpecification.reportDetailsId);
+                    .Include(x => x.ErrorEnrollmentDetails)
+                    .Where(x => x.ValidationReportDetailsId == filterSpecification.reportDetailsId);
 
                 IQueryable<string> autocompleteQuery;
                 switch (filterSpecification.autocompleteColumn)
@@ -196,9 +200,6 @@ namespace ValidationWeb.Services
                                 }
 
                                 break;
-                            default:
-                                // Do nothing
-                                break;
                         }
                     }
                 }
@@ -209,13 +210,12 @@ namespace ValidationWeb.Services
 
                 var sortColumnNames = filterSpecification.sortColumns ?? new string[0];
                 var sortDirections = filterSpecification.sortDirections ?? new string[0];
-                var isDescending = false;
                 var isSecondarySortColumn = false;
                 for (int colIndex = 0; colIndex < sortColumnNames.Length; colIndex++)
                 {
                     // Ascending is the default sort direction
-                    isDescending = (sortDirections.Length > colIndex)
-                                   && (sortDirections[colIndex] ?? String.Empty).ToLowerInvariant().StartsWith("d");
+                    var isDescending = (sortDirections.Length > colIndex)
+                                       && (sortDirections[colIndex] ?? string.Empty).ToLowerInvariant().StartsWith("d");
 
                     switch (sortColumnNames[colIndex])
                     {
@@ -565,15 +565,9 @@ namespace ValidationWeb.Services
 
                 // IMPORTANT! If still unsorted - add default sorting, necessary for LINQ-to-Entities paging to function correctly.
                 // If already sorted, still needs to be secondary-sorted by a UNIQUE field, otherwise rows will be repeated on subsequent pages.
-                if (!isSecondarySortColumn)
-                {
-                    filteredErrorQuery = filteredErrorQuery.OrderBy(er2 => er2.Id);
-                }
-                else
-                {
-                    filteredErrorQuery =
-                        (filteredErrorQuery as IOrderedQueryable<ValidationErrorSummary>).ThenBy(er2 => er2.Id);
-                }
+                filteredErrorQuery = !isSecondarySortColumn 
+                    ? filteredErrorQuery.OrderBy(x => x.Id) 
+                    : ((IOrderedQueryable<ValidationErrorSummary>)filteredErrorQuery).ThenBy(x => x.Id);
 
                 #endregion Sort results
 

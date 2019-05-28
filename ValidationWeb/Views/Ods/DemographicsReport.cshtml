@@ -1,9 +1,9 @@
-﻿@using ValidationWeb.Filters
+﻿@using ValidationWeb.Models
 @using ValidationWeb.Utility
 @model ValidationWeb.ViewModels.OdsDemographicsReportViewModel
 @{
     var identity = (ValidationPortalIdentity)User.Identity;
-    var appRoleName = identity.AppRole.Name;
+   // var appRoleName = identity.AppRole.Name;
     var permissions = User.Identity.GetViewPermissions(identity.AppRole);
 }
 
@@ -28,21 +28,23 @@
     @if (permissions.CanAccessAllDistrictsMode)
     {
         if (Model.IsStateMode)
-         {
-             <div class="col-md-2">
-                 <a href="@Url.Action("DemographicsReport", "Ods", new
-                                                                   {
-                                                                       isStateMode = false
-                                                                   })" class="show-data-loading">View Single District</a></div>
-         }
-         else
-         {
-             <div class="col-md-2">
-                 <a href="@Url.Action("DemographicsReport", "Ods", new
-                                                                   {
-                                                                       isStateMode = true
-                                                                   })" class="show-data-loading">View All Districts</a></div>
-         }
+        {
+            <div class="col-md-2">
+                <a href="@Url.Action("DemographicsReport", "Ods", new
+                         {
+                             isStateMode = false
+                         })" class="show-data-loading">View Single District</a>
+            </div>
+        }
+        else
+        {
+            <div class="col-md-2">
+                <a href="@Url.Action("DemographicsReport", "Ods", new
+                         {
+                             isStateMode = true
+                         })" class="show-data-loading">View All Districts</a>
+            </div>
+        }
     }
 </div>
 <div id="requestedReportContent" class="row">
@@ -54,7 +56,7 @@
         $(function() {
 
             // change to add ariaLabel (basically column name and #)
-                
+
             var drillDownLinkTemplate =
                 '<a href="@Html.Raw(Url.Action("DemographicsReport", "Ods", new { schoolId = "_EdOrgId_", drillDownColumnIndex = "_DrillDownIndex_", isStateMode = Model.IsStateMode, districtToDisplay = "_EdOrgId_", isStudentDrillDown = true, orgType = "_OrgType_" }))"'+
                 ' aria-label="_Label_">_LinkText_</a>';
@@ -111,7 +113,7 @@
                                   isStateMode = Model.IsStateMode,
                               }))",
                     complete: function() {
-                        var dataTable = $($("#reportsTable").DataTable().table().header()); 
+                        var dataTable = $($("#reportsTable").DataTable().table().header());
                         dataTable.find('th').removeAttr('aria-label');
                     }
                 },

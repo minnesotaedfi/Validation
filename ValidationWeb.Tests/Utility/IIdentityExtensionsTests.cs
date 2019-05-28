@@ -1,15 +1,13 @@
-﻿namespace ValidationWeb.Tests.Utility
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Security.Principal;
+using NUnit.Framework;
+using Should;
+using ValidationWeb.Filters;
+using ValidationWeb.Models;
+using ValidationWeb.Utility;
+
+namespace ValidationWeb.Tests.Utility
 {
-    using System.Diagnostics.CodeAnalysis;
-    using System.Security.Principal;
-
-    using NUnit.Framework;
-
-    using Should;
-
-    using ValidationWeb.Filters;
-    using ValidationWeb.Utility;
-
     [TestFixture]
     [ExcludeFromCodeCoverage]
     public class IIdentityExtensionsTests

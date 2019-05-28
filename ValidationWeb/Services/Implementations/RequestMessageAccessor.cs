@@ -1,22 +1,18 @@
-﻿using SimpleInjector;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Web;
+﻿using System.Net.Http;
+using SimpleInjector;
+using ValidationWeb.Services.Interfaces;
 
-namespace ValidationWeb.Services
+namespace ValidationWeb.Services.Implementations
 {
     public sealed class RequestMessageAccessor : IRequestMessageAccessor
     {
-        private readonly Container container;
+        private readonly Container _container;
 
         public RequestMessageAccessor(Container container)
         {
-            this.container = container;
+            _container = container;
         }
 
-        public HttpRequestMessage CurrentMessage =>
-            this.container.GetCurrentHttpRequestMessage();
+        public HttpRequestMessage CurrentMessage => _container.GetCurrentHttpRequestMessage();
     }
 }

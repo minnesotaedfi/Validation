@@ -1,10 +1,10 @@
-﻿namespace ValidationWeb
-{
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
+namespace ValidationWeb.Models
+{
     [Serializable]
     [Table("validation.EdOrg")]
     public class EdOrg
@@ -15,7 +15,7 @@
         }
 
         /// <summary>
-        /// Not database generated - but comes from ODS - comes from assignment via code, or bulk-loading this table.
+        /// Gets or sets Id. Not database generated - but comes from ODS - comes from assignment via code, or bulk-loading this table.
         /// </summary>
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         [Key]
@@ -49,7 +49,7 @@
 
         public bool TryGetEdOrgType(out EdOrgType edOrgType)
         {
-            return Enum.TryParse<EdOrgType>(Type.CodeValue, true, out edOrgType);
+            return Enum.TryParse(Type.CodeValue, true, out edOrgType);
         }
 
         public override bool Equals(object obj)

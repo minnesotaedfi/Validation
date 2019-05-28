@@ -9,7 +9,8 @@ using System.Web;
 using System.Web.Http;
 using System.Web.Http.Filters;
 using ValidationWeb.Database;
-using ValidationWeb.Services;
+using ValidationWeb.Models;
+using ValidationWeb.Services.Interfaces;
 
 namespace ValidationWeb.Filters
 {
@@ -22,7 +23,7 @@ namespace ValidationWeb.Filters
         public const string SessionItemName = "Session";
 
         /// <summary>
-        /// Key property value of the ASP.NET/OWIN-provided HttpCpntext.Session object for the user's session, if it exists. 
+        /// Key property value of the ASP.NET/OWIN-provided HttpContext.Session object for the user's session, if it exists. 
         /// </summary>
         public const string SessionKey = "LoggedInUserSessionKey";
 
@@ -75,8 +76,8 @@ namespace ValidationWeb.Filters
                         using (var dbContext = DbContextFactory.Create())
                         {
                             // Get the user's session from the database.
-                            var sessIdSought = session[SessionKey].ToString();
-                            var currentSession = dbContext.AppUserSessions.FirstOrDefault(sess => sess.Id == sessIdSought);
+                            var sessionIdSought = session[SessionKey].ToString();
+                            var currentSession = dbContext.AppUserSessions.FirstOrDefault(sess => sess.Id == sessionIdSought);
                             if (currentSession != null)
                             {
                                 Logger.LogInfoMessage($"User {userIdentity.FullName} making a request on an existing session.");
@@ -93,9 +94,11 @@ namespace ValidationWeb.Filters
                                 else
                                 {
                                     Logger.LogInfoMessage($"User {userIdentity.FullName} last session was expired and removed from the database during an API call.");
+                                    
                                     // The session has expired from our application's constraint.
                                     dbContext.AppUserSessions.Remove(currentSession);
                                     dbContext.SaveChanges();
+
                                     // And some clean-up ...
                                     IEnumerable<AppUserSession> expiredUserSessions = dbContext.AppUserSessions.Where(s => s.ExpiresUtc < DateTime.UtcNow);
                                     dbContext.AppUserSessions.RemoveRange(expiredUserSessions);

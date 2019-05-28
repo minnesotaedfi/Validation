@@ -1,13 +1,12 @@
-﻿namespace ValidationWeb.ApiControllers
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Web.Http;
+using MoreLinq;
+using ValidationWeb.Models;
+using ValidationWeb.Services.Interfaces;
+
+namespace ValidationWeb.ApiControllers
 {
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Web.Http;
-
-    using MoreLinq;
-
-    using ValidationWeb.Services;
-
     [RoutePrefix("api/validation")]
     public class ValidationController : ApiController
     {

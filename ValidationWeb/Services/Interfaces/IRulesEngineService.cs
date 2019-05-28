@@ -1,16 +1,14 @@
-﻿using Engine.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Engine.Models;
+using ValidationWeb.Models;
 
-namespace ValidationWeb.Services
+namespace ValidationWeb.Services.Interfaces
 {
-    using System.Threading.Tasks;
-
     public interface IRulesEngineService
     {
         ValidationReportSummary SetupValidationRun(SubmissionCycle submissionCycle, string collectionId);
+
         List<Collection> GetCollections();
 
         void RunValidation(SubmissionCycle submissionCycle, long ruleValidationId);

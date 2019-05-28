@@ -1,12 +1,9 @@
-﻿namespace ValidationWeb
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace ValidationWeb.Models
 {
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
-
-    using ValidationWeb.Filters;
-
     [Table("validation.AppUserSession")]
     public class AppUserSession
     {
@@ -15,7 +12,7 @@
         public string Id { get; set; }
 
         /// <summary>
-        /// Logged in user.
+        /// Gets or sets the Logged in user.
         /// </summary>
         [NotMapped]
         public ValidationPortalIdentity UserIdentity { get; set; }
@@ -23,12 +20,12 @@
         public DateTime ExpiresUtc { get; set; }
 
         /// <summary>
-        /// This is the EdOrg that the user is acting on/viewing ... chosen in the application/website.
+        /// Gets or sets the EdOrg that the user is acting on/viewing ... chosen in the application/website.
         /// </summary>
         public int FocusedEdOrgId { get; set; }
 
         /// <summary>
-        /// This is the SchoolYear that the user is acting on/viewing ... chosen in the application/website.
+        /// Gets or sets SchoolYear that the user is acting on/viewing ... chosen in the application/website.
         /// </summary>
         public int FocusedSchoolYearId { get; set; }
     }

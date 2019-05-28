@@ -2,7 +2,9 @@
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using ValidationWeb.Database;
-using ValidationWeb.Filters;
+using ValidationWeb.Models;
+using ValidationWeb.Services.Interfaces;
+using ValidationWeb.Utility;
 
 namespace ValidationWeb.Services.Implementations
 {
@@ -74,7 +76,7 @@ namespace ValidationWeb.Services.Implementations
 
                     // todo: null ref
                     int? validSchoolYearId = validationPortalDataContext.SchoolYears
-                        .FirstOrDefault(sy => sy.Enabled && sy.Id == newFocusedSchoolYearId).Id;
+                        .FirstOrDefault(sy => sy.Enabled && sy.Id == newFocusedSchoolYearId)?.Id;
 
                     if (sessionObj == null || !validSchoolYearId.HasValue)
                     {
@@ -82,7 +84,7 @@ namespace ValidationWeb.Services.Implementations
                     }
 
                     validationPortalDataContext.AppUserSessions
-                        .First(x => x.Id == sessionObj.Id)  // todo: null ref
+                        .First(x => x.Id == sessionObj.Id)  
                         .FocusedSchoolYearId = validSchoolYearId.Value;
                     
                     validationPortalDataContext.SaveChanges();
@@ -94,6 +96,7 @@ namespace ValidationWeb.Services.Implementations
             }
         }
 
+        // todo: orphan? 
         private void UpdateUserSession(AppUserSession session)
         {
             HttpContextProvider.CurrentHttpContext.Items[SessionItemName] = session;

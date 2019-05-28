@@ -1,16 +1,18 @@
-﻿using ValidationWeb.Database;
+﻿using System;
+using System.Collections.Generic;
+using System.Data.Common;
+using System.Data.Entity.Infrastructure;
+using System.Data.Entity.Migrations;
+using System.Data.SqlClient;
+using System.Linq;
+using ValidationWeb.Database;
 using ValidationWeb.Database.Queries;
+using ValidationWeb.Models;
+using ValidationWeb.Services.Interfaces;
+using ValidationWeb.Utility;
 
-namespace ValidationWeb.Services
+namespace ValidationWeb.Services.Implementations
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Data.Common;
-    using System.Data.Entity.Infrastructure;
-    using System.Data.Entity.Migrations;
-    using System.Data.SqlClient;
-    using System.Linq;
-
     public class EdOrgService : IEdOrgService
     {
         public EdOrgService(
@@ -58,7 +60,7 @@ namespace ValidationWeb.Services
 
                 if (!validationPortalDataContext.EdOrgs.Any())
                 {
-                    LoggingService.LogDebugMessage($"Refreshing EdOrg cache");
+                    LoggingService.LogDebugMessage("Refreshing EdOrg cache");
                     RefreshEdOrgCache(schoolYear);
                 }
 
@@ -84,19 +86,13 @@ namespace ValidationWeb.Services
                     catch (Exception ex)
                     {
                         LoggingService.LogErrorMessage(
-                            $"While reading Ed Org description (ID# {edOrgId}, school year {schoolYear.ToString()}): {ex.ChainInnerExceptionMessages()}");
+                            $"While reading Ed Org description (ID# {edOrgId}, school year {schoolYear}): {ex.ChainInnerExceptionMessages()}");
                     }
                     finally
                     {
                         if (conn != null && conn.State != System.Data.ConnectionState.Closed)
                         {
-                            try
-                            {
-                                conn.Close();
-                            }
-                            catch (Exception)
-                            {
-                            }
+                            conn.Close();
                         }
                     }
                 }
@@ -109,7 +105,7 @@ namespace ValidationWeb.Services
                 }
 
                 throw new ApplicationException(
-                    $"The Ed Org with ID# {edOrgId}, school year {schoolYear.ToString()}, was not found.");
+                    $"The Ed Org with ID# {edOrgId}, school year {schoolYear}, was not found.");
             }
         }
 
@@ -136,11 +132,7 @@ namespace ValidationWeb.Services
                 {
                     if (conn != null && conn.State != System.Data.ConnectionState.Closed)
                     {
-                        try
-                        {
-                            conn.Close();
-                        }
-                        catch (Exception) { }   // todo: never this
+                        conn.Close();
                     }
                 }
             }
@@ -152,7 +144,7 @@ namespace ValidationWeb.Services
                     validationPortalDataContext.EdOrgs.AddOrUpdate(singleEdOrg);
                 }
 
-                LoggingService.LogDebugMessage($"EdOrgCache: saving changes");
+                LoggingService.LogDebugMessage("EdOrgCache: saving changes");
                 validationPortalDataContext.SaveChanges();
             }
         }
@@ -191,19 +183,13 @@ namespace ValidationWeb.Services
                 catch (Exception ex)
                 {
                     LoggingService.LogErrorMessage(
-                        $"While reading Ed Org description (ID# {edOrgId}, school year {schoolYear.ToString()}): {ex.ChainInnerExceptionMessages()}");
+                        $"While reading Ed Org description (ID# {edOrgId}, school year {schoolYear}): {ex.ChainInnerExceptionMessages()}");
                 }
                 finally
                 {
                     if (conn != null && conn.State != System.Data.ConnectionState.Closed)
                     {
-                        try
-                        {
-                            conn.Close();
-                        }
-                        catch (Exception)
-                        {
-                        }
+                        conn.Close();
                     }
                 }
             }

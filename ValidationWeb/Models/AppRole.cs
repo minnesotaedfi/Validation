@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
-namespace ValidationWeb
+namespace ValidationWeb.Models
 {
-    using ValidationWeb.Filters;
-
     /// <summary>
     /// Role information and definitions are stored in the Minnesota SSO database. 
     /// </summary>
@@ -25,6 +20,8 @@ namespace ValidationWeb
         
         public static AppRole RegionUser => CreateAppRole("RegionUser");
         
+        public string Name { get; set; }
+
         public static AppRole CreateAppRole(string name)
         {
             if (string.CompareOrdinal(name, SSORoleNames.Admin) == 0)
@@ -53,14 +50,12 @@ namespace ValidationWeb
         
         public override bool Equals(object obj)
         {
-            return (obj as AppRole)?.Name == this.Name;
+            return (obj as AppRole)?.Name == Name;
         }
 
         public override int GetHashCode()
         {
-            return this.Name.GetHashCode();
+            return Name.GetHashCode();
         }
-        
-        public string Name { get; set; }
     }
 }

@@ -1,5 +1,4 @@
 ﻿@using ValidationWeb.Database.Queries
-@using ValidationWeb.ViewModels
 @model StudentDrillDownViewModel
 
 <div class="row tbmargin10">
@@ -22,7 +21,7 @@
 <div id="requestedReportContent" class="row">
 
     @* this is a terrible hack *@
-    @if (@Model.ReportType == StudentDrillDownReportType.Demographics || Model.ReportType == StudentDrillDownReportType.Programs)
+    @if (Model.ReportType == StudentDrillDownReportType.Demographics || Model.ReportType == StudentDrillDownReportType.Programs)
     {
         <!-- report type demo -->
         @:<div class="col-md-2"></div>
@@ -35,7 +34,7 @@
     }
     @Html.Partial("Partials/StudentDrillDownTable", Model)
 
-    @if (@Model.ReportType == StudentDrillDownReportType.Demographics || Model.ReportType == StudentDrillDownReportType.Programs)
+    @if (Model.ReportType == StudentDrillDownReportType.Demographics || Model.ReportType == StudentDrillDownReportType.Programs)
     {
         @:</div>
         @:<div class="col-md-2"></div>
@@ -122,7 +121,7 @@
                         <text>
                             ,
                             {
-                            @if (@Model.ReportType == StudentDrillDownReportType.EnrolledElsewhere)
+                            @if (Model.ReportType == StudentDrillDownReportType.EnrolledElsewhere)
                             {
                                 <text>
                                     title: 'District School ID',
@@ -168,7 +167,7 @@
                                 }
                             },
                             {
-                            @if (@Model.ReportType == StudentDrillDownReportType.EnrolledElsewhere)
+                            @if (Model.ReportType == StudentDrillDownReportType.EnrolledElsewhere)
                             {
                                 @:title: 'Entry Date',
                             }
@@ -187,7 +186,7 @@
                             }
                             },
                             {
-                            @if (@Model.ReportType == StudentDrillDownReportType.EnrolledElsewhere)
+                            @if (Model.ReportType == StudentDrillDownReportType.EnrolledElsewhere)
                             {
                                 @:title: 'Exit/Withdraw Date',
                             }
@@ -222,7 +221,7 @@
                                 }
                             }</text>
                     }
-                    @if (@Model.ReportType == StudentDrillDownReportType.EnrolledElsewhere)
+                    @if (Model.ReportType == StudentDrillDownReportType.EnrolledElsewhere)
                     {
                         <text>, {
                         title: 'Special Ed Evaluation Status',

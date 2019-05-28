@@ -1,4 +1,4 @@
-﻿@model SubmissionCycle
+﻿@model ValidationWeb.Models.SubmissionCycle
 
         <div id="submissioncycle-modal-content" class="modal-content">
             <div class="modal-header prime-blue white-heavy-text">
@@ -9,9 +9,9 @@
                 @using (Html.BeginForm())
                 {
                     <div class="row" id="submissioncycle-validation-summary-row">
-                        @Html.ValidationSummary(false, "Errors:", new { @class = "alert alert-danger", @style = "width: 100%" })
+                        @Html.ValidationSummary(false, "Errors:", new { @class = "alert alert-danger", style = "width: 100%" })
                     </div>
-                    @Html.HiddenFor(m => m.Id, new { @id = "edit-submissioncycle-id" })
+                    @Html.HiddenFor(m => m.Id, new { id = "edit-submissioncycle-id" })
 
                     <div style="padding: 10px;">
                         <div class="row form-group">
@@ -40,7 +40,7 @@
                                 <label for="edit-submissioncycle-startDate">Start Date:</label>
                             </div>
                             <div class="col-sm-9">
-                                @Html.TextBoxFor(m => m.StartDate, new { id = "edit-submissioncycle-startDate", @class = "form-control", @required = "required" })
+                                @Html.TextBoxFor(m => m.StartDate, new { id = "edit-submissioncycle-startDate", @class = "form-control", required = "required" })
                             </div>
                         </div>
                         <div id="form-row-0" class="row form-group">
@@ -48,7 +48,7 @@
                                 <label for="edit-submissioncycle-endDate">End Date:</label>
                             </div>
                             <div class="col-sm-9">
-                                @Html.TextBoxFor(m => m.EndDate, new { id = "edit-submissioncycle-endDate", @class = "form-control", @required = "required" })
+                                @Html.TextBoxFor(m => m.EndDate, new { id = "edit-submissioncycle-endDate", @class = "form-control", required = "required" })
                             </div>
                         </div>
                         <div class="modal-footer">

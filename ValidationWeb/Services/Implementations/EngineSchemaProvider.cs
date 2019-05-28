@@ -1,7 +1,7 @@
-﻿namespace ValidationWeb.Services
-{
-    using Engine.Language;
+﻿using Engine.Language;
 
+namespace ValidationWeb.Services.Implementations
+{
     public class EngineSchemaProvider : ISchemaProvider
     {
         private static readonly string _ruleEngineResultsSchema;

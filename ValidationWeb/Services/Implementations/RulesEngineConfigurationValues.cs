@@ -1,7 +1,8 @@
-﻿namespace ValidationWeb.Services
-{
-    using System.Configuration;
+﻿using System.Configuration;
+using ValidationWeb.Services.Interfaces;
 
+namespace ValidationWeb.Services.Implementations
+{
     public class RulesEngineConfigurationValues : IRulesEngineConfigurationValues
     {
         private static readonly string _rulesFileFolder;
@@ -10,8 +11,8 @@
 
         static RulesEngineConfigurationValues()
         {
-            _rulesFileFolder = ConfigurationManager.AppSettings["RulesFileFolder"]?.ToString();
-            _ruleEngineResultsSchema = ConfigurationManager.AppSettings["RuleEngineResultsSchema"]?.ToString();
+            _rulesFileFolder = ConfigurationManager.AppSettings["RulesFileFolder"];
+            _ruleEngineResultsSchema = ConfigurationManager.AppSettings["RuleEngineResultsSchema"];
             _ruleEngineResultsConnectionString = ConfigurationManager.ConnectionStrings["ValidationPortalDbContext"]?.ToString();
         }
 

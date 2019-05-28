@@ -1,4 +1,7 @@
 ﻿using ValidationWeb.Database;
+using ValidationWeb.Models;
+using ValidationWeb.Services.Implementations;
+using ValidationWeb.Services.Interfaces;
 
 namespace ValidationWeb.Tests.Services
 {

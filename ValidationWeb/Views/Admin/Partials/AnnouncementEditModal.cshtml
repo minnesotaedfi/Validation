@@ -1,4 +1,4 @@
-﻿@model Announcement
+﻿@model ValidationWeb.Models.Announcement
 
 <div>
     <div id="announcement-modal-content" class="modal-content" tabindex="-1">
@@ -10,15 +10,15 @@
             @using (Html.BeginForm())
             {
                 <div class="row" id="announcement-validation-summary-row">
-                    @Html.ValidationSummary(false, "Errors:", new { @class = "alert alert-danger", @style = "width: 100%" })
+                    @Html.ValidationSummary(false, "Errors:", new { @class = "alert alert-danger", style = "width: 100%" })
                 </div>
-                @Html.HiddenFor(m => m.Id, new { @id = "edit-announcement-id" })
+                @Html.HiddenFor(m => m.Id, new { id = "edit-announcement-id" })
                 <div class="row form-group">
                     <div class="col-lg-3">
                         <label for="edit-priority">Sort Order:</label>
                     </div>
                     <div class="col-lg-9">
-                        @Html.TextBoxFor(m => m.Priority, new { id = "edit-announcement-priority", @pattern = "\\d*", @title = "Priority must be a number", @class = "form-control" })
+                        @Html.TextBoxFor(m => m.Priority, new { id = "edit-announcement-priority", pattern = "\\d*", title = "Priority must be a number", @class = "form-control" })
                     </div>
                 </div>
                 <div class="row form-group">
@@ -31,9 +31,9 @@
                             new
                             {
                                 id = "edit-announcement-message",
-                                @rows = 4,
+                                rows = 4,
                                 @class = "form-control",
-                                @required = "required"
+                                required = "required"
                             })
 
                         @Html.ValidationMessageFor(m => m.Message)
@@ -60,7 +60,7 @@
                         <label for="edit-expiration-date-picker">Expiration: <span style="color: red">*</span></label>
                     </div>
                     <div class="col-sm-9">
-                        @Html.TextBoxFor(m => m.Expiration, new { id = "edit-announcement-expiration", @class = "form-control", @required = "required" })
+                        @Html.TextBoxFor(m => m.Expiration, new { id = "edit-announcement-expiration", @class = "form-control", required = "required" })
                         @Html.ValidationMessageFor(m => m.Expiration)
                     </div>
                 </div>

@@ -1,21 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
+using ValidationWeb.Models;
 
-namespace ValidationWeb
+namespace ValidationWeb.ViewModels
 {
     public class HomeAnnouncementsViewModel
     {
         public IEnumerable<Announcement> Announcements { get; set; }
+
         /// <summary>
-        /// Ed Orgs the use is allowed to see.
+        /// Gets or sets Ed Orgs the use is allowed to see.
         /// </summary>
         public IEnumerable<EdOrg> AuthorizedEdOrgs { get; set; }
+        
         /// <summary>
-        /// Subset of Ed Orgs currently chosen for viewing.
+        /// Gets or sets Subset of Ed Orgs currently chosen for viewing.
         /// </summary>
         public IEnumerable<EdOrg> FilteredEdOrgs { get; set; }
+        
         public IEnumerable<SchoolYear> YearsOpenForDataSubmission { get; set; }
     }
 }

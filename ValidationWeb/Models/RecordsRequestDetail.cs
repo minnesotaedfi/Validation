@@ -1,8 +1,7 @@
-﻿namespace ValidationWeb
-{
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
+namespace ValidationWeb.Models
+{
     [ComplexType]
     [Table("validation.RecordsRequestDetail")]
     public class RecordsRequestDetail

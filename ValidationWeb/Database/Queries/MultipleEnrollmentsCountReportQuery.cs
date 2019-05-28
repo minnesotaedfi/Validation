@@ -1,6 +1,4 @@
-﻿using ValidationWeb.Database.Queries;
-
-namespace ValidationWeb
+﻿namespace ValidationWeb.Database.Queries
 {
     public class MultipleEnrollmentsCountReportQuery
     {

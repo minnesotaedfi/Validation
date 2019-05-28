@@ -1,16 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Web;
 
-namespace ValidationWeb
+namespace ValidationWeb.Models
 {
     [Table("validation.SchoolYear")]
     public class SchoolYear : IEquatable<SchoolYear>
     {
-        public SchoolYear() { }
+        public SchoolYear()
+        {
+        }
 
         public SchoolYear(string startYear, string endYear, bool enabled = true)
         {
@@ -22,11 +21,14 @@ namespace ValidationWeb
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
         public int Id { get; set; }
+        
         public bool Enabled { get; set; }
+
         public decimal? ErrorThreshold { get; set; }
 
-        public string StartYear { get; set; }
-        public string EndYear { get; set; }
+        public string StartYear { get; }
+
+        public string EndYear { get; }
 
         public override string ToString()
         {
@@ -47,10 +49,9 @@ namespace ValidationWeb
             return "Unknown";
         }
 
-        // i love ReSharper! --pocky
         public bool Equals(SchoolYear other)
         {
-            return Id == other.Id && string.Equals(StartYear, other.StartYear) && string.Equals(EndYear, other.EndYear);
+            return other != null && Id == other.Id && string.Equals(StartYear, other.StartYear) && string.Equals(EndYear, other.EndYear);
         }
 
         public override bool Equals(object obj)
@@ -71,7 +72,7 @@ namespace ValidationWeb
                 return true;
             }
 
-            if (obj.GetType() != this.GetType())
+            if (obj.GetType() != GetType())
             {
                 return false;
             }

@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Linq;
 using System.Web.Mvc;
 using ValidationWeb.Filters;
-using ValidationWeb.Services;
+using ValidationWeb.Models;
+using ValidationWeb.Services.Interfaces;
+using ValidationWeb.ViewModels;
 
-namespace ValidationWeb
+namespace ValidationWeb.Controllers
 {
-    using ValidationWeb.Services.Interfaces;
-    using ValidationWeb.ViewModels;
-
     [PortalAuthorize(Roles = "DataOwner,DistrictUser,HelpDesk")]
     public class HomeController : Controller
     {

@@ -1,4 +1,6 @@
-﻿namespace ValidationWeb.Tests
+﻿using ValidationWeb.Utility;
+
+namespace ValidationWeb.Tests
 {
 
     using Moq;

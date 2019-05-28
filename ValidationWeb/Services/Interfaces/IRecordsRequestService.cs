@@ -1,8 +1,8 @@
-﻿namespace ValidationWeb.Services.Interfaces
-{
-    using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using ValidationWeb.Models;
 
-    using ValidationWeb.Models;
+namespace ValidationWeb.Services.Interfaces
+{
 
     public interface IRecordsRequestService
     {

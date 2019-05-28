@@ -1,11 +1,9 @@
-﻿using ValidationWeb.Database.Queries;
+﻿using System.Collections.Generic;
+using ValidationWeb.Database.Queries;
+using ValidationWeb.Models;
 
-namespace ValidationWeb
+namespace ValidationWeb.ViewModels
 {
-    using System.Collections.Generic;
-
-    using ValidationWeb.Filters;
-
     public class OdsChangeOfEnrollmentReportViewModel
     {
         public ValidationPortalIdentity User { get; set; }

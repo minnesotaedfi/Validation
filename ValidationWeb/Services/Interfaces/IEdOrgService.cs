@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using ValidationWeb.Database.Queries;
+using ValidationWeb.Models;
 
-namespace ValidationWeb.Services
+namespace ValidationWeb.Services.Interfaces
 {
     public interface IEdOrgService
     {

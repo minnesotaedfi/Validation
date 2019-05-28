@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
+using ValidationWeb.Models;
+using ValidationWeb.Services.Interfaces;
 
-namespace ValidationWeb.Services
+namespace ValidationWeb.Services.Implementations
 {
     public class ValidatedDataSubmissionService : IValidatedDataSubmissionService
     {
         private readonly ISchoolYearService _schoolYearService;
+
         public ValidatedDataSubmissionService(ISchoolYearService schoolYearService)
         {
             _schoolYearService = schoolYearService;

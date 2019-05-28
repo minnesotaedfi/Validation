@@ -1,4 +1,4 @@
-﻿namespace ValidationWeb.Filters
+﻿namespace ValidationWeb.Models
 {
     public class SSORoleNames
     {

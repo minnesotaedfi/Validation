@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace ValidationWeb.Services
+﻿namespace ValidationWeb.Services.Interfaces
 {
     public interface IOdsConfigurationValues
     {
         string GetRawOdsConnectionString(string fourDigitYear);
+
         string GetValidatedOdsConnectionString(string fourDigitYear);
     }
 }

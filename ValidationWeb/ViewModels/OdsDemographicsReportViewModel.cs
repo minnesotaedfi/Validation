@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using ValidationWeb.Database.Queries;
-using ValidationWeb.Filters;
+using ValidationWeb.Models;
 
 namespace ValidationWeb.ViewModels
 {

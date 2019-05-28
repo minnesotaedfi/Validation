@@ -1,12 +1,13 @@
-﻿namespace ValidationWeb.Filters
-{
-    using System.Security.Principal;
+﻿using System.Security.Principal;
 
+namespace ValidationWeb.Models
+{
     public class ValidationPortalPrincipal : IPrincipal
     {
         public ValidationPortalPrincipal(ValidationPortalIdentity ident)
         {
-            Identity = ident;
+            var identity = ident as IIdentity;
+            Identity = identity;
         }
 
         public IIdentity Identity { get; set; }

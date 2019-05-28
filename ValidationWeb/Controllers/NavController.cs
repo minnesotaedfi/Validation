@@ -1,11 +1,10 @@
 ﻿using System.Linq;
 using System.Web.Mvc;
-using ValidationWeb.Services;
+using ValidationWeb.Services.Interfaces;
+using ValidationWeb.ViewModels;
 
-namespace ValidationWeb
+namespace ValidationWeb.Controllers
 {
-    using ValidationWeb.ViewModels;
-
     public class NavController : Controller
     {
         private static readonly string _version;
@@ -23,7 +22,6 @@ namespace ValidationWeb
             IAppUserService appUserService,
             IEdOrgService edOrgService,
             ISchoolYearService schoolYearService,
-            IValidatedDataSubmissionService validatedDataSubmissionService,
             IConfigurationValues configurationValues)
         {
             _appUserService = appUserService;

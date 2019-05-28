@@ -1,10 +1,9 @@
-﻿namespace ValidationWeb
+﻿using System.Collections.Generic;
+using Engine.Models;
+using ValidationWeb.Models;
+
+namespace ValidationWeb.ViewModels
 {
-    using System.Collections.Generic;
-
-    using Engine.Models;
-    using ValidationWeb.Filters;
-
     public class ValidationReportsViewModel
     {
         public string DistrictName { get; set; }

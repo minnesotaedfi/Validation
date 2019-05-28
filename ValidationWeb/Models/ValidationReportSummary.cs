@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ValidationWeb
+namespace ValidationWeb.Models
 {
     [Table("validation.ReportSummary")]
     public class ValidationReportSummary

@@ -1,4 +1,6 @@
-﻿namespace ValidationWeb.Models
+﻿using ValidationWeb.Utility;
+
+namespace ValidationWeb.Models
 {
     using Newtonsoft.Json;
 

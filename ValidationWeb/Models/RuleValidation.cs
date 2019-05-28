@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Web;
 
-namespace ValidationWeb
+namespace ValidationWeb.Models
 {
     /// <summary>
-    /// Represents one occurence of running the entire validation engine for a particular collection of [rulesets & rules]. 
+    /// Represents one occurence of running the entire validation engine for a particular collection of (rulesets and rules). 
     /// Typically, a collection consists of a set of rulesets, given by their Ruleset ID's. Rulesets, in turn, consist of a list of Rules.
     /// In addition to rulesets, a collection can additionally include individual rules, identified by their Rule ID's, 
     /// regardless of what ruleset they do or don't exist in. 

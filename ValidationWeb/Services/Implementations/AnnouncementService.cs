@@ -1,12 +1,14 @@
-﻿using ValidationWeb.Database;
+﻿using System;
+using System.Collections.Generic;
+using System.Data.Entity.Infrastructure;
+using System.Linq;
+using ValidationWeb.Database;
+using ValidationWeb.Models;
+using ValidationWeb.Services.Interfaces;
+using ValidationWeb.Utility;
 
-namespace ValidationWeb.Services
+namespace ValidationWeb.Services.Implementations
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Data.Entity.Infrastructure;
-    using System.Linq;
-
     public class AnnouncementService : IAnnouncementService
     {
         protected readonly IDbContextFactory<ValidationPortalDbContext> DbContextFactory;
@@ -57,7 +59,7 @@ namespace ValidationWeb.Services
             catch (Exception ex)
             {
                 LoggingService.LogErrorMessage($"An error occurred while retrieving announcement by id {id}: {ex.ChainInnerExceptionMessages()}");
-                throw new Exception($"An error occurred while retrieving announcement"); // why strip the exception? TODO: don't throw without attaching ex
+                throw new Exception("An error occurred while retrieving announcement", ex); 
             }
 
             return announcement;

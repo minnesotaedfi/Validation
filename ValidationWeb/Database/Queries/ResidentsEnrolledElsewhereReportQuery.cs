@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using ValidationWeb.Database.Queries;
-
-namespace ValidationWeb
+﻿namespace ValidationWeb.Database.Queries
 {
     public class ResidentsEnrolledElsewhereReportQuery
     {

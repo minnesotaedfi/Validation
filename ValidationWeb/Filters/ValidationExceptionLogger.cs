@@ -1,27 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Web;
 using System.Web.Http.ExceptionHandling;
-using ValidationWeb.Services;
+using ValidationWeb.Services.Interfaces;
+using ValidationWeb.Utility;
 
-namespace ValidationWeb
+namespace ValidationWeb.Filters
 {
     public class ValidationExceptionLogger : ExceptionLogger
     {
-        protected readonly ILoggingService _logger;
-        protected readonly IRequestMessageAccessor _requestAccessor;
+        protected readonly ILoggingService Logger;
+        protected readonly IRequestMessageAccessor RequestAccessor;
 
         public ValidationExceptionLogger(ILoggingService logger, IRequestMessageAccessor requestAccessor)
         {
-            _logger = logger;
-            _requestAccessor = requestAccessor;
+            Logger = logger;
+            RequestAccessor = requestAccessor;
         }
 
         /// <summary>
         /// Ensures all unhandled exceptions are logged to the application log.
         /// </summary>
-        /// <param name="context"></param>
+        /// <param name="context">Exception Logger Context</param>
         public override void Log(ExceptionLoggerContext context)
         {
             string corrId = "(none)";
@@ -33,12 +32,12 @@ namespace ValidationWeb
                 }
                 else
                 {
-                    corrId = $"[Request {Guid.NewGuid().ToString("N")}] ";
+                    corrId = $"[Request {Guid.NewGuid():N}] ";
                     HttpContext.Current.Items.Add("CorrelationID", corrId);
                 }
             }
 
-            _logger.LogErrorMessage($"Error processing the request.See log, correlation ID: {corrId} \r\n {context.Exception.ChainInnerExceptionMessages()}");
+            Logger.LogErrorMessage($"Error processing the request.See log, correlation ID: {corrId} \r\n {context.Exception.ChainInnerExceptionMessages()}");
         }
     }
 }

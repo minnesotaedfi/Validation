@@ -1,11 +1,8 @@
-﻿using ValidationWeb.Database.Queries;
+﻿using System.Collections.Generic;
+using ValidationWeb.Database.Queries;
 
-namespace ValidationWeb.Services
+namespace ValidationWeb.Services.Interfaces
 {
-    using System.Collections.Generic;
-
-    using ValidationWeb.Models;
-
     public interface IOdsDataService
     {
         List<DemographicsCountReportQuery> GetDistrictAncestryRaceCounts(

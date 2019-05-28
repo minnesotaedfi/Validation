@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Web;
 
-namespace ValidationWeb
+namespace ValidationWeb.Models
 {
     /// <summary>
     /// Represents a single rule that needs to be validated, during a single run of the rules engine. 

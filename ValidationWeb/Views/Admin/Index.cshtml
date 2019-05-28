@@ -17,10 +17,10 @@
                 @Html.Partial("Partials/ErrorThresholds", Model.YearsOpenForDataSubmission)
             </div>
             <div class="tab-pane fade" id="list-submissioncycles" role="tabpanel" aria-labelledby="list-submissioncycles-list">
-                @Html.Partial("Partials/SubmissionCycleList", @Model.SubmissionCycles)
+                @Html.Partial("Partials/SubmissionCycleList", Model.SubmissionCycles)
             </div>
             <div class="tab-pane fade" id="list-announcements" role="tabpanel" aria-labelledby="list-announcements-list">
-                @Html.Partial("Partials/Announcements", @Model.Announcements)
+                @Html.Partial("Partials/Announcements", Model.Announcements)
             </div>
         </div>
     </div>
@@ -29,7 +29,7 @@
 @*Modal Section*@
 @Html.Partial("Partials/AddSchoolYearModal")
 
-@Html.Hidden("tabParam", @Request.QueryString["tab"])
+@Html.Hidden("tabParam", Request.QueryString["tab"])
 
 
 @section scripts {
@@ -162,7 +162,7 @@
                     var successValue = updateThreshold(id, threshold);
 
                     // Ajax returns a captial T true instead of boolean
-                    if (successValue != "True") {
+                    if (successValue !== "True") {
                         $("#error-threshold-warning").show();
                     }
                     // Otherwise return it back to original state.
@@ -187,6 +187,7 @@
                 $("#add-end-year").val(Number($("#add-start-year").val()) + 1);
             });
 
+            @* todo: why so many warnings here? *@
             var AddAnnouncementRoute = "@Url.Content("~/Admin/AddAnnouncement")";
             $("#announcement-add").click({ modalName: "Announcement", modalAddRoute: AddAnnouncementRoute }, CreateAddModal);
 
@@ -281,7 +282,7 @@
                 $.ajax({
                     type: "DELETE",
                     url: deleteRoute+'/'+id,
-                    success: function (data) {
+                    success: function (/*data*/) {
                         location.reload(true);
                     },
                     error: function () {
@@ -355,8 +356,7 @@
 
         function getMappedModel(modelName, modelFieldNames) {
             var dataObj = {};
-            var fieldVal = "";
-            debugger;
+            var fieldVal;
             for (var i = 0; i < modelFieldNames.length; i++) {
                 var fieldName = modelFieldNames[i];
                 var fieldSelector = '#edit-'+modelName+'-'+fieldName;
@@ -391,7 +391,7 @@
         function updateThreshold(id, errorThreshold) {
             var value;
             $.ajax({
-                url: '@(Url.Action("UpdateThresholdErrorValue", "Admin"))',
+                url: '@Url.Action("UpdateThresholdErrorValue", "Admin")',
                 async: true,
                 data: { Id: id, thresholdValue: errorThreshold },
                 success: function (result) {
@@ -408,7 +408,7 @@
         function removeSchoolYear(id, yearsRange) {
             if (confirm("Are you sure you want to delete " + yearsRange + "?")) {
                 $.ajax({
-                    url: '@(Url.Action("RemoveSchoolYear", "Admin"))',
+                    url: '@Url.Action("RemoveSchoolYear", "Admin")',
                     async: false,
                     data: { Id: id },
                     success: function () {

@@ -1,12 +1,9 @@
-﻿using ValidationWeb.Database.Queries;
+﻿using System.Collections.Generic;
+using ValidationWeb.Database.Queries;
+using ValidationWeb.Models;
 
-namespace ValidationWeb
+namespace ValidationWeb.ViewModels
 {
-    using System.Collections.Generic;
-
-    using ValidationWeb.Filters;
-    using ValidationWeb.ViewModels;
-
     public class StudentDrillDownViewModel
     {
         public string ReportName { get; set; } = string.Empty;

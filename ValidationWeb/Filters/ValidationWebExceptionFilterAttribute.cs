@@ -1,29 +1,28 @@
-﻿namespace ValidationWeb.Filters
+﻿using System;
+using System.Net;
+using System.Net.Http;
+using System.Web;
+using System.Web.Http.Filters;
+using ValidationWeb.Services.Interfaces;
+
+namespace ValidationWeb.Filters
 {
-    using System;
-    using System.Net;
-    using System.Net.Http;
-    using System.Web;
-    using System.Web.Http.Filters;
-
-    using ValidationWeb.Services;
-
     /// <summary>
     /// Catches all unhandled exceptions and formats user message to be returned in the HTTP response.
     /// </summary>
     public class ValidationWebExceptionFilterAttribute : ExceptionFilterAttribute
     {
-        protected readonly IRequestMessageAccessor _requestAccessor;
+        protected readonly IRequestMessageAccessor RequestAccessor;
 
-        public ValidationWebExceptionFilterAttribute(IRequestMessageAccessor requestAccessor, ILoggingService logger)
+        public ValidationWebExceptionFilterAttribute(IRequestMessageAccessor requestAccessor)
         {
-            _requestAccessor = requestAccessor;
+            RequestAccessor = requestAccessor;
         }
 
         /// <summary>
         /// Called for all unhandled exceptions; formats user message to be returned in the HTTP response.
         /// </summary>
-        /// <param name="actionExecutedContext"></param>
+        /// <param name="actionExecutedContext">Action Context</param>
         public override void OnException(HttpActionExecutedContext actionExecutedContext)
         {
             var formatter = actionExecutedContext.Request.GetConfiguration().Formatters[0];
@@ -36,15 +35,22 @@
                 }
                 else
                 {
-                    corrId = $"[Request {Guid.NewGuid().ToString("N")}] ";
+                    corrId = $"[Request {Guid.NewGuid():N}] ";
                     HttpContext.Current.Items.Add("CorrelationID", corrId);
                 }
             }
+
             // Return them as JSON.
             actionExecutedContext.Response = new HttpResponseMessage
             {
                 StatusCode = HttpStatusCode.InternalServerError,
-                Content = new ObjectContent<object>(new { reason = $"Error processing the request. See log, correlation ID: {corrId}" }, formatter, "application/json")
+                Content = new ObjectContent<object>(
+                    new
+                    {
+                        reason = $"Error processing the request. See log, correlation ID: {corrId}"
+                    }, 
+                    formatter, 
+                    "application/json")
             };
         }
     }

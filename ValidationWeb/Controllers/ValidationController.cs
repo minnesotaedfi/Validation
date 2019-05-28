@@ -1,18 +1,20 @@
-﻿using Engine.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Web.Hosting;
 using System.Web.Mvc;
+using CsvHelper;
+using DataTables.AspNet.Core;
+using DataTables.AspNet.Mvc5;
+using Engine.Models;
 using ValidationWeb.Filters;
-using ValidationWeb.Services;
+using ValidationWeb.Models;
+using ValidationWeb.Services.Interfaces;
+using ValidationWeb.ViewModels;
 
-namespace ValidationWeb
+namespace ValidationWeb.Controllers
 {
-    using CsvHelper;
-    using DataTables.AspNet.Core;
-    using DataTables.AspNet.Mvc5;
-    using System.IO;
-    using System.Web.Hosting;
     [PortalAuthorize(Roles = "DistrictUser,HelpDesk")]
     public class ValidationController : Controller
     {
@@ -103,10 +105,10 @@ namespace ValidationWeb
             var sortColumn = request.Columns.FirstOrDefault(x => x.Sort != null);
             if (sortColumn != null)
             {
-                Func<ValidationReportSummary, string> orderingFunctionString = null;
-                Func<ValidationReportSummary, int?> orderingFunctionNullableInt = null;
-                Func<ValidationReportSummary, DateTime> orderingFunctionDateTime = null;
-                Func<ValidationReportSummary, DateTime?> orderingFunctionNullableDateTime = null;
+                Func<ValidationReportSummary, string> orderingFunctionString;
+                Func<ValidationReportSummary, int?> orderingFunctionNullableInt;
+                Func<ValidationReportSummary, DateTime> orderingFunctionDateTime;
+                Func<ValidationReportSummary, DateTime?> orderingFunctionNullableDateTime;
 
                 switch (sortColumn.Field)
                 {
@@ -118,6 +120,7 @@ namespace ValidationWeb
                                                 : results.OrderByDescending(orderingFunctionDateTime);
                             break;
                         }
+
                     case "collection":
                         {
                             orderingFunctionString = x => $"{x.SchoolYear.StartYear}-{x.SchoolYear.EndYear} / {x.Collection}";
@@ -126,6 +129,7 @@ namespace ValidationWeb
                                                 : results.OrderByDescending(orderingFunctionString);
                             break;
                         }
+
                     case "initiatedBy":
                         {
                             orderingFunctionString = x => x.InitiatedBy;
@@ -134,6 +138,7 @@ namespace ValidationWeb
                                                 : results.OrderByDescending(orderingFunctionString);
                             break;
                         }
+                    
                     case "status":
                         {
                             orderingFunctionString = x => x.Status;
@@ -142,6 +147,7 @@ namespace ValidationWeb
                                                 : results.OrderByDescending(orderingFunctionString);
                             break;
                         }
+                    
                     case "completedWhen":
                         {
                             orderingFunctionNullableDateTime = x => x.CompletedWhen;
@@ -150,6 +156,7 @@ namespace ValidationWeb
                                                 : results.OrderByDescending(orderingFunctionNullableDateTime);
                             break;
                         }
+                    
                     case "errorCount":
                         {
                             orderingFunctionNullableInt = x => x.ErrorCount;
@@ -158,6 +165,7 @@ namespace ValidationWeb
                                                 : results.OrderByDescending(orderingFunctionNullableInt);
                             break;
                         }
+                    
                     case "warningCount":
                         {
                             orderingFunctionNullableInt = x => x.WarningCount;
@@ -166,6 +174,7 @@ namespace ValidationWeb
                                                 : results.OrderByDescending(orderingFunctionNullableInt);
                             break;
                         }
+                    
                     default:
                         {
                             sortedResults = results;
@@ -264,8 +273,7 @@ namespace ValidationWeb
             var memoryStream = new MemoryStream();
             var streamWriter = new StreamWriter(memoryStream);
 
-            CsvWriter csvWriter = null;
-            using (csvWriter = new CsvWriter(streamWriter))
+            using (var csvWriter = new CsvWriter(streamWriter))
             {
                 csvWriter.WriteRecords(records);
                 streamWriter.Flush();

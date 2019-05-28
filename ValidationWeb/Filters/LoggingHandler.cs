@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Threading.Tasks;
 using System.Net.Http;
 using System.Threading;
-using ValidationWeb.Services;
+using System.Threading.Tasks;
+using ValidationWeb.Services.Interfaces;
 
-namespace ValidationWeb
+namespace ValidationWeb.Filters
 {
     /// <summary>
     /// Initiates logging capability by attaching an ID that will by added to all the log messages for this Request - as well as
@@ -27,15 +27,17 @@ namespace ValidationWeb
         /// Attach an ID that will by added to all the log messages for this Request. Starts the clock on performance monitoring
         /// included in all log requests. 
         /// </summary>
-        /// <param name="request"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
+        /// <param name="request">The Request</param>
+        /// <param name="cancellationToken">Cancellation Token</param>
+        /// <returns><see cref="Task&lt;HttpResponseMessage&gt;"/></returns>
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             #region Add Logging Context to the Request
             var newGuid = Guid.NewGuid();
+
             // "B" means "Braces" - {00000000-0000-0000-0000-000000000000}
-            var logCorrelationId = $"[API Request {newGuid.ToString("N")}] ";
+            var logCorrelationId = $"[API Request {newGuid:N}] ";
+            
             request.Properties.Add(CorrelationIdKeyName, newGuid);
             request.Properties.Add(LogCorrelationIdKeyName, logCorrelationId);
             Logger.LogInfoMessage("BEGINNING OF REQUEST ------------------");

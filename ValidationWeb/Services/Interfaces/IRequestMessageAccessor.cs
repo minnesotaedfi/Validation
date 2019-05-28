@@ -1,7 +1,6 @@
-﻿using System;
-using System.Net.Http;
+﻿using System.Net.Http;
 
-namespace ValidationWeb.Services
+namespace ValidationWeb.Services.Interfaces
 {
     public interface IRequestMessageAccessor
     {

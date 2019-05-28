@@ -1,7 +1,8 @@
-﻿namespace ValidationWeb.Services.Implementations
-{
-    using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using ValidationWeb.Models;
 
+namespace ValidationWeb.Services.Interfaces
+{
     public interface IEdFiApiLogService
     {
         IEnumerable<Log> GetIdentityIssues();

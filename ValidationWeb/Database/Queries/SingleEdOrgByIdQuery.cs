@@ -1,4 +1,4 @@
-﻿namespace ValidationWeb
+﻿namespace ValidationWeb.Database.Queries
 {
     public class SingleEdOrgByIdQuery
     {

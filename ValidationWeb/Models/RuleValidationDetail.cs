@@ -1,8 +1,8 @@
-﻿namespace ValidationWeb
-{
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
+namespace ValidationWeb.Models
+{
     /// <summary>
     /// Represents a single error or warning. The structure of this table is given by the Wells Rules Engine.
     /// </summary>

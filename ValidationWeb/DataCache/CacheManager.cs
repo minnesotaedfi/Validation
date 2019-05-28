@@ -1,14 +1,11 @@
-﻿using ValidationWeb.Database.Queries;
+﻿using System;
+using System.Collections.Generic;
+using System.Runtime.Caching;
+using ValidationWeb.Database.Queries;
+using ValidationWeb.Services.Interfaces;
 
 namespace ValidationWeb.DataCache
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Runtime.Caching;
-
-    using ValidationWeb.Services;
-
     public class CacheManager : ICacheManager
     {
         public CacheManager()

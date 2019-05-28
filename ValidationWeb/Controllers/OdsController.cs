@@ -1,31 +1,24 @@
-﻿using ValidationWeb.Database.Queries;
+﻿using DataTables.AspNet.Core;
+using DataTables.AspNet.Mvc5;
+using Engine.Models;
+using MoreLinq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Mvc;
+using ValidationWeb.ApiControllers.ModelBinders;
+using ValidationWeb.Database.Queries;
+using ValidationWeb.DataCache;
 using ValidationWeb.Filters;
+using ValidationWeb.Models;
+using ValidationWeb.Services.Interfaces;
+using ValidationWeb.Utility;
+using ValidationWeb.ViewModels;
 
-namespace ValidationWeb
+namespace ValidationWeb.Controllers
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Web.Mvc;
-
-    using DataTables.AspNet.Core;
-    using DataTables.AspNet.Mvc5;
-
-    using Engine.Models;
-
-    using MoreLinq;
-
-    using ValidationWeb.ApiControllers.ModelBinders;
-    using ValidationWeb.DataCache;
-    using ValidationWeb.Models;
-    using ValidationWeb.Services;
-    using ValidationWeb.Services.Implementations;
-    using ValidationWeb.Services.Interfaces;
-    using ValidationWeb.Utility;
-    using ValidationWeb.ViewModels;
-
-    [PortalAuthorize(Roles = "DataOwner,DistrictUser,HelpDesk")]
     // TODO: refactor repeated code. move cache manager and serialization calls into a separate layer. -pocky
+    [PortalAuthorize(Roles = "DataOwner,DistrictUser,HelpDesk")]
     public class OdsController : Controller
     {
         public OdsController(
@@ -74,15 +67,23 @@ namespace ValidationWeb
             var session = AppUserService.GetSession();
             var edOrg = EdOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
             var edOrgName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
-            var edOrgId = edOrg.Id;
-            var theUser = AppUserService.GetUser();
-            var model = new OdsReportsViewModel
+
+            if (edOrg != null)
             {
-                EdOrgId = edOrgId,
-                EdOrgName = edOrgName,
-                User = theUser
-            };
-            return View(model);
+                var edOrgId = edOrg.Id;
+                var theUser = AppUserService.GetUser();
+                var model = new OdsReportsViewModel
+                {
+                    EdOrgId = edOrgId,
+                    EdOrgName = edOrgName,
+                    User = theUser
+                };
+
+                return View(model);
+            }
+
+            // todo: what if edOrg is null? 
+            return View();
         }
 
         // GET: Ods/DemographicsReport
@@ -97,10 +98,11 @@ namespace ValidationWeb
             var session = AppUserService.GetSession();
             var edOrg = EdOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
             var edOrgName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
+            // todo: edOrg could be null
             var edOrgId = edOrg.Id;
 
             // A state user can look at any district via a link, without changing the default district.
-            if (districtToDisplay.HasValue && session.UserIdentity.AuthorizedEdOrgs.Select(eorg => eorg.Id).Contains(districtToDisplay.Value))
+            if (districtToDisplay.HasValue && session.UserIdentity.AuthorizedEdOrgs.Select(x => x.Id).Contains(districtToDisplay.Value))
             {
                 edOrgId = districtToDisplay.Value;
                 edOrg = EdOrgService.GetEdOrgById(edOrgId, session.FocusedSchoolYearId);
@@ -144,7 +146,7 @@ namespace ValidationWeb
                 EdOrgName = edOrgName,
                 User = theUser,
                 DistrictToDisplay = districtToDisplay,
-                IsStudentDrillDown = isStudentDrillDown,
+                IsStudentDrillDown = false,
                 IsStateMode = isStateMode,
                 SchoolId = schoolId,
                 SchoolName = schoolName
@@ -236,7 +238,7 @@ namespace ValidationWeb
 #endif
 
             IEnumerable<StudentDrillDownQuery> sortedResults = new List<StudentDrillDownQuery>(results);
-            
+
             var sortColumn = request.Columns.FirstOrDefault(x => x.Sort != null);
             if (sortColumn != null)
             {
@@ -435,7 +437,7 @@ namespace ValidationWeb
             var edOrgId = edOrg.Id;
 
             // A state user can look at any district via a link, without changing the default district.
-            if (districtToDisplay.HasValue && session.UserIdentity.AuthorizedEdOrgs.Select(eorg => eorg.Id).Contains(districtToDisplay.Value))
+            if (districtToDisplay.HasValue && session.UserIdentity.AuthorizedEdOrgs.Select(x => x.Id).Contains(districtToDisplay.Value))
             {
                 edOrgId = districtToDisplay.Value;
                 edOrg = EdOrgService.GetEdOrgById(edOrgId, session.FocusedSchoolYearId);
@@ -579,7 +581,7 @@ namespace ValidationWeb
             var edOrgId = edOrg.Id;
 
             // A state user can look at any district via a link, without changing the default district.
-            if (districtToDisplay.HasValue && session.UserIdentity.AuthorizedEdOrgs.Select(eorg => eorg.Id).Contains(districtToDisplay.Value))
+            if (districtToDisplay.HasValue && session.UserIdentity.AuthorizedEdOrgs.Select(x => x.Id).Contains(districtToDisplay.Value))
             {
                 edOrgId = districtToDisplay.Value;
                 edOrg = EdOrgService.GetEdOrgById(edOrgId, session.FocusedSchoolYearId);
@@ -839,7 +841,7 @@ namespace ValidationWeb
             results = results.Where(x => x.IsCurrentDistrict == isCurrentDistrict);
 
             var allRecordsRequests = RecordsRequestService.GetAllRecordsRequests().ToList();
-            
+
             foreach (var result in results)
             {
                 if (isCurrentDistrict)
@@ -1058,7 +1060,7 @@ namespace ValidationWeb
             var edOrgId = edOrg.Id;
 
             // A state user can look at any district via a link, without changing the default district.
-            if (districtToDisplay.HasValue && session.UserIdentity.AuthorizedEdOrgs.Select(eorg => eorg.Id).Contains(districtToDisplay.Value))
+            if (districtToDisplay.HasValue && session.UserIdentity.AuthorizedEdOrgs.Select(x => x.Id).Contains(districtToDisplay.Value))
             {
                 edOrgId = districtToDisplay.Value;
                 edOrg = EdOrgService.GetEdOrgById(edOrgId, session.FocusedSchoolYearId);
@@ -1195,14 +1197,11 @@ namespace ValidationWeb
             var results = ApiLogService.GetApiErrors();
             return SortAndFilterApiReportData(results, request);
         }
-        
+
         // GET: Ods/Level1IssuesReport
         public ActionResult Level1IssuesReport()
         {
-            var model = new OdsLevel1IssuesReportViewModel
-            {
-                // todo: implement
-            };
+            var model = new OdsLevel1IssuesReportViewModel();
             return View(model);
         }
 

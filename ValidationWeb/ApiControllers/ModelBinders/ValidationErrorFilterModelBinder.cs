@@ -1,10 +1,10 @@
-﻿namespace ValidationWeb.ApiControllers
+﻿using System.Web.Http.Controllers;
+using System.Web.Http.ModelBinding;
+using Newtonsoft.Json;
+using ValidationWeb.Models;
+
+namespace ValidationWeb.ApiControllers.ModelBinders
 {
-    using System.Web.Http.Controllers;
-    using System.Web.Http.ModelBinding;
-
-    using Newtonsoft.Json;
-
     public class ValidationErrorFilterModelBinder : IModelBinder
     {
         /// <inheritdoc cref="IModelBinder"/>

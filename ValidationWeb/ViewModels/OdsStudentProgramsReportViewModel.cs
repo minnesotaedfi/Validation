@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using ValidationWeb.Models;
 
-namespace ValidationWeb
+namespace ValidationWeb.ViewModels
 {
-    using ValidationWeb.Filters;
-
     public class OdsStudentProgramsReportViewModel
     {
         public ValidationPortalIdentity User { get; set; }

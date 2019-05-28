@@ -34,7 +34,8 @@
             return new DateTimeOffset(dt.Ticks, offset);
         }
 
+        // todo - is this even needed? got a warning about float comparison
         public static DateTimeOffset ToDateTimeOffset(this DateTime dt, double offsetInHours = 0)
-            => ToDateTimeOffset(dt, offsetInHours == 0 ? TimeSpan.Zero : TimeSpan.FromHours(offsetInHours));
+            => ToDateTimeOffset(dt, Math.Abs(offsetInHours) < 0.01 ? TimeSpan.Zero : TimeSpan.FromHours(offsetInHours));
     }
 }

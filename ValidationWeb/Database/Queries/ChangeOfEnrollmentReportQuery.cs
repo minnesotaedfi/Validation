@@ -1,4 +1,5 @@
 ﻿using System;
+using ValidationWeb.Models;
 
 namespace ValidationWeb.Database.Queries
 {

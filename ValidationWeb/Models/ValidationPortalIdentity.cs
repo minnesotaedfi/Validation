@@ -1,10 +1,10 @@
-﻿namespace ValidationWeb.Filters
-{
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
-    using System.Security.Principal;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Security.Principal;
 
+namespace ValidationWeb.Models
+{
     /// <summary>
     /// A representation of the authenticated Validation Portal user, for use in HTTP Contexts.
     /// </summary>

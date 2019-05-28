@@ -1,26 +1,26 @@
 ﻿using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
-using ValidationWeb.Services;
+using ValidationWeb.Services.Interfaces;
 
-namespace ValidationWeb
+namespace ValidationWeb.Filters
 {
     public class ProfilingFilter : ActionFilterAttribute
     {
-        protected readonly ILoggingService _logger;
+        protected readonly ILoggingService Logger;
 
         public ProfilingFilter(ILoggingService logger)
         {
-            _logger = logger;
+            Logger = logger;
         }
 
         public override void OnActionExecuting(HttpActionContext actionContext)
         {
-            _logger.LogInfoMessage("Controller model bound. Controller action starting.");
+            Logger.LogInfoMessage("Controller model bound. Controller action starting.");
         }
 
         public override void OnActionExecuted(HttpActionExecutedContext actionExecutedContext)
         {
-            _logger.LogInfoMessage("RESPONSE COMPLETED.");
+            Logger.LogInfoMessage("RESPONSE COMPLETED.");
         }
     }
 }

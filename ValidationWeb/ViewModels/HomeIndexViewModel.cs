@@ -1,7 +1,8 @@
-﻿namespace ValidationWeb
-{
-    using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using ValidationWeb.Models;
 
+namespace ValidationWeb.ViewModels
+{
     public class HomeIndexViewModel
     {
         public AppUserSession AppUserSession { get; set; }

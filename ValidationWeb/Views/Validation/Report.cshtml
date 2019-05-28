@@ -114,7 +114,6 @@
         }
 
         function ClearGrid(gridId) {
-            var gridIdWithHash = '#'+gridId;
             $('tr.datarow').remove();
         }
 
@@ -552,7 +551,11 @@
                 window.location.href = "@Html.Raw(Url.Action(
                                             "DownloadReportCsv",
                                             "Validation",
-                                            new { Id = Model.Details.Id, ReportSummaryId = Model.Details.ValidationReportSummary.ValidationReportSummaryId }))";
+                                            new
+                                            {
+                                                Id = Model.Details.Id, 
+                                                ReportSummaryId = Model.Details.ValidationReportSummary.ValidationReportSummaryId
+                                            }))";
             });
 
             /*

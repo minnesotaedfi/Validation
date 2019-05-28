@@ -127,7 +127,7 @@
 
     // There is a bug in Safari 10.1 and `Proxy`ing it is not enough.
     var forSureUsePolyfill = !decodesPlusesCorrectly;
-    var useProxy = (!forSureUsePolyfill && nativeURLSearchParams && !isSupportObjectConstructor && self.Proxy)
+    var useProxy = (!forSureUsePolyfill && nativeURLSearchParams && !isSupportObjectConstructor && self.Proxy);
     /*
      * Apply polifill to global object and append other prototype into it
      */
@@ -270,7 +270,7 @@
         if (typeof search === "object") {
             for (var key in search) {
                 if (search.hasOwnProperty(key)) {
-                    appendTo(dict, key, search[key])
+                    appendTo(dict, key, search[key]);
                 }
             }
 
@@ -300,9 +300,13 @@
     }
 
     function appendTo(dict, name, value) {
-        var val = typeof value === 'string' ? value : (
-            value !== null && value !== undefined && typeof value.toString === 'function' ? value.toString() : JSON.stringify(value)
-        )
+        var val = typeof value === 'string'
+            ? value
+            : (
+                value !== null && value !== undefined && typeof value.toString === 'function'
+                    ? value.toString()
+                    : JSON.stringify(value)
+            );
 
         if (name in dict) {
             dict[name].push(val);

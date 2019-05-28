@@ -1,7 +1,7 @@
-﻿namespace ValidationWeb.Services
-{
-    using ValidationWeb.Filters;
+﻿using ValidationWeb.Models;
 
+namespace ValidationWeb.Services.Interfaces
+{
     public interface IAppUserService
     {
         AppUserSession GetSession();

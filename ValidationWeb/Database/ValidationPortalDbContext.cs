@@ -1,5 +1,5 @@
-﻿using System;
-using System.Data.Entity;
+﻿using System.Data.Entity;
+using ValidationWeb.Models;
 
 namespace ValidationWeb.Database
 {
@@ -45,34 +45,9 @@ namespace ValidationWeb.Database
 
         public virtual DbSet<ValidationReportSummary> ValidationReportSummaries { get; set; }
 
-        //public new void Dispose()
-        //{
-        //    base.Dispose();
-        //}
-
         protected new virtual void Dispose(bool disposing)
         {
             base.Dispose(disposing);
-        }
-
-        protected override void OnModelCreating(DbModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
-            //modelBuilder.Entity<Announcement>()
-            //    .HasMany<EdOrg>(ann => ann.LimitToEdOrgs)
-            //    .WithMany(eo => eo.Announcements)
-            //    .Map(cs =>
-            //    {
-            //        cs.MapLeftKey("AnnouncementId");
-            //        cs.MapRightKey("EdOrgId");
-            //        cs.ToTable("validation.AnnouncementEdOrg");
-            //    });
-
-            //modelBuilder.Entity<AppUserSession>()
-            //    .HasMany<DismissedAnnouncement>(aus => aus.DismissedAnnouncements)
-            //    .WithRequired(dann => dann.AppUserSession)
-            //    .HasForeignKey(aus => aus.AppUserSessionId)
-            //    .WillCascadeOnDelete();
         }
     }
 }

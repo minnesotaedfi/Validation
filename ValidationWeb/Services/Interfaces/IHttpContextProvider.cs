@@ -1,8 +1,6 @@
-﻿using System;
+﻿using System.Web;
 
-using System.Web;
-
-namespace ValidationWeb.Services
+namespace ValidationWeb.Services.Interfaces
 {
     public interface IHttpContextProvider
     {

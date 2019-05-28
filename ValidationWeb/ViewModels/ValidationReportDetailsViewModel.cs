@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using ValidationWeb.Models;
 
-namespace ValidationWeb
+namespace ValidationWeb.ViewModels
 {
     public class ValidationReportDetailsViewModel
     {

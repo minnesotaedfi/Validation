@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Web;
 
-namespace ValidationWeb
+namespace ValidationWeb.Models
 {
     [Table("validation.ErrorSummary")]
     public class ValidationErrorSummary
@@ -23,23 +21,28 @@ namespace ValidationWeb
 
         [ForeignKey("Severity")]
         public int SeverityId { get; set; }
+        
         public ErrorSeverityLookup Severity { get; set; }
 
         public ICollection<ValidationErrorEnrollmentDetail> ErrorEnrollmentDetails { get; set; }
 
         public string ErrorCode { get; set; }
+        
         public string ErrorText { get; set; }
 
 
         [ForeignKey("ValidationReportDetails")]
         public int ValidationReportDetailsId { get; set; }
+        
         public int SchoolYearId { get; set; }
+
         public ValidationReportDetails ValidationReportDetails { get; set; }
 
         public bool TryGetErrorSeverity(out ErrorSeverity edOrgType)
         {
-            return Enum.TryParse<ErrorSeverity>(Severity.CodeValue, true, out edOrgType);
+            return Enum.TryParse(Severity.CodeValue, true, out edOrgType);
         }
+
         /// <summary>
         /// The StudentUniqueId is not globally unique, but unique just to one ODS database.
         /// </summary>
