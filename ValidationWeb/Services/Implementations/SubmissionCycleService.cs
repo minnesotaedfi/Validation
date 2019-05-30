@@ -12,7 +12,6 @@ namespace ValidationWeb.Services.Implementations
 {
     public class SubmissionCycleService : ISubmissionCycleService
     {
-
         public SubmissionCycleService(
             IDbContextFactory<ValidationPortalDbContext> validationPortalDataContextFactory,
             ISchoolYearService schoolYearService,
@@ -46,15 +45,17 @@ namespace ValidationWeb.Services.Implementations
             }
         }
 
-        public IList<SubmissionCycle> GetSubmissionCyclesOpenToday()
+        public IEnumerable<SubmissionCycle> GetSubmissionCyclesOpenToday()
         {
             using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
             {
-                var submissionCyclesOpenToday =
-                    validationPortalDataContext.SubmissionCycles
-                        .Where(s => 
-                            s.StartDate.Date <= DateTime.Now.Date && 
-                            s.EndDate.Date >= DateTime.Now.Date);
+                var submissionCycles = validationPortalDataContext.SubmissionCycles.ToList();
+
+                var submissionCyclesOpenToday = submissionCycles
+                    .Where(s => 
+                        s.StartDate.Date <= DateTime.Now.Date &&
+                        s.EndDate.Date >= DateTime.Now.Date)
+                    .ToList();
 
                 foreach (var submissionCycle in submissionCyclesOpenToday)
                 {
@@ -68,7 +69,7 @@ namespace ValidationWeb.Services.Implementations
                     }
                 }
 
-                return submissionCyclesOpenToday.ToList();
+                return submissionCyclesOpenToday;
             }
         }
 
@@ -200,16 +201,16 @@ namespace ValidationWeb.Services.Implementations
                 return duplicateCycle;
             }
         }
-        public void DeleteSubmissionCycle(int Id)
+        public void DeleteSubmissionCycle(int id)
         {
             using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
             {
-                var submissionCycle = validationPortalDataContext.SubmissionCycles.FirstOrDefault(a => a.Id == Id);
+                var submissionCycle = validationPortalDataContext.SubmissionCycles.FirstOrDefault(a => a.Id == id);
 
                 if (submissionCycle == null)
                 {
                     throw new Exception(
-                        $"Could not delete a collection cycle because collection cycle with ID {Id} was not found");
+                        $"Could not delete a collection cycle because collection cycle with ID {id} was not found");
                 }
 
                 validationPortalDataContext.SubmissionCycles.Remove(submissionCycle);

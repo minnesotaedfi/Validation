@@ -28,10 +28,11 @@ namespace ValidationWeb.Controllers
             using (var ssoDatabaseConnection = new SqlConnection(ConfigurationValues.SingleSignOnDatabaseConnectionString))
             {
                 var commandText =
-                    @"select distinct au.UserId, au.FullName, aa.RoleId, ar.RoleDescription 
+                    $@"select distinct au.UserId, au.FullName, aa.RoleId, ar.RoleDescription 
                         from apps.AppUser au
                         join apps.AppAuthorization aa on aa.UserId = au.UserId
-                        join apps.AppRole ar on ar.RoleId=aa.RoleId";
+                        join apps.AppRole ar on ar.RoleId=aa.RoleId
+                        where ar.appid='{ConfigurationValues.AppId}';";
 
                 using (var ssoCommand = new SqlCommand(commandText, ssoDatabaseConnection))
                 {

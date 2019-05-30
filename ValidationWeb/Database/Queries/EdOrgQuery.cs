@@ -3,34 +3,35 @@
     public class EdOrgQuery
     {
         public const string AllEdOrgQuery =
-@"SELECT 
+@"SELECT
     Id = lea.LocalEducationAgencyId,
     OrganizationShortName = eo.ShortNameOfInstitution,
     OrganizationName = eo.NameOfInstitution,
-    StateOrganizationId = eo.StateOrganizationId,
+    StateOrganizationId = eo.EducationOrganizationId,
     ParentId = lea.ParentLocalEducationAgencyId,
     StateLevelOrganizationId = lea.StateEducationAgencyId,
-    OrgTypeCodeValue = leact.CodeValue,
-    OrgTypeShortDescription = leact.ShortDescription
+    OrgTypeCodeValue = d.CodeValue,
+    OrgTypeShortDescription = d.ShortDescription
 FROM edfi.LocalEducationAgency lea
 LEFT OUTER JOIN edfi.EducationOrganization eo ON eo.EducationOrganizationId = lea.LocalEducationAgencyId
-LEFT OUTER JOIN edfi.LocalEducationAgencyCategoryType leact ON leact.LocalEducationAgencyCategoryTypeId = lea.LocalEducationAgencyCategoryTypeId;";
+JOIN edfi.LocalEducationAgencyCategoryDescriptor leacd on leacd.LocalEducationAgencyCategoryDescriptorId=lea.LocalEducationAgencyCategoryDescriptorId
+JOIN edfi.Descriptor d on d.DescriptorId=leacd.LocalEducationAgencyCategoryDescriptorId";
 
         public const string SingleEdOrgsQuery =
 @"SELECT 
     Id = lea.LocalEducationAgencyId,
     OrganizationShortName = eo.ShortNameOfInstitution,
     OrganizationName = eo.NameOfInstitution,
-    StateOrganizationId = eo.StateOrganizationId,
+    StateOrganizationId = eo.EducationOrganizationId,
     ParentId = lea.ParentLocalEducationAgencyId,
     StateLevelOrganizationId = lea.StateEducationAgencyId,
-    OrgTypeCodeValue = leact.CodeValue,
-    OrgTypeShortDescription = leact.ShortDescription
+    OrgTypeCodeValue = d.CodeValue,
+    OrgTypeShortDescription = d.ShortDescription
 FROM edfi.LocalEducationAgency lea
 LEFT OUTER JOIN edfi.EducationOrganization eo ON eo.EducationOrganizationId = lea.LocalEducationAgencyId
-LEFT OUTER JOIN edfi.LocalEducationAgencyCategoryType leact ON leact.LocalEducationAgencyCategoryTypeId = lea.LocalEducationAgencyCategoryTypeId
+LEFT OUTER JOIN edfi.LocalEducationAgencyCategoryDescriptor leacd on leacd.LocalEducationAgencyCategoryDescriptorId = lea.LocalEducationAgencyCategoryDescriptorId
+JOIN edfi.Descriptor d on d.DescriptorId=leacd.LocalEducationAgencyCategoryDescriptorId
 WHERE lea.LocalEducationAgencyId = @lea_id;";
-
 
         public const string IdColumnName = "Id";
         public const string OrganizationShortNameColumnName = "OrganizationShortName";

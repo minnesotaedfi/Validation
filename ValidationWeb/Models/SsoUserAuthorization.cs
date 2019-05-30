@@ -32,7 +32,7 @@ namespace ValidationWeb.Models
         public string StateOrganizationId { get; set; }
 
         // Example:  0241-01
-        public string FormattedOrganizationId { get; set; }
+        //public string FormattedOrganizationId { get; set; }
 
         // Example:  241
         public int? DistrictNumber { get; set; }
@@ -41,7 +41,7 @@ namespace ValidationWeb.Models
         public string OrganizationName { get; set; }
 
         // 1
-        public int? DistrictType { get; set; }
+        //public int? DistrictType { get; set; }
         
         public override string ToString()
         {
@@ -57,10 +57,10 @@ namespace ValidationWeb.Models
             sb.Append($"RoleId: {RoleId}\r\n");
             sb.Append($"RoleDescription: {RoleDescription}\r\n");
             sb.Append($"StateOrganizationId: {StateOrganizationId}\r\n");
-            sb.Append($"FormattedOrganizationId: {FormattedOrganizationId}\r\n");
+            //sb.Append($"FormattedOrganizationId: {FormattedOrganizationId}\r\n");
             sb.Append($"DistrictNumber: {DistrictNumber}\r\n");
             sb.Append($"OrganizationName: {OrganizationName}\r\n");
-            sb.Append($"DistrictType: {DistrictType}\r\n");
+            //sb.Append($"DistrictType: {DistrictType}\r\n");
             return sb.ToString();
         }
     }

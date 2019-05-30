@@ -50,10 +50,11 @@ namespace ValidationWeb.Controllers
         // GET: Validation/Reports
         public ActionResult Reports()
         {
-            var edOrg = _edOrgService.GetEdOrgById(_appUserService.GetSession().FocusedEdOrgId, _appUserService.GetSession().FocusedSchoolYearId);
+            var session = _appUserService.GetSession();
+            var edOrg = _edOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
             var rulesCollections = _engineObjectModel.Collections.OrderBy(x => x.CollectionId).ToList();
             var theUser = _appUserService.GetUser();
-            var districtName = (edOrg == null) ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
+            var districtName = edOrg == null ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
 
             var model = new ValidationReportsViewModel
             {
@@ -61,10 +62,11 @@ namespace ValidationWeb.Controllers
                 TheUser = theUser,
                 RulesCollections = rulesCollections,
                 SchoolYears = _schoolYearService.GetSubmittableSchoolYears().ToList(),
-                SubmissionCycles = _submissionCycleService.GetSubmissionCyclesOpenToday(),
-                FocusedEdOrgId = _appUserService.GetSession().FocusedEdOrgId,
-                FocusedSchoolYearId = _appUserService.GetSession().FocusedSchoolYearId
+                SubmissionCycles = _submissionCycleService.GetSubmissionCyclesOpenToday().ToList(),
+                FocusedEdOrgId = session.FocusedEdOrgId,
+                FocusedSchoolYearId = session.FocusedSchoolYearId
             };
+
             return View(model);
         }
 

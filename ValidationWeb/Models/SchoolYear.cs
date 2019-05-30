@@ -26,9 +26,9 @@ namespace ValidationWeb.Models
 
         public decimal? ErrorThreshold { get; set; }
 
-        public string StartYear { get; }
+        public string StartYear { get; set; }
 
-        public string EndYear { get; }
+        public string EndYear { get; set; }
 
         public override string ToString()
         {

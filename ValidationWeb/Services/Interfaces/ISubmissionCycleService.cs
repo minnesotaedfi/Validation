@@ -7,11 +7,11 @@ namespace ValidationWeb.Services.Interfaces
 {
     public interface ISubmissionCycleService
     {
-        void DeleteSubmissionCycle(int Id);
+        void DeleteSubmissionCycle(int id);
 
         IList<SubmissionCycle> GetSubmissionCycles();
 
-        IList<SubmissionCycle> GetSubmissionCyclesOpenToday();
+        IEnumerable<SubmissionCycle> GetSubmissionCyclesOpenToday();
 
         SubmissionCycle GetSubmissionCycle(int id);
 

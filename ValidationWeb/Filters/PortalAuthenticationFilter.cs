@@ -219,20 +219,30 @@ namespace ValidationWeb.Filters
             {
                 using (var ssoDatabaseConnection = new SqlConnection(_singleSignOnDatabaseConnectionString))
                 {
-                    var sqlCommandText = $"select * from {_authorizationStoredProcedureName} where UserId = @UserId";
+                    var sqlCommandText = $"select * from {_authorizationStoredProcedureName} where UserId = @UserId and AppId = @AppId";
                     var ssoCommand = new SqlCommand(sqlCommandText, ssoDatabaseConnection)
                     {
                         CommandType = CommandType.Text
                     };
+                    
                     var userIdInput = ssoCommand.Parameters.Add("@UserId", SqlDbType.VarChar);
                     userIdInput.Value = authHeaderValue;
+                    
+                    var appIdInput = ssoCommand.Parameters.Add("@AppId", SqlDbType.VarChar);
+                    appIdInput.Value = _appId;
+
                     ssoDatabaseConnection.Open();
                     var ssoReader = ssoCommand.ExecuteReader();
                     while (ssoReader.Read())
                     {
-                        int districtNumber, districtType;
-                        var hasDistrictNumber = int.TryParse(ssoReader["DistrictNumber"]?.ToString(), out districtNumber);
-                        var hasDistrictType = int.TryParse(ssoReader["DistrictType"]?.ToString(), out districtType);
+                        // TODO: make sure this lines up with what's really coming from the new MN SSO view 
+                        // var stateOrganizationId = $"{ssoReader["districtType"]}{ssoReader["districtNumber"]:D4}000";
+                        var stateOrganizationId = $"{ssoReader["stateOrganizationId"]}";
+                        if (stateOrganizationId.EndsWith("000"))
+                        {
+                            stateOrganizationId = stateOrganizationId.Substring(0, stateOrganizationId.Length - 3);
+                        }
+
                         var theAppId = ssoReader["AppId"]?.ToString();
 
                         if (string.Compare(theAppId, _config.AppId, StringComparison.OrdinalIgnoreCase) == 0)
@@ -242,16 +252,16 @@ namespace ValidationWeb.Filters
                                 {
                                     AppId = theAppId,
                                     AppName = ssoReader["AppName"]?.ToString(),
-                                    DistrictNumber = hasDistrictNumber ? (int?)districtNumber : null,
-                                    DistrictType = hasDistrictType ? (int?)districtType : null,
+                                    DistrictNumber = int.Parse(stateOrganizationId),
+                                    //DistrictType = hasDistrictType ? (int?)districtType : null,
                                     Email = ssoReader["Email"]?.ToString(),
                                     FirstName = ssoReader["FirstName"]?.ToString(),
                                     MiddleName = ssoReader["MiddleName"]?.ToString(),
                                     LastName = ssoReader["LastName"]?.ToString(),
                                     FullName = ssoReader["FullName"]?.ToString(),
                                     UserId = ssoReader["UserId"]?.ToString(),
-                                    StateOrganizationId = ssoReader["StateOrganizationId"]?.ToString(),
-                                    FormattedOrganizationId = ssoReader["FormattedOrganizationId"]?.ToString(),
+                                    StateOrganizationId = stateOrganizationId,
+                                    //FormattedOrganizationId = ssoReader["FormattedOrganizationId"]?.ToString(),
                                     OrganizationName = ssoReader["OrganizationName"]?.ToString(),
                                     RoleDescription = ssoReader["RoleDescription"]?.ToString(),
                                     RoleId = ssoReader["RoleId"]?.ToString()
@@ -260,7 +270,7 @@ namespace ValidationWeb.Filters
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _loggingService.LogErrorMessage($"Error occurred when retrieving authorization for user {authHeaderValue}. {ex.ChainInnerExceptionMessages()}");
             }
@@ -313,17 +323,17 @@ namespace ValidationWeb.Filters
                 }
 
                 // Names and Addresses
-                var firstName = ssoUserAuthorizations.FirstOrDefault(ss => ss.FirstName != null).FirstName;
+                var firstName = ssoUserAuthorizations.FirstOrDefault(ss => ss.FirstName != null)?.FirstName;
                 _loggingService.LogDebugMessage($"User: {authHeaderValue}, First Name: {firstName}.");
-                var middleName = ssoUserAuthorizations.FirstOrDefault(ss => ss.MiddleName != null).MiddleName;
+                var middleName = ssoUserAuthorizations.FirstOrDefault(ss => ss.MiddleName != null)?.MiddleName;
                 _loggingService.LogDebugMessage($"User: {authHeaderValue}, Middle Name: {middleName}.");
-                var lastName = ssoUserAuthorizations.FirstOrDefault(ss => ss.LastName != null).LastName;
+                var lastName = ssoUserAuthorizations.FirstOrDefault(ss => ss.LastName != null)?.LastName;
                 _loggingService.LogDebugMessage($"User: {authHeaderValue}, Last Name: {lastName}.");
-                var fullName = ssoUserAuthorizations.FirstOrDefault(ss => ss.FullName != null).FullName;
+                var fullName = ssoUserAuthorizations.FirstOrDefault(ss => ss.FullName != null)?.FullName;
                 _loggingService.LogDebugMessage($"User: {authHeaderValue}, Full Name: {fullName}.");
-                var theEmail = ssoUserAuthorizations.FirstOrDefault(ss => ss.Email != null).Email;
+                var theEmail = ssoUserAuthorizations.FirstOrDefault(ss => ss.Email != null)?.Email;
                 _loggingService.LogDebugMessage($"User: {authHeaderValue}, Email: {theEmail}.");
-                var appName = ssoUserAuthorizations.FirstOrDefault(ss => ss.AppName != null).AppName;
+                var appName = ssoUserAuthorizations.FirstOrDefault(ss => ss.AppName != null)?.AppName;
                 _loggingService.LogDebugMessage($"User: {authHeaderValue}, Application Name: {appName}.");
 
                 #endregion Extract data about the user that is common to all SSO Authorization records.
@@ -342,7 +352,7 @@ namespace ValidationWeb.Filters
                         if (!ssoUserOrg.StateOrganizationId.Equals("ALL", StringComparison.InvariantCultureIgnoreCase))
                         {
                             int authorizedEdOrgId;
-                            if (int.TryParse(ssoUserOrg.StateOrganizationId.Substring(0, 5), out authorizedEdOrgId))
+                            if (int.TryParse(ssoUserOrg.StateOrganizationId.Substring(0, 8), out authorizedEdOrgId))
                             {
 
                                 _loggingService.LogDebugMessage(
