@@ -1,0 +1,25 @@
+ruleset SchoolGrade
+
+rule 10.10.6530
+	when {SchoolGrade}.[DistrictNumber] = {StudentEnrollment}.[DistrictNumber]
+	and {SchoolGrade}.[DistrictType] = {StudentEnrollment}.[DistrictType]
+	and {SchoolGrade}.[SchoolNumber] = {StudentEnrollment}.[SchoolNumber]
+	and {SchoolGrade}.[SchoolNumber] <> '005' then
+	expect {SchoolGrade}.[SchoolGradeLevel] = {StudentEnrollment}.[StudentGradeLevel]
+	else '149. No students were reported in this grade for this school, but there exists a SCH/GRD record in the school file. Confirm that there are no students to be reported for this grade in this school.'
+
+rule 10.10.6642 
+	when max({StudentEnrollment}.[StudentGradeLevel] by [SchoolNumber] 
+		when {StudentEnrollment}.[DistrictType] is in ['01','03','06','07','08','34','50','51','52','53','61','62','70','83','99']
+		and {StudentEnrollment}.[SchoolClassification] is in ['00','10','20','31','32','33','40','41','42','43','46','50','55','60','70','71','72','73','74','76','77','78','79']
+		and {StudentEnrollment}.[StateAidCategory] is not in ['02','14','16','17','18','28','46','52','98'] ) < 7 then
+	expect that min({SchoolGrade}.[SchoolNumber] by [SchoolNumber] when {SchoolGrade}.[SchoolGradeLevel]  is not in ['7','8','9','10','11','12']) = {StudentEnrollment}.[SchoolNumber]
+	else '429. The MARSS Enrollment data reported for this school would indicate this is an Elementary school (no students reported in grades 7 or above), but the grades registered in MDEORG conflict with this designation for accountability purposes. Check the grade levels that are authorized for this school in MDEORG.'
+
+rule 10.10.6643 
+	when max({StudentEnrollment}.[StudentGradeLevel] by [SchoolNumber] 
+		when {StudentEnrollment}.[DistrictType] is in ['01','03','06','07','08','34','50','51','52','53','61','62','70','83','99']
+		and {StudentEnrollment}.[SchoolClassification] is in ['00','10','20','31','32','33','40','41','42','43','46','50','55','60','70','71','72','73','74','76','77','78','79']
+		and {StudentEnrollment}.[StateAidCategory] is not in ['02','14','16','17','18','28','46','52','98'] ) >= 7 then
+	expect that min({SchoolGrade}.[SchoolNumber] by [SchoolNumber] when {SchoolGrade}.[SchoolGradeLevel] is in ['7','8','9','10','11','12']) = {StudentEnrollment}.[SchoolNumber]
+	else '430. The MARSS Enrollment data reported for this school would indicate this is a Middle school (students are reported in grades 7 or above), but the grades registered in MDEORG conflict with this designation for accountability purposes. Check the grade levels that are authorized for this school in MDEORG.'

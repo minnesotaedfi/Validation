@@ -25,6 +25,31 @@ rule 10.10.6214
 	require that {StudentEnrollment}.[StatusBeginDate] >= 1-July
 	else '29. By statute the school year for early childhood special education and kindergarten disabled students may start July 1 and continue through June 30. However, any membership that occurs before July 1 is part of the prior school year. Schools with classifications of 02 and District Types 07 and 34 are also held to this start date.'
 
+rule 10.10.6215
+	when {StudentEnrollment}.[DistrictType] is in ['1','2','3']
+	and {StudentEnrollment}.[StudentGradeLevel] is not in ['HK','EC','PS'] 
+	and {StudentEnrollment}.[StateAidCategory] is not in ['98','46'] 
+	and {StudentEnrollment}.[DistrictNumber] <> '0347' 
+	and {StudentEnrollment}.[SchoolNumber] is not in ['931','941'] then
+	require {StudentEnrollment}.[StatusBeginDate] > first Monday in September
+	else '64. Status Start Date cannot be before the state-wide start date (specified by statute) for regular schools for students in grades K-12.  (This edit excludes students enrolled in Area Learning Centers and other state-approved alternative program sites, summer graduates, summer dropouts and other summer leavers, SAC 46 (ESY) students, and early childhood and kindergarten disabled students.'
+
+rule 10.10.6216
+	when {StudentEnrollment}.[DistrictType] is in ['7','34','70']
+	and {StudentEnrollment}.[StateAidCategory] <> '98' then
+	require {StudentEnrollment}.[StatusBeginDate] >= 1-July
+	else '29. By statute the school year for early childhood special education and kindergarten disabled students may start July 1 and continue through June 30.  However, any membership that occurs before July 1 is part of the prior school year. Schools with classifications of 02 and District Types 07 and 34 are also held to this start date.'
+	
+rule 10.10.6217
+	when {StudentEnrollment}.[StateAidCategory] <> '98' then
+	require {StudentEnrollment}.[StatusBeginDate] >= 1-July
+	else '29. By statute the school year for early childhood special education and kindergarten disabled students may start July 1 and continue through June 30.  However, any membership that occurs before July 1 is part of the prior school year. Schools with classifications of 02 and District Types 07 and 34 are also held to this start date.'	
+
+rule 10.10.6218
+	when {StudentEnrollment}.[StateAidCategory] <> '98' then
+	require {StudentEnrollment}.[StatusBeginDate] >= 1-June
+	else '80. For Area Learning Center (ALC) and Learning Year Program Site (LYPS) students only:  Status Start Date must be within the school year.  The school year for ALC\'s and other state-approved alternative programs may start in June after the end of the just prior school year, usually early to mid-June, and running for the following 12 months, generally ending early the following June.  This error occurs when the student\'s Status Start Date is prior to June 1.  For example, an ALC student\'s Status Start Date cannot be before June 1, 2018 for FY 2019.'
+
 rule 10.10.6221
 	when {StudentEnrollment}.[StudentGradeLevel] = 'HK' then
 	require that {StudentEnrollment}.[SpecialEducationEvaluationStatus] exists and {StudentEnrollment}.[SpecialEducationEvaluationStatus] is in ['4','6','9']
@@ -53,6 +78,19 @@ rule 10.10.6229
 	when {StudentEnrollment}.[StudentGradeLevel] = 'EC' then
 	require {StudentEnrollment}.[SpecialEducationEvaluationStatus] exists and {StudentEnrollment}.[SpecialEducationEvaluationStatus] is in ['2','3','4','5','6','9']
 	else '125. Students reported in grade \'EC\' (early childhood special education) must have a Special Education Evaluation Status of either 2, 4, 5 or 6 to generate any ADM. There is no need to report a second enrollment record for an early childhood student whose IEP/IFSP is terminated. Check the student\'s grade level and/or Special Education Evaluation Status.'
+	
+rule 10.10.6231
+	when {StudentEnrollment}.[StudentGradeLevel] = 'EC' 
+	and {StudentEnrollment}.[SpecialEducationEvaluationStatus] = '5'
+	and {StudentEnrollment}.[StateAidCategory] <> '46' then
+	require {StudentEnrollment}.[Membership] = 0 
+	or {StudentEnrollment}.[Membership] does not exist
+	else '248. When grade equals EC and SEES equals 5 membership and attendance must equal zero.'	
+
+rule 10.10.6331
+	when {StudentEnrollment}.[SpecialEducationEvaluationStatus] is in ['4','6','9'] then
+	require {StudentEnrollment}.[StateAidCategory] <> '20'
+	else '371. Federal law requires that instruction be free to students who have an IEP. SAC 20 indicates that the parent is paying tuition and Special Education Evaluation Status of 4, 6 or 9 indicates the student has an IEP. Verify the existence of the IEP or select a different SAC.'
 
 rule 10.10.62381
 	when {StudentEnrollment}.[StatusEnd] is in ['21','25','27','28','29','30'] then
@@ -76,7 +114,14 @@ rule 10.10.6386
 	and {StudentEnrollment}.[SchoolClassification] <> '46' then
 	require that {StudentEnrollment}.[DistrictType] <> '7' 
 	else '288. Student has resident district number 0001 and type of 01 (Aitkin) which is an invalid resident district number and type for charter school.'
-	
+
+rule 10.10.6391
+	when {StudentEnrollment}.[StateAidCategory] = '98'
+	and {StudentEnrollment}.[StatusEnd] is in ['08','09'] then
+	require days since first Monday in September as of {StudentEnrollment}.[StatusBeginDate] <= 8 
+	or days since first Monday in September as of {StudentEnrollment}.[StatusEndDate] <= 8 
+	else '17. State Aid Category 98 (summer dropouts, leavers and graduates) requires that the Status Start and Status End Dates be any date between June 30 and the 2nd week of September. Also check the student\'s Status Start and End Dates.  Late graduates (summer graduates) are also reported with SAC 98 but they may be reported at any time during the year.  Refer to procedure 12.'
+		
 rule 10.10.6428 
 	when {StudentEnrollment}.[StudentGradeLevel] is not in ['5','6','7','8','9','10','11','12','PS'] then
 	require {StudentEnrollment}.[SchoolClassification] is not in ['41','42']
@@ -118,6 +163,11 @@ rule 10.10.64763
 	when {StudentEnrollment}.[StudentGradeLevel] <> 'PS' then
 	require that {StudentEnrollment}.[SchoolClassification] <> '83'
 	else '223. This error occurs when grade 10-12 students are reported in a Targeted Services ALC (school classification 45). This error may also occur when a early childhood student (grade EC or PS) is reporting in an SAAP (school classification 41, 42, 43 or 45). It can also occur when grade level other than PS is reported in Early Childhood Screening School (school classification 83).'	
+
+rule 10.10.6491
+	when {StudentEnrollment}.[StateAidCategory] = '98' then
+	require days since {StudentEnrollment}.[StatusBeginDate] as of {StudentEnrollment}.[StatusEndDate] <= 4
+	else '381. State Aid Category 98 is used to report students who have transferred to a school in another state or country or to a nonpublic school, graduated, dropped out or were deceased over the summer or who graduated mid-year while not enrolled in school. These students should have a Status End Date the day after the Status Start Date. The error indicates an inconsistency among the State Aid Category and the Status Start and End Dates. Refer to the MARSS Manual, Procedure 12 for more information.'
 	
 rule 10.10.6516 
 	when {StudentEnrollment}.[StudentResidentDistrictNumber] exists and {StudentEnrollment}.[StudentResidentDistrictNumber] <> '9998' then
@@ -133,7 +183,14 @@ rule 10.10.6524
 	when {StudentEnrollment}.[StatusEndDate] exists then
 	require that {StudentEnrollment}.[StatusEndDate] <= 30-June
 	else '40. Status End Date cannot be after June 30, except for summer graduates and dropouts which are ignored by this edit. In a regular school, membership that occurs after June 30 is considered summer school, which is not reported on MARSS. Membership that occurs in June after the graduation date of the just completed school year in an ALC or other state-approved alternative school is part of the following school year. Most school calendars have ending dates by early June; that ending date is the last possible Status End Date for students enrolled in those schools during the current school year.'
-	
+
+rule 10.10.6571
+	when {StudentEnrollment}.[StatusEndDate] exists
+	and {StudentEnrollment}.[StateAidCategory] <> '46'
+	and {StudentEnrollment}.[StudentGradeLevel] <> 'PS' then
+	require {StudentEnrollment}.[Attendance] <= {StudentEnrollment}.[Membership]
+	else '52. Attendance Days (hours) cannot exceed Membership Days (hours) in any enrollment record.  Also check the student\'s Membership Days (hours).      
+		
 rule 10.10.6617 
 	when {StudentEnrollment}.[HomeboundServiceIndicator] = 1 then
 	require that {StudentEnrollment}.[StudentGradeLevel] <> 'EC'
@@ -156,5 +213,68 @@ rule 30.10.6429
 	and years since {StudentDemographic}.[BirthDate] as of {StudentEnrollment}.[StatusEndDate] < 3 then
 	expect that {StudentEnrollment}.[StatusEnd] <> '40' 
 	else '309. EC student turns three before June 30 and has a status end code of 40 prior to June 30. Verify that special education services were not provided until the end of the fiscal school year of June 30.'
+/* */
 
+rule 10.10.6413
+	when {StudentEnrollment}.[SpecialEducationEvaluationStatus] is in ['4','6','9']
+	and {StudentEnrollment}.[SchoolNumber] <> '005'
+	and {StudentEnrollment}.[StudentGradeLevel] <> 'PS'
+	and {StudentEnrollment}.[StateAidCategory] <> '46'
+	expect count({StudentEnrollment} when {StudentEnrollment}.[TransportationCategory] = '03') > 0 
+	else '301. Special education students have been reported but no transportation category 03 found. Verify transportation categories.'
 
+rule 10.10.6560
+	when {StudentEnrollment}.[SchoolClassification] is not in ['45','51']
+	and {StudentEnrollment}.[StudentGradeLevel] <> 'PS'
+	and count({StudentDemographic} when {StudentDemographic}.[Gender] is in ['Male', 'Female'] ) > 0
+	expect count({StudentEnrollment} when {StudentEnrollment}.[EconomicIndicatorCode] is in  ['1', '2'] and {StudentEnrollment}.[StateAidCategory] is not in ('14','15','16','17','18','20','21','24','25','28','98')) > 0 
+	else '158. This warning message appears when no students were reported as qualifying for the Compensatory Revenue counts. To qualify, a student must meet 3 criteria. (1.) - The student must qualify for the Free or Reduced Price meal program (as determined using the Economic Indicator). (2.) - The student must have a qualifying State Aid Category. State Aid Categories of 14, 15, 16, 17, 18, 20, 21, 24, 25, 28, & 98 are excluded. (3.) - The student must be enrolled over October 1st of the reporting year.'
+
+rule 10.10.6561
+	when {StudentDemographic}.[SchoolNumber] <> '005'
+	and count({StudentDemographic} when {StudentDemographic}.[Gender] is in ['Male', 'Female'] ) > 0
+	expect count({StudentDemographic} when {StudentDemographic}.[Gender] = 'Male') exists and count({StudentDemographic} when {StudentDemographic}.[Gender] = 'Male') > 0 
+	else '142. This message warns that all students at the requested level (district,school,grade) have been coded as female.  No males have been identified.  In a gender-specific school or program (e.g., correctional facility), this message may be ignored.  Otherwise, identify the males as such. This edit only looks at records that have no local error.'
+
+rule 10.10.6562
+	when {StudentDemographic}.[SchoolNumber] <> '005'
+	and count({StudentDemographic} when {StudentDemographic}.[Gender] is in ['Male', 'Female'] ) > 0
+	expect count({StudentDemographic} when {StudentDemographic}.[Gender] = 'Female') exists and count({StudentDemographic} when {StudentDemographic}.[Gender] = 'Female') > 0 
+	else '124. This message warns that all students at the requested level (district,school,grade) have been coded as male.  No females have been identified.  In a gender-specific school or program (e.g., correctional facility), this message may be ignored.  Otherwise, identify the females as such. This warning only looks at records that have no local error.'
+
+rule 10.10.6563
+	when {StudentDemographic}.[SchoolNumber] <> '005'
+	and count({StudentDemographic} when {StudentDemographic}.[Gender] is in ['Male', 'Female'] ) > 0
+	expect count({StudentDemographic} when {StudentDemographic}.[HomePrimaryLanguage] <> '011') > 0 
+	else '143. This message warns that all students at the requested level (district,school,grade) are identified with a Home Language of English (011).  Verify that no students have some other Home Language.'	
+
+rule 10.10.6564
+	when {StudentEnrollment}.[SchoolNumber] <> '005'
+	and {StudentEnrollment}.[StudentGradeLevel] is not in ['KA','KB','KC','KD','KE','KF','KG','KI','KJ','KK','KL','KM','KN','KO','KP','KQ','KR','KS','KT','KU','KV','KW','KX','KY','KZ','PA','PB','PC','PD','PE','PF','PG','PH','PI','PJ','RA','RB','RC','RD','RE','RF','RG','RH','RI','RJ']
+	and count({StudentDemographic} when {StudentDemographic}.[Gender] is in ['Male', 'Female'] ) > 0
+	expect count({StudentDemographic} when {StudentDemographic}.[SpecialEducationIndicator] = '1') > 0 
+	else '171. This message warns that no students were reported with Special Education Evaluation Status = 4, 6 or 9.  Verify that no students were served in Special Education.'
+
+rule 30.10.6539
+	when  collection is EOY_Enrollment_And_Demographic 
+	and {SchoolCalendar}.[SchoolTitle1Code] = 'B' 
+	and {SchoolGrade}.[SchoolNumber] <> '000' 
+	and {SchoolGrade}.[SchoolGradeLevel] <> 'PS' then 
+	require count({StudentEnrollment} by [SchoolNumber] when {StudentEnrollment}.[Title1Indicator] = 1) > 0
+	else '212. The student\'s Targeted Student Indicator is inconsistent with the Title I School Indicator.   When the Title I School Indicator is A, all students within the school must be reported with Targeted Student Indicator = N.   When the Title I School Indicator is C, all students within the school must be reported with Targeted Student Indicator = Y.    When the Title 1 School Indicator is B, at least one student within the school must be reported with Targeted Student Indicator = Y.'
+	
+rule 30.10.6540
+	when  collection is EOY_Enrollment_And_Demographic 
+	and count({StudentDemographic} when {StudentDemographic}.[Gender] is in ['Male', 'Female'] ) > 0
+	and {StudentEnrollment}.[SchoolClassification] <> '51'
+	and {StudentEnrollment}.[StudentGradeLevel] <> 'PS'
+	expect count({StudentEnrollment} when {StudentEnrollment}.[TransportationCategory] is in ['01', '02', '03', '04', '05', '06') > 0 
+	else '208. This warning occurs when all students for a grade within a school were reported with a Transportation Category of "00" - "Walkers".'	
+	
+rule 30.10.6551
+	when  collection is EOY_Enrollment_And_Demographic 
+	and {StudentEnrollment}.[SchoolNumber] <> '005'
+	and {StudentEnrollment}.[SchoolClassification] is not in ['51', '83']
+	and {StudentEnrollment}.[StudentGradeLevel] <> 'PS' then
+	expect sum({StudentEnrollment} by [SchoolNumber, StudentGradeLevel] when {StudentEnrollment}.[Membership] > 0) =  sum({StudentEnrollment} by [SchoolNumber, StudentGradeLevel] when {StudentEnrollment}.[Attendance] > 0)
+	else '224. This warning appears when all students within a grade within a school are reported with perfect attendance (their attendance days/hours are equal to their membership days/hours). Check the student\'s attendance and/or membership to confirm all students were in attendance while in membership.' 
