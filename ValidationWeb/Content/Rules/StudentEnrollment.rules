@@ -227,19 +227,19 @@ rule 10.10.6560
 	when {StudentEnrollment}.[SchoolClassification] is not in ['45','51']
 	and {StudentEnrollment}.[StudentGradeLevel] <> 'PS'
 	and count({StudentDemographic} when {StudentDemographic}.[Gender] is in ['Male', 'Female'] ) > 0 then
-	expect count({StudentEnrollment} when {StudentEnrollment}.[EconomicIndicatorCode] is in  ['1', '2'] and {StudentEnrollment}.[StateAidCategory] is not in ('14','15','16','17','18','20','21','24','25','28','98')) > 0 
+	expect count({StudentEnrollment} when {StudentEnrollment}.[EconomicIndicatorCode] is in  ['1', '2'] and {StudentEnrollment}.[StateAidCategory] is not in ['14','15','16','17','18','20','21','24','25','28','98']) > 0 
 	else '158. This warning message appears when no students were reported as qualifying for the Compensatory Revenue counts. To qualify, a student must meet 3 criteria. (1.) - The student must qualify for the Free or Reduced Price meal program (as determined using the Economic Indicator). (2.) - The student must have a qualifying State Aid Category. State Aid Categories of 14, 15, 16, 17, 18, 20, 21, 24, 25, 28, & 98 are excluded. (3.) - The student must be enrolled over October 1st of the reporting year.'
 
 rule 10.10.6561
 	when {StudentDemographic}.[SchoolNumber] <> '005'
 	and count({StudentDemographic} when {StudentDemographic}.[Gender] is in ['Male', 'Female'] ) > 0 then
-	expect count({StudentDemographic} when {StudentDemographic}.[Gender] = 'Male') exists and count({StudentDemographic} when {StudentDemographic}.[Gender] = 'Male') > 0 
+	expect count({StudentDemographic} when {StudentDemographic}.[Gender] = 'Male') > 0 
 	else '142. This message warns that all students at the requested level (district,school,grade) have been coded as female.  No males have been identified.  In a gender-specific school or program (e.g., correctional facility), this message may be ignored.  Otherwise, identify the males as such. This edit only looks at records that have no local error.'
 
 rule 10.10.6562
 	when {StudentDemographic}.[SchoolNumber] <> '005'
 	and count({StudentDemographic} when {StudentDemographic}.[Gender] is in ['Male', 'Female'] ) > 0 then
-	expect count({StudentDemographic} when {StudentDemographic}.[Gender] = 'Female') exists and count({StudentDemographic} when {StudentDemographic}.[Gender] = 'Female') > 0 
+	expect count({StudentDemographic} when {StudentDemographic}.[Gender] = 'Female') > 0 
 	else '124. This message warns that all students at the requested level (district,school,grade) have been coded as male.  No females have been identified.  In a gender-specific school or program (e.g., correctional facility), this message may be ignored.  Otherwise, identify the females as such. This warning only looks at records that have no local error.'
 
 rule 10.10.6563
@@ -268,13 +268,14 @@ rule 30.10.6540
 	and count({StudentDemographic} when {StudentDemographic}.[Gender] is in ['Male', 'Female'] ) > 0
 	and {StudentEnrollment}.[SchoolClassification] <> '51'
 	and {StudentEnrollment}.[StudentGradeLevel] <> 'PS' then
-	expect count({StudentEnrollment} when {StudentEnrollment}.[TransportationCategory] is in ['01', '02', '03', '04', '05', '06'] > 0 
+	expect count({StudentEnrollment} when {StudentEnrollment}.[TransportationCategory] is in ['01', '02', '03', '04', '05', '06']) > 0 
 	else '208. This warning occurs when all students for a grade within a school were reported with a Transportation Category of "00" - "Walkers".'	
 
 rule 30.10.6551
 	when  collection is EOY_Enrollment_And_Demographic 
 	and {StudentEnrollment}.[SchoolNumber] <> '005'
 	and {StudentEnrollment}.[SchoolClassification] is not in ['51', '83']
-	and {StudentEnrollment}.[StudentGradeLevel] <> 'PS' then
-	expect sum({StudentEnrollment} by [SchoolNumber, StudentGradeLevel] when {StudentEnrollment}.[Membership] > 0) =  sum({StudentEnrollment} by [SchoolNumber, StudentGradeLevel] when {StudentEnrollment}.[Attendance] > 0)
+	and {StudentEnrollment}.[StudentGradeLevel] <> 'PS' 
+	and sum({StudentEnrollment}.[Membership] by [SchoolNumber, StudentGradeLevel]) > 1 then
+	expect sum({StudentEnrollment}.[Membership] by [SchoolNumber, StudentGradeLevel]) =  sum({StudentEnrollment}.[Attendance] by [SchoolNumber, StudentGradeLevel])
 	else '224. This warning appears when all students within a grade within a school are reported with perfect attendance (their attendance days/hours are equal to their membership days/hours). Check the student\'s attendance and/or membership to confirm all students were in attendance while in membership.' 
