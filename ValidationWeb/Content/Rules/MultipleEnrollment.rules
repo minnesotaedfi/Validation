@@ -41,7 +41,7 @@ rule 10.10.6272
 	when {MultipleEnrollment}.[DistrictIdLeft] <> {MultipleEnrollment}.[DistrictIdRight]
 	and {MultipleEnrollment}.[StudentGradeLevelLeft] <> 'PS'
 	and {MultipleEnrollment}.[StudentGradeLevelRight] <> 'PS' 
-	and {MultipleEnrollment}.[SpecialEducationEvaluationStatus] is in ['4','6','9'] then
+	and {MultipleEnrollment}.[SpecialEducationEvaluationStatusLeft] is in ['4','6','9'] then
 	expect {MultipleEnrollment}.[SpecialEducationEvaluationStatusRight] <> '8'
 	else '327. When SEES equals 8 students cannot have a prior enrollment record with SEES of 4 or 6 within the same school year.'
 
@@ -49,7 +49,7 @@ rule 10.10.6273
 	when {MultipleEnrollment}.[DistrictIdLeft] <> {MultipleEnrollment}.[DistrictIdRight]
 	and {MultipleEnrollment}.[StudentGradeLevelLeft] <> 'PS'
 	and {MultipleEnrollment}.[StudentGradeLevelRight] <> 'PS' 
-	and {MultipleEnrollment}.[SpecialEducationEvaluationStatus] is in ['4','6','9'] then
+	and {MultipleEnrollment}.[SpecialEducationEvaluationStatusLeft] is in ['4','6','9'] then
 	expect {MultipleEnrollment}.[SpecialEducationEvaluationStatusRight] <> '8'
 	else '327. When SEES equals 8 students cannot have a prior enrollment record with SEES of 4 or 6 within the same school year.'	
 
