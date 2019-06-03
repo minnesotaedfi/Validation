@@ -1,0 +1,11 @@
+ruleset StudentProgram
+
+rule 10.10.6243
+	when {StudentEnrollment}.[StateAidCategory] <> '46'
+	and {StudentEnrollment}.[StudentGradeLevel] <> 'PS' 
+	and {StudentProgram}.[EnglishLearnerStartDate] exists then
+	require {StudentProgram}.[EnglishLearnerStartDate] <= 30-June
+	and {StudentProgram}.[EnglishLearnerStartDate] >= 1 year before 1-June
+	and {StudentProgram}.[EnglishLearner] = 1
+	else '51. A non-zero EL Start Date (the student participated in an EL program during the school year) requires that the student be identified as needing EL services; English Learner must be \'Y\' (yes, the student has been evaluated and requires EL services).  Additionally, if EL = Y, the student must either have 00000000 (00/00/00) as the EL Begin Date (needs el services but is not yet receiving EL services) or the date must fall within the current school year. Check English Learner indicator or the EL Start Date for valid values.'
+	

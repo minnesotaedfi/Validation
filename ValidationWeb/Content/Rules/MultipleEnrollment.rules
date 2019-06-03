@@ -13,6 +13,22 @@ rule 10.10.6176
 	and {MultipleEnrollment}.[StudentGradeLevelRight] = 'PS'  then
 	require {MultipleEnrollment}.[StudentGradeLevelLeft] is in ['EC','HK','KA','KB','KC','KD','KE','KF','KG','KH','KI','KK','KL','KM','KN','KO','KP','KQ','KR','KS','KT','KU','KV','KW','KX','KY','KZ','PA','PB','PC','PD','PE','PF','PG','PH','PI','PJ','RA','RB','RC','RD','RE','RF','RG','RH','RI','RJ']
 	else '21. Status Start Date on a student\'s enrollment record must be later than the Status End Date of the student\'s immediately prior enrollment record within the same school year unless the dual enrolled criteria are met; refer to Procedure Number 8 in the MARSS Manual. Status Start and End Dates are inclusive; they count as Attendance and Membership days. Also check the Status End Date on the student\'s just prior enrollment record.'
+
+rule 10.10.6252
+	when {MultipleEnrollment}.[SchoolIdLeft] <> {MultipleEnrollment}.[SchoolIdRight]
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] is not in ['PS','EC','HK']
+	and {MultipleEnrollment}.[StudentGradeLevelRight] <> 'PS' 
+	and {MultipleEnrollment}.[SchoolClassificationLeft] is not in ['41','42','43','44','45'] then
+	require {MultipleEnrollment}.[StateAidCategoryRight] <> '46'
+	else '266. Record with a SAC of 46 cannot overlap with any other type of enrollment record or with a State Approved Alternative Program (SAAP) within the same district.'
+
+rule 10.10.6253
+	when {MultipleEnrollment}.[SchoolIdLeft] <> {MultipleEnrollment}.[SchoolIdRight]
+	and {MultipleEnrollment}.[StudentGradeLevelRight] is not in ['PS','EC','HK']
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] <> 'PS' 
+	and {MultipleEnrollment}.[SchoolClassificationRight] is not in ['41','42','43','44','45'] then
+	require {MultipleEnrollment}.[StateAidCategoryLeft] <> '46'
+	else '266. Record with a SAC of 46 cannot overlap with any other type of enrollment record or with a State Approved Alternative Program (SAAP) within the same district.'
 	
 rule 10.10.6254 
 	when {MultipleEnrollment}.[EnrollmentOverlap] = 1
@@ -20,6 +36,74 @@ rule 10.10.6254
 	and {MultipleEnrollment}.[StudentGradeLevelLeft] = 'PS'  then
 	require {MultipleEnrollment}.[StudentGradeLevelRight] is in ['EC','HK','KA','KB','KC','KD','KE','KF','KG','KH','KI','KK','KL','KM','KN','KO','KP','KQ','KR','KS','KT','KU','KV','KW','KX','KY','KZ','PA','PB','PC','PD','PE','PF','PG','PH','PI','PJ','RA','RB','RC','RD','RE','RF','RG','RH','RI','RJ']
 	else '21. Status Start Date on a student\'s enrollment record must be later than the Status End Date of the student\'s immediately prior enrollment record within the same school year unless the dual enrolled criteria are met; refer to Procedure Number 8 in the MARSS Manual. Status Start and End Dates are inclusive; they count as Attendance and Membership days. Also check the Status End Date on the student\'s just prior enrollment record.'
+
+rule 10.10.6272
+	when {MultipleEnrollment}.[DistrictIdLeft] <> {MultipleEnrollment}.[DistrictIdRight]
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] <> 'PS'
+	and {MultipleEnrollment}.[StudentGradeLevelRight] <> 'PS' 
+	and {MultipleEnrollment}.[SpecialEducationEvaluationStatus] is in ['4','6','9'] then
+	expect {MultipleEnrollment}.[SpecialEducationEvaluationStatusRight] <> '8'
+	else '327. When SEES equals 8 students cannot have a prior enrollment record with SEES of 4 or 6 within the same school year.'
+
+rule 10.10.6273
+	when {MultipleEnrollment}.[DistrictIdLeft] <> {MultipleEnrollment}.[DistrictIdRight]
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] <> 'PS'
+	and {MultipleEnrollment}.[StudentGradeLevelRight] <> 'PS' 
+	and {MultipleEnrollment}.[SpecialEducationEvaluationStatus] is in ['4','6','9'] then
+	expect {MultipleEnrollment}.[SpecialEducationEvaluationStatusRight] <> '8'
+	else '327. When SEES equals 8 students cannot have a prior enrollment record with SEES of 4 or 6 within the same school year.'	
+
+rule 10.10.6274
+	when {MultipleEnrollment}.[DistrictIdLeft] <> {MultipleEnrollment}.[DistrictIdRight]
+	and {MultipleEnrollment}.[StateAidCategoryLeft] is in ['16','17','18'] then
+	expect {MultipleEnrollment}.[StateAidCategoryRight] is in ['16','17','18']
+	else '329. SAC 16-18 and record is overlapping with another record both records must have SAC 16-18.'
+
+rule 10.10.6275
+	when {MultipleEnrollment}.[DistrictIdLeft] <> {MultipleEnrollment}.[DistrictIdRight]
+	and {MultipleEnrollment}.[StateAidCategoryRight] is in ['16','17','18'] then
+	expect {MultipleEnrollment}.[StateAidCategoryLeft] is in ['16','17','18']
+	else '329. SAC 16-18 and record is overlapping with another record both records must have SAC 16-18.'
+	
+rule 10.10.6276
+	when days since {MultipleEnrollment}.[StatusEndDateLeft] as of {MultipleEnrollment}.[StatusBeginDateRight] >= 2 
+	and {MultipleEnrollment}.[DistrictIdLeft] <> {MultipleEnrollment}.[DistrictIdRight] then
+	expect {MultipleEnrollment}.[ValidDistrictOverlap] = 1
+	else '326. This appears when two districts have the same State Reporting Number on their MARSS files with overlapping enrollments and the dual enrolled criteria have not been met.  (The student\'s name is not used to match records.) The message appears in conjunction with either:  NEXT REC DST (the district with the earlier Status Start Date) and PRIOR REC DST (the district with the later Status Start Date).  Check the Status Start and End Dates on the "Notification of Change in Student Enrollment."  Neither record will generate any state aid until the error is corrected.  Also check the student\'s State Reporting Number.'
+	
+rule 10.10.6277
+	when {MultipleEnrollment}.[DistrictIdLeft] <> {MultipleEnrollment}.[DistrictIdRight]
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] = 'PS'
+	and {MultipleEnrollment}.[StudentGradeLevelRight] is not in ['EC','PA','PB','PC','PD','PE','PF','PG','PH','PI','PJ','HK','KA','KB','KC','KD','KE','KF','KG','KI','KJ','KK','RA','RB','RC','RD','RE','RF','RG','RH','RI','RJ'] then
+	expect {MultipleEnrollment}.[EnrollmentOverlap] <> 1
+	else '326. This appears when two districts have the same State Reporting Number on their MARSS files with overlapping enrollments and the dual enrolled criteria have not been met.  (The student\'s name is not used to match records.) The message appears in conjunction with either:  NEXT REC DST (the district with the earlier Status Start Date) and PRIOR REC DST (the district with the later Status Start Date).  Check the Status Start and End Dates on the "Notification of Change in Student Enrollment."  Neither record will generate any state aid until the error is corrected.  Also check the student\'s State Reporting Number.'	
+	
+rule 10.10.6278
+	when {MultipleEnrollment}.[DistrictIdLeft] <> {MultipleEnrollment}.[DistrictIdRight]
+	and {MultipleEnrollment}.[StudentGradeLevelRight] = 'PS'
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] is not in ['EC','PA','PB','PC','PD','PE','PF','PG','PH','PI','PJ','HK','KA','KB','KC','KD','KE','KF','KG','KI','KJ','KK','RA','RB','RC','RD','RE','RF','RG','RH','RI','RJ'] then
+	expect {MultipleEnrollment}.[EnrollmentOverlap] <> 1
+	else '326. This appears when two districts have the same State Reporting Number on their MARSS files with overlapping enrollments and the dual enrolled criteria have not been met.  (The student\'s name is not used to match records.) The message appears in conjunction with either:  NEXT REC DST (the district with the earlier Status Start Date) and PRIOR REC DST (the district with the later Status Start Date).  Check the Status Start and End Dates on the "Notification of Change in Student Enrollment."  Neither record will generate any state aid until the error is corrected.  Also check the student\'s State Reporting Number.'
+
+rule 10.10.6279
+	when {MultipleEnrollment}.[DistrictIdLeft] <> {MultipleEnrollment}.[DistrictIdRight] 
+	and {MultipleEnrollment}.[EnrollmentOverlap] = 1
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] <> 'PS'
+	and {MultipleEnrollment}.[StudentGradeLevelRight] <> 'PS' 
+	and {MultipleEnrollment}.[StateAidCategoryLeft] <> '46'
+	and {MultipleEnrollment}.[StateAidCategoryRight] <> '46' then
+	expect {MultipleEnrollment}.[HomeboundServiceIndicatorLeft] = {MultipleEnrollment}.[HomeboundServiceIndicatorRight]
+	else '328. If dual or concurrently enrolled within a district or between districts and one record is marked with Y for homebound then error out the homebound record.  This would apply when one or both records is a State Approved Alternative Program (SAAP) or two part-time records.'
+
+rule 10.10.6280
+	when {MultipleEnrollment}.[DistrictIdLeft] <> {MultipleEnrollment}.[DistrictIdRight] 
+	and {MultipleEnrollment}.[EnrollmentOverlap] = 1
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] <> 'PS'
+	and {MultipleEnrollment}.[StudentGradeLevelRight] <> 'PS' 
+	and {MultipleEnrollment}.[StateAidCategoryLeft] <> '46'
+	and {MultipleEnrollment}.[StateAidCategoryRight] <> '46' then
+	expect {MultipleEnrollment}.[HomeboundServiceIndicatorLeft] = {MultipleEnrollment}.[HomeboundServiceIndicatorRight]
+	else '328. If dual or concurrently enrolled within a district or between districts and one record is marked with Y for homebound then error out the homebound record.  This would apply when one or both records is a State Approved Alternative Program (SAAP) or two part-time records.'
 	
 rule 10.10.6300 
 	when {MultipleEnrollment}.[SpecialEducationEvaluationStatusRight] = '8'
@@ -58,6 +142,55 @@ rule 10.10.63752
 	expect {MultipleEnrollment}.[StudentGradeLevelLeft] is in ['HK','KA','KB','KC','KD','KE','KF','KG','KH','KI','KK','KL','KM','KN','KO','KP','KQ','KR','KS','KT','KU','KV','KW','KX','KY','KZ','PS']
 	else '235. This warning indicates the student has been reported as \'dual enrolled\' or \'concurrently enrolled\' and the grade level does not match between two of the records. Check the student\'s grade level or the student\'s State Reporting Number to confirm the two records are for the same student.'
 
+rule 10.10.6395
+	when {MultipleEnrollment}.[EnrollmentOverlap] = 1
+	and {MultipleEnrollment}.[DualEnrolledIndicator] = 1 
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] <> 'PS' 
+	and {MultipleEnrollment}.[StudentGradeLevelRight] <> 'PS' 
+	and {MultipleEnrollment}.[StateAidCategoryLeft] <> '46'
+	and {MultipleEnrollment}.[StateAidCategoryRight] <> '46' 
+	and {MultipleEnrollment}.[PercentEnrolledLeft] = 999.00 then
+	expect {MultipleEnrollment}.[PercentEnrolledRight] >= 100.00
+	else '240. This warning occurs when the traditional school reports the student at 999% (or less than 100%) while the Alternative School (school classification 41/42) has reported the student as 999% enrolled over the same time period. Check to confirm the student is \'concurrently enrolled\' at both the traditional school and the alternative school.'
+
+rule 10.10.6417
+	when {MultipleEnrollment}.[EnrollmentOverlap] = 1
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] <> 'PS' 
+	and {MultipleEnrollment}.[StudentGradeLevelRight] <> 'PS'
+	and {MultipleEnrollment}.[StateAidCategoryRight] is in ['16','17','18'] then
+	require {MultipleEnrollment}.[StateAidCategoryLeft] is in ['16','17','18']
+	else '306. SAC 16-18 and record is overlapping with another record both records must have SAC 16-18.'
+
+rule 10.10.6426
+	when {MultipleEnrollment}.[EnrollmentOverlap] = 1
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] <> 'PS' 
+	and {MultipleEnrollment}.[StudentGradeLevelRight] <> 'PS'
+	and {MultipleEnrollment}.[StateAidCategoryLeft] is in ['16','17','18'] then
+	require {MultipleEnrollment}.[StateAidCategoryRight] is in ['16','17','18']
+	else '306. SAC 16-18 and record is overlapping with another record both records must have SAC 16-18.'
+
+rule 10.10.6433
+	when {MultipleEnrollment}.[StateAidCategoryLeft] is in ['27','28','77']
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] <> 'PS' 
+	and {MultipleEnrollment}.[StudentGradeLevelRight] <> 'PS'
+	and {MultipleEnrollment}.[StateAidCategoryLeft] <> '46'
+	and {MultipleEnrollment}.[StateAidCategoryRight] <> '46'
+	and {MultipleEnrollment}.[SchoolClassificationLeft] is not in ['41','42','45']
+	and {MultipleEnrollment}.[SchoolClassificationRight] is not in ['41','42','45'] then
+	require {MultipleEnrollment}.[EnrollmentOverlap] <> 1
+	else '311. When students are in care & treatment (SAC 27 or 28) they cannot be enrolled at another school within the district during the same time period.  Student must be reported in the care & treatment facility only.'
+
+rule 10.10.6434
+	when {MultipleEnrollment}.[StateAidCategoryRight] is in ['27','28','77']
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] <> 'PS' 
+	and {MultipleEnrollment}.[StudentGradeLevelRight] <> 'PS'
+	and {MultipleEnrollment}.[StateAidCategoryLeft] <> '46'
+	and {MultipleEnrollment}.[StateAidCategoryRight] <> '46'
+	and {MultipleEnrollment}.[SchoolClassificationLeft] is not in ['41','42','45']
+	and {MultipleEnrollment}.[SchoolClassificationRight] is not in ['41','42','45'] then
+	require {MultipleEnrollment}.[EnrollmentOverlap] <> 1
+	else '311. When students are in care & treatment (SAC 27 or 28) they cannot be enrolled at another school within the district during the same time period.  Student must be reported in the care & treatment facility only.'
+	
 rule 10.10.64461
 	when {MultipleEnrollment}.[EnrollmentOverlap] = 1
 	and {MultipleEnrollment}.[SchoolIdRight] <> {MultipleEnrollment}.[SchoolIdLeft]
@@ -108,7 +241,6 @@ rule 10.10.6583
 	expect {MultipleEnrollment}.[ResidentDistrictLeft] <> {MultipleEnrollment}.[ResidentDistrictRight]
 	else '68. Last Location of Attendance 23 (student\'s district of residence changed during the school year but not school of enrollment) expects the student\'s resident district be changed from that in the student\'s immediately prior enrollment record. Also check the student\'s Resident District Number/Type in both enrollment records.'
 	
-
 rule 10.10.6592 
 	when {MultipleEnrollment}.[IsNextEnrollment] = 1
 	and {MultipleEnrollment}.[SpecialEducationEvaluationStatusRight] = '7'
