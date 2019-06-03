@@ -34,7 +34,7 @@ rule 10.10.6329
 rule 10.10.6493
 	when {SchoolCalendar}.[KindergratenScheduleCode] is in ['A','B','C',',G'] then
 	expect {SchoolCalendar}.[LengthOfYearInHours] < 850
-	else '383. Kindergarten Schedule is used to determine the eligibility of a student’s ADM to generate 1.0 pupil unit effective starting FY 2015. The annual instructional hours reported provide at least 850 annual instructional hours (instructional days times the length of day in terms of minutes divided by 60). However, the Kindergarten Schedule reported is either half-day, daily (A), full-day, alternate day (B) or full-day, 3-days per week. Double check Kindergarten Schedule, Instructional Days and Length of Day to determine which is in error.'	
+	else '383. Kindergarten Schedule is used to determine the eligibility of a student\’s ADM to generate 1.0 pupil unit effective starting FY 2015. The annual instructional hours reported provide at least 850 annual instructional hours (instructional days times the length of day in terms of minutes divided by 60). However, the Kindergarten Schedule reported is either half-day, daily (A), full-day, alternate day (B) or full-day, 3-days per week. Double check Kindergarten Schedule, Instructional Days and Length of Day to determine which is in error.'	
 	
 rule 10.10.6541
 	when {SchoolCalendar}.[GradeLevel] is in ['09','10','11','12']
@@ -93,14 +93,14 @@ rule 10.10.6549
 
 rule 10.10.6558
 	when {SchoolCalendar}.[GradeLevel] is in ['KA', 'KB', 'KC', 'KD', 'KE', 'KF', 'KG', 'KI', 'KJ', 'KK'] then
-	require that {SchoolCalendar}.[KindergratenScheduleCode] exits
-	else '6. The field given contains an invalid value as defined in the MARSS Manual.  Note:  Fields are edited only if they are required in that reporting cycle (fall or end-of-year).'                                                                                 '	
+	require that {SchoolCalendar}.[KindergratenScheduleCode] exists
+	else '6. The field given contains an invalid value as defined in the MARSS Manual.  Note:  Fields are edited only if they are required in that reporting cycle (fall or end-of-year).'	
 	
 rule 30.10.6345
 	when collection is EOY_Enrollment_And_Demographic
 	and {SchoolCalendar}.[GradeLevel] is in ['9','10','11','12']
 	and {SchoolCalendar}.[SchoolClassification] is in ['41', '42'] then
-	require {SchoolCalendar}.[InstructionalDays] > 0 and {SchoolCalendar}.LengthOfDay > 0
+	require {SchoolCalendar}.[InstructionalDays] > 0 or {SchoolCalendar}.[LengthOfDay] > 0
 	else '370. Zero instructional days and zero length of day can not be reported for classifications 41 and 42.'	
 
 rule 30.10.6552
