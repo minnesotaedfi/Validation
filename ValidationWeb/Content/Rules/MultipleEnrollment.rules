@@ -68,7 +68,7 @@ rule 10.10.6275
 rule 10.10.6276
 	when days since {MultipleEnrollment}.[StatusEndDateLeft] as of {MultipleEnrollment}.[StatusBeginDateRight] >= 2 
 	and {MultipleEnrollment}.[DistrictIdLeft] <> {MultipleEnrollment}.[DistrictIdRight] then
-	expect {MultipleEnrollment}.[ValidDistrictOverlap] = 1
+	expect {MultipleEnrollment}.[EnrollmentOverlap] = 1
 	else '326. This appears when two districts have the same State Reporting Number on their MARSS files with overlapping enrollments and the dual enrolled criteria have not been met.  (The student\'s name is not used to match records.) The message appears in conjunction with either:  NEXT REC DST (the district with the earlier Status Start Date) and PRIOR REC DST (the district with the later Status Start Date).  Check the Status Start and End Dates on the "Notification of Change in Student Enrollment."  Neither record will generate any state aid until the error is corrected.  Also check the student\'s State Reporting Number.'
 	
 rule 10.10.6277

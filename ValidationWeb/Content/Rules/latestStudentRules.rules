@@ -1,0 +1,394 @@
+/***StudentEnrollment***
+
+rule 10.10.65101
+	when {StudentEnrollment}.[EnrollmentSequence] = '1'
+	and years since {StudentDemographic}.[BirthDate] as of {StudentEnrollment}.[StatusBeginDate] >= 21
+	and {StudentEnrollment}.[SpecialEducationEvaluationStatus] is not in ['4','6', '9'] then
+	require {StudentEnrollment}.[StateAidCategory] = '98'
+	else '134. Students who turn age 21 prior to the start of the school year are ineligible to generate general education revenue.  Also check the student\'s birthdate. Under limited conditions, records with State Aid Category 98 (summer leavers) may exceed this age restriction..  Late graduates (summer graduates) are also reported with SAC 98 but they may be reported at any time during the year.  Refer to procedure 12.'
+
+
+rule 10.10.65102
+	when {StudentEnrollment}.[EnrollmentSequence] = '1'
+	and years since {StudentDemographic}.[BirthDate] as of {StudentEnrollment}.[StatusBeginDate] >= 21
+	and {StudentEnrollment}.[SpecialEducationEvaluationStatus] is not in ['4','6', '9']
+	and {StudentEnrollment}.[StateAidCategory] = '98' then
+	require years since {StudentDemographic}.[BirthDate] as of {StudentEnrollment}.[StatusBeginDate] <= 29
+	else '134. Students who turn age 21 prior to the start of the school year are ineligible to generate general education revenue.  Also check the student\'s birthdate. Under limited conditions, records with State Aid Category 98 (summer leavers) may exceed this age restriction..  Late graduates (summer graduates) are also reported with SAC 98 but they may be reported at any time during the year.  Refer to procedure 12.'
+
+ rule 10.10.65111
+	when {StudentEnrollment}.[EnrollmentSequence] = '1'
+	and years since {StudentDemographic}.[BirthDate] as of {StudentEnrollment}.[StatusBeginDate] >= 21
+	and years since {StudentDemographic}.[BirthDate] as of 1-July >= 21
+	and years since {StudentDemographic}.[BirthDate] as of 1 year before 30-June >= 21
+	and {StudentEnrollment}.[SpecialEducationEvaluationStatus] is in ['4','6', '9'] then
+	require {StudentEnrollment}.[StateAidCategory] = '98'
+	else '128. Special education students who turn age 21 prior to July 1 are ineligible to generate general education revenue.  Also check the student\'s birthdate. Under limited conditions, records with State Aid Category 98 (summer leavers) may exceed this age restriction.'
+
+
+rule 10.10.65112
+	when {StudentEnrollment}.[EnrollmentSequence] = '1'
+	and years since {StudentDemographic}.[BirthDate] as of {StudentEnrollment}.[StatusBeginDate] >= 21
+	and years since {StudentDemographic}.[BirthDate] as of 1-July >= 21
+	and years since {StudentDemographic}.[BirthDate] as of 1 year before 30-June >= 21
+	and {StudentEnrollment}.[SpecialEducationEvaluationStatus] is in ['4','6', '9'] 
+	and {StudentEnrollment}.[StateAidCategory] = '98' then
+	require years since {StudentDemographic}.[BirthDate] as of {StudentEnrollment}.[StatusBeginDate] <= 29
+	else '128. Special education students who turn age 21 prior to July 1 are ineligible to generate general education revenue.  Also check the student\'s birthdate. Under limited conditions, records with State Aid Category 98 (summer leavers) may exceed this age restriction.'
+
+rule 10.10.6518
+	when {StudentEnrollment}.[TransportingDistrictNumber] exists
+	and {StudentEnrollment}.[StudentGradeLevel] <> 'PS' then
+	require that {StudentEnrollment}.[TransportingDistrictType] is in ['01','02','03','07','08','70','38','98']
+	else '242. The transporting district number and/or type reported in the student\'s enrollment record is not a valid district number and/or type.  Only district types 1, 2, 3, 7, 8 and 70 are valid transporting district types and district number must be valid for the reporting year.  Transporting district type 38 may also be a valid if the serving district is one of the South Dakota broder districts.'
+
+rule 30.10.6165
+	when collection is EOY_Enrollment_And_Demographic 
+	and {StudentEnrollment}.[PSEOProgramIndicator] = '1' then
+	require {StudentEnrollment}.[PSEOHighSchoolHours] exists
+	else '214. This error occurs when either Membership Days, Attendance Days, PSEO HS Hours, Special Education Service Hours, or Percent Enrolled contain non-numeric characters or spaces for values that are greater than 0. Check the item value carefully as spaces to the right of the number usually cause this error to occur.'
+
+rule 30.10.6389 
+	when collection is EOY_Enrollment_And_Demographic 
+	and {MultipleEnrollment}.[EnrollmentOverlap] = 1
+	and {StudentEnrollment}.[DistrictType] <> '70' 
+	and {StudentEnrollment}.[StudentGradeLevel] <> 'PS'
+	and {MultipleEnrollment}.[SchoolClassificationLeft] is in ['41','42']
+	and {MultipleEnrollment}.[SchoolClassificationRight] is in ['41','42']
+	and {StudentEnrollment}.[SpecialEducationEvaluationStatus] is in ['4', '6', '9'] then
+	require sum({MultipleEnrollment}.[SpecialEducationServiceHoursLeft] when {MultipleEnrollment}.[SpecialEducationServiceHoursLeft] exists and {MultipleEnrollment}.[SpecialEducationEvaluationStatusLeft] is in ['4', '6', '9']) > 0
+	or sum({MultipleEnrollment}.[SpecialEducationServiceHoursRight] when {MultipleEnrollment}.[SpecialEducationServiceHoursRight] exists and {MultipleEnrollment}.[SpecialEducationEvaluationStatusRight] is in ['4', '6', '9']) > 0
+	else '290. For students with Special Education Evaluation Status equals 4 or 6, Special Education Service Hours are required on at least one of the records  if two SAAP records overlap and no other records are detected the SAAP records must have Special Education Service Hours entered.'
+
+rule 30.10.6392
+	when {StudentEnrollment}.[SpecialEducationIndicator] = '1' then
+	require {StudentEnrollment}.[SpecialEducationServiceHours] exists
+	else '214. This error occurs when either Membership Days, Attendance Days, PSEO HS Hours, Special Education Service Hours, or Percent Enrolled contain non-numeric characters or spaces for values that are greater than 0. Check the item value carefully as spaces to the right of the number usually cause this error to occur.'
+
+rule 30.10.6630 
+	when collection is EOY_Enrollment_And_Demographic 
+	and {StudentEnrollment}.[SpecialEducationEvaluationStatus] is in ['4', '6', '9']
+	and {StudentEnrollment}.[SchoolClassification] <> '45'
+	and {StudentEnrollment}.[DistrictType] <> '70' 
+	and {StudentEnrollment}.[IndependentStudyIndicator] = '1'
+	and {StudentEnrollment}.[StudentGradeLevel] <> 'PS'
+	and {MultipleEnrollment}.[EnrollmentOverlap] <> '1' then
+	require {StudentEnrollment}.[SpecialEducationServiceHours] exists and {StudentEnrollment}.[SpecialEducationServiceHours] > 0
+	else '263. Special Education Service Hours required when the Independent Study flag is set to "Y" and the Special Education Evaluation Status = 4 or 6.'
+
+/***invalid combination***64**/
+
+rule 10.10.61891
+	when {StudentEnrollment}.[StateAidCategory] is in ['41','42','43','44','45'] then
+	require {StudentEnrollment}.[StudentGradeLevel] = 'PS'
+	else '256. Only Preschool Screening records must have grade = PS with State Aid Category = 41,  42, 43, 44 or 45.'
+
+rule 10.10.61892
+	when {StudentEnrollment}.[StudentGradeLevel] = 'PS' then
+	require that {StudentEnrollment}.[StateAidCategory] is in ['41','42','43','44','45']
+	else '256. Only Preschool Screening records must have grade = PS with State Aid Category = 41,  42, 43, 44 or 45.'
+	
+rule 10.10.6190
+	when {StudentEnrollment}.[StateAidCategory] = '97' then
+	require {StudentEnrollment}.[HomelessStudentFlag] = '1'
+	else '252. Homeless flag must equal Y when SAC = 97'
+	
+rule 10.10.6191
+	when {StudentEnrollment}.[SchoolClassification] is in ['76','78'] then
+	require that {StudentEnrollment}.[StateAidCategory] is in ['15','28','98']
+	else '246. The only valid State Aid Categories for School Classification 76 or 78 are 15, 28, or 98.'
+	
+rule 10.10.6192
+	when {StudentEnrollment}.[StateAidCategory] = '26' then
+	require that {StudentEnrollment}.[DistrictType] is in ['01','03','35']
+	else '10. Only District Types 01, 03 or 35 may report private contract alternative school students (State Aid Category 26). Refer to Procedure Number 16 to report residents who attend a Minnesota nonpublic school via care and treatment or an IEP.'
+
+rule 10.10.61931
+	when {StudentEnrollment}.[StateAidCategory] = '08' then
+	require that {StudentEnrollment}.[DistrictType] = '07'
+	else '22. The reported State Aid Category is invalid for the type of district reporting the student record. Check the student\'s State Aid Category.'
+
+rule 10.10.61932
+	when {StudentEnrollment}.[DistrictType] = '34' then
+	require that {StudentEnrollment}.[StateAidCategory] is in ['01','15','19','24','34','35','98','97','41','42','43','44','45']
+	else '22. The reported State Aid Category is invalid for the type of district reporting the student record. Check the student\'s State Aid Category.'
+
+rule 10.10.6194
+	when {StudentEnrollment}.[StateAidCategory] is in ['34', '35'] then
+	require that {StudentEnrollment}.[DistrictType] = '34'
+	else '198. State Aid Category 34 or 35 requires the reporting district be District Type 34. Check the student\'s State Aid Category.'
+	
+rule 10.10.6195
+	when {StudentEnrollment}.[DistrictType] = '10' then
+	require that {StudentEnrollment}.[StateAidCategory] is in ['06','50','51','52','53','61','83']
+	else '13. State Aid Category 10 (cooperatives, intermediate districts, education districts) requires that the reporting district type be 6, 50, 51, 52, 53 or 61.'
+	
+rule 10.10.6196
+	when {StudentEnrollment}.[StateAidCategory] = '17' then
+	require that {StudentEnrollment}.[DistrictType] is in ['01','02','03','07','08','62']
+	else '18. State Aid Category 17 (shared time student; aid paid to serving district) requires that the serving district type be 1, 2, 3, 7, 8  or 62.'
+	
+rule 10.10.6197
+	when {StudentEnrollment}.[StateAidCategory] = '06' then
+	require that {StudentEnrollment}.[DistrictType] = '62'
+	else '33. State Aid Category 06 (Secondary School Facilities) requires that the serving district type be 62 (Secondary School Facilities).  Also check the reporting district number and type.'
+
+rule 10.10.6198
+	when {StudentEnrollment}.[DistrictType] = '07' then
+	require that {StudentEnrollment}.[StateAidCategory] is not in ['00','01','05','06','10','11','12','13','14','26','27','28']
+	else '90. This error appears when a State Aid Category (SAC) of 00, 01, 05, 06, 10, 11, 14, 26, 27 or 28 is used to report a student at a charter school.  Students who choose to enroll at a charter school should be coded SAC 08. Students who are placed by a regular public district are considered tuition (SAC 19).'
+
+rule 10.10.6199
+	when {StudentEnrollment}.[StateAidCategory] = '07'
+	or {StudentEnrollment}.[StateAidCategory] = '14' then
+	require that {StudentEnrollment}.[DistrictType] is in ['01','02','03','06','62']
+	else '92. State Aid Categories 14 (resident student enrolled in an out-of-state school via care and treatment or an IEP) and 28 (resident student enrolled in a Minnesota nonpublic school via care and treatment or an IEP) require that the reporting District Type be 1, 2, 3 or 62.  Also check the student'\s State Aid Category.'
+
+rule 10.10.6200
+	when {StudentEnrollment}.[StateAidCategory] = '26' then
+	require that {StudentEnrollment}.[SchoolClassification] = '43'
+	else '32. State Aid Category 26 (private alternative program) requires that the reporting school be identified by the Department as a contract alternative school.  Also check school number and type.'
+
+rule 10.10.6201
+	when {StudentEnrollment}.[SchoolClassification] is in ['41','42','45'] then
+	require that {StudentEnrollment}.[StateAidCategory] is in ['00','02','03','16','17','18','27','98','15','97','41','42','43','44','45']
+	else '89. This error appears when a State Aid Category (SAC) of other than 00, 02, 03, 16-18, 27 or 98 is used to report students at an ALC or public, state-approved alternative school.  Students must qualify for graduation incentives (GI) to enroll in either an ALC or other public, state-approved alternative school.  Thus, the only eligible SAC\'s are 00 and 02 for residents; 03 for GI nonresidents; 16-18 for GI-eligible, nonpublic shared time students; 27 for care & treatment students; and 98 for summer dropouts. SAC 15 is also allowed if the student is ineligible to generate state aid.'
+	
+rule 10.10.6202
+	when {StudentEnrollment}.[SchoolClassification] = '43' then
+	require that {StudentEnrollment}.[StateAidCategory] is in ['07','15','25','26','98','41','42','43','44','45']
+	else '96. The only three State Aid Categories that are valid in a contract alternative school are 15 - residents of another state or country,  26 - Private Contract students, or 98 - summer drop or graduate.'
+
+rule 10.10.6203
+	when {StudentEnrollment}.[StateAidCategory] is in ['02', '24', '46', '52', '98',  '15','18'] then
+	require that {StudentEnrollment}.[PSEOProgramIndicator] <> '1'
+	else '97. Students who are not residents of Minnesota (State Aid Category SAC 15); shared time students who is a resident of other than Minnesota (SAC 18); who are foreign exchange students (SAC 02); who are enrolled in an extended school year special education program (SAC 46); who are enrolled in South Dakota under reciprocity (SAC 52); or who are summer graduates or summer leavers (SAC 98) are ineligible to participate in the postsecondary enrollment options (PSEO) program during this enrollment period.  Also check the student\'s State Aid Category.'
+
+rule 10.10.6203
+	when {StudentEnrollment}.[StateAidCategory] is in ['02', '24', '46', '52', '98',  '15','18'] then
+	require that {StudentEnrollment}.[PSEOProgramIndicator] <> '1'
+	else '97. Students who are not residents of Minnesota (State Aid Category SAC 15); shared time students who is a resident of other than Minnesota (SAC 18); who are foreign exchange students (SAC 02); who are enrolled in an extended school year special education program (SAC 46); who are enrolled in South Dakota under reciprocity (SAC 52); or who are summer graduates or summer leavers (SAC 98) are ineligible to participate in the postsecondary enrollment options (PSEO) program during this enrollment period.  Also check the student\'s State Aid Category.'
+
+rule 10.10.6204
+	when {StudentEnrollment}.[StateAidCategory] = '04' then
+	require that {StudentEnrollment}.[StudentGradelevel] is in ['11', '12']
+	else '41. State Aid Category 04 (Continued Enrollment of juniors and seniors in the previous district of residence) requires that the student be in grade 11 or 12.  Also check the student\'s grade level.'
+
+rule 10.10.6205
+	when {StudentEnrollment}.[StateAidCategory] is in ['00','22','29'] then
+	require that {StudentEnrollment}.[DistrictNumberType] = {StudentEnrollment}.[StudentResidentDistrictNumberType]
+	else '19. State Aid Category 00, 22 and 29 (resident of the reporting district) require that the resident district number and type be the same as the serving/reporting district number and type.  Also check the Student\'s Resident District Number/Type.'                                                                                  
+
+rule 10.10.6206
+	when {StudentEnrollment}.[StateAidCategory] is in ['01','03','04','05','06','08','10','11','12','15','17','18','19','20','21'] then
+	require that {StudentEnrollment}.[DistrictNumberType] <> {StudentEnrollment}.[StudentResidentDistrictNumberType] 
+	else '58. State Aid Categories 01, 03, 04, 05, 06, 08, 10, 11, 12, 13, 15 and 17-21 require that the student be a nonresident of the reporting district.  Also check the student\'s Resident District Number/Type.'                                                                                  
+
+rule 10.10.62071
+	when {StudentEnrollment}.[StateAidCategory] = '15' then
+	require that {StudentEnrollment}.[StudentResidentDistrictNumber] = '9998'
+	else '35. State Aid Category 15 (resident of other than Minnesota) requires that the Resident District Number be 9998 and the Resident District Type be 98.    Also check the student'\s Resident District Number/Type.  Additionally, Resident District Number 9998 may only be reported on students with State Aid Categories of 15, 18, or 41-45.'                                                                                  
+
+rule 10.10.62072
+	when {StudentEnrollment}.[StudentResidentDistrictNumber] = '9998' then
+	require that {StudentEnrollment}.[StateAidCategory] is in ['98','15','18','46','41','42','43','44','45']
+	else '35. State Aid Category 15 (resident of other than Minnesota) requires that the Resident District Number be 9998 and the Resident District Type be 98.    Also check the student'\s Resident District Number/Type.  Additionally, Resident District Number 9998 may only be reported on students with State Aid Categories of 15, 18, or 41-45.'                                                                                  
+
+rule 10.10.6209
+	when {StudentEnrollment}.PercentEnrolled >= 101
+	and {StudentEnrollment}.PercentEnrolled <= 998
+	and {StudentEnrollment}.[StudentGradelevel] is not in ['PS','HK']
+	and {StudentEnrollment}.[StateAidCategory] is not in ['46', '98'] then
+	require that {StudentEnrollment}.[SchoolClassification] is in ['41','42','43','44','45']
+	else '6. The field given contains an invalid value as defined in the MARSS Manual.  Note:  Fields are edited only if they are required in that reporting cycle (fall or end-of-year).'                                                                                  
+
+/*****GAP HERE*****/
+rule 10.10.6219
+	when {StudentEnrollment}.[SpecialEducationEvaluationStatus] is in ['4','6','9','7'] 
+	and {StudentEnrollment}.[StudentGradelevel] <> 'PS' then
+	require that {StudentEnrollment}.[InstructionalSetting] <> '00'
+	else '30. Special Education Evaluation Status 4 (student has an IEP) and Status 7 (student had an IEP)  6 or 9 (indirect services only)  require that the student have a valid Primary Disability Instructional Setting.  Also check the student\'s Primary Disability.'
+
+rule 10.10.6220
+	when {StudentEnrollment}.[SpecialEducationEvaluationStatus] is in ['4','5','6','7','9'] 
+	and {StudentEnrollment}.[StudentGradelevel] <> 'PS' then
+	require that {StudentEnrollment}.[PrimaryDisability] is not in ['00','54']
+	else '39. Special Education Evaluation Status 4 (student has an IEP) and Status 7 (student had an IEP), 5 and 6 require that the student have a valid Primary Disability (01-14).  Also check the student\'s Instructional Setting.'
+
+rule 10.10.6232
+	when {StudentEnrollment}.[StudentGradelevel] = 'EC' then
+	require that {StudentEnrollment}.[StateAidCategory] is in ['16','17','18']
+	else '127. This message indicates that a student in grade EC (Pre-Kindergarten disabled) has been coded as a shared time student (State Aid Category 16-18).  Shared time instruction is for students in grades K-12 only, i.e., students of compulsory instruction age.  A shared time student generates basic revenue only. Check the student\'s State Aid Category and grade level.'
+
+rule 10.10.62401
+	when {StudentEnrollment}.[StatusEnd] = '25'
+	and {StudentEnrollment}.[StateAidCategory] <> '46'
+	and {StudentEnrollment}.[StudentGradelevel] <> 'PS' then
+	require that {StudentEnrollment}.[SpecialEducationEvaluationStatus] = '2'
+	else '261. Status End Code of 25 should have the Special Education Evaluation Status = 2.    Status End Code of 26 should have the Special Education Evaluation Status = 4, 5, 6 or 9.   Status End Code of 27 should have the Special Education Evaluation Status = 4, 6 or 9.'
+
+rule 10.10.62402
+	when {StudentEnrollment}.[StatusEnd] = '26'
+	and {StudentEnrollment}.[StateAidCategory] <> '46'
+	and {StudentEnrollment}.[StudentGradelevel] is not in ['PS','PA','PB','PC','PD','PE','PF','PG','PH','PI','PJ','RA','RB','RC','RD','RE','RF','RG','RH','RI','RJ'] then
+	require that {StudentEnrollment}.[SpecialEducationEvaluationStatus] is in ['4','5','6','9']
+	else '261. Status End Code of 25 should have the Special Education Evaluation Status = 2.    Status End Code of 26 should have the Special Education Evaluation Status = 4, 5, 6 or 9.   Status End Code of 27 should have the Special Education Evaluation Status = 4, 6 or 9.'
+
+rule 10.10.62403
+	when {StudentEnrollment}.[StatusEnd] = '27'
+	and {StudentEnrollment}.[StateAidCategory] <> '46' then
+	require that {StudentEnrollment}.[SpecialEducationEvaluationStatus] is in ['4','6','9']
+	else '261. Status End Code of 25 should have the Special Education Evaluation Status = 2.    Status End Code of 26 should have the Special Education Evaluation Status = 4, 5, 6 or 9.   Status End Code of 27 should have the Special Education Evaluation Status = 4, 6 or 9.'
+
+/****Studentprogram***/
+rule 10.10.6242
+	when {StudentEnrollment}.[StateAidCategory] <> '46'
+	and {StudentEnrollment}.[StudentGradeLevel] <> 'PS' 
+	and {StudentProgram}.[EnglishLearner] does not exist  then
+	require that {StudentProgram}.[EnglishLearnerStartDate] does not exist 
+	else '51. A non-zero EL Start Date (the student participated in an EL program during the school year) requires that the student be identified as needing EL services; English Learner must be \'Y\' (yes, the student has been evaluated and requires EL services).  Additionally, if EL = Y, the student must either have 00000000 (00/00/00) as the EL Begin Date (needs el services but is not yet receiving EL services) or the date must fall within the current school year. Check English Learner indicator or the EL Start Date for valid values.'
+
+/**Studentprogram end***/
+
+rule 10.10.6244
+	when {StudentEnrollment}.[PSEOProgramIndicator] = '1'
+	and {StudentEnrollment}.[StateAidCategory] <> '46'
+	and {StudentEnrollment}.[StudentGradeLevel] <> 'PS' then
+	require that {StudentEnrollment}.[StudentGradeLevel] is in ['09','10','11','12']
+	else '56. Postsecondary Enrollment Options participation requires that the student be in one of grades 9, 10, 11 or 12.  Also check the student\'s grade level.'
+
+rule 10.10.62631
+	when {MultipleEnrollment}.[EnrollmentOverlap] = 1
+	and {MultipleEnrollment}.[StudentGradeLevelRight] = 'EC'
+	and {StudentEnrollment}.[StudentGradeLevel] = 'EC'
+	and {StudentEnrollment}.[SpecialEducationEvaluationStatus] = '2'
+	and {StudentEnrollment}.[DistrictType] is in ['01','02','03'] then
+	require that {StudentEnrollment}.[StateAidCategory] is in ['00','21','15']
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] is in ['PA','PB','PC','PD','PE','PF','PG','PH','PI','PJ','RA','RB','RC','RD','RE','RF','RG','RH','RI','RJ']
+	else '318. For independent districts EC students cannot be open enrolled during evaluation period.  The resident district needs to report the evaluation record.' 
+   
+rule 10.10.62632
+	when {MultipleEnrollment}.[EnrollmentOverlap] = 1
+	and {MultipleEnrollment}.[StudentGradeLevelRight] = 'EC'
+	and {StudentEnrollment}.[StudentGradeLevel] = 'EC'
+	and {StudentEnrollment}.[SpecialEducationEvaluationStatus] = '2'
+	and {StudentEnrollment}.[DistrictType] is in ['01','02','03']
+	and {StudentEnrollment}.[HomelessStudentFlag] = '1' then
+	require that {StudentEnrollment}.[StateAidCategory] ='11' 
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] is in ['PA','PB','PC','PD','PE','PF','PG','PH','PI','PJ','RA','RB','RC','RD','RE','RF','RG','RH','RI','RJ']
+	else '318. For independent districts EC students cannot be open enrolled during evaluation period.  The resident district needs to report the evaluation record.' 
+ 
+rule 10.10.62633
+	when {MultipleEnrollment}.[EnrollmentOverlap] = 1
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] = 'EC'
+	and {StudentEnrollment}.[StudentGradeLevel] = 'EC'
+	and {StudentEnrollment}.[SpecialEducationEvaluationStatus] = '2'
+	and {StudentEnrollment}.[DistrictType] is in ['01','02','03'] then
+	require that {StudentEnrollment}.[StateAidCategory] is in ['00','21','15']
+	and {MultipleEnrollment}.[StudentGradeLevelRight] is in ['PA','PB','PC','PD','PE','PF','PG','PH','PI','PJ','RA','RB','RC','RD','RE','RF','RG','RH','RI','RJ']
+	else '318. For independent districts EC students cannot be open enrolled during evaluation period.  The resident district needs to report the evaluation record.' 
+ 
+rule 10.10.62634
+	when {MultipleEnrollment}.[EnrollmentOverlap] = 1
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] = 'EC'
+	and {StudentEnrollment}.[StudentGradeLevel] = 'EC'
+	and {StudentEnrollment}.[SpecialEducationEvaluationStatus] = '2'
+	and {StudentEnrollment}.[DistrictType] is in ['01','02','03']
+	and {StudentEnrollment}.[HomelessStudentFlag] = '1' then
+	require that {StudentEnrollment}.[StateAidCategory] ='11' 
+	and {MultipleEnrollment}.[StudentGradeLevelRight] is in ['PA','PB','PC','PD','PE','PF','PG','PH','PI','PJ','RA','RB','RC','RD','RE','RF','RG','RH','RI','RJ']
+	else '318. For independent districts EC students cannot be open enrolled during evaluation period.  The resident district needs to report the evaluation record.' 
+
+rule 10.10.62635
+	when {MultipleEnrollment}.[EnrollmentOverlap] <> 1
+	and {StudentEnrollment}.[StudentGradeLevel] = 'EC'
+	and {StudentEnrollment}.[SpecialEducationEvaluationStatus] = '2'
+	and {StudentEnrollment}.[DistrictType] is in ['01','02','03'] then
+	require that {StudentEnrollment}.[StateAidCategory] is in ['00','21','15']
+	else '318. For independent districts EC students cannot be open enrolled during evaluation period.  The resident district needs to report the evaluation record.' 
+  
+rule 10.10.62636
+	when {MultipleEnrollment}.[EnrollmentOverlap] <> 1
+	and {StudentEnrollment}.[StudentGradeLevel] = 'EC'
+	and {StudentEnrollment}.[SpecialEducationEvaluationStatus] = '2'
+	and {StudentEnrollment}.[DistrictType] is in ['01','02','03']
+	and {StudentEnrollment}.[HomelessStudentFlag] = '1' then
+	require that {StudentEnrollment}.[StateAidCategory] ='11' 
+	else '318. For independent districts EC students cannot be open enrolled during evaluation period.  The resident district needs to report the evaluation record.' 
+
+rule 10.10.6264
+	when {StudentEnrollment}.[PSEOProgramIndicator] = '1'
+	or {StudentEnrollment}.[PSEOConcurrentIndicator] = '1'
+	or {StudentEnrollment}.[IndependentStudyIndicator] = '1' then
+	require that {StudentEnrollment}.[StateAidCategory] <> '52'
+	else '317. SAC 52 students do not qualify for PSEO, independent student, PSEO concurrent enrollment, or IS.  These three flags must be N.' 
+	
+rule 10.10.6265
+	when {StudentEnrollment}.[SchoolClassification] is in ['41','42','43','45'] then
+	require that {StudentEnrollment}.[StateAidCategory] <> '52'
+	else '316. SAC 52 invalid at ALC, ALP, contract alternative and targeted services.'
+	
+rule 10.10.6266
+	when {StudentEnrollment}.[StudentGradeLevel] is in ['PS','PA','PB','PC','PD','PE','PF','PG','PH','PI','PJ','RA','RB','RC','RD','RE','RF','RG','RH','RI','RJ','EC'] then
+	require that {StudentEnrollment}.[StateAidCategory] is not in ['51','52']
+	else '315. Grade levels PS, PA-PJ, RA-RJ and EC are not valid for students reported with SAC 51 or 52.'
+	
+rule 10.10.62671
+	when {StudentEnrollment}.[StateAidCategory] is in ['51','52'] then
+	require that {StudentEnrollment}.[StudentResidentDistrictType] = '38'
+	else '314. SAC 51 and 52 must have resident district type 38. Resident district type 38 must have SAC 51 or 52.'
+
+rule 10.10.62672
+	when {StudentEnrollment}.[StudentResidentDistrictType] = '38' then
+	require that {StudentEnrollment}.[StateAidCategory] is in ['51','52','41','42','43','44','45','98'] 
+	else '314. SAC 51 and 52 must have resident district type 38. Resident district type 38 must have SAC 51 or 52.'
+	
+rule 10.10.6337
+	when {StudentEnrollment}.[TransportationCategory] = '03'
+	and {StudentEnrollment}.[SpecialEducationEvaluationStatus] is in ['4','6','9'] 
+	and {StudentEnrollment}.[StudentGradeLevel] <> 'PS' then
+	expect that {StudentEnrollment}.[StateAidCategory] is not in ['27','28','77'] 
+	else '376. This warning occurs when a student is reported with Transportation Category 3, Special Education Evaluation Status 4, 6 or 9 (student has an IEP) and has a State Aid Category of 27 or 28 (placed for care and treatment). Verify that the IEP placed the student for care and treatment. If the student was placed for care and treatment by the courts or a medical authority, report Transportation Category 6.'
+
+rule 10.10.6364
+	when {StudentEnrollment}.[StateAidCategory] is in ['01','04','05','11','12','20'] then
+	require that {StudentEnrollment}.[DistrictType] is in ['01','02','03','07','08','62','34]
+	else '16. State Aid Categories 1, 4, 5, 11, 12, 13, 20 and 21 require that the serving District Type be 1, 2, 3, 7 or 62.  Also check serving District Number/Type.'
+
+rule 10.10.6383
+	when {StudentEnrollment}.HomeboundServiceIndicator = 'Yes' 
+	and {StudentEnrollment}.[StateAidCategory] <> '46'
+	and {StudentEnrollment}.[StudentGradeLevel] <> 'PS' then
+	require that {StudentEnrollment}.[IndependentStudyIndicator] <> 1
+	else '243. If the school is not an ALC/ALP school (classifications 41, 42, or 43), OR the homebound indicator= Y, the Independent Study flag must be N.  Check the school classification.'
+
+rule 10.10.6387
+	when {StudentEnrollment}.[SchoolClassification] = '51' then
+	require that {StudentEnrollment}.[StateAidCategory] = '46'
+	else '289. If school classification is 51, the only valid State Aid Category is 46.'
+	
+rule 10.10.6398
+	when {StudentEnrollment}.[StateAidCategory] is not in ['16','17','18'] 
+	and {StudentEnrollment}.[SpecialEducationEvaluationStatus] is in ['4','6','9'] then
+	require that {StudentEnrollment}.[DistrictType] <= '03'
+	else '296. Shared time special education student not allowed at district type greater than 03.  District where a non-public school is located must provide special education services.'
+
+rule 10.10.6400
+	when {StudentEnrollment}.[StateAidCategory] is not in ['16','17','18'] then
+	require that {StudentEnrollment}.[SchoolClassification] <> '45'
+	else '298. SAC 16-18 invalid at school classification=45 (targeted services).'
+	
+rule 10.10.6468
+	when years since {StudentDemographic}.[BirthDate] as of {StudentEnrollment}.[StatusBeginDate] < 3
+	and {StudentEnrollment}.[DistrictType]= '07' then
+	require that {StudentEnrollment}.[StateAidCategory] <> '08'
+	else '422. SAC 08 is invalid for students with start age less than 3 and district type = 7.'
+	
+rule 10.10.6475
+	when {StudentEnrollment}.[StudentGradeLevel] = 'EC'
+	and {StudentEnrollment}.[SpecialEducationEvaluationStatus] = '2'
+	and ({StudentEnrollment}.[DistrictType] = '06' or {StudentEnrollment}.[DistrictType] > '07') then
+	require that {StudentEnrollment}.[StateAidCategory] is not in ['10','19']
+	else '320. EC evaluation at an Intermediate District or Special Ed Coop must report evaluation record with SAC 10 or 19.  The record cannot be reported as open enrolled.'
+
+	

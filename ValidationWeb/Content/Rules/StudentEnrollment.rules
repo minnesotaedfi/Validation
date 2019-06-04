@@ -252,11 +252,11 @@ rule 10.10.6564
 	when {StudentEnrollment}.[SchoolNumber] <> '005'
 	and {StudentEnrollment}.[StudentGradeLevel] is not in ['KA','KB','KC','KD','KE','KF','KG','KI','KJ','KK','KL','KM','KN','KO','KP','KQ','KR','KS','KT','KU','KV','KW','KX','KY','KZ','PA','PB','PC','PD','PE','PF','PG','PH','PI','PJ','RA','RB','RC','RD','RE','RF','RG','RH','RI','RJ']
 	and count({StudentDemographic} when {StudentDemographic}.[Gender] is in ['Male', 'Female'] ) > 0 then
-	expect count({StudentDemographic} when {StudentDemographic}.[SpecialEducationIndicator] = '1') > 0 
+	expect count({StudentDemographic} when {StudentDemographic}.[SpecialEducationEvaluationStatus] in ['4', '6', '9']) > 0 
 	else '171. This message warns that no students were reported with Special Education Evaluation Status = 4, 6 or 9.  Verify that no students were served in Special Education.'
 
 rule 30.10.6539
-	when  collection is EOY_Enrollment_And_Demographic 
+	when collection is EOY_Enrollment_And_Demographic 
 	and {SchoolCalendar}.[SchoolTitle1Code] = 'B' 
 	and {SchoolGrade}.[SchoolNumber] <> '000' 
 	and {SchoolGrade}.[SchoolGradeLevel] <> 'PS' then 
@@ -264,7 +264,7 @@ rule 30.10.6539
 	else '212. The student\'s Targeted Student Indicator is inconsistent with the Title I School Indicator.   When the Title I School Indicator is A, all students within the school must be reported with Targeted Student Indicator = N.   When the Title I School Indicator is C, all students within the school must be reported with Targeted Student Indicator = Y.    When the Title 1 School Indicator is B, at least one student within the school must be reported with Targeted Student Indicator = Y.'
 
 rule 30.10.6540
-	when  collection is EOY_Enrollment_And_Demographic 
+	when collection is EOY_Enrollment_And_Demographic 
 	and count({StudentDemographic} when {StudentDemographic}.[Gender] is in ['Male', 'Female'] ) > 0
 	and {StudentEnrollment}.[SchoolClassification] <> '51'
 	and {StudentEnrollment}.[StudentGradeLevel] <> 'PS' then
@@ -272,7 +272,7 @@ rule 30.10.6540
 	else '208. This warning occurs when all students for a grade within a school were reported with a Transportation Category of "00" - "Walkers".'	
 
 rule 30.10.6551
-	when  collection is EOY_Enrollment_And_Demographic 
+	when collection is EOY_Enrollment_And_Demographic 
 	and {StudentEnrollment}.[SchoolNumber] <> '005'
 	and {StudentEnrollment}.[SchoolClassification] is not in ['51', '83']
 	and {StudentEnrollment}.[StudentGradeLevel] <> 'PS' 
