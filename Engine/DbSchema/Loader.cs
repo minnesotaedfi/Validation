@@ -6,14 +6,11 @@ using System.Threading.Tasks;
 
 namespace Engine.DbSchema
 {
-    public class Loader
+    public class Loader : IDisposable
     {
-        private readonly DbContext _context;
+
         private readonly Lazy<IReadOnlyList<Column>> _tables;
         private readonly Lazy<IReadOnlyList<Parameter>> _functions;
-
-        public IReadOnlyList<Column> Tables => _tables.Value;
-        public IReadOnlyList<Parameter> Functions => _functions.Value;
 
         public Loader(DbConnection connection)
         {
@@ -21,6 +18,13 @@ namespace Engine.DbSchema
             _tables = new Lazy<IReadOnlyList<Column>>(GetTables);
             _functions = new Lazy<IReadOnlyList<Parameter>>(GetFunctions);
         }
+
+        // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Local
+        protected DbContext _context { get; private set; }
+        
+        public IReadOnlyList<Column> Tables => _tables.Value;
+
+        public IReadOnlyList<Parameter> Functions => _functions.Value;
 
         private IReadOnlyList<Column> GetTables()
         {
@@ -49,6 +53,17 @@ namespace Engine.DbSchema
                 "FROM INFORMATION_SCHEMA.PARAMETERS";
             var query = _context.Database.SqlQuery<Parameter>(sql);
             return await query.ToListAsync();
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            _context?.Dispose();
         }
     }
 }

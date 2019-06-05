@@ -22,11 +22,22 @@ namespace Engine.Templates
             var templateNames = assembly.GetManifestResourceNames().Where(x => x.EndsWith(".hbs"));
             foreach (var resourceName in templateNames)
             {
-                using (var stream = assembly.GetManifestResourceStream(resourceName) ?? new MemoryStream())
-                using (var reader = new StreamReader(stream))
+                Stream stream = null; 
+
+                try
                 {
-                    var partialTemplate = Handlebars.Compile(reader);
-                    _handlebars.RegisterTemplate(ShortTemplateName(resourceName), partialTemplate);
+                    stream = assembly.GetManifestResourceStream(resourceName) ?? new MemoryStream();
+
+                    using (var reader = new StreamReader(stream))
+                    {
+                        stream = null; 
+                        var partialTemplate = Handlebars.Compile(reader);
+                        _handlebars.RegisterTemplate(ShortTemplateName(resourceName), partialTemplate);
+                    }
+                }
+                finally
+                {
+                    stream?.Dispose();
                 }
             }
         }

@@ -16,7 +16,7 @@ namespace Engine.Utility
         public IEnumerable<string> RulesText => _constantValueProviders
             .SelectMany(x => x.Values.Select(y => $"define {y.Key} = {y.Value}"));
 
-        Stream[] IRulesStreamsProvider.Streams
+        public Stream[] Streams
         {
             get
             {

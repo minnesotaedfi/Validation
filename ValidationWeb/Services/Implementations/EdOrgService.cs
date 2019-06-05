@@ -126,7 +126,8 @@ namespace ValidationWeb.Services.Implementations
                 }
                 catch (Exception ex)
                 {
-                    LoggingService.LogErrorMessage($"While trying to add all ODS Ed Org descriptions to the Validation Portal Database Cache: school year {fourDigitOdsDbYear}, error: {ex.ChainInnerExceptionMessages()}");
+                    LoggingService.LogErrorMessage(
+                        $"While trying to add all ODS Ed Org descriptions to the Validation Portal Database Cache: school year {fourDigitOdsDbYear}, error: {ex.ChainInnerExceptionMessages()}");
                 }
                 finally
                 {
@@ -154,6 +155,7 @@ namespace ValidationWeb.Services.Implementations
             SingleEdOrgByIdQuery result = null;
 
             var schoolYear = SchoolYearService.GetSchoolYearById(schoolYearId);
+            // todo: DI RawOdsDbContext
             using (var odsRawDbContext = new RawOdsDbContext(schoolYear.EndYear))
             {
                 var conn = odsRawDbContext.Database.Connection;
@@ -232,8 +234,10 @@ namespace ValidationWeb.Services.Implementations
             }
             catch (Exception ex)
             {
-                LoggingService.LogErrorMessage($"An error occurred while trying to read the Ed Org information from the Ed Fi ODS referring to the school year with ID {schoolYearId}: {ex.ChainInnerExceptionMessages()}");
+                LoggingService.LogErrorMessage(
+                    $"An error occurred while trying to read the Ed Org information from the Ed Fi ODS referring to the school year with ID {schoolYearId}: {ex.ChainInnerExceptionMessages()}");
             }
+
             LoggingService.LogDebugMessage($"Added {result.Count} EdOrgs");
 
             return result;

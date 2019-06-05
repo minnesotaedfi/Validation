@@ -1,0 +1,15 @@
+{
+    "version": "2.0.0",
+    "configurations": [
+        {
+            "name": "antlr4-validation",
+            "type": "antlr-debug",
+            "request": "launch",
+            "input": "ValidationWeb/Content/Rules/SchoolCalendar.rules",
+            "grammar": "Engine/Language/MsdsParser.g4",
+            "printParseTree": true,
+            "visualParseTree": true
+        }
+    ]
+}
+

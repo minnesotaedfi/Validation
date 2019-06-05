@@ -13,6 +13,7 @@ namespace ValidationWeb.Database
         }
         
         // Use of connection string ensures that a new database won't be created by default.
+        // todo: dependency inject OdsConfigurationValues 
         public RawOdsDbContext(string fourDigitYear)
             : base(new OdsConfigurationValues().GetRawOdsConnectionString(fourDigitYear))
         {

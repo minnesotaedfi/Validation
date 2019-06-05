@@ -19,6 +19,7 @@ namespace ValidationWeb.Controllers
         protected IConfigurationValues ConfigurationValues { get; set; }
 
         // GET: Login
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "Does not come from user input")]
         [AllowAnonymous]
         public ActionResult Index(string returnUrl)
         {

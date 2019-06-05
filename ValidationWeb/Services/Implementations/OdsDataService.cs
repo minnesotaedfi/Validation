@@ -138,6 +138,7 @@ namespace ValidationWeb.Services.Implementations
 
         public List<StudentProgramsCountReportQuery> GetStudentProgramsCounts(int? districtEdOrgId, string fourDigitOdsDbYear)
         {
+            // todo: DI
             using (var rawOdsContext = new RawOdsDbContext(fourDigitOdsDbYear))
             {
                 var conn = rawOdsContext.Database.Connection;

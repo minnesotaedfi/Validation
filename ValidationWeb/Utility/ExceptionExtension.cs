@@ -14,6 +14,7 @@ namespace ValidationWeb.Utility
                 exceptionMessages.AppendLine(ex.StackTrace);
                 ex = ex.InnerException;
             }
+
             return exceptionMessages.ToString();
         }
     }

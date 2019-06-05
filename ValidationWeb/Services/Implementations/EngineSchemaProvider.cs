@@ -8,6 +8,7 @@ namespace ValidationWeb.Services.Implementations
 
         static EngineSchemaProvider()
         {
+            // todo: di... 
             _ruleEngineResultsSchema = (new RulesEngineConfigurationValues()).RuleEngineResultsSchema;
         }
 

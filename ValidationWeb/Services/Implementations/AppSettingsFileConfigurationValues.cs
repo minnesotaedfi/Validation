@@ -29,16 +29,18 @@ namespace ValidationWeb.Services.Implementations
             _useFakeViewModelData = ConfigurationManager.AppSettings["UseFakeViewModelData"] == "true";
             _isSsoSimulated = ConfigurationManager.AppSettings["UseSimulatedSSO"] == "true";
             _ssoSimulatedUserName = ConfigurationManager.AppSettings["SimulatedUserName"];
+
             if (!int.TryParse(ConfigurationManager.AppSettings["SessionTimeoutInMinutes"], out _sessionTimeoutInMinutes))
             {
                 _sessionTimeoutInMinutes = 30; // Default to 30 minutes.
             }
 
+            // todo: this needs to not be hidden down in this constructor 
             var seedSchoolYears = ConfigurationManager.AppSettings["SeedSchoolYears"];
             if (!string.IsNullOrWhiteSpace(seedSchoolYears))
             {
                 var seedSchoolYearsCandidates = seedSchoolYears.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-                foreach(var schoolYearCandidate in seedSchoolYearsCandidates)
+                foreach (var schoolYearCandidate in seedSchoolYearsCandidates)
                 {
                     int schoolYearInteger;
                     if (int.TryParse(schoolYearCandidate.Trim(), out schoolYearInteger) && schoolYearInteger > 1900 && schoolYearInteger < 2400)

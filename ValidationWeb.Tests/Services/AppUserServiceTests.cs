@@ -1,29 +1,22 @@
-﻿
+﻿using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Linq;
+using System.Web;
+using Moq;
+using NUnit.Framework;
+using Should;
 using ValidationWeb.Database;
 using ValidationWeb.Models;
 using ValidationWeb.Services.Implementations;
 using ValidationWeb.Services.Interfaces;
+using ValidationWeb.Tests.Mocks;
 
 namespace ValidationWeb.Tests.Services
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Data.Entity;
-    using System.Data.Entity.Infrastructure;
-    using System.Diagnostics.CodeAnalysis;
-    using System.IO;
-    using System.Linq;
-    using System.Web;
-
-    using Moq;
-    using NUnit.Framework;
-
-    using Should;
-
-    using ValidationWeb.Filters;
-    using ValidationWeb.Services;
-    using ValidationWeb.Tests.Mocks;
-
     [TestFixture]
     [ExcludeFromCodeCoverage]
     public class AppUserServiceTests
@@ -66,6 +59,102 @@ namespace ValidationWeb.Tests.Services
                     AuthorizedEdOrgs = new List<EdOrg>()
                 },
             };
+
+            var appUserSession = new AppUserSession
+            {
+                Id = "12345",
+                FocusedEdOrgId = 1234,
+                UserIdentity = null
+            };
+            
+            var appUserSessions = new List<AppUserSession>(new[] { appUserSession }); 
+
+            EntityFrameworkMocks.SetupMockDbSet(
+                EntityFrameworkMocks.GetQueryableMockDbSet(appUserSessions),
+                ValidationPortalDbContextMock,
+                x => x.AppUserSessions,
+                x => x.AppUserSessions = It.IsAny<DbSet<AppUserSession>>(),
+                appUserSessions);
+
+            var announcements = new List<Announcement>();
+            EntityFrameworkMocks.SetupMockDbSet(
+                EntityFrameworkMocks.GetQueryableMockDbSet(announcements),
+                ValidationPortalDbContextMock,
+                x => x.Announcements,
+                x => x.Announcements = It.IsAny<DbSet<Announcement>>(),
+                announcements);
+
+            var edOrgs = new List<EdOrg>(); 
+            EntityFrameworkMocks.SetupMockDbSet(
+                EntityFrameworkMocks.GetQueryableMockDbSet(edOrgs),
+                ValidationPortalDbContextMock,
+                x => x.EdOrgs,
+                x => x.EdOrgs = It.IsAny<DbSet<EdOrg>>(),
+                edOrgs);
+
+            var edOrgTypeLookups = new List<EdOrgTypeLookup>(); 
+            EntityFrameworkMocks.SetupMockDbSet(
+                EntityFrameworkMocks.GetQueryableMockDbSet(edOrgTypeLookups),
+                ValidationPortalDbContextMock,
+                x => x.EdOrgTypeLookup,
+                x => x.EdOrgTypeLookup = It.IsAny<DbSet<EdOrgTypeLookup>>(),
+                edOrgTypeLookups);
+
+            var errorSeverityLookups = new List<ErrorSeverityLookup>(); 
+            EntityFrameworkMocks.SetupMockDbSet(
+                EntityFrameworkMocks.GetQueryableMockDbSet(errorSeverityLookups),
+                ValidationPortalDbContextMock,
+                x => x.ErrorSeverityLookup,
+                x => x.ErrorSeverityLookup = It.IsAny<DbSet<ErrorSeverityLookup>>(),
+                errorSeverityLookups);
+
+            var recordsRequests = new List<RecordsRequest>(); 
+            EntityFrameworkMocks.SetupMockDbSet(
+                EntityFrameworkMocks.GetQueryableMockDbSet(recordsRequests),
+                ValidationPortalDbContextMock,
+                x => x.RecordsRequests,
+                x => x.RecordsRequests = It.IsAny<DbSet<RecordsRequest>>(),
+                recordsRequests);
+
+            var schoolYears = new List<SchoolYear>(); 
+            EntityFrameworkMocks.SetupMockDbSet(
+                EntityFrameworkMocks.GetQueryableMockDbSet(schoolYears),
+                ValidationPortalDbContextMock,
+                x => x.SchoolYears,
+                x => x.SchoolYears = It.IsAny<DbSet<SchoolYear>>(),
+                schoolYears);
+
+            var submissionCycles = new List<SubmissionCycle>(); 
+            EntityFrameworkMocks.SetupMockDbSet(
+                EntityFrameworkMocks.GetQueryableMockDbSet(submissionCycles),
+                ValidationPortalDbContextMock,
+                x => x.SubmissionCycles,
+                x => x.SubmissionCycles = It.IsAny<DbSet<SubmissionCycle>>(),
+                submissionCycles);
+
+            var validationErrorSummaries = new List<ValidationErrorSummary>(); 
+            EntityFrameworkMocks.SetupMockDbSet(
+                EntityFrameworkMocks.GetQueryableMockDbSet(validationErrorSummaries),
+                ValidationPortalDbContextMock,
+                x => x.ValidationErrorSummaries,
+                x => x.ValidationErrorSummaries = It.IsAny<DbSet<ValidationErrorSummary>>(),
+                validationErrorSummaries);
+
+            var validationReportDetails = new List<ValidationReportDetails>(); 
+            EntityFrameworkMocks.SetupMockDbSet(
+                EntityFrameworkMocks.GetQueryableMockDbSet(validationReportDetails),
+                ValidationPortalDbContextMock,
+                x => x.ValidationReportDetails,
+                x => x.ValidationReportDetails = It.IsAny<DbSet<ValidationReportDetails>>(),
+                validationReportDetails);
+
+            var validationReportSummaries = new List<ValidationReportSummary>();
+            EntityFrameworkMocks.SetupMockDbSet(
+                EntityFrameworkMocks.GetQueryableMockDbSet(validationReportSummaries),
+                ValidationPortalDbContextMock,
+                x => x.ValidationReportSummaries,
+                x => x.ValidationReportSummaries = It.IsAny<DbSet<ValidationReportSummary>>(),
+                validationReportSummaries);
         }
 
         [TearDown]
@@ -153,14 +242,6 @@ namespace ValidationWeb.Tests.Services
         [Test]
         public void UpdateFocusedEdOrg_Should_LogException()
         {
-            var announcements = new List<Announcement>();
-            EntityFrameworkMocks.SetupMockDbSet(
-                EntityFrameworkMocks.GetQueryableMockDbSet(announcements),
-                ValidationPortalDbContextMock,
-                x => x.Announcements,
-                x => x.Announcements = It.IsAny<DbSet<Announcement>>(),
-                announcements);
-
             var oldFocusedEdOrg = 12345;
             var newFocusedEdOrg = 23456;
             var appUserSessionId = 123;
@@ -171,6 +252,15 @@ namespace ValidationWeb.Tests.Services
                 FocusedEdOrgId = oldFocusedEdOrg,
                 UserIdentity = null
             };
+
+            var appUserSessions = new List<AppUserSession>(new[] { appUserSession }); 
+
+            EntityFrameworkMocks.SetupMockDbSet(
+                EntityFrameworkMocks.GetQueryableMockDbSet(appUserSessions),
+                ValidationPortalDbContextMock,
+                x => x.AppUserSessions,
+                x => x.AppUserSessions = It.IsAny<DbSet<AppUserSession>>(),
+                appUserSessions);
 
             DbContextFactoryMock.Setup(x => x.Create()).Returns(ValidationPortalDbContextMock.Object);
 
@@ -235,6 +325,7 @@ namespace ValidationWeb.Tests.Services
                 x => x.AppUserSessions = It.IsAny<DbSet<AppUserSession>>(),
                 userSessions);
 
+
             DbContextFactoryMock.Setup(x => x.Create()).Returns(ValidationPortalDbContextMock.Object);
 
             var httpContext = new HttpContext(
@@ -264,14 +355,6 @@ namespace ValidationWeb.Tests.Services
         [Test]
         public void UpdateFocusedSchoolYear_Should_FailSilentlyBecauseItJustDoes()
         {
-            var announcements = new List<Announcement>();
-            EntityFrameworkMocks.SetupMockDbSet(
-                EntityFrameworkMocks.GetQueryableMockDbSet(announcements),
-                ValidationPortalDbContextMock,
-                x => x.Announcements,
-                x => x.Announcements = It.IsAny<DbSet<Announcement>>(),
-                announcements);
-
             var oldFocusedSchoolYear = 12345;
             var newFocusedSchoolYear = 23456;
             var appUserSessionId = 123;
@@ -311,6 +394,7 @@ namespace ValidationWeb.Tests.Services
             HttpContextProviderMock.SetupGet(x => x.CurrentHttpContext).Returns(httpContext);
 
             LoggingServiceMock.Setup(x => x.LogDebugMessage(It.IsAny<string>()));
+            LoggingServiceMock.Setup(x => x.LogErrorMessage(It.IsAny<string>()));
 
             var appUserService = new AppUserService(
                 DbContextFactoryMock.Object,
@@ -323,16 +407,8 @@ namespace ValidationWeb.Tests.Services
         }
 
         [Test]
-        public void UpdateFocusedSchoolYear_Should_LogException()
+        public void UpdateFocusedSchoolYear_WithInvalidYear_Should_LogError()
         {
-            var announcements = new List<Announcement>();
-            EntityFrameworkMocks.SetupMockDbSet(
-                EntityFrameworkMocks.GetQueryableMockDbSet(announcements),
-                ValidationPortalDbContextMock,
-                x => x.Announcements,
-                x => x.Announcements = It.IsAny<DbSet<Announcement>>(),
-                announcements);
-
             var newFocusedSchoolYear = 23456;
             var appUserSessionId = 123;
 

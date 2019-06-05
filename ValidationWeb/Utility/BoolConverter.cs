@@ -12,7 +12,7 @@ namespace ValidationWeb.Utility
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            return reader.Value.ToString() == "1";
+            return reader.Value?.ToString() == "1";
         }
 
         public override bool CanConvert(Type objectType)

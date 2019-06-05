@@ -80,6 +80,7 @@ namespace ValidationWeb.Services.Implementations
 
                     if (sessionObj == null || !validSchoolYearId.HasValue)
                     {
+                        LoggingService.LogErrorMessage("Unable to set an invalid school year");
                         return; // todo: another silent fail! 
                     }
 

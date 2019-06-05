@@ -37,6 +37,7 @@ namespace ValidationWeb.Services.Implementations
 
         public IEnumerable<Log> GetApiErrors()
         {
+            // todo: make sure this works to collect 3.1.1 errors
             using (var dbContext = DbContextFactory.Create())
             {
                 return dbContext.Logs
