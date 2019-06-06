@@ -1,14 +1,4 @@
-﻿using Engine.Language;
-using Engine.Models;
-using Engine.Utility;
-using log4net;
-using log4net.Config;
-using SimpleInjector;
-using SimpleInjector.Integration.Web;
-using SimpleInjector.Integration.Web.Mvc;
-using SimpleInjector.Integration.WebApi;
-using SimpleInjector.Lifestyles;
-using System;
+﻿using System;
 using System.Data.Entity.Infrastructure;
 using System.Reflection;
 using System.Web;
@@ -20,6 +10,16 @@ using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using System.Web.SessionState;
+using Engine.Language;
+using Engine.Models;
+using Engine.Utility;
+using log4net;
+using log4net.Config;
+using SimpleInjector;
+using SimpleInjector.Integration.Web;
+using SimpleInjector.Integration.Web.Mvc;
+using SimpleInjector.Integration.WebApi;
+using SimpleInjector.Lifestyles;
 using ValidationWeb.ApiControllers.ModelBinders;
 using ValidationWeb.Database;
 using ValidationWeb.DataCache;
@@ -92,12 +92,13 @@ namespace ValidationWeb
             container.Register<ISubmissionCycleService, SubmissionCycleService>(Lifestyle.Scoped);
             container.Register<IEdFiApiLogService, EdFiApiLogService>(Lifestyle.Scoped);
             container.Register<IRecordsRequestService, RecordsRequestService>(Lifestyle.Scoped);
-            container.Register<IOdsConfigurationValues, OdsConfigurationValues>(Lifestyle.Scoped);
+            container.Register<IOdsConfigurationValues, OdsConfigurationValues>(Lifestyle.Singleton);
 
             // singletons
             container.Register<ICacheManager, CacheManager>(Lifestyle.Singleton);
             container.Register<IDbContextFactory<ValidationPortalDbContext>, DbContextFactory<ValidationPortalDbContext>>(Lifestyle.Singleton);
             container.Register<IDbContextFactory<EdFiLogDbContext>, DbContextFactory<EdFiLogDbContext>>(Lifestyle.Singleton);
+            container.Register<ISchoolYearDbContextFactory, SchoolYearDbContextFactory>(Lifestyle.Singleton);
 
             // Rules Engine
             container.Register<ISchemaProvider, EngineSchemaProvider>(Lifestyle.Scoped);

@@ -1,6 +1,7 @@
 ﻿using System.Data.Entity;
 using ValidationWeb.Models;
 using ValidationWeb.Services.Implementations;
+using ValidationWeb.Services.Interfaces;
 
 namespace ValidationWeb.Database
 {
@@ -9,13 +10,19 @@ namespace ValidationWeb.Database
         static RawOdsDbContext()
         {
             // Fixes a known bug in which EntityFramework.SqlServer.dll is not copied into consumer even when CopyLocal is True.
+            // todo: i'm unsure about that entire comment
             var includeSqlServerDLLInConsumer = System.Data.Entity.SqlServer.SqlProviderServices.Instance;
+        }
+
+        // TOOD: remove ... 
+        public RawOdsDbContext(string fourDigitYear)
+            : base(new OdsConfigurationValues().GetRawOdsConnectionString(fourDigitYear))
+        {
         }
         
         // Use of connection string ensures that a new database won't be created by default.
-        // todo: dependency inject OdsConfigurationValues 
-        public RawOdsDbContext(string fourDigitYear)
-            : base(new OdsConfigurationValues().GetRawOdsConnectionString(fourDigitYear))
+        public RawOdsDbContext(IOdsConfigurationValues odsConfigurationValues, string fourDigitYear)
+            : base(odsConfigurationValues.GetRawOdsConnectionString(fourDigitYear))
         {
         }
         

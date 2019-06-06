@@ -14,20 +14,23 @@ namespace ValidationWeb.Services.Implementations
     {
         public readonly ILoggingService LoggingService;
 
-        public readonly IDbContextFactory<ValidationPortalDbContext> DbContextFactory;
+        public readonly IDbContextFactory<ValidationPortalDbContext> ValidationDbContextFactory;
+
+        public readonly ISchoolYearDbContextFactory OdsDbContextFactory;
 
         public OdsDataService(
             ILoggingService loggingService,
-            IDbContextFactory<ValidationPortalDbContext> dbContextFactory)
+            IDbContextFactory<ValidationPortalDbContext> validationDbContextFactory, 
+            ISchoolYearDbContextFactory odsDbContextFactory)
         {
             LoggingService = loggingService;
-            DbContextFactory = dbContextFactory;
+            ValidationDbContextFactory = validationDbContextFactory;
+            OdsDbContextFactory = odsDbContextFactory;
         }
 
         public List<DemographicsCountReportQuery> GetDistrictAncestryRaceCounts(int? districtEdOrgId, string fourDigitOdsDbYear)
         {
-            // todo: dependency-inject these data contexts
-            using (var rawOdsContext = new RawOdsDbContext(fourDigitOdsDbYear))
+            using (var rawOdsContext = OdsDbContextFactory.CreateWithParameter(fourDigitOdsDbYear))
             {
                 var conn = rawOdsContext.Database.Connection;
                 try
@@ -83,7 +86,7 @@ namespace ValidationWeb.Services.Implementations
 
         public List<MultipleEnrollmentsCountReportQuery> GetMultipleEnrollmentCounts(int? districtEdOrgId, string fourDigitOdsDbYear)
         {
-            using (var rawOdsContext = new RawOdsDbContext(fourDigitOdsDbYear))
+            using (var rawOdsContext = OdsDbContextFactory.CreateWithParameter(fourDigitOdsDbYear))
             {
                 var conn = rawOdsContext.Database.Connection;
                 try
@@ -138,8 +141,7 @@ namespace ValidationWeb.Services.Implementations
 
         public List<StudentProgramsCountReportQuery> GetStudentProgramsCounts(int? districtEdOrgId, string fourDigitOdsDbYear)
         {
-            // todo: DI
-            using (var rawOdsContext = new RawOdsDbContext(fourDigitOdsDbYear))
+            using (var rawOdsContext = OdsDbContextFactory.CreateWithParameter(fourDigitOdsDbYear))
             {
                 var conn = rawOdsContext.Database.Connection;
                 try
@@ -206,7 +208,7 @@ namespace ValidationWeb.Services.Implementations
 
         public List<ChangeOfEnrollmentReportQuery> GetChangeOfEnrollmentReport(int districtEdOrgId, string fourDigitOdsDbYear)
         {
-            using (var rawOdsContext = new RawOdsDbContext(fourDigitOdsDbYear))
+            using (var rawOdsContext = OdsDbContextFactory.CreateWithParameter(fourDigitOdsDbYear))
             {
                 var conn = rawOdsContext.Database.Connection;
                 try
@@ -277,7 +279,7 @@ namespace ValidationWeb.Services.Implementations
 
         public List<ResidentsEnrolledElsewhereReportQuery> GetResidentsEnrolledElsewhereReport(int? districtEdOrgId, string fourDigitOdsDbYear)
         {
-            using (var rawOdsContext = new RawOdsDbContext(fourDigitOdsDbYear))
+            using (var rawOdsContext = OdsDbContextFactory.CreateWithParameter(fourDigitOdsDbYear))
             {
                 var conn = rawOdsContext.Database.Connection;
                 try
@@ -331,7 +333,7 @@ namespace ValidationWeb.Services.Implementations
 
         public List<StudentDrillDownQuery> GetDistrictAncestryRaceStudentDrillDown(OrgType orgType, int? schoolEdOrgId, int? districtEdOrgId, int? columnIndex, string fourDigitOdsDbYear)
         {
-            using (var rawOdsContext = new RawOdsDbContext(fourDigitOdsDbYear))
+            using (var rawOdsContext = OdsDbContextFactory.CreateWithParameter(fourDigitOdsDbYear))
             {
                 var conn = rawOdsContext.Database.Connection;
                 try
@@ -377,7 +379,7 @@ namespace ValidationWeb.Services.Implementations
             int? columnIndex,
             string fourDigitOdsDbYear)
         {
-            using (var rawOdsContext = new RawOdsDbContext(fourDigitOdsDbYear))
+            using (var rawOdsContext = OdsDbContextFactory.CreateWithParameter(fourDigitOdsDbYear))
             {
                 var conn = rawOdsContext.Database.Connection;
                 try
@@ -423,7 +425,7 @@ namespace ValidationWeb.Services.Implementations
 
         public List<StudentDrillDownQuery> GetStudentProgramsStudentDrillDown(OrgType orgType, int? schoolEdOrgId, int? districtEdOrgId, int? columnIndex, string fourDigitOdsDbYear)
         {
-            using (var rawOdsContext = new RawOdsDbContext(fourDigitOdsDbYear))
+            using (var rawOdsContext = OdsDbContextFactory.CreateWithParameter(fourDigitOdsDbYear))
             {
                 var conn = rawOdsContext.Database.Connection;
                 try
@@ -463,7 +465,7 @@ namespace ValidationWeb.Services.Implementations
 
         public List<StudentDrillDownQuery> GetResidentsEnrolledElsewhereStudentDrillDown(int? districtEdOrgId, string fourDigitOdsDbYear)
         {
-            using (var rawOdsContext = new RawOdsDbContext(fourDigitOdsDbYear))
+            using (var rawOdsContext = OdsDbContextFactory.CreateWithParameter(fourDigitOdsDbYear))
             {
                 var conn = rawOdsContext.Database.Connection;
                 try

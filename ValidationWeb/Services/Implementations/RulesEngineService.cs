@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 using Engine.Models;
 using ValidationWeb.Database;
 using ValidationWeb.Database.Queries;
@@ -31,6 +32,8 @@ namespace ValidationWeb.Services.Implementations
 
         public readonly IDbContextFactory<ValidationPortalDbContext> DbContextFactory;
 
+        public readonly ISchoolYearDbContextFactory OdsDbContextFactory;
+
         public RulesEngineService(
             IAppUserService appUserService,
             IEdOrgService edOrgService,
@@ -38,6 +41,7 @@ namespace ValidationWeb.Services.Implementations
             IRulesEngineConfigurationValues engineConfig,
             ILoggingService loggingService,
             IDbContextFactory<ValidationPortalDbContext> dbContextFactory,
+            ISchoolYearDbContextFactory odsDbContextFactory,
             Model engineObjectModel)
         {
             AppUserService = appUserService;
@@ -46,6 +50,7 @@ namespace ValidationWeb.Services.Implementations
             LoggingService = loggingService;
             EngineConfig = engineConfig;
             DbContextFactory = dbContextFactory;
+            OdsDbContextFactory = odsDbContextFactory;
             EngineObjectModel = engineObjectModel;
         }
 
@@ -60,7 +65,7 @@ namespace ValidationWeb.Services.Implementations
             string fourDigitOdsDbYear = schoolYear.EndYear;
 
             ValidationReportSummary newReportSummary;
-            using (var odsRawDbContext = new RawOdsDbContext(fourDigitOdsDbYear))
+            using (var odsRawDbContext = OdsDbContextFactory.CreateWithParameter(fourDigitOdsDbYear))
             {
                 using (var validationDbContext = DbContextFactory.Create())
                 {
@@ -144,8 +149,7 @@ namespace ValidationWeb.Services.Implementations
             var schoolYear = SchoolYearService.GetSchoolYearById(submissionCycle.SchoolYearId.Value);
             var fourDigitOdsDbYear = schoolYear.EndYear;
 
-            // todo: dependency inject the initialization of RawOdsDbContext with a year. introduce a factory for most simple implementation
-            using (var odsRawDbContext = new RawOdsDbContext(fourDigitOdsDbYear))
+            using (var odsRawDbContext = OdsDbContextFactory.CreateWithParameter(fourDigitOdsDbYear))
             {
                 using (var validationDbContext = DbContextFactory.Create())
                 {

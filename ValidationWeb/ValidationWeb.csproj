@@ -939,7 +939,11 @@
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\DynamicController.cs" />
     <Compile Include="Database\EdFiLogDbContext.cs" />
+    <Compile Include="Database\ISchoolYearDbContextFactory.cs" />
     <Compile Include="Database\Queries\OrgType.cs" />
+    <Compile Include="Database\SchoolYearDbContextFactory.cs">
+      <DependentUpon>ISchoolYearDbContextFactory.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\ValidationPortalIdentity.cs" />
     <Compile Include="Services\Implementations\RecordsRequestService.cs" />
     <Compile Include="Services\Interfaces\IRecordsRequestService.cs" />

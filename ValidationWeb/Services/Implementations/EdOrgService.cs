@@ -19,15 +19,19 @@ namespace ValidationWeb.Services.Implementations
             IDbContextFactory<ValidationPortalDbContext> validationPortalDataContextFactory,
             IAppUserService appUserService,
             ISchoolYearService schoolYearService,
+            ISchoolYearDbContextFactory schoolYearDbContextFactory,
             ILoggingService loggingService)
         {
             ValidationPortalDataContextFactory = validationPortalDataContextFactory;
             AppUserService = appUserService;
             SchoolYearService = schoolYearService;
+            SchoolYearDbContextFactory = schoolYearDbContextFactory;
             LoggingService = loggingService;
         }
 
         protected IDbContextFactory<ValidationPortalDbContext> ValidationPortalDataContextFactory { get; set; }
+
+        protected ISchoolYearDbContextFactory SchoolYearDbContextFactory { get; set; }
 
         protected IAppUserService AppUserService { get; set; }
 
@@ -70,9 +74,9 @@ namespace ValidationWeb.Services.Implementations
                     return result;
                 }
 
-                using (var _odsRawDbContext = new RawOdsDbContext(schoolYear.EndYear))
+                using (var odsDbContext = SchoolYearDbContextFactory.CreateWithParameter(schoolYear.EndYear))
                 {
-                    var conn = _odsRawDbContext.Database.Connection;
+                    var conn = odsDbContext.Database.Connection;
                     try
                     {
                         conn.Open();
@@ -113,9 +117,10 @@ namespace ValidationWeb.Services.Implementations
         {
             string fourDigitOdsDbYear = schoolYear.EndYear;
             var edOrgsExtractedFromODS = new List<EdOrg>();
-            using (var odsRawDbContext = new RawOdsDbContext(fourDigitOdsDbYear))
+            
+            using (var odsDbContext = SchoolYearDbContextFactory.CreateWithParameter(fourDigitOdsDbYear))
             {
-                var conn = odsRawDbContext.Database.Connection;
+                var conn = odsDbContext.Database.Connection;
                 try
                 {
                     conn.Open();
@@ -127,7 +132,8 @@ namespace ValidationWeb.Services.Implementations
                 catch (Exception ex)
                 {
                     LoggingService.LogErrorMessage(
-                        $"While trying to add all ODS Ed Org descriptions to the Validation Portal Database Cache: school year {fourDigitOdsDbYear}, error: {ex.ChainInnerExceptionMessages()}");
+                        $"While trying to add all ODS Ed Org descriptions to the Validation Portal Database Cache: " +
+                        $"school year {fourDigitOdsDbYear}, error: {ex.ChainInnerExceptionMessages()}");
                 }
                 finally
                 {
@@ -155,10 +161,10 @@ namespace ValidationWeb.Services.Implementations
             SingleEdOrgByIdQuery result = null;
 
             var schoolYear = SchoolYearService.GetSchoolYearById(schoolYearId);
-            // todo: DI RawOdsDbContext
-            using (var odsRawDbContext = new RawOdsDbContext(schoolYear.EndYear))
+            
+            using (var odsDbContext = SchoolYearDbContextFactory.CreateWithParameter(schoolYear.EndYear))
             {
-                var conn = odsRawDbContext.Database.Connection;
+                var conn = odsDbContext.Database.Connection;
                 try
                 {
                     conn.Open();

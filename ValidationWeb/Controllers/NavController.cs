@@ -15,7 +15,7 @@ namespace ValidationWeb.Controllers
 
         static NavController()
         {
-            _version = "1.0.0.0"; // new Version(FileVersionInfo.GetVersionInfo(Assembly.GetCallingAssembly().Location).ProductVersion).ToString();
+            _version = "3.1.1.0"; // new Version(FileVersionInfo.GetVersionInfo(Assembly.GetCallingAssembly().Location).ProductVersion).ToString();
         }
 
         public NavController(
