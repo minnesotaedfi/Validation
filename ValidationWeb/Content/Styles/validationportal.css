@@ -171,16 +171,17 @@ a.white-heavy-text {
 .close {
     background-color: transparent;
     color: rgb(255, 255, 255);
-    font-weight: bold;
+    font-weight: normal;
     text-decoration: none;
     opacity: 1.0;
+    font-size: 1em;
 }
 
     .close:hover,
     .close:focus {
         color: #003865;
         background-color: #a4bcc2;
-        font-weight: bold;
+        font-weight: normal;
         text-decoration: none;
         opacity: 1.0 !important;
     }
