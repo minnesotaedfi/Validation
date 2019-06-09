@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Diagnostics.CodeAnalysis;
+using Should;
 using ValidationWeb.Database;
 using ValidationWeb.Models;
 using ValidationWeb.Services.Implementations;
@@ -32,7 +33,7 @@ namespace ValidationWeb.Tests.Services
         protected Mock<ValidationPortalDbContext> ValidationPortalDbContextMock { get; set; }
 
         protected Mock<IDbContextFactory<ValidationPortalDbContext>> DbContextFactoryMock { get; set; }
-        
+
         protected Mock<RawOdsDbContext> SchoolYearDbContextMock { get; set; }
 
         protected Mock<ISchoolYearDbContextFactory> SchoolYearDbContextFactoryMock { get; set; }
@@ -66,6 +67,11 @@ namespace ValidationWeb.Tests.Services
         [SetUp]
         public void SetUp()
         {
+            LoggingServiceMock.Setup(x => x.LogDebugMessage(It.IsAny<string>()));
+            LoggingServiceMock.Setup(x => x.LogErrorMessage(It.IsAny<string>()));
+            LoggingServiceMock.Setup(x => x.LogWarningMessage(It.IsAny<string>()));
+            LoggingServiceMock.Setup(x => x.LogInfoMessage(It.IsAny<string>()));
+
             DefaultTestAppUserSession = new AppUserSession
             {
                 FocusedEdOrgId = 1234,
@@ -174,6 +180,8 @@ namespace ValidationWeb.Tests.Services
                 x => x.ValidationReportSummaries = It.IsAny<DbSet<ValidationReportSummary>>(),
                 validationReportSummaries);
 
+            DbContextFactoryMock.As<IDisposable>().Setup(x => x.Dispose());
+
             DbContextFactoryMock
                 .Setup(x => x.Create())
                 .Returns(ValidationPortalDbContextMock.Object);
@@ -190,7 +198,7 @@ namespace ValidationWeb.Tests.Services
                 x => x.RuleValidations,
                 x => x.RuleValidations = It.IsAny<DbSet<RuleValidation>>(),
                 ruleValidations);
-            
+
             var ruleValidationDetails = new List<RuleValidationDetail>();
 
             EntityFrameworkMocks.SetupMockDbSet(
@@ -208,10 +216,14 @@ namespace ValidationWeb.Tests.Services
                 x => x.RuleValidationRuleComponents,
                 x => x.RuleValidationRuleComponents = It.IsAny<DbSet<RuleValidationRuleComponent>>(),
                 ruleValidationRuleComponents);
+            
+            SchoolYearDbContextMock.As<IDisposable>().Setup(x => x.Dispose());
 
             SchoolYearDbContextFactoryMock
                 .Setup(x => x.CreateWithParameter(It.IsAny<string>()))
                 .Returns(SchoolYearDbContextMock.Object);
+
+
         }
 
         [TearDown]
@@ -275,8 +287,30 @@ namespace ValidationWeb.Tests.Services
                 SchoolYearDbContextFactoryMock.Object,
                 EngineObjectModel);
 
-            var submissionCycle = new SubmissionCycle { SchoolYearId = null };
-            Assert.Throws<ArgumentException>(() => rulesEngineService.SetupValidationRun(submissionCycle, null));
+            var schoolYear = new SchoolYear
+            {
+                Id = 1,
+                Enabled = true,
+                ErrorThreshold = null,
+                StartYear = "2019",
+                EndYear = "2020"
+            };
+
+            var submissionCycle = new SubmissionCycle { SchoolYearId = schoolYear.Id, CollectionId = "collection" };
+            SchoolYearServiceMock.Setup(x => x.GetSchoolYearById(schoolYear.Id)).Returns(schoolYear);
+
+            AppUserServiceMock.Setup(x => x.GetSession()).Returns(DefaultTestAppUserSession);
+            AppUserServiceMock.Setup(x => x.GetUser()).Returns(DefaultTestAppUserSession.UserIdentity);
+            
+            var result = rulesEngineService.SetupValidationRun(submissionCycle, submissionCycle.CollectionId);
+
+            result.ShouldNotBeNull();
+            result.SchoolYearId.ShouldEqual(schoolYear.Id);
+            result.Collection.ShouldEqual(submissionCycle.CollectionId);
+
+            SchoolYearDbContextMock.Verify(
+                x => x.RuleValidations.Add(
+                    It.Is<RuleValidation>(y => y.CollectionId == submissionCycle.CollectionId)));
         }
     }
 }
