@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Diagnostics.CodeAnalysis;
-
+using System.Linq;
 using Moq;
 using NUnit.Framework;
 using Should;
@@ -18,21 +18,13 @@ namespace ValidationWeb.Tests.Services
 {
     [TestFixture]
     [ExcludeFromCodeCoverage]
-    public class EdOrgServiceTests
+    public class SchoolYearServiceTests
     {
         protected MockRepository MockRepository { get; set; }
-
-        protected AppUserSession DefaultTestAppUserSession { get; set; }
 
         protected Mock<ValidationPortalDbContext> ValidationPortalDbContextMock { get; set; }
 
         protected Mock<IDbContextFactory<ValidationPortalDbContext>> DbContextFactoryMock { get; set; }
-
-        protected Mock<ISchoolYearDbContextFactory> SchoolYearDbContextFactoryMock { get; set; }
-
-        protected Mock<IAppUserService> AppUserServiceMock { get; set; }
-        
-        protected Mock<ISchoolYearService> SchoolYearServiceMock { get; set; }
 
         protected Mock<ILoggingService> LoggingServiceMock { get; set; }
 
@@ -43,35 +35,13 @@ namespace ValidationWeb.Tests.Services
 
             ValidationPortalDbContextMock = MockRepository.Create<ValidationPortalDbContext>();
             DbContextFactoryMock = MockRepository.Create<IDbContextFactory<ValidationPortalDbContext>>();
-            AppUserServiceMock = MockRepository.Create<IAppUserService>();
-            SchoolYearServiceMock = MockRepository.Create<ISchoolYearService>();
-            SchoolYearDbContextFactoryMock = MockRepository.Create<ISchoolYearDbContextFactory>();
             LoggingServiceMock = MockRepository.Create<ILoggingService>();
         }
 
         [SetUp]
         public void SetUp()
         {
-            DefaultTestAppUserSession = new AppUserSession
-            {
-                FocusedEdOrgId = 1234,
-                FocusedSchoolYearId = 1,
-                Id = "234",
-                ExpiresUtc = DateTime.Now.AddMonths(1),
-                UserIdentity = new ValidationPortalIdentity
-                {
-                    AuthorizedEdOrgs = new List<EdOrg>()
-                },
-            };
-
-            var appUserSession = new AppUserSession
-            {
-                Id = "12345",
-                FocusedEdOrgId = 1234,
-                UserIdentity = null
-            };
-            
-            var appUserSessions = new List<AppUserSession>(new[] { appUserSession }); 
+            var appUserSessions = new List<AppUserSession>(); 
 
             EntityFrameworkMocks.SetupMockDbSet(
                 EntityFrameworkMocks.GetQueryableMockDbSet(appUserSessions),
@@ -120,14 +90,6 @@ namespace ValidationWeb.Tests.Services
                 x => x.RecordsRequests = It.IsAny<DbSet<RecordsRequest>>(),
                 recordsRequests);
 
-            var schoolYears = new List<SchoolYear>(); 
-            EntityFrameworkMocks.SetupMockDbSet(
-                EntityFrameworkMocks.GetQueryableMockDbSet(schoolYears),
-                ValidationPortalDbContextMock,
-                x => x.SchoolYears,
-                x => x.SchoolYears = It.IsAny<DbSet<SchoolYear>>(),
-                schoolYears);
-
             var submissionCycles = new List<SubmissionCycle>(); 
             EntityFrameworkMocks.SetupMockDbSet(
                 EntityFrameworkMocks.GetQueryableMockDbSet(submissionCycles),
@@ -159,138 +121,55 @@ namespace ValidationWeb.Tests.Services
                 x => x.ValidationReportSummaries,
                 x => x.ValidationReportSummaries = It.IsAny<DbSet<ValidationReportSummary>>(),
                 validationReportSummaries);
+            
+            TestSchoolYears = new List<SchoolYear>(new []
+            {
+                new SchoolYear("2017", "2018", false) { Id = 0 },
+                new SchoolYear("2018", "2019", true) { Id = 1 },
+                new SchoolYear("2019", "2020", true) { Id = 2 }, 
+            }); 
+
+            EntityFrameworkMocks.SetupMockDbSet(
+                EntityFrameworkMocks.GetQueryableMockDbSet(TestSchoolYears),
+                ValidationPortalDbContextMock,
+                x => x.SchoolYears,
+                x => x.SchoolYears = It.IsAny<DbSet<SchoolYear>>(),
+                TestSchoolYears);
 
             ValidationPortalDbContextMock.As<IDisposable>().Setup(x => x.Dispose());
 
             DbContextFactoryMock.Setup(x => x.Create()).Returns(ValidationPortalDbContextMock.Object);
         }
 
+        public List<SchoolYear> TestSchoolYears { get; set; }
+
         [TearDown]
         public void TearDown()
         {
             ValidationPortalDbContextMock.Reset();
             DbContextFactoryMock.Reset();
-            AppUserServiceMock.Reset();
-            SchoolYearServiceMock.Reset();
             LoggingServiceMock.Reset();
         }
         
         [Test]
-        public void GetAuthorizedEdOrgs_Should_ReturnUserSessionEdOrgs()
+        public void GetSubmittableSchoolYears_Should_ReturnAllEnabled()
         {
-            var authorizedEdOrgs = new List<EdOrg>
-            {
-                new EdOrg { Id = 12345 },
-                new EdOrg { Id = 23456 }
-            };
+            var schoolYearService = new SchoolYearService(DbContextFactoryMock.Object);
 
-            foreach (var edorg in authorizedEdOrgs)
-            {
-                DefaultTestAppUserSession.UserIdentity.AuthorizedEdOrgs.Add(edorg);
-            }
+            var result = schoolYearService.GetSubmittableSchoolYears();
 
-            AppUserServiceMock.Setup(x => x.GetSession()).Returns(DefaultTestAppUserSession);
-
-            var edOrgService = new EdOrgService(
-                DbContextFactoryMock.Object,
-                AppUserServiceMock.Object,
-                SchoolYearServiceMock.Object, 
-                SchoolYearDbContextFactoryMock.Object,
-                LoggingServiceMock.Object);
-
-            var result = edOrgService.GetAuthorizedEdOrgs();
-
-            result.ShouldHaveSameItems(authorizedEdOrgs);
+            result.ShouldEqual(TestSchoolYears);
         }
 
         [Test]
-        public void GetAllEdOrgs_Should_ReturnAllEdOrgs()
+        public void GetSubmittableSchoolYearsDictionary_Should_BeADictionary()
         {
-            var allEdOrgs = new List<EdOrg>
-            {
-                new EdOrg { Id = 12345 },
-                new EdOrg { Id = 23456 },
-                new EdOrg { Id = 34567 }
-            };
+            var schoolYearService = new SchoolYearService(DbContextFactoryMock.Object);
 
-            EntityFrameworkMocks.SetupMockDbSet(
-                EntityFrameworkMocks.GetQueryableMockDbSet(allEdOrgs),
-                ValidationPortalDbContextMock,
-                x => x.EdOrgs,
-                x => x.EdOrgs = It.IsAny<DbSet<EdOrg>>(),
-                allEdOrgs);
+            var result = schoolYearService.GetSubmittableSchoolYearsDictionary();
 
-
-            var edOrgService = new EdOrgService(
-                DbContextFactoryMock.Object,
-                AppUserServiceMock.Object,
-                SchoolYearServiceMock.Object, 
-                SchoolYearDbContextFactoryMock.Object,
-                LoggingServiceMock.Object);
-
-            var result = edOrgService.GetAllEdOrgs();
-
-            result.ShouldHaveSameItems(allEdOrgs);
-        }
-
-        [Test]
-        public void GetEdOrgById_Should_ReturnSpecifiedEdOrgIfPresent()
-        {
-            const int testEdOrgId = 12345;
-            const int testSchoolYearId = 111;
-            const string testSchoolName = "12345 Elementary";
-
-            var allEdOrgs = new List<EdOrg>
-            {
-                new EdOrg
-                {
-                    Id = testEdOrgId, 
-                    SchoolYearId = testSchoolYearId, 
-                    OrganizationName = testSchoolName, 
-                    OrganizationShortName = testSchoolName
-                },
-                new EdOrg { Id = 23456 },
-                new EdOrg { Id = 34567 }
-            };
-
-            EntityFrameworkMocks.SetupMockDbSet(
-                EntityFrameworkMocks.GetQueryableMockDbSet(allEdOrgs),
-                ValidationPortalDbContextMock,
-                x => x.EdOrgs,
-                x => x.EdOrgs = It.IsAny<DbSet<EdOrg>>(),
-                allEdOrgs);
-
-            var testSchoolYear = new SchoolYear
-            {
-                Id = testSchoolYearId,
-                StartYear = "1776",
-                EndYear = "1777",
-                Enabled = true
-            };
-
-            var schoolYears = new List<SchoolYear>(new[] {testSchoolYear});
-
-            EntityFrameworkMocks.SetupMockDbSet(
-                EntityFrameworkMocks.GetQueryableMockDbSet(schoolYears),
-                ValidationPortalDbContextMock,
-                x => x.SchoolYears,
-                x => x.SchoolYears = It.IsAny<DbSet<SchoolYear>>(),
-                schoolYears);
-
-            var edOrgService = new EdOrgService(
-                DbContextFactoryMock.Object,
-                AppUserServiceMock.Object,
-                SchoolYearServiceMock.Object, 
-                SchoolYearDbContextFactoryMock.Object,
-                LoggingServiceMock.Object);
-
-            SchoolYearServiceMock.Setup(x => x.GetSchoolYearById(testSchoolYearId)).Returns(testSchoolYear);
-
-            LoggingServiceMock.Setup(x => x.LogDebugMessage($"EdOrg cache: {allEdOrgs.Count} currently in ValidationPortal database"));
-
-            var result = edOrgService.GetEdOrgById(testEdOrgId, testSchoolYearId);
-
-            result.ShouldNotBeNull();
+            result.ShouldBeType(typeof(Dictionary<int, string>));
+            result.Values.ShouldEqual(TestSchoolYears.Select(x => $"{x.StartYear}-{x.EndYear}"));
         }
     }
 }
