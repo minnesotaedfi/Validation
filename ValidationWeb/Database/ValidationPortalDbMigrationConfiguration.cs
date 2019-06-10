@@ -42,6 +42,17 @@ namespace ValidationWeb.Database
             new RecordsRequestTypeLookup { Id = (int)RecordsRequestType.Immunizations, CodeValue = "Immunizations", Description = "Immunizations"}
         };
 
+        //public static string[] RulesViewNames = new[]
+        //{
+        //    "StudentEnrollment",
+        //    "StudentDemographic",
+        //    "SSDC",
+        //    "StudentProgram",
+        //    "MultipleEnrollment",
+        //    "SchoolCalendar",
+        //    "SchoolGrade"
+        //};
+
         /// <summary>
         /// Called after migration.
         /// </summary>
@@ -63,6 +74,7 @@ namespace ValidationWeb.Database
                     }
                 }
             }
+
 #if DEBUG
             if (context.Announcements != null && !context.Announcements.Any())
             {

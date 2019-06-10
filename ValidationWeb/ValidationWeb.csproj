@@ -944,8 +944,16 @@
     <Compile Include="Database\SchoolYearDbContextFactory.cs">
       <DependentUpon>ISchoolYearDbContextFactory.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201906101609378_ValidationRules.cs" />
+    <Compile Include="Migrations\201906101609378_ValidationRules.Designer.cs">
+      <DependentUpon>201906101609378_ValidationRules.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\ValidationPortalIdentity.cs" />
+    <Compile Include="Models\ValidationRulesField.cs" />
+    <Compile Include="Models\ValidationRulesView.cs" />
+    <Compile Include="Services\Interfaces\IValidationRulesViewService.cs" />
     <Compile Include="Services\Implementations\RecordsRequestService.cs" />
+    <Compile Include="Services\Implementations\ValidationRulesViewService.cs" />
     <Compile Include="Services\Interfaces\IRecordsRequestService.cs" />
     <Compile Include="Utility\IIdentityExtensions.cs" />
     <Compile Include="Models\Log.cs" />
@@ -1097,6 +1105,11 @@
     <Content Include="Content\Rules\StudentEnrollment.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201906101609378_ValidationRules.resx">
+      <DependentUpon>201906101609378_ValidationRules.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <!--<ItemGroup>
     <TypeScriptCompile Include="Scripts\index.d.ts" />

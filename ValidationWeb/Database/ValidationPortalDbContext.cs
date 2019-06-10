@@ -45,6 +45,10 @@ namespace ValidationWeb.Database
 
         public virtual DbSet<ValidationReportSummary> ValidationReportSummaries { get; set; }
 
+        public virtual DbSet<ValidationRulesView> ValidationRulesViews { get; set; }
+
+        public virtual DbSet<ValidationRulesField> ValidationRulesFields { get; set; }
+        
         protected new virtual void Dispose(bool disposing)
         {
             base.Dispose(disposing);

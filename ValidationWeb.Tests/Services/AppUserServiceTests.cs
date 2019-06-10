@@ -155,6 +155,22 @@ namespace ValidationWeb.Tests.Services
                 x => x.ValidationReportSummaries,
                 x => x.ValidationReportSummaries = It.IsAny<DbSet<ValidationReportSummary>>(),
                 validationReportSummaries);
+
+            var validationRulesViews = new List<ValidationRulesView>();
+            EntityFrameworkMocks.SetupMockDbSet(
+                EntityFrameworkMocks.GetQueryableMockDbSet(validationRulesViews),
+                ValidationPortalDbContextMock,
+                x => x.ValidationRulesViews,
+                x => x.ValidationRulesViews = It.IsAny<DbSet<ValidationRulesView>>(),
+                validationRulesViews);
+
+            var validationRulesFields = new List<ValidationRulesField>();
+            EntityFrameworkMocks.SetupMockDbSet(
+                EntityFrameworkMocks.GetQueryableMockDbSet(validationRulesFields),
+                ValidationPortalDbContextMock,
+                x => x.ValidationRulesFields,
+                x => x.ValidationRulesFields = It.IsAny<DbSet<ValidationRulesField>>(),
+                validationRulesFields);
         }
 
         [TearDown]
