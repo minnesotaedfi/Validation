@@ -1,26 +1,54 @@
-﻿using ValidationWeb.Services.Interfaces;
+﻿using System.CodeDom;
+using System.Linq;
+using System.Web.Mvc;
+using ValidationWeb.Models;
+using ValidationWeb.Services.Interfaces;
 
 namespace ValidationWeb.Controllers
 {
-    using System.Web.Mvc;
-
     public class DynamicController : Controller
     {
-        public DynamicController(IValidationRulesViewService validationRulesViewService)
+        public DynamicController(IDynamicReportingService dynamicReportingService)
         {
-            ValidationRulesViewService = validationRulesViewService;
+            DynamicReportingService = dynamicReportingService;
         }
 
-        protected IValidationRulesViewService ValidationRulesViewService { get; set; }
+        protected IDynamicReportingService DynamicReportingService { get; set; }
 
         // GET: Dynamic
         public ActionResult Index()
         {
             // todo: build a ui
-            ValidationRulesViewService.UpdateRulesForSchoolYear(13);
+            DynamicReportingService.UpdateViewsAndRulesForSchoolYear(13);
+            // var allRules = DynamicReportingService.GetRulesViews(13);
 
-            var allRules = ValidationRulesViewService.GetRulesViews(13);
-            
+            var rules = DynamicReportingService.GetRulesViews(13);
+
+            var view = rules.Single(x => x.Name == "SSDC"); 
+
+            var report = new DynamicReportDefinition
+            {
+                Enabled = true,
+                Name = "Test Report Name",
+                Description = "Test Report Description",
+                SchoolYearId = view.SchoolYearId,
+                ValidationRulesViewId = view.Id
+            };
+
+            foreach (var field in view.RulesFields)
+            {
+                report.Fields.Add(
+                    new DynamicReportField
+                    {
+                        Description = $"test {field.Name}",
+                        Enabled = true,
+                        ValidationRulesFieldId = field.Id,
+                        Field = field
+                    });
+            }
+
+            DynamicReportingService.SaveReportDefinition(report);
+
             return View();
         }
     }

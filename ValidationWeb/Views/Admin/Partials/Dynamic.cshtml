@@ -1,0 +1,56 @@
+﻿@model AdminIndexViewModel
+
+<div class="row">
+    <div class="col-10">
+        <div id="announcement-warning" class="alert alert-danger alert-dismissible" style="display:none" role="alert">
+            <button id="announcement-warning-button" type="button" class="close" aria-label="Close">
+                <span aria-hidden="true">[close]</span>
+            </button>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-10">
+        <div class="col-sm-9">
+            @Html.DropDownListFor(m => m.ReportSchoolYearId,
+                (IEnumerable<SelectListItem>)ViewData["schoolYears"],
+                new { id = "edit-dynamic-reports-schoolYearId", @class = "form-control" })
+        </div>
+    </div>
+    <div class="col-2">
+        <button id="announcement-add" class="btn btn-sm prime-blue white-heavy-text">Configure New Report</button>
+    </div>
+</div>
+<div class="row tbmargin10">
+    <table class="table table-sm table-responsive-md table-bordered" id="reportsTable">
+        <tr class="table-primary">
+            <th class="id-hide-column">Id</th>
+            <th>Name</th>
+            <th>Year</th>
+            <th>Enabled</th>
+            <th>Action</th>
+        </tr>
+        @foreach (var view in Model.ReportDefinitions.OrderBy(x => x.Name))
+        {
+            <tr>
+                <td class="id-hide-column">@view.Id</td>
+                <td>@view.Name</td>
+                <td>@view.SchoolYear.ToString()</td>
+                <td>@view.Enabled</td>
+                <th>
+                    <a href="javascript:void(0);" class="report-edit btn btn-sm prime-blue white-heavy-text" data-id="@view.Id">
+                        Edit
+                    </a>
+                </th>
+            </tr>
+        }
+    </table>
+</div>
+
+<div id='reportModal' class="modal fade" role="dialog" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div id='report-modal-content'></div>
+        </div>
+    </div>
+</div>

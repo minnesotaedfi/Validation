@@ -19,6 +19,7 @@ namespace ValidationWeb.Controllers
         private readonly IRulesEngineService _rulesEngineService;
         private readonly ISubmissionCycleService _submissionCycleService;
         private readonly IAnnouncementService _announcementService;
+        private readonly IDynamicReportingService _dynamicReportingService;
 
         public AdminController(
             IAppUserService appUserService,
@@ -26,7 +27,8 @@ namespace ValidationWeb.Controllers
             ISchoolYearService schoolYearService,
             IRulesEngineService rulesEngineService,
             ISubmissionCycleService submissionCycleService,
-            IAnnouncementService announcementService)
+            IAnnouncementService announcementService,
+            IDynamicReportingService dynamicReportingService)
         {
             _appUserService = appUserService;
             _edOrgService = edOrgService;
@@ -34,6 +36,7 @@ namespace ValidationWeb.Controllers
             _rulesEngineService = rulesEngineService;
             _submissionCycleService = submissionCycleService;
             _announcementService = announcementService;
+            _dynamicReportingService = dynamicReportingService;
         }
 
         // GET: Admin
@@ -42,17 +45,28 @@ namespace ValidationWeb.Controllers
             var model = new AdminIndexViewModel
             {
                 AppUserSession = _appUserService.GetSession(),
-                FocusedEdOrg = _edOrgService.GetEdOrgById(_appUserService.GetSession().FocusedEdOrgId, _schoolYearService.GetSchoolYearById(_appUserService.GetSession().FocusedSchoolYearId).Id),
+                FocusedEdOrg = _edOrgService.GetEdOrgById(
+                    _appUserService.GetSession().FocusedEdOrgId,
+                    _schoolYearService.GetSchoolYearById(_appUserService.GetSession().FocusedSchoolYearId).Id),
                 YearsOpenForDataSubmission = _schoolYearService.GetSubmittableSchoolYears().OrderByDescending(x => x.EndYear),
                 RuleCollections = _rulesEngineService.GetCollections(),
                 SubmissionCycles = _submissionCycleService.GetSubmissionCycles(),
-                Announcements = _announcementService.GetAnnouncements()
+                Announcements = _announcementService.GetAnnouncements(),
+                ReportDefinitions = _dynamicReportingService.GetReportDefinitions()
             };
 
-            // Check user authorization, if user is admin then then return admin page if not return the error page.
-            return model.AppUserSession.UserIdentity.GetViewPermissions(model.AppUserSession.UserIdentity.AppRole).CanAccessAdminFeatures
-                       ? View(model)
-                       : View("Error");
+            PopulateDropDownLists();
+
+            // Check user authorization, if user is admin then then return admin page if not redirect to home.
+            if (model
+                .AppUserSession
+                .UserIdentity.GetViewPermissions(model.AppUserSession.UserIdentity.AppRole)
+                .CanAccessAdminFeatures)
+            {
+                return View(model);
+            }
+
+            return RedirectToAction("Index", "Home");
         }
 
         public bool UpdateThresholdErrorValue(int id, decimal thresholdValue)
@@ -63,7 +77,7 @@ namespace ValidationWeb.Controllers
         public ActionResult AddNewSchoolYear(FormCollection formCollection)
         {
             int endDate;
-            var didParse = Int32.TryParse(formCollection["startYear"], out endDate);
+            var didParse = int.TryParse(formCollection["startYear"], out endDate);
 
             if (didParse)
             {
@@ -82,8 +96,29 @@ namespace ValidationWeb.Controllers
         public ActionResult GetSubmissionCyclesByCollectionId(string collectionId)
         {
             var submissionCycles = _submissionCycleService.GetSubmissionCyclesByCollectionId(collectionId);
-
             return PartialView("Partials/SubmissionCycleList", submissionCycles);
+        }
+
+        // todo: separate these out from being mixed in with submission cycle stuff. follow same model 
+
+        public ActionResult AddDynamicReportDefinition(int schoolYearId)
+        {
+            var schoolYear = _schoolYearService.GetSchoolYearById(schoolYearId);
+
+            var dynamicReport = new DynamicReportDefinition
+            {
+                Enabled = true,
+                SchoolYearId = schoolYearId,
+                SchoolYear = schoolYear,
+            };
+
+            return PartialView("Partials/DynamicReportEditModal", dynamicReport);
+        }
+
+        public ActionResult EditDynamicReportDefinition(int id)
+        {
+            var dynamicReport = _dynamicReportingService.GetReportDefinition(id);
+            return PartialView("Partials/DynamicReportEditModal", dynamicReport);
         }
 
         public ActionResult AddSubmissionCycle()
@@ -93,9 +128,9 @@ namespace ValidationWeb.Controllers
             return PartialView("Partials/SubmissionCycleEditModal", submissionCycle);
         }
 
-        public ActionResult EditSubmissionCycle(int Id)
+        public ActionResult EditSubmissionCycle(int id)
         {
-            var submissionCycle = _submissionCycleService.GetSubmissionCycle(Id);
+            var submissionCycle = _submissionCycleService.GetSubmissionCycle(id);
             PopulateDropDownLists(submissionCycle);
             return PartialView("Partials/SubmissionCycleEditModal", submissionCycle);
         }
@@ -153,11 +188,11 @@ namespace ValidationWeb.Controllers
                 try
                 {
                     _announcementService.SaveAnnouncement(
-                        announcement.Id, 
-                        announcement.Priority, 
+                        announcement.Id,
+                        announcement.Priority,
                         announcement.Message,
                         announcement.ContactInfo,
-                        announcement.LinkUrl, 
+                        announcement.LinkUrl,
                         announcement.Expiration);
 
                     return RedirectToAction("Index", new { tab = "announcements" });
@@ -180,9 +215,9 @@ namespace ValidationWeb.Controllers
             return PartialView("Partials/AnnouncementEditModal", announcement);
         }
 
-        public ActionResult EditAnnouncement(int Id)
+        public ActionResult EditAnnouncement(int id)
         {
-            var announcement = _announcementService.GetAnnouncement(Id);
+            var announcement = _announcementService.GetAnnouncement(id);
             return PartialView("Partials/AnnouncementEditModal", announcement);
         }
 

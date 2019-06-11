@@ -23,11 +23,8 @@ namespace ValidationWeb.Models
 
         public bool Enabled { get; set; }
 
-        [ForeignKey("SchoolYear")]
         public int SchoolYearId { get; set; }
-
-        public SchoolYear SchoolYear { get; set; }
-
+        
         public ICollection<ValidationRulesField> RulesFields { get; set; }
 
     }

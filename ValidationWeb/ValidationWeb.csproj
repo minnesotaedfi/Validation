@@ -861,6 +861,8 @@
     <Content Include="Views\Shared\_Environment.cshtml" />
     <Content Include="Views\Shared\_MarssLink.cshtml" />
     <Content Include="Views\Dynamic\Index.cshtml" />
+    <Content Include="Views\Admin\Partials\Dynamic.cshtml" />
+    <Content Include="Views\Admin\Partials\DynamicReportEditModal.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -944,16 +946,18 @@
     <Compile Include="Database\SchoolYearDbContextFactory.cs">
       <DependentUpon>ISchoolYearDbContextFactory.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201906101609378_ValidationRules.cs" />
-    <Compile Include="Migrations\201906101609378_ValidationRules.Designer.cs">
-      <DependentUpon>201906101609378_ValidationRules.cs</DependentUpon>
+    <Compile Include="Migrations\201906111937077_ValidationRules.cs" />
+    <Compile Include="Migrations\201906111937077_ValidationRules.Designer.cs">
+      <DependentUpon>201906111937077_ValidationRules.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\DynamicReportField.cs" />
     <Compile Include="Models\ValidationPortalIdentity.cs" />
     <Compile Include="Models\ValidationRulesField.cs" />
+    <Compile Include="Models\DynamicReportDefinition.cs" />
     <Compile Include="Models\ValidationRulesView.cs" />
-    <Compile Include="Services\Interfaces\IValidationRulesViewService.cs" />
+    <Compile Include="Services\Interfaces\IDynamicReportingService.cs" />
     <Compile Include="Services\Implementations\RecordsRequestService.cs" />
-    <Compile Include="Services\Implementations\ValidationRulesViewService.cs" />
+    <Compile Include="Services\Implementations\DynamicReportingService.cs" />
     <Compile Include="Services\Interfaces\IRecordsRequestService.cs" />
     <Compile Include="Utility\IIdentityExtensions.cs" />
     <Compile Include="Models\Log.cs" />
@@ -1107,8 +1111,8 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201906101609378_ValidationRules.resx">
-      <DependentUpon>201906101609378_ValidationRules.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201906111937077_ValidationRules.resx">
+      <DependentUpon>201906111937077_ValidationRules.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <!--<ItemGroup>

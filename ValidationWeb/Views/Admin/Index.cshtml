@@ -8,7 +8,9 @@
             <a class="list-group-item list-group-item-action" id="list-submissioncycles-list" data-toggle="list" href="#list-submissioncycles" role="tab"
                onclick="loadNonDefaultTab('submissioncycles')">Collection Cycles</a>
             <a class="list-group-item list-group-item-action" id="list-announcements-list" data-toggle="list" href="#list-announcements" role="tab" aria-controls="settings"
-               onclick="loadNonDefaultTab('announcements')">Announcements</a>            
+               onclick="loadNonDefaultTab('announcements')">Announcements</a>
+            <a class="list-group-item list-group-item-action" id="list-dynamic-list" data-toggle="list" href="#list-dynamic" role="tab" aria-controls="settings"
+               onclick="loadNonDefaultTab('dynamic')">Dynamic Reporting</a>
         </div>
     </div>
     <div class="col-10">
@@ -21,6 +23,9 @@
             </div>
             <div class="tab-pane fade" id="list-announcements" role="tabpanel" aria-labelledby="list-announcements-list">
                 @Html.Partial("Partials/Announcements", Model.Announcements)
+            </div>
+            <div class="tab-pane fade" id="list-dynamic" role="tabpanel" aria-labelledby="list-dynamic-list">
+                @Html.Partial("Partials/Dynamic", Model)
             </div>
         </div>
     </div>
@@ -64,7 +69,8 @@
             $('#edit-submissioncycle-endDate').datetimepicker({ format: 'L' });
         }
 
-        const ModelFieldMap = {"announcement": ["id", "priority", "message", "contactInfo", "linkUrl", "expiration"],
+        const ModelFieldMap = {
+            "announcement": ["id", "priority", "message", "contactInfo", "linkUrl", "expiration"],
             "submissioncycle": ["id", "schoolYearId", "collectionId", "startDate", "endDate"]
         };
 
@@ -78,8 +84,10 @@
             }
         };
 
-        const ModelNameToDisplay = {"announcement": "Announcement",
-            "submissioncycle": "Active Dates for Collection"
+        const ModelNameToDisplay = {
+            "announcement": "Announcement",
+            "submissioncycle": "Active Dates for Collection",
+            "report": "Dynamic Report"
         };
 
         var originalThreshold = "";
@@ -197,6 +205,15 @@
             var DeleteAnnouncementRoute = "@Url.Content("~/Admin/DeleteAnnouncement")";
             $(".announcement-delete").click({ modelName: "announcement", deleteRoute: DeleteAnnouncementRoute }, DeleteModel);
 
+            var AddDynamicReportRoute = "@Url.Content("~/Admin/AddDynamicReportDefinition")";
+            $('.report-add').click({ modalName: "report", modalAddRoute: AddDynamicReportRoute }, CreateAddModal);
+
+            var EditDynamicReportRoute = "@Url.Content("~/Admin/EditDynamicReportDefinition")";
+            $(".report-edit").click({ modalName: "report", modalEditRoute: EditDynamicReportRoute }, CreateEditModal);
+
+            var DeleteDynamicReportRoute = "@Url.Content("~/Admin/DeleteDynamicReportDefinition")";
+            $(".report-delete").click({ modelName: "report", deleteRoute: DeleteDynamicReportRoute }, DeleteModel);
+
             var AddSubmissionCycleRoute = "@Url.Content("~/Admin/AddSubmissionCycle")";
             $("#submissioncycle-add").click({ modalName: "SubmissionCycle", modalAddRoute: AddSubmissionCycleRoute }, CreateAddModal);
 
@@ -205,6 +222,11 @@
 
             var DeleteSubmissionCycleRoute = "@Url.Content("~/Admin/DeleteSubmissionCycle")";
             $(".submissioncycle-delete").click({ modelName: "submissioncycle", deleteRoute: DeleteSubmissionCycleRoute }, DeleteModel);
+
+            $('#reportModal').on('shown.bs.modal', function () {
+                setModalHeaderText("report", ModelNameToDisplay["report"]);
+                $("#save-report").click({ modalName: "DynamicReport" }, saveModel);
+            });
 
             $('#submissioncycleModal').on('shown.bs.modal', function () {
                 setModalHeaderText("submissioncycle", ModelNameToDisplay["submissioncycle"]);
@@ -220,6 +242,7 @@
         });
 
         function CreateAddModal(event) {
+            debugger;
             var modalNameRaw = event.data.modalName;
             var modalAddRoute = event.data.modalAddRoute;
             var modelName = modalNameRaw.toLowerCase();
@@ -235,6 +258,7 @@
                 data: {},
                 datatype: "json",
                 success: function (data) {
+                    debugger;
                     $(modelModalContent).html(data);
                     $(modelModal).modal(options);
                     $(modelModal).modal('show');
@@ -246,6 +270,7 @@
         }
 
         function CreateEditModal(event) {
+            debugger;
             var modalNameRaw = event.data.modalName;
             var modalEditRoute = event.data.modalEditRoute;
             var modelName = modalNameRaw.toLowerCase();
@@ -266,12 +291,14 @@
                     $(modelModal).modal('show');
                 },
                 error: function () {
+                    debugger;
                     alert('Could not retrieve the '+modalNameRaw+' for editing.');
                 }
             });
         }
 
         function DeleteModel(event) {
+            debugger;
             var  modelName = event.data.modelName;
             var deleteRoute = event.data.deleteRoute;
             var modelDisplayName = ModelNameToDisplay[modelName];
@@ -341,6 +368,7 @@
                     }
                 },
                 error: function (data) {
+                    debugger;
                     $('#'+modelName+'-modal-content').html(data);
                     $('#'+modelName+'Modal').modal(options);
                     $('#'+modelName+'Modal').modal('show');
@@ -355,6 +383,7 @@
         }
 
         function getMappedModel(modelName, modelFieldNames) {
+            debugger;
             var dataObj = {};
             var fieldVal;
             for (var i = 0; i < modelFieldNames.length; i++) {
@@ -381,6 +410,7 @@
         }
 
         function setModalHeaderText(modalName, modalTitle) {
+            debugger;
             var modalHeader = $('#'+modalName+'-header');
             var id = $('#edit-'+modalName+'-id').val();
             if (id > 0) {

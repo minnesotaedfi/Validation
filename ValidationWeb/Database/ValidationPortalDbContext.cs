@@ -49,9 +49,21 @@ namespace ValidationWeb.Database
 
         public virtual DbSet<ValidationRulesField> ValidationRulesFields { get; set; }
         
+        public virtual DbSet<DynamicReportDefinition> DynamicReportDefinitions { get; set; }
+
+        public virtual DbSet<DynamicReportField> DynamicReportFields { get; set; }
+
         protected new virtual void Dispose(bool disposing)
         {
             base.Dispose(disposing);
+        }
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            //modelBuilder.Entity<ValidationRulesView>()
+            //    .HasRequired(x => x.SchoolYear)
+            //    .WithRequiredDependent()
+            //    .WillCascadeOnDelete(false);
         }
     }
 }

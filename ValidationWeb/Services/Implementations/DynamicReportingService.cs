@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
+using System.Data.Entity.Migrations;
 using System.Data.SqlClient;
 using System.Linq;
 
@@ -10,9 +11,9 @@ using ValidationWeb.Services.Interfaces;
 
 namespace ValidationWeb.Services.Implementations
 {
-    public class ValidationRulesViewService : IValidationRulesViewService
+    public class DynamicReportingService : IDynamicReportingService
     {
-        public ValidationRulesViewService(
+        public DynamicReportingService( 
             IDbContextFactory<ValidationPortalDbContext> validationPortalDataContextFactory,
             ISchoolYearDbContextFactory schoolYearDbContextFactory,
             ISchoolYearService schoolYearService)
@@ -28,6 +29,42 @@ namespace ValidationWeb.Services.Implementations
 
         protected ISchoolYearService SchoolYearService { get; set; }
 
+        public IEnumerable<DynamicReportDefinition> GetReportDefinitions()
+        {
+            using (var validationPortalContext = ValidationPortalDataContextFactory.Create())
+            {
+                return validationPortalContext.DynamicReportDefinitions
+                    .Include(x => x.Fields)
+                    .Include(x => x.SchoolYear)
+                    .ToList();
+            }
+        }
+
+        public DynamicReportDefinition GetReportDefinition(int id)
+        {
+            using (var validationPortalContext = ValidationPortalDataContextFactory.Create())
+            {
+                return validationPortalContext.DynamicReportDefinitions
+                    .Include(x => x.Fields)
+                    .Include(x => x.SchoolYear)
+                    .Single(x => x.Id == id);
+            }
+        }
+
+        public void SaveReportDefinition(DynamicReportDefinition reportDefinition)
+        {
+            using (var validationPortalContext = ValidationPortalDataContextFactory.Create())
+            {
+                foreach (var field in reportDefinition.Fields)
+                {
+                    validationPortalContext.DynamicReportFields.AddOrUpdate(field);
+                }
+
+                validationPortalContext.DynamicReportDefinitions.AddOrUpdate(reportDefinition);
+                validationPortalContext.SaveChanges();
+            }
+        }
+
         public IEnumerable<ValidationRulesView> GetRulesViews(int schoolYearId)
         {
             using (var validationPortalContext = ValidationPortalDataContextFactory.Create())
@@ -39,7 +76,7 @@ namespace ValidationWeb.Services.Implementations
             }
         }
 
-        public void DeleteRulesForSchoolYear(int schoolYearId)
+        public void DeleteViewsAndRulesForSchoolYear(int schoolYearId)
         {
             using (var validationPortalContext = ValidationPortalDataContextFactory.Create())
             {
@@ -52,9 +89,9 @@ namespace ValidationWeb.Services.Implementations
             }
         }
 
-        public void UpdateRulesForSchoolYear(int schoolYearId)
+        public void UpdateViewsAndRulesForSchoolYear(int schoolYearId)
         {
-            DeleteRulesForSchoolYear(schoolYearId);
+            DeleteViewsAndRulesForSchoolYear(schoolYearId);
 
             var viewsForYear = new List<ValidationRulesView>();
 
@@ -88,7 +125,6 @@ namespace ValidationWeb.Services.Implementations
 
             using (var validationPortalContext = ValidationPortalDataContextFactory.Create())
             {
-
                 foreach (var view in viewsForYear)
                 {
                     var fieldNames = GetFieldsForView(schoolYear, view.Schema, view.Name);
@@ -105,7 +141,7 @@ namespace ValidationWeb.Services.Implementations
             }
         }
 
-        public IEnumerable<string> GetFieldsForView(SchoolYear schoolYear, string schema, string name)
+        protected IEnumerable<string> GetFieldsForView(SchoolYear schoolYear, string schema, string name)
         {
             var fieldsForView = new List<string>();
 
