@@ -1,4 +1,4 @@
-﻿@model ValidationWeb.Models.DynamicReportDefinition
+﻿@model ValidationWeb.ViewModels.AdminDynamicReportViewModel
 
 <div>
     <div id="report-modal-content" class="modal-content" tabindex="-1">
@@ -17,10 +17,50 @@
                         style = "width: 100%"
                     })
                 </div>
-                @Html.HiddenFor(m => m.Id, new
+                @Html.HiddenFor(m => m.DynamicReportDefinition.Id, new
                 {
                     id = "edit-report-id"
                 })
+
+                <div class="row form-group">
+                    <div class="col-sm-3">
+                        @Html.LabelFor(m => m.DynamicReportDefinition.Name, "Report Name")
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.TextBoxFor(
+                            m => m.DynamicReportDefinition.Name, 
+                            new { id = "edit-report-name", @class = "form-control", required = "required" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-sm-3">
+                        @Html.LabelFor(m => m.DynamicReportDefinition.Description, "Description")
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.TextBoxFor(
+                            m => m.DynamicReportDefinition.Description,
+                            new { id = "edit-report-description", @class = "form-control", required = "required" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-sm-3">
+                        @Html.LabelFor(m => m.DynamicReportDefinition.ValidationRulesViewId, "Rules View")
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(
+                            m => m.DynamicReportDefinition.ValidationRulesViewId,
+                            Model.ValidationRulesViews.Select(x => new SelectListItem {Text = x.Name, Value = x.Id.ToString()}),
+                            "Select a view",
+                            new
+                            {
+                                id = "select-rules-view",
+                                @class = "form-control",
+                                @onchange="updateRulesView(this.value)"
+                            })
+                    </div>
+                </div>
+
+
                 @*
             <div class="row form-group">
                 <div class="col-lg-3">

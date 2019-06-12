@@ -13,7 +13,7 @@ namespace ValidationWeb.Database
         
         string IMigrationMetadata.Id
         {
-            get { return "201906111937077_ValidationRules"; }
+            get { return "201906121506338_ValidationRules"; }
         }
         
         string IMigrationMetadata.Source

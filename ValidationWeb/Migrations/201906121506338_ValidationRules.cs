@@ -46,7 +46,6 @@ namespace ValidationWeb.Database
                     {
                         Id = c.Int(nullable: false, identity: true),
                         Name = c.String(),
-                        Alias = c.String(),
                         Enabled = c.Boolean(nullable: false),
                         RulesViewId = c.Int(nullable: false),
                     })

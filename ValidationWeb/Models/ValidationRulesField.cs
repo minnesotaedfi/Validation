@@ -21,8 +21,6 @@ namespace ValidationWeb.Models
 
         public string Name { get; set; }
 
-        public string Alias { get; set; }
-
         public bool Enabled { get; set; }
 
         [ForeignKey("RulesView")]

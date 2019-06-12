@@ -42,8 +42,7 @@ namespace ValidationWeb.Controllers
                     {
                         Description = $"test {field.Name}",
                         Enabled = true,
-                        ValidationRulesFieldId = field.Id,
-                        Field = field
+                        ValidationRulesFieldId = field.Id
                     });
             }
 

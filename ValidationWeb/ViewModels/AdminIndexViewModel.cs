@@ -28,6 +28,8 @@ namespace ValidationWeb.ViewModels
 
         public IEnumerable<DynamicReportDefinition> ReportDefinitions { get; set; }
 
+        public IDictionary<int, IEnumerable<ValidationRulesView>> RulesViewsPerSchoolYearId { get; set; }
+        
         public int? ReportSchoolYearId { get; set; }
     }
 }

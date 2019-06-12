@@ -1,24 +1,66 @@
 ﻿@model AdminIndexViewModel
 
+<div class="row form-group">
+    <div class="col-lg-12">
+        <div class="row">
+            <div class="col-md-12">
+                <h3>
+                    UI TEST
+                </h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6 form-group">
+                <select id='rulesViewSelect' class="form-control" onchange="$('#rulesViewTabs li a').eq($(this).val()).tab('show');">
+                    <option value="">Select a view</option>
+                    @*<option value='0'>Home</option>
+                    <option value='1'>Profile</option>
+                    <option value='2'>Messages</option>
+                    <option value='3'>Settings</option>*@
+                </select>
+            </div>
+        </div>
+        <div class="row" style="display: none;">
+            <div class="col-sm-12 form-group">
+                <ul class="nav nav-pills mb-3" id="rulesViewTabs">
+                    <li class="active nav-link"><a href="#home">Home</a></li>
+                    <li class="nav-link"><a href="#profile">Profile</a></li>
+                    <li class="nav-link"><a href="#messages">Messages</a></li>
+                    <li class="nav-link"><a href="#settings">Settings</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 form-group">
+                <div class="tab-content">
+                    <div class="tab-pane active" id="home">Home content</div>
+                    <div class="tab-pane" id="profile">Profile content</div>
+                    <div class="tab-pane" id="messages">Messages content</div>
+                    <div class="tab-pane" id="settings">Settings content</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<hr />
+
 <div class="row">
     <div class="col-10">
-        <div id="announcement-warning" class="alert alert-danger alert-dismissible" style="display:none" role="alert">
-            <button id="announcement-warning-button" type="button" class="close" aria-label="Close">
+        <div id="report-warning" class="alert alert-danger alert-dismissible" style="display:none" role="alert">
+            <button id="report-warning-button" type="button" class="close" aria-label="Close">
                 <span aria-hidden="true">[close]</span>
             </button>
         </div>
     </div>
 </div>
 <div class="row">
-    <div class="col-10">
-        <div class="col-sm-9">
-            @Html.DropDownListFor(m => m.ReportSchoolYearId,
-                (IEnumerable<SelectListItem>)ViewData["schoolYears"],
-                new { id = "edit-dynamic-reports-schoolYearId", @class = "form-control" })
-        </div>
+    <div class="col-sm-9">
+        @Html.DropDownListFor(m => m.ReportSchoolYearId,
+            (IEnumerable<SelectListItem>)ViewData["schoolYears"],
+            new { id = "edit-dynamic-reports-schoolYearId", @class = "form-control" })
     </div>
     <div class="col-2">
-        <button id="announcement-add" class="btn btn-sm prime-blue white-heavy-text">Configure New Report</button>
+        <button id="report-add" class="btn btn-sm prime-blue white-heavy-text">Configure New Report</button>
     </div>
 </div>
 <div class="row tbmargin10">

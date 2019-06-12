@@ -55,11 +55,6 @@ namespace ValidationWeb.Services.Implementations
         {
             using (var validationPortalContext = ValidationPortalDataContextFactory.Create())
             {
-                foreach (var field in reportDefinition.Fields)
-                {
-                    validationPortalContext.DynamicReportFields.AddOrUpdate(field);
-                }
-
                 validationPortalContext.DynamicReportDefinitions.AddOrUpdate(reportDefinition);
                 validationPortalContext.SaveChanges();
             }

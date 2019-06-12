@@ -946,9 +946,9 @@
     <Compile Include="Database\SchoolYearDbContextFactory.cs">
       <DependentUpon>ISchoolYearDbContextFactory.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201906111937077_ValidationRules.cs" />
-    <Compile Include="Migrations\201906111937077_ValidationRules.Designer.cs">
-      <DependentUpon>201906111937077_ValidationRules.cs</DependentUpon>
+    <Compile Include="Migrations\201906121506338_ValidationRules.cs" />
+    <Compile Include="Migrations\201906121506338_ValidationRules.Designer.cs">
+      <DependentUpon>201906121506338_ValidationRules.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\DynamicReportField.cs" />
     <Compile Include="Models\ValidationPortalIdentity.cs" />
@@ -994,6 +994,7 @@
     <Compile Include="Utility\DataRecordExtensions.cs" />
     <Compile Include="Utility\GradeLevelComparer.cs" />
     <Compile Include="Utility\ImportPropertySelectionBehavior.cs" />
+    <Compile Include="ViewModels\AdminDynamicReportViewModel.cs" />
     <Compile Include="ViewModels\EnvironmentViewModel.cs" />
     <Compile Include="ViewModels\StudentDrillDownReportType.cs" />
     <Compile Include="Database\ValidatedOdsDbContext.cs" />
@@ -1111,8 +1112,8 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201906111937077_ValidationRules.resx">
-      <DependentUpon>201906111937077_ValidationRules.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201906121506338_ValidationRules.resx">
+      <DependentUpon>201906121506338_ValidationRules.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <!--<ItemGroup>

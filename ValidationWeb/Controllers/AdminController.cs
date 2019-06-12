@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using MoreLinq;
+using MvcSiteMapProvider.Reflection;
+using Newtonsoft.Json;
 using ValidationWeb.Filters;
 using ValidationWeb.Models;
 using ValidationWeb.Services.Interfaces;
@@ -42,17 +45,28 @@ namespace ValidationWeb.Controllers
         // GET: Admin
         public ActionResult Index()
         {
+            var schoolYears = _schoolYearService.GetSubmittableSchoolYears();
+
+            var viewsPerYear = new Dictionary<int, IEnumerable<ValidationRulesView>>();
+            foreach (var schoolYear in schoolYears)
+            {
+                viewsPerYear.Add(
+                    schoolYear.Id, 
+                    _dynamicReportingService.GetRulesViews(schoolYear.Id));
+            }
+
             var model = new AdminIndexViewModel
             {
                 AppUserSession = _appUserService.GetSession(),
                 FocusedEdOrg = _edOrgService.GetEdOrgById(
                     _appUserService.GetSession().FocusedEdOrgId,
                     _schoolYearService.GetSchoolYearById(_appUserService.GetSession().FocusedSchoolYearId).Id),
-                YearsOpenForDataSubmission = _schoolYearService.GetSubmittableSchoolYears().OrderByDescending(x => x.EndYear),
+                YearsOpenForDataSubmission = schoolYears.OrderByDescending(x => x.EndYear),
                 RuleCollections = _rulesEngineService.GetCollections(),
                 SubmissionCycles = _submissionCycleService.GetSubmissionCycles(),
                 Announcements = _announcementService.GetAnnouncements(),
-                ReportDefinitions = _dynamicReportingService.GetReportDefinitions()
+                ReportDefinitions = _dynamicReportingService.GetReportDefinitions(),
+                RulesViewsPerSchoolYearId = viewsPerYear
             };
 
             PopulateDropDownLists();
@@ -101,6 +115,20 @@ namespace ValidationWeb.Controllers
 
         // todo: separate these out from being mixed in with submission cycle stuff. follow same model 
 
+        public ActionResult GetRulesViewsPerSchoolYearId(int schoolYearId)
+        {
+            var result = _dynamicReportingService
+                .GetRulesViews(schoolYearId)
+                .OrderBy(x => x.Name);
+
+            var serializedResult = JsonConvert.SerializeObject(
+                result,
+                Formatting.None,
+                new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+
+            return Content(serializedResult, "application/json");
+        }
+
         public ActionResult AddDynamicReportDefinition(int schoolYearId)
         {
             var schoolYear = _schoolYearService.GetSchoolYearById(schoolYearId);
@@ -112,7 +140,16 @@ namespace ValidationWeb.Controllers
                 SchoolYear = schoolYear,
             };
 
-            return PartialView("Partials/DynamicReportEditModal", dynamicReport);
+            var rulesViews = _dynamicReportingService.GetRulesViews(schoolYearId);
+
+            var viewModel = new AdminDynamicReportViewModel
+            {
+                DynamicReportDefinition = dynamicReport,
+                ReportSchoolYearId = schoolYearId,
+                ValidationRulesViews = rulesViews.ToList()
+            };
+
+            return PartialView("Partials/DynamicReportEditModal", viewModel);
         }
 
         public ActionResult EditDynamicReportDefinition(int id)
