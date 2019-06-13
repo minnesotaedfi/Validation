@@ -266,14 +266,12 @@
         });
 
         function updateRulesViews(schoolYearId) {
-            debugger;
             $.ajax({
                 type: "GET",
                 url: '@Url.Action("GetRulesViewsPerSchoolYearId", "Admin")?schoolYearId=' + schoolYearId,
                 contentType: "application/json; charset=utf-8",
                 datatype: "json",
                 success: function(data) {
-                    debugger;
                     var viewSelect = $('#rulesViewSelect');
                     var viewTabs = $('#rulesViewTabs');
                     var viewPanes = $('#rulesViewPanes');
@@ -285,7 +283,6 @@
 
                     $.each(data,
                         function(i, item) {
-                            debugger;
                             viewSelect.append($('<option>', { value: item.Id, text: item.Name }));
 
                             var tabName = 'rulesViewTabContent-' + item.Id;
@@ -302,29 +299,64 @@
 
                             var tableContent =
                                 '<table class="table table-sm table-responsive-md table-bordered" id="rulesTable-' + item.Id + '">';
-                            
+
                             tableContent +='<thead><tr class="table-primary"><th>ID</th><th>Enabled</th><th>Field Name</th><th>Alias</th></tr></thead><tbody>';
 
                             $.each(item.RulesFields,
                                 function(j, field) {
-                                    debugger;
                                     tableContent += '<tr>'+
                                         '<td>' +field.Id +'</td>' +
-                                        '<td>Enabled</td>' +
+                                        '<td>true</td>' +
                                         '<td>' + field.Name + '</td>' +
-                                        '<td>Alias</td>' +
+                                        '<td></td>' +
                                         '</tr>';
                                 });
                             tableContent +='</tbody></table>';
                             viewContent.append(tableContent);
 
-                            $('rulesTable-' + item.Id).dataTable({
-                                //columnDefs: [ {
-                                //    targets: [0, 1, 2, 3],
-                                //    searchable: false
-                                //} ]
+                            $('#rulesTable-' + item.Id).dataTable({
+                                //dom: '<t>',
+                                scrollY: '200px',
+                                scrollCollapse: true,
+                                ordering: false,
+                                paging: false,
+                                columns: [
+                                    {
+                                        data: "Id",
+                                        searchable: false,
+                                        sortable: false,
+                                        visible: false
+                                    },
+                                    {
+                                        data: "Enabled",
+                                        searchable: false,
+                                        sortable: false,
+                                        render: function(data, type, row) {
 
-                            }); 
+                                            var checked = false;
+                                            if (data === 'true') {
+                                                checked = true;
+                                            } 
+                                            
+                                            return '<input type="checkbox" '+(checked?'checked':'')+'>';
+                                        },
+                                    },
+                                    {
+                                        data: "Name",
+                                        searchable: false,
+                                        sortable: false
+                                    },
+                                    {
+                                        data: "Description",
+                                        searchable: false,
+                                        sortable: false,
+                                        render: function (data, type, row) {
+
+                                            return '<input type="text" id="row-2-position" name="row-2-position" value="">';
+                                        },
+                                    },
+                                ]
+                            });
                         });
                 },
                 error: function() {
@@ -334,10 +366,13 @@
         }
 
         function changeRulesViewTab(sender) {
-            var tabHref = '#rulesViewTabContent-' + $(sender).val();
+            var senderId = $(sender).val();
+            var tabHref = '#rulesViewTabContent-' + senderId;
             var tab = $('#rulesViewTabs li a[href$="' + tabHref + '"]');
             if (tab && tab.length) {
                 tab.tab('show');
+                var rulesTable = $('#rulesTable-' + senderId);
+                rulesTable.dataTable().api().columns().draw();
             } else {
                 $('#rulesViewTabs li a[class$="active"]').removeClass('active');
                 $('#rulesViewPanes div[class$="active"]').removeClass('active');
@@ -345,7 +380,7 @@
         }
 
         function CreateAddModal(event) {
-            debugger;
+
             var modalNameRaw = event.data.modalName;
             var modalAddRoute = event.data.modalAddRoute;
 
@@ -368,7 +403,6 @@
                 data: {},
                 datatype: "json",
                 success: function(data) {
-                    debugger;
                     $(modelModalContent).html(data);
                     $(modelModal).modal(options);
                     $(modelModal).modal('show');
@@ -380,7 +414,6 @@
         }
 
         function CreateEditModal(event) {
-            debugger;
             var modalNameRaw = event.data.modalName;
             var modalEditRoute = event.data.modalEditRoute;
             var modelName = modalNameRaw.toLowerCase();
@@ -401,14 +434,12 @@
                     $(modelModal).modal('show');
                 },
                 error: function() {
-                    debugger;
                     alert('Could not retrieve the ' + modalNameRaw + ' for editing.');
                 }
             });
         }
 
         function DeleteModel(event) {
-            debugger;
             var modelName = event.data.modelName;
             var deleteRoute = event.data.deleteRoute;
             var modelDisplayName = ModelNameToDisplay[modelName];
@@ -430,7 +461,6 @@
         };
 
         function saveModel(event) {
-            debugger;
             event.preventDefault();
             var modalNameRaw = event.data.modalName;
             var additionalFunction = event.data.additionalFunction;
@@ -478,7 +508,6 @@
                     }
                 },
                 error: function(data) {
-                    debugger;
                     $('#' + modelName + '-modal-content').html(data);
                     $('#' + modelName + 'Modal').modal(options);
                     $('#' + modelName + 'Modal').modal('show');
@@ -494,7 +523,6 @@
         }
 
         function getMappedModel(modelName, modelFieldNames) {
-            debugger;
             var dataObj = {};
             var fieldVal;
             for (var i = 0; i < modelFieldNames.length; i++) {
@@ -520,7 +548,6 @@
         }
 
         function setModalHeaderText(modalName, modalTitle) {
-            debugger;
             var modalHeader = $('#' + modalName + '-header');
             var id = $('#edit-' + modalName + '-id').val();
             if (id > 0) {
