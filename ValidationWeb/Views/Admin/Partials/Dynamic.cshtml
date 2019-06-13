@@ -11,7 +11,8 @@
         </div>
         <div class="row">
             <div class="col-sm-6 form-group">
-                <select id='rulesViewSelect' class="form-control" onchange="$('#rulesViewTabs li a').eq($(this).val()).tab('show');">
+                <select id='rulesViewSelect' class="form-control" onchange="changeRulesViewTab(this)">
+
                     <option value="">Select a view</option>
                     @*<option value='0'>Home</option>
                     <option value='1'>Profile</option>
@@ -32,7 +33,7 @@
         </div>
         <div class="row">
             <div class="col-sm-12 form-group">
-                <div class="tab-content">
+                <div class="tab-content" id="rulesViewPanes">
                     <div class="tab-pane active" id="home">Home content</div>
                     <div class="tab-pane" id="profile">Profile content</div>
                     <div class="tab-pane" id="messages">Messages content</div>

@@ -268,29 +268,80 @@
         function updateRulesViews(schoolYearId) {
             debugger;
             $.ajax({
-                    type: "GET",
-                    url: '@Url.Action("GetRulesViewsPerSchoolYearId", "Admin")?schoolYearId='+schoolYearId,
-                    contentType: "application/json; charset=utf-8",
-                    datatype: "json",
-                    success: function(data) {
-                        debugger;
-                        var viewSelect = $('#rulesViewSelect');
-                        var viewTabs = $('#rulesViewTabs');
-                        
-                        viewTabs.empty();
-                        viewSelect.empty();
-                        viewSelect.append($('<option>', { value: '', text: '- select a view -' }));
+                type: "GET",
+                url: '@Url.Action("GetRulesViewsPerSchoolYearId", "Admin")?schoolYearId=' + schoolYearId,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function(data) {
+                    debugger;
+                    var viewSelect = $('#rulesViewSelect');
+                    var viewTabs = $('#rulesViewTabs');
+                    var viewPanes = $('#rulesViewPanes');
 
-                        $.each(data, function (i, item) {
+                    viewTabs.empty();
+                    viewPanes.empty();
+                    viewSelect.empty();
+                    viewSelect.append($('<option>', { value: '', text: '- select a view -' }));
+
+                    $.each(data,
+                        function(i, item) {
+                            debugger;
                             viewSelect.append($('<option>', { value: item.Id, text: item.Name }));
-                            viewTabs.append($('<li class="nav-link"><a href="#'+item.Name+'">'+item.Name+'</a></li>'));
 
+                            var tabName = 'rulesViewTabContent-' + item.Id;
+
+                            viewTabs.append($('<li class="nav-link"><a href="#' +
+                                tabName +
+                                '">' +
+                                item.Name +
+                                '</a></li>'));
+                            viewPanes.append($('<div>', { class: 'tab-pane', id: tabName }));
+                            var viewContent = $('#' + tabName);
+
+                            viewContent.empty();
+
+                            var tableContent =
+                                '<table class="table table-sm table-responsive-md table-bordered" id="rulesTable-' + item.Id + '">';
+                            
+                            tableContent +='<thead><tr class="table-primary"><th>ID</th><th>Enabled</th><th>Field Name</th><th>Alias</th></tr></thead><tbody>';
+
+                            $.each(item.RulesFields,
+                                function(j, field) {
+                                    debugger;
+                                    tableContent += '<tr>'+
+                                        '<td>' +field.Id +'</td>' +
+                                        '<td>Enabled</td>' +
+                                        '<td>' + field.Name + '</td>' +
+                                        '<td>Alias</td>' +
+                                        '</tr>';
+                                });
+                            tableContent +='</tbody></table>';
+                            viewContent.append(tableContent);
+
+                            $('rulesTable-' + item.Id).dataTable({
+                                //columnDefs: [ {
+                                //    targets: [0, 1, 2, 3],
+                                //    searchable: false
+                                //} ]
+
+                            }); 
                         });
-                    },
-                    error: function() {
-                        alert('Could not retrieve rules views');
-                    }
-                });
+                },
+                error: function() {
+                    alert('Could not retrieve rules views');
+                }
+            });
+        }
+
+        function changeRulesViewTab(sender) {
+            var tabHref = '#rulesViewTabContent-' + $(sender).val();
+            var tab = $('#rulesViewTabs li a[href$="' + tabHref + '"]');
+            if (tab && tab.length) {
+                tab.tab('show');
+            } else {
+                $('#rulesViewTabs li a[class$="active"]').removeClass('active');
+                $('#rulesViewPanes div[class$="active"]').removeClass('active');
+            }
         }
 
         function CreateAddModal(event) {
