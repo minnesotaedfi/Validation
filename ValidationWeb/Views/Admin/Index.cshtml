@@ -38,7 +38,7 @@
 
 
 @section scripts {
-    <script>
+    <script type="text/javascript">
         /** All Error Threshold JS Functionality **/
         $("#error-threshold-warning-button").on("click",
             function() {
@@ -298,24 +298,31 @@
                             viewContent.empty();
 
                             var tableContent =
-                                '<table class="table table-sm table-responsive-md table-bordered" id="rulesTable-' + item.Id + '">';
+                                '<table class="table table-sm table-responsive-md table-bordered" id="rulesTable-' +
+                                    item.Id +
+                                    '">';
 
-                            tableContent +='<thead><tr class="table-primary"><th>ID</th><th>Enabled</th><th>Field Name</th><th>Alias</th></tr></thead><tbody>';
+                            tableContent +=
+                                '<thead><tr class="table-primary"><th>ID</th><th>Enabled</th><th>Field Name</th><th>Alias</th></tr></thead><tbody>';
 
                             $.each(item.RulesFields,
                                 function(j, field) {
-                                    tableContent += '<tr>'+
-                                        '<td>' +field.Id +'</td>' +
+                                    tableContent += '<tr>' +
+                                        '<td>' +
+                                        field.Id +
+                                        '</td>' +
                                         '<td>true</td>' +
-                                        '<td>' + field.Name + '</td>' +
+                                        '<td>' +
+                                        field.Name +
+                                        '</td>' +
                                         '<td></td>' +
                                         '</tr>';
                                 });
-                            tableContent +='</tbody></table>';
+                            tableContent += '</tbody></table>';
                             viewContent.append(tableContent);
 
                             $('#rulesTable-' + item.Id).dataTable({
-                                //dom: '<t>',
+                                dom: '<t>',
                                 scrollY: '200px',
                                 scrollCollapse: true,
                                 ordering: false,
@@ -332,13 +339,16 @@
                                         searchable: false,
                                         sortable: false,
                                         render: function(data, type, row) {
+                                            if (type === 'display') {
+                                                var checked = false;
+                                                if (data === 'true') {
+                                                    checked = true; // todo? this isn't binded to anything
+                                                }
 
-                                            var checked = false;
-                                            if (data === 'true') {
-                                                checked = true;
-                                            } 
-                                            
-                                            return '<input type="checkbox" '+(checked?'checked':'')+'>';
+                                                return '<input type="checkbox" '+(checked ? 'checked' : '')+'>';
+                                            } else {
+                                                return data;
+                                            }
                                         },
                                     },
                                     {
@@ -350,9 +360,12 @@
                                         data: "Description",
                                         searchable: false,
                                         sortable: false,
-                                        render: function (data, type, row) {
-
-                                            return '<input type="text" id="row-2-position" name="row-2-position" value="">';
+                                        render: function(data, type, row) {
+                                            if (type === 'display') {
+                                                return '<input type="text" value="' + data + '">';
+                                            } else {
+                                                return data;
+                                            }
                                         },
                                     },
                                 ]
@@ -363,6 +376,65 @@
                     alert('Could not retrieve rules views');
                 }
             });
+        }
+
+        function saveDynamicReport() {
+            var rulesViewId = $('#rulesViewSelect').val();
+            var reportTitle = $('#report-name').val();
+            var reportDescription = $('#report-description').val();
+            var reportTable = $('#rulesTable-' + rulesViewId).dataTable();
+
+            var dynamicReportDefinition = {
+                name: reportTitle,
+                description: reportDescription,
+                enabled: true,
+                schoolYearId: 13, // todo: pull from dropdown 
+                validationRulesViewId: rulesViewId
+            };
+
+            var reportFields = [];
+
+            reportTable.api().rows().eq(0).each( function (index) {
+                var row = reportTable.api().row(index);
+                var data = row.data();
+                var node = $(row.node());
+                var enabled = node.find('input[type=checkbox]').is(':checked');
+                var description = $(node).find('input[type=text]').val();
+                reportFields.push({
+                    ValidationRulesFieldId: data.Id,
+                    Name: data.Name,
+                    Description: description.trim(),
+                    Enabled: enabled
+                });
+            });
+
+            dynamicReportDefinition.Fields = reportFields; 
+            debugger;
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("SaveDynamicReportDefinition", "Admin")',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(dynamicReportDefinition),
+                datatype: "json",
+                success: function (data) {
+                    //var tempData = $(data);
+                    //var validationSummaryContents = "";
+                    //var validationSummary = tempData.find('#' + modelName + '-validation-summary-row');
+                    //if (validationSummary) {
+                    //    validationSummaryContents = validationSummary.text();
+                    //}
+
+                    // If validationSummaryContents contains more than just whitespace,
+                    // then validation summary contains errors, and we should re-show the modal
+                    debugger;
+                },
+                error: function (data) {
+                    debugger;
+                }
+            });
+
+            return false;
         }
 
         function changeRulesViewTab(sender) {

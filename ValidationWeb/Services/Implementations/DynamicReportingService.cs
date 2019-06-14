@@ -35,6 +35,7 @@ namespace ValidationWeb.Services.Implementations
             {
                 return validationPortalContext.DynamicReportDefinitions
                     .Include(x => x.Fields)
+                    .Include(x => x.Fields.Select(y => y.Field))
                     .Include(x => x.SchoolYear)
                     .ToList();
             }
@@ -46,6 +47,7 @@ namespace ValidationWeb.Services.Implementations
             {
                 return validationPortalContext.DynamicReportDefinitions
                     .Include(x => x.Fields)
+                    .Include(x => x.Fields.Select(y => y.Field))
                     .Include(x => x.SchoolYear)
                     .Single(x => x.Id == id);
             }

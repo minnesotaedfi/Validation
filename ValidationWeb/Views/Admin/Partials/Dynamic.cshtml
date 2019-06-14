@@ -1,48 +1,53 @@
 ﻿@model AdminIndexViewModel
 
-<div class="row form-group">
-    <div class="col-lg-12">
-        <div class="row">
-            <div class="col-md-12">
-                <h3>
-                    UI TEST
-                </h3>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-6 form-group">
-                <select id='rulesViewSelect' class="form-control" onchange="changeRulesViewTab(this)">
-
-                    <option value="">Select a view</option>
-                    @*<option value='0'>Home</option>
-                    <option value='1'>Profile</option>
-                    <option value='2'>Messages</option>
-                    <option value='3'>Settings</option>*@
-                </select>
-            </div>
-        </div>
-        <div class="row" style="display: none;">
-            <div class="col-sm-12 form-group">
-                <ul class="nav nav-pills mb-3" id="rulesViewTabs">
-                    <li class="active nav-link"><a href="#home">Home</a></li>
-                    <li class="nav-link"><a href="#profile">Profile</a></li>
-                    <li class="nav-link"><a href="#messages">Messages</a></li>
-                    <li class="nav-link"><a href="#settings">Settings</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-12 form-group">
-                <div class="tab-content" id="rulesViewPanes">
-                    <div class="tab-pane active" id="home">Home content</div>
-                    <div class="tab-pane" id="profile">Profile content</div>
-                    <div class="tab-pane" id="messages">Messages content</div>
-                    <div class="tab-pane" id="settings">Settings content</div>
+<form id="editDynamicReport">
+    <div class="row form-group">
+        <div class="col-sm-8">
+            <div class="row">
+                <div class="col-md-12">
+                    <h3>
+                        UI TEST
+                    </h3>
                 </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6 form-group">
+                    <select id='rulesViewSelect' class="form-control" onchange="changeRulesViewTab(this)" required></select>
+                </div>
+            </div>
+            <div class="row" style="display: none;">
+                <div class="col-sm-12 form-group">
+                    <ul class="nav nav-pills mb-3" id="rulesViewTabs"></ul>
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-sm-3">
+                    <label for="report-name">Report Name</label>
+                </div>
+                <div class="col-sm-9">
+                    <input class="form-control" type="text" id="report-name" required />
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-sm-3">
+                    <label for="report-description">Report Description</label>
+                </div>
+                <div class="col-sm-9">
+                    <input class="form-control" type="text" id="report-description" required />
+                </div>
+            </div>
+            <div class="row" form-group>
+                <div class="col-sm-12 form-group">
+                    <div class="tab-content" id="rulesViewPanes">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <button type="button" class="btn btn-primary" onclick="saveDynamicReport()">Submit</button>
             </div>
         </div>
     </div>
-</div>
+</form>
 <hr />
 
 <div class="row">
