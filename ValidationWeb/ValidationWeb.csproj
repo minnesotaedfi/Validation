@@ -863,6 +863,7 @@
     <Content Include="Views\Dynamic\Index.cshtml" />
     <Content Include="Views\Admin\Partials\Dynamic.cshtml" />
     <Content Include="Views\Admin\Partials\DynamicReportEditModal.cshtml" />
+    <Content Include="Views\Admin\Partials\DynamicReportAddModal.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -151,7 +151,7 @@ namespace ValidationWeb.Controllers
                 ValidationRulesViews = rulesViews.ToList()
             };
 
-            return PartialView("Partials/DynamicReportEditModal", viewModel);
+            return PartialView("Partials/DynamicReportAddModal", viewModel);
         }
 
         public ActionResult SaveDynamicReportDefinition(DynamicReportDefinition reportDefinition)

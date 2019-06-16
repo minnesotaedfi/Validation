@@ -1,0 +1,70 @@
+﻿@model ValidationWeb.ViewModels.AdminDynamicReportViewModel
+
+<div>
+    <div id="report-modal-content" class="modal-content" tabindex="-1">
+        <div class="modal-header prime-blue white-heavy-text">
+            <h4 id="report-header" class="modal-title">Add Dynamic Report</h4>
+            <button type="button" class="close" aria-label="close" data-dismiss="modal">[close]</button>
+        </div>
+        <div class="modal-body">
+            <div class="row form-group">
+                <div class="col-md-8 offset-2">
+                    @using (Html.BeginForm())
+                    {
+                        <div class="row" id="report-validation-summary-row">
+                            @Html.ValidationSummary(false, "Errors:", new
+                            {
+                                @class = "alert alert-danger",
+                                style = "width: 100%"
+                            })
+                        </div>
+                        @Html.HiddenFor(m => m.DynamicReportDefinition.Id, new
+                        {
+                            id = "edit-report-id"
+                        })
+
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <label for="rulesViewSelect">Rules View</label>
+                            </div>
+                            <div class="col-sm-9 form-group">
+                                <select id='rulesViewSelect' class="form-control" onchange="changeRulesViewTab(this)" required></select>
+                            </div>
+                        </div>
+                        <div class="row" style="display: none;">
+                            <div class="col-sm-12 form-group">
+                                <ul class="nav nav-pills mb-3" id="rulesViewTabs"></ul>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-sm-3">
+                                <label for="report-name">Report Name</label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input class="form-control" type="text" id="report-name" required />
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-sm-3">
+                                <label for="report-description">Report Description</label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input class="form-control" type="text" id="report-description" required />
+                            </div>
+                        </div>
+                        <div class="row" form-group>
+                            <div class="col-sm-12 form-group">
+                                <div class="tab-content" id="rulesViewPanes">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="modal-footer">
+                            <button type="submit" id="save-new-report" class="btn prime-blue white-heavy-text">Save Report</button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
