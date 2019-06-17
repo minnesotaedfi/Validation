@@ -1,5 +1,5 @@
 ﻿@using ValidationWeb.Models
-@model OdsChangeOfEnrollmentReportViewModel
+@model DynamicReportViewModel
 
 
 <div class="row">
@@ -8,15 +8,18 @@
 
 <form>
     <div class="form-group row">
-        <label for="selectDataView" class="text-right col-sm-2 col-form-label col-form-label-sm">Select Data View</label>
-        <div class="col-sm-8">
-            <select class="form-control form-control-sm" id="selectDataView" name="selectDataView">
+        <div class="col-sm-2 ">
+            <label for="selectDataView" class="text-right col-form-label col-form-label-sm">Select Data View</label>
+        </div>
+        <div class="nav-item col-sm-6">
+            <select class="form-control validation-dropdown-menu" id="selectDataView" name="selectDataView">
                 <option selected="selected" value="">- make a selection -</option>
-                <option value="StudentDemographic">StudentDemographic</option>
-                <option value="SSDC">SSDC</option>
-                <option value="StudentEnrollment">StudentEnrollment</option>
-                <option value="MultipleEnrollment">MultipleEnrollment</option>
             </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6 offset-2">
+            <p id="reportDescription"></p>
         </div>
     </div>
     <div class="row" style="margin-top: 15px; display:none" id="selectWrapper">
@@ -24,118 +27,85 @@
             <select multiple="multiple" size="15" class="form-control form-control-sm" id="fieldSelect" name="fieldSelect[]"></select>
         </div>
     </div>
+    <div class="form-group row">
+        <div class="col-sm-3">
+            <button type="button" style="margin-top: 15px; display:none" id="generateReport" class="btn prime-blue white-heavy-text margin10 justify-self-end">Generate Report</button>
+        </div>
+
+    </div>
 </form>
 
 @section scripts
 {
     <script type="text/javascript">
 
-        var fakeData =
-        {
-            'StudentDemographic': [
-                'MARSSNumber',
-                'DistrictId',
-                'SchoolId',
-                'FirstName',
-                'MiddleName',
-                'LastName',
-                'Suffix',
-                'BirthDate',
-                'Gender',
-                'HispanicIndicator',
-                'AsianIndicator',
-                'BlackIndicator',
-                'IndianIndicator',
-                'PacificIslanderIndicator',
-                'WhiteIndicator',
-                'EthnicCode',
-                'AncestryEthnicOrigin',
-                'HomePrimaryLanguage',
-                'EnglishLearner',
-                'LocalUseData'
-            ],
-            'SSDC': [
-                'MARSSNumber',
-                'DistrictId',
-                'DistrictIdLeft',
-                'DistrictIdRight',
-                'SchoolId',
-                'ActiveDutyParentIndicator',
-                'ImmigrantIndicator',
-                'RecentlyArrivedEnglishLearner',
-                'SLIFE'
-            ],
-            'StudentEnrollment': [
-                'MARSSNumber',
-                'DistrictId',
-                'DistrictIdLeft',
-                'DistrictIdRight',
-                'SchoolId',
-                'DistrictType',
-                'DistrictNumber',
-                'SchoolNumber',
-                'StatusBeginDate',
-                'EnrollmentSequence',
-                'LastLocationOfAttendance',
-                'StatusEndDate',
-                'StatusEnd',
-                'StudentGradeLevel',
-                'EconomicIndicatorCode',
-                'HomeboundServiceIndicator',
-                'HomelessStudentFlag',
-                'COEMigrantIndicator',
-                'IndependentStudyIndicator',
-                'Section504Placement',
-                'Section504PlacementBeginDate',
-                'Section504PlacementEndDate',
-                'Title1Indicator',
-                'SpecialEducationEvaluationStatus',
-                'EnglishLearnerStartDate',
-                'StudentResidentDistrictNumber',
-                'StudentResidentDistrictType',
-                'SchoolClassification',
-            ],
-            'MultipleEnrollment': [
-                'MARSSNumber',
-                'EnrollmentSequenceLeft',
-                'DistrictId',
-                'DistrictIdLeft',
-                'SchoolIdLeft',
-                'SchoolClassificationLeft',
-                'ResidentDistrictLeft',
-                'StatusBeginDateLeft',
-                'StatusEndDateLeft',
-                'LastLocationOfAttendanceLeft',
-                'StudentGradeLevelLeft',
-                'SpecialEducationEvaluationStatusLeft',
-                'EnrollmentSequenceRight',
-                'DistrictIdRight',
-                'SchoolIdRight',
-                'SchoolClassificationRight',
-                'ResidentDistrictRight',
-                'StatusBeginDateRight',
-                'StatusEndDateRight',
-                'LastLocationOfAttendanceRight',
-                'StudentGradeLevelRight',
-                'SpecialEducationEvaluationStatusRight',
-                'IsNextEnrollment',
-                'EnrollmentOverlap',
-                'DualEnrolledIndicator',
-                'ValidSameSchoolOverlap'
-            ]
-        };
+        var viewData = {};
 
-        $(document).ready(function () {
-            $('#selectDataView').select2({
-                minimumResultsForSearch: Infinity,
+        $(document).on('focus',
+            '.select2.select2-container',
+            function(e) {
+                // console.log("%c Focus Event ", "background:green; color:white", e);
+
+                var initialFocusEvent = e.originalEvent; //don't re-open on close focus event
+                var targetIsInput = e.target && $(e.target).is("input"); // don't open when focused from input 
+                var relTargetIsInput = e.relatedTarget && $(e.relatedTarget).is("input");
+                var anyTargetIsInput = targetIsInput || relTargetIsInput;
+
+                // only open on original attempt - close focus event should not fire open
+                if (initialFocusEvent && !anyTargetIsInput) {
+                    // console.log("%c Call Select2 Open ", "background:orange; color:white");
+                    $(this).siblings('select').select2('open');
+                }
             });
 
-            var fieldSelect = $('select[name="fieldSelect[]"]').hide().bootstrapDualListbox({
-                nonSelectedListLabel: 'Available Fields',
-                selectedListLabel: 'Selected Fields',
-                //preserveSelectionOnMove: 'moved',
-                moveOnSelect: false,
-                selectorMinimalHeight: 200
+        $(document).ready(function() {
+
+            $('#selectDataView').select2({
+                minimumResultsForSearch: Infinity
+            });
+
+            $('#generateReport').on('click', createReport);
+
+            var selectElement = $('select[name="fieldSelect[]"]');
+
+            var fieldSelect = selectElement
+                .hide()
+                .bootstrapDualListbox({
+                    nonSelectedListLabel: 'Available Fields',
+                    selectedListLabel: 'Selected Fields',
+                    //preserveSelectionOnMove: 'moved',
+                    moveOnSelect: false,
+                    selectorMinimalHeight: 200
+                });
+
+            selectElement.on('change',
+                function(e) {
+                    var newState = $(this).val();
+                    //console.log(newState);
+
+                    var generateReport = $('#generateReport');
+                    if (newState && newState.length) {
+                        generateReport.show();
+                    } else {
+                        generateReport.hide();
+                    }
+                });
+
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetReportDefinitions", "Dynamic")?schoolYearId=@Model.SchoolYear.Id',
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function(data) {
+                    var selectDataView = $('#selectDataView');
+                    selectDataView.empty();
+                    selectDataView.append($('<option>', { value: '', text: '- select a view -' }));
+                    $.each(data,
+                        function(i, item) {
+                            selectDataView.append($('<option>', { value: item.Id, text: item.Name }));
+                            viewData[item.Id] = item;
+                        });
+                }
             });
 
             var dualListContainer = fieldSelect.bootstrapDualListbox('getContainer');
@@ -145,20 +115,83 @@
             dualListContainer.find('.remove').text('').addClass('fa fa-angle-left');
             dualListContainer.find('.btn').addClass('prime-blue white-heavy-text');
 
-            $("#selectDataView").change(function (e) {
-
+            $("#selectDataView").change(function(e) {
                 var dataView = $(this).val();
+
+                if (!dataView) {
+                    $('#selectWrapper').hide();
+                    return;
+                }
+
                 $('#selectWrapper').show();
+                $('#generateReport').hide();
+
+                var rules = viewData[dataView];
+                $('#reportDescription').text(rules.Description);
+
                 if (dataView.length > 0) {
+
                     var select = $('#fieldSelect');
                     select.empty();
-                    $.each(fakeData[dataView], function (index, value) {
-                        select.append($('<option>', { value: value, text: value }));
-                    });
+
+                    $.each(rules.Fields,
+                        function(index, value) {
+                            if (value.Enabled) {
+                                select.append($('<option>',
+                                    {
+                                        value: value.Id,
+                                        text: (value.Description ? value.Description : value.Field.Name)
+                                    }));
+                            }
+                        });
 
                     fieldSelect.bootstrapDualListbox('refresh');
+                    $(this).blur();
+                    fieldSelect.focus();
                 }
             });
         });
+
+        function createReport() {
+            debugger;
+
+            var reportRequest = {
+                ReportDefinitionId: $('#selectDataView').val(),
+                SchoolYearId: '@Model.SchoolYear.Id',
+                SelectedFields: $('select[name="fieldSelect[]"]').val()
+            };
+
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                var a;
+                if (xhttp.readyState === 4 && xhttp.status === 200) {
+                    // Trick for making downloadable link
+                    a = document.createElement('a');
+                    a.href = window.URL.createObjectURL(xhttp.response);
+                    // Give filename you wish to download
+                    a.download = $('#selectDataView option:selected').text() + '-@(Model.SchoolYear.EndYear).csv';
+                    a.style.display = 'none';
+                    document.body.appendChild(a);
+                    a.click();
+                }
+            };
+            // Post data to URL which handles post request
+            xhttp.open("POST", '@Url.Action("GenerateReport", "Dynamic")');
+            xhttp.setRequestHeader("Content-Type", "application/json");
+            xhttp.responseType = 'blob';
+            xhttp.send(JSON.stringify(reportRequest));
+            
+            @*$.ajax({
+                type: "POST",
+                url: '@Url.Action("GenerateReport", "Dynamic")',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(reportRequest),
+                datatype: "json",
+                success: function(data) {
+
+                }
+            });*@
+            
+        }
     </script>
 }

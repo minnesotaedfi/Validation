@@ -276,7 +276,7 @@ div#NewValidationModal select {
         border-color: rgb(120, 190, 33);
     }
 
-nav select.form-control {
+ select.form-control {
     height: unset;
     padding: 0px 10px;
     margin: 0 10px;

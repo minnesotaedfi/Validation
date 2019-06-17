@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Migrations;
 using System.Data.SqlClient;
+using System.Dynamic;
 using System.Linq;
 
 using ValidationWeb.Database;
@@ -51,6 +53,47 @@ namespace ValidationWeb.Services.Implementations
                     .Include(x => x.SchoolYear)
                     .Single(x => x.Id == id);
             }
+        }
+
+        public IList<dynamic> GetReportData(DynamicReportRequest request)
+        {
+            var reportDefinition = GetReportDefinition(request.ReportDefinitionId);
+            var selectedFields = reportDefinition.Fields
+                .Where(x => request.SelectedFields.Contains(x.Id.ToString()))
+                .ToList();
+
+            var viewName = $"[{reportDefinition.RulesView.Schema}].[{reportDefinition.RulesView.Name}]";
+            var fieldNames = string.Join(", ", selectedFields.Select(x => $"[{x.Field.Name}]"));
+
+            var report = new List<dynamic>(); 
+
+            using (var schoolYearContext = SchoolYearDbContextFactory.CreateWithParameter(reportDefinition.SchoolYear.EndYear))
+            {
+                var connection = schoolYearContext.Database.Connection;
+                connection.Open();
+
+                var queryCommand = connection.CreateCommand();
+                queryCommand.CommandType = System.Data.CommandType.Text;
+                queryCommand.CommandText = $"SELECT {fieldNames} FROM {viewName}";
+
+                using (var reader = queryCommand.ExecuteReader())
+                {
+                    while (reader.Read())
+                    { 
+                        var dynamicObject = new ExpandoObject() as IDictionary<string, object>;
+
+                        foreach (var field in selectedFields)
+                        {
+                            var fieldDescription = !string.IsNullOrWhiteSpace(field.Description) ? field.Description : field.Field.Name;
+                            dynamicObject.Add(fieldDescription, reader[field.Field.Name].ToString());
+                        }
+
+                        report.Add(dynamicObject);
+                    }
+                }
+            }
+
+            return report;
         }
 
         public void SaveReportDefinition(DynamicReportDefinition reportDefinition)

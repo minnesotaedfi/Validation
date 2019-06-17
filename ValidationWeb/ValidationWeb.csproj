@@ -951,6 +951,7 @@
     <Compile Include="Migrations\201906121506338_ValidationRules.Designer.cs">
       <DependentUpon>201906121506338_ValidationRules.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\DynamicReportRequest.cs" />
     <Compile Include="Models\DynamicReportField.cs" />
     <Compile Include="Models\ValidationPortalIdentity.cs" />
     <Compile Include="Models\ValidationRulesField.cs" />
@@ -995,8 +996,10 @@
     <Compile Include="Utility\DataRecordExtensions.cs" />
     <Compile Include="Utility\GradeLevelComparer.cs" />
     <Compile Include="Utility\ImportPropertySelectionBehavior.cs" />
+    <Compile Include="Utility\Utility.cs" />
     <Compile Include="ViewModels\AdminDynamicReportViewModel.cs" />
     <Compile Include="ViewModels\EnvironmentViewModel.cs" />
+    <Compile Include="ViewModels\DynamicReportViewModel.cs" />
     <Compile Include="ViewModels\StudentDrillDownReportType.cs" />
     <Compile Include="Database\ValidatedOdsDbContext.cs" />
     <Compile Include="Database\ValidationPortalDbContext.cs" />

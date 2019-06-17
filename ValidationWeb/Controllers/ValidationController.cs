@@ -11,6 +11,7 @@ using Engine.Models;
 using ValidationWeb.Filters;
 using ValidationWeb.Models;
 using ValidationWeb.Services.Interfaces;
+using ValidationWeb.Utility;
 using ValidationWeb.ViewModels;
 
 namespace ValidationWeb.Controllers
@@ -78,7 +79,7 @@ namespace ValidationWeb.Controllers
                 .OrderByDescending(rs => rs.CompletedWhen)
                 .ToList();
 
-            var csvArray = WriteCsvToMemory(results.Select(
+            var csvArray = Csv.WriteCsvToMemory(results.Select(
                 x => new
                 {
                     x.RequestedWhen,
@@ -232,7 +233,7 @@ namespace ValidationWeb.Controllers
                     });
             }
 
-            var csvArray = WriteCsvToMemory(groupedByStudent);
+            var csvArray = Csv.WriteCsvToMemory(groupedByStudent);
             var memoryStream = new MemoryStream(csvArray);
 
             var reportSummary = _validationResultsService.GetValidationReportDetails(reportSummaryId);
@@ -270,18 +271,6 @@ namespace ValidationWeb.Controllers
             return Json(summary);
         }
 
-        protected byte[] WriteCsvToMemory<T>(IEnumerable<T> records)
-        {
-            var memoryStream = new MemoryStream();
-            var streamWriter = new StreamWriter(memoryStream);
-
-            using (var csvWriter = new CsvWriter(streamWriter))
-            {
-                csvWriter.WriteRecords(records);
-                streamWriter.Flush();
-                return memoryStream.ToArray();
-            }
-        }
 
         protected string CombineDetailField(
             ICollection<ValidationErrorEnrollmentDetail> details,
