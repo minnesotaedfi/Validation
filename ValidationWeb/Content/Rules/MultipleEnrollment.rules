@@ -248,3 +248,327 @@ rule 10.10.6592
 	and {MultipleEnrollment}.[StudentGradeLevelRight] <> 'PS' then
 	require {MultipleEnrollment}.[SpecialEducationEvaluationStatusLeft] exists and {MultipleEnrollment}.[SpecialEducationEvaluationStatusLeft] is in ['4','6','9']
 	else '129. Students whose IEP is terminated mid-year must have a prior enrollment record showing the IEP, i.e., the earlier enrollment record must have a Special Education Evaluation Status of 4 or 6. There is no need to report a second enrollment record for an early childhood student whose IEP/IFSP is terminated.'
+
+rule 30.10.6389 
+	when collection is EOY_Enrollment_And_Demographic 
+	and {MultipleEnrollment}.[EnrollmentOverlap] = 1
+	and {StudentEnrollment}.[DistrictType] <> '70' 
+	and {StudentEnrollment}.[StudentGradeLevel] <> 'PS'
+	and {MultipleEnrollment}.[SchoolClassificationLeft] is in ['41','42']
+	and {MultipleEnrollment}.[SchoolClassificationRight] is in ['41','42']
+	and {StudentEnrollment}.[SpecialEducationEvaluationStatus] is in ['4', '6', '9'] then
+	require sum({MultipleEnrollment}.[SpecialEducationServiceHoursLeft] when {MultipleEnrollment}.[SpecialEducationServiceHoursLeft] exists and {MultipleEnrollment}.[SpecialEducationEvaluationStatusLeft] is in ['4', '6', '9']) > 0
+	or sum({MultipleEnrollment}.[SpecialEducationServiceHoursRight] when {MultipleEnrollment}.[SpecialEducationServiceHoursRight] exists and {MultipleEnrollment}.[SpecialEducationEvaluationStatusRight] is in ['4', '6', '9']) > 0
+	else '290. For students with Special Education Evaluation Status equals 4 or 6, Special Education Service Hours are required on at least one of the records  if two SAAP records overlap and no other records are detected the SAAP records must have Special Education Service Hours entered.'
+
+rule 10.10.62711
+	when {MultipleEnrollment}.[SchoolClassificationLeft] is not in ['41','42','45']
+	and {MultipleEnrollment}.[SchoolClassificationRight] is not in ['41','42','45']
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] <> 'PS'
+	and {MultipleEnrollment}.[StudentGradeLevelRight] <> 'PS'
+	and ({MultipleEnrollment}.[StateAidCategoryLeft] <> '46' and {MultipleEnrollment}.[StateAidCategoryRight] <> '46')
+	and ({MultipleEnrollment}.[StateAidCategoryLeft] <> '46' and {MultipleEnrollment}.[SchoolClassificationRight] is not in {'43','44'])
+	and ({MultipleEnrollment}.[StateAidCategoryRight] <> '46' and {MultipleEnrollment}.[SchoolClassificationLeft] is not in {'43','44'])
+	and {MultipleEnrollment}.[DistrictIdLeft] <> {MultipleEnrollment}.[DistrictIdRight] 
+	and {MultipleEnrollment}.[StatusEndDateLeft] < {MultipleEnrollment}.[StatusEndDateRight] then 
+	expect days since {MultipleEnrollment}.[StatusBeginDateRight] as of {MultipleEnrollment}.[StatusEndDateLeft] < 1
+	and days since {MultipleEnrollment}.[StatusBeginDateRight] as of {MultipleEnrollment}.[StatusEndDateLeft] < 2
+	else '326. This appears when two districts have the same State Reporting Number on their MARSS files with overlapping enrollments and the dual enrolled criteria have not been met.  (The student\'s name is not used to match records.) The message appears in conjunction with either:  NEXT REC DST (the district with the earlier Status Start Date) and PRIOR REC DST (the district with the later Status Start Date).  Check the Status Start and End Dates on the "Notification of Change in Student Enrollment."  Neither record will generate any state aid until the error is corrected.  Also check the student\'s State Reporting Number.'
+	
+	
+rule 10.10.62712
+	when {MultipleEnrollment}.[SchoolClassificationLeft] is not in ['41','42','45']
+	and {MultipleEnrollment}.[SchoolClassificationRight] is not in ['41','42','45']
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] <> 'PS'
+	and {MultipleEnrollment}.[StudentGradeLevelRight] <> 'PS'
+	and ({MultipleEnrollment}.[StateAidCategoryLeft] <> '46' and {MultipleEnrollment}.[StateAidCategoryRight] <> '46')
+	and ({MultipleEnrollment}.[StateAidCategoryLeft] <> '46' and {MultipleEnrollment}.[SchoolClassificationRight] is not in {'43','44'])
+	and ({MultipleEnrollment}.[StateAidCategoryRight] <> '46' and {MultipleEnrollment}.[SchoolClassificationLeft] is not in {'43','44'])
+	and {MultipleEnrollment}.[DistrictIdLeft] <> {MultipleEnrollment}.[DistrictIdRight] 
+	and {MultipleEnrollment}.[StatusEndDateLeft] >= {MultipleEnrollment}.[StatusEndDateRight] then 
+	expect days since {MultipleEnrollment}.[StatusBeginDateRight] as of {MultipleEnrollment}.[StatusEndDateRight] < 1
+	and days since {MultipleEnrollment}.[StatusBeginDateRight] as of {MultipleEnrollment}.[StatusEndDateLeft] < 2
+	else '326. This appears when two districts have the same State Reporting Number on their MARSS files with overlapping enrollments and the dual enrolled criteria have not been met.  (The student\'s name is not used to match records.) The message appears in conjunction with either:  NEXT REC DST (the district with the earlier Status Start Date) and PRIOR REC DST (the district with the later Status Start Date).  Check the Status Start and End Dates on the "Notification of Change in Student Enrollment."  Neither record will generate any state aid until the error is corrected.  Also check the student\'s State Reporting Number.'
+	
+
+rule 10.10.6507
+	when {MultipleEnrollment}.[DualEnrolledIndicator] = 1 
+	and {MultipleEnrollment}.[SchoolClassificationLeft] is not in ['41','42','45']
+	and {MultipleEnrollment}.[SchoolClassificationRight] = '45'
+	and {MultipleEnrollment}.[StateAidCategoryLeft] <> '46'
+	and {MultipleEnrollment}.[StateAidCategoryRight] <> '46' 
+	and {MultipleEnrollment}.[StudentGradeLevelRight] <> 'PS' 
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] is not in ['PS','HK'] then
+	require {MultipleEnrollment}.[PercentEnrolledRight] >= 100
+	else '93. To be dual enrolled, a student must be 100% enrolled at the traditional school and 999% enrolled at the public alternative program. To be concurrently enrolled, a student must be less than 100% enrolled at the traditional school and 998% enrolled at the public alternative program.  Refer to Procedure 8.'
+
+
+rule 20.10.6349
+	when collection is Fall_Enrollment_And_Demographic
+	and {StudentEnrollment}.[LastLocationOfAttendance] = '24' 
+	and {StudentEnrollment}.[StateAidCategory] <> '46'
+	and {StudentEnrollment}.[StudentGradeLevel] <> 'PS' then
+	expect {MultipleEnrollment} exists
+	and count({MultipleEnrollment} when {MultipleEnrollment}.[LastLocationOfAttendanceRight] = '24' and {MultipleEnrollment}.[LastLocationOfAttendanceLeft] <> '24') > 1
+	else '118. Last Location of Attendance 24 (re-enrollment into the same school or inter-district transfer) requires that there be a prior enrollment record for the student in the district. This warning will convert to an error EOY if an early record is not found.'
+
+
+rule 20.10.6366
+	when collection is Fall_Enrollment_And_Demographic
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] <> 'PS'
+	and {MultipleEnrollment}.[StudentGradeLevelRight] <> 'PS'
+	and {MultipleEnrollment}.[StateAidCategoryLeft] <> '46'
+	and {MultipleEnrollment}.[StateAidCategoryRight] <> '46' 
+	and {MultipleEnrollment}.[StatusEndDateRight] > {MultipleEnrollment}.[StatusEndDateLeft] then
+	expect {MultipleEnrollment}.[StatusEndLeft] is not in ['8','11','40']
+	else '107. Status End codes of 8, 11 and 40 (graduated, deceased, end of year) indicate this is the student\'s last enrollment record for this school year.  Records with later Status End Dates may be in error or this record may have an inappropriate Status End code.'
+
+
+rule 20.10.65061
+	when collection is Fall_Enrollment_And_Demographic
+	and {MultipleEnrollment}.[EnrollmentOverlap] = 1
+	and {MultipleEnrollment}.[DualEnrolledIndicator] = 1
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] <> 'PS'
+	and {MultipleEnrollment}.[StudentGradeLevelRight] <> 'PS'
+	and {MultipleEnrollment}.[StateAidCategoryLeft] <> '46'
+	and {MultipleEnrollment}.[StateAidCategoryRight] <> '46' 
+	and {MultipleEnrollment}.[PercentEnrolledLeft] = 998 then
+	expect {MultipleEnrollment}.[PercentEnrolledRight] <> 100
+	else '238. This warning indicates the school has reported this student as Percent Enrolled = 100.  However, this student has also been reported by an Alternate School over the same time period (\'concurrent enrollment\'). The Alternate School has indicated \'concurrent enrollment\' (Percent Enrolled = 998). By definition, the student cannot be 100% enrolled in the traditional school.  Check the student\'s percent enrolled on both records or the student\'s State Reporting Number to confirm the two records are for the same student.'
+	
+
+rule 20.10.65062
+	when collection is Fall_Enrollment_And_Demographic
+	and {MultipleEnrollment}.[EnrollmentOverlap] = 1
+	and {MultipleEnrollment}.[DualEnrolledIndicator] = 1
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] <> 'PS'
+	and {MultipleEnrollment}.[StudentGradeLevelRight] <> 'PS'
+	and {MultipleEnrollment}.[StateAidCategoryLeft] <> '46'
+	and {MultipleEnrollment}.[StateAidCategoryRight] <> '46' 
+	and {MultipleEnrollment}.[PercentEnrolledRight] = 998 then
+	expect {MultipleEnrollment}.[PercentEnrolledLeft] <> 100
+	else '238. This warning indicates the school has reported this student as Percent Enrolled = 100.  However, this student has also been reported by an Alternate School over the same time period (\'concurrent enrollment\'). The Alternate School has indicated \'concurrent enrollment\' (Percent Enrolled = 998). By definition, the student cannot be 100% enrolled in the traditional school.  Check the student\'s percent enrolled on both records or the student\'s State Reporting Number to confirm the two records are for the same student.'
+
+
+rule 20.10.6604
+	when collection is Fall_Enrollment_And_Demographic 
+	and {MultipleEnrollment}.[StatusBeginDateRight] > {MultipleEnrollment}.[StatusBeginDateLeft]
+	and {MultipleEnrollment}.[StateAidCategoryLeft] <> '46'
+	and {MultipleEnrollment}.[StateAidCategoryRight] <> '46'
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] <> 'PS'
+	and {MultipleEnrollment}.[StudentGradeLevelRight] <> 'PS' then
+	expect {MultipleEnrollment}.[LastLocationOfAttendanceRight] is not in ['0','1','2','3','4','5']
+	else '114. Last Location of Attendance codes 0- 5 require that this record be the student\'s first enrollment record this school year.  If the student was first enrolled in a school outside Minnesota and the resident district had to report the student  for state aid purposes, this edit will ignored.  This warning will convert to an error message EOY.'	
+	
+
+rule 30.10.6285
+	when collection is EOY_Enrollment_And_Demographic 
+	and {MultipleEnrollment}.[StatusEndDateRight] > {MultipleEnrollment}.[StatusEndDateLeft] 
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] <> 'PS'
+	and {MultipleEnrollment}.[StudentGradeLevelRight] <> 'PS'
+	and {MultipleEnrollment}.[StateAidCategoryLeft] <> '46'
+	and {MultipleEnrollment}.[StateAidCategoryRight] <> '46' 
+	and {MultipleEnrollment}.[DistrictIdLeft] <> {MultipleEnrollment}.[DistrictIdRight] then
+	expect {MultipleEnrollment}.[StatusEndLeft] is not in ['8','11','40']
+	else '336. This message indicates that a student was withdrawn using any Status End codes 8, 11 (graduate, deceased) or 40 (end-of-year) and then re-enrolled.  The prior Status End code must be changed to reflect the re-enrollment.'	
+
+
+rule 30.10.6286
+	when collection is EOY_Enrollment_And_Demographic 
+	and {MultipleEnrollment}.[StatusEndDateRight] > {MultipleEnrollment}.[StatusEndDateLeft] 
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] <> 'PS'
+	and {MultipleEnrollment}.[StudentGradeLevelRight] <> 'PS'
+	and {MultipleEnrollment}.[StateAidCategoryLeft] <> '46'
+	and {MultipleEnrollment}.[StateAidCategoryRight] <> '46' 
+	and {MultipleEnrollment}.[DistrictIdLeft] <> {MultipleEnrollment}.[DistrictIdRight] then
+	expect {MultipleEnrollment}.[StatusEndLeft] is not in ['8','11','40']
+	else '336. This message indicates that a student was withdrawn using any Status End codes 8, 11 (graduate, deceased) or 40 (end-of-year) and then re-enrolled.  The prior Status End code must be changed to reflect the re-enrollment.'	
+
+
+rule 30.10.6287
+	when collection is EOY_Enrollment_And_Demographic 
+	and {MultipleEnrollment}.[SchoolClassificationRight] = '45'
+	and {MultipleEnrollment}.[PercentEnrolledRight] = '999' 
+	and {MultipleEnrollment}.[SchoolClassificationLeft] is not in ['41','42','45'] 
+	and {MultipleEnrollment}.[StudentGradeLevelRight] is not in ['HK','PS']
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] <> 'PS' 
+	and {MultipleEnrollment}.[DistrictIdLeft] <> {MultipleEnrollment}.[DistrictIdRight] then
+	expect {MultipleEnrollment}.[PercentEnrolledLeft] >= 100
+	else '335. To be dual enrolled, a student must be 100% enrolled at the traditional school and 999% enrolled at the public alternative program. To be concurrent enrolled, a student must be less than 100% enrolled at the traditional school and 998% enrolled at the public alternative program. Refer to Procedure 8.'
+
+
+rule 30.10.6288
+	when collection is EOY_Enrollment_And_Demographic 
+	and {MultipleEnrollment}.[SchoolClassificationLeft] = '45'
+	and {MultipleEnrollment}.[PercentEnrolledLeft] = '999' 
+	and {MultipleEnrollment}.[SchoolClassificationRight] is not in ['41','42','45'] 
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] is not in ['HK','PS']
+	and {MultipleEnrollment}.[StudentGradeLevelRight] <> 'PS' 
+	and {MultipleEnrollment}.[DistrictIdLeft] <> {MultipleEnrollment}.[DistrictIdRight] then
+	expect {MultipleEnrollment}.[PercentEnrolledLeft] >= 100
+	else '335. To be dual enrolled, a student must be 100% enrolled at the traditional school and 999% enrolled at the public alternative program. To be concurrent enrolled, a student must be less than 100% enrolled at the traditional school and 998% enrolled at the public alternative program. Refer to Procedure 8.'
+
+
+rule 30.10.6289
+	when collection is EOY_Enrollment_And_Demographic 
+	and {MultipleEnrollment}.[SchoolClassificationRight] is in ['41','42']
+	and {MultipleEnrollment}.[PercentEnrolledRight] = '998' 
+	and {MultipleEnrollment}.[SchoolClassificationLeft] is not in ['41','42','45'] 
+	and {MultipleEnrollment}.[StudentGradeLevelRight] is not in ['HK','PS']
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] <> 'PS' 
+	and {MultipleEnrollment}.[DistrictIdLeft] <> {MultipleEnrollment}.[DistrictIdRight] then
+	expect {MultipleEnrollment}.[PercentEnrolledLeft] < 100
+	else '335. To be dual enrolled, a student must be 100% enrolled at the traditional school and 999% enrolled at the public alternative program. To be concurrent enrolled, a student must be less than 100% enrolled at the traditional school and 998% enrolled at the public alternative program. Refer to Procedure 8.'
+
+
+rule 30.10.6290
+	when collection is EOY_Enrollment_And_Demographic 
+	and {MultipleEnrollment}.[SchoolClassificationLeft] is in ['41','42']
+	and {MultipleEnrollment}.[PercentEnrolledLeft] = '998' 
+	and {MultipleEnrollment}.[SchoolClassificationRight] is not in ['41','42','45'] 
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] is not in ['HK','PS']
+	and {MultipleEnrollment}.[StudentGradeLevelRight] <> 'PS' 
+	and {MultipleEnrollment}.[DistrictIdLeft] <> {MultipleEnrollment}.[DistrictIdRight] then
+	expect {MultipleEnrollment}.[PercentEnrolledRight] < 100
+	else '335. To be dual enrolled, a student must be 100% enrolled at the traditional school and 999% enrolled at the public alternative program. To be concurrent enrolled, a student must be less than 100% enrolled at the traditional school and 998% enrolled at the public alternative program.  Refer to Procedure 8.'	
+
+
+rule 30.10.6291
+	when collection is EOY_Enrollment_And_Demographic 
+	and {MultipleEnrollment}.[SchoolClassificationRight] = '45'
+	and {MultipleEnrollment}.[PercentEnrolledRight] = '999' 
+	and {MultipleEnrollment}.[SchoolClassificationLeft] is not in ['41','42','45'] 
+	and {MultipleEnrollment}.[StudentGradeLevelRight] is not in ['HK','PS']
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] <> 'PS' 
+	and {MultipleEnrollment}.[DistrictIdLeft] <> {MultipleEnrollment}.[DistrictIdRight] then
+	expect {MultipleEnrollment}.[PercentEnrolledLeft] >= 100
+	else '335. To be dual enrolled, a student must be 100% enrolled at the traditional school and 999% enrolled at the public alternative program. To be concurrent enrolled, a student must be less than 100% enrolled at the traditional school and 998% enrolled at the public alternative program. Refer to Procedure 8.'	
+
+
+rule 30.10.6292
+	when collection is EOY_Enrollment_And_Demographic 
+	and {MultipleEnrollment}.[SchoolClassificationLeft] = '45'
+	and {MultipleEnrollment}.[PercentEnrolledLeft] = '999' 
+	and {MultipleEnrollment}.[SchoolClassificationRight] is not in ['41','42','45'] 
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] is not in ['HK','PS']
+	and {MultipleEnrollment}.[StudentGradeLevelRight] <> 'PS' 
+	and {MultipleEnrollment}.[DistrictIdLeft] <> {MultipleEnrollment}.[DistrictIdRight] then
+	expect {MultipleEnrollment}.[PercentEnrolledLeft] >= 100
+	else '335. To be dual enrolled, a student must be 100% enrolled at the traditional school and 999% enrolled at the public alternative program. To be concurrent enrolled, a student must be less than 100% enrolled at the traditional school and 998% enrolled at the public alternative program. Refer to Procedure 8.'	
+	
+	
+rule 30.10.6293
+	when collection is EOY_Enrollment_And_Demographic 
+	and {MultipleEnrollment}.[SchoolClassificationRight] is in ['41','42']
+	and {MultipleEnrollment}.[PercentEnrolledRight] = '998' 
+	and {MultipleEnrollment}.[SchoolClassificationLeft] is not in ['41','42','45'] 
+	and {MultipleEnrollment}.[StudentGradeLevelRight] is not in ['HK','PS']
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] <> 'PS' 
+	and {MultipleEnrollment}.[DistrictIdLeft] <> {MultipleEnrollment}.[DistrictIdRight] then
+	expect {MultipleEnrollment}.[PercentEnrolledLeft] < 100
+	else '335. To be dual enrolled, a student must be 100% enrolled at the traditional school and 999% enrolled at the public alternative program. To be concurrent enrolled, a student must be less than 100% enrolled at the traditional school and 998% enrolled at the public alternative program. Refer to Procedure 8.'
+
+
+rule 30.10.6294
+	when collection is EOY_Enrollment_And_Demographic 
+	and {MultipleEnrollment}.[SchoolClassificationLeft] is in ['41','42']
+	and {MultipleEnrollment}.[PercentEnrolledLeft] = '998' 
+	and {MultipleEnrollment}.[SchoolClassificationRight] is not in ['41','42','45'] 
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] is not in ['HK','PS']
+	and {MultipleEnrollment}.[StudentGradeLevelRight] <> 'PS' 
+	and {MultipleEnrollment}.[DistrictIdLeft] <> {MultipleEnrollment}.[DistrictIdRight] then
+	expect {MultipleEnrollment}.[PercentEnrolledRight] < 100
+	else '335. To be dual enrolled, a student must be 100% enrolled at the traditional school and 999% enrolled at the public alternative program. To be concurrent enrolled, a student must be less than 100% enrolled at the traditional school and 998% enrolled at the public alternative program. Refer to Procedure 8.'
+
+
+rule 30.10.6365
+	when collection is EOY_Enrollment_And_Demographic 
+	and {MultipleEnrollment}.[DistrictIdLeft] = {MultipleEnrollment}.[DistrictIdRight]
+	and {MultipleEnrollment}.[StateAidCategoryLeft] <> '46'
+	and {MultipleEnrollment}.[StateAidCategoryRight] <> '46'
+	and {StudentEnrollment}.[StudentGradeLevelLeft] <> 'PS'
+	and {StudentEnrollment}.[StudentGradeLevelRight] <> 'PS' then
+	require count({MultipleEnrollment} by [StatusEndLeft] when {MultipleEnrollment}.[StatusEndLeft] is in ['8','11','40']) <= 1
+	else '94. This message indicates that a student was withdrawn using any of Status End codes 8 - 11 (graduate or deceased), 40 (end-of-year) and then re-enrolled in the same district.  The prior Status End code must be changed to reflect the re-enrollment.'
+	
+
+rule 10.10.64831
+	when {MultipleEnrollment}.[SchoolClassificationLeft] is in ['41','42','45']
+	and {MultipleEnrollment}.[StateAidCategoryLeft] is in ['27','28']
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] <> 'PS'
+	and {MultipleEnrollment}.[StudentGradeLevelRight] <> 'PS'
+	and ({MultipleEnrollment}.[StateAidCategoryLeft] <> '46' and {MultipleEnrollment}.[StateAidCategoryRight] <> '46')
+	and ({MultipleEnrollment}.[StateAidCategoryLeft] <> '46' and {MultipleEnrollment}.[StateAidCategoryRight] is not in ['43','44'])
+	and ({MultipleEnrollment}.[StateAidCategoryRight] <> '46' and {MultipleEnrollment}.[StateAidCategoryLeft] is not in ['43','44']) 
+	and ({MultipleEnrollment}.[MembershipLeft] <> 1 and {MultipleEnrollment}.[StateAidCategoryRight] = '46')
+	and ({MultipleEnrollment}.[MembershipRight] <> 1 and {MultipleEnrollment}.[StateAidCategoryLeft] = '46')
+	and {MultipleEnrollment}.[DistrictIdLeft] <> {MultipleEnrollment}.[DistrictIdRight]
+	and {MultipleEnrollment}.[StatusEndDateLeft] < {MultipleEnrollment}.[StatusEndDateRight] then 
+	expect days since {MultipleEnrollment}.[StatusBeginDateRight] as of {MultipleEnrollment}.[StatusEndDateLeft] <= 1
+	and days since {MultipleEnrollment}.[StatusBeginDateRight] as of {MultipleEnrollment}.[StatusEndDateLeft] < 2
+	else '343. A student with a State Aid Category of 27 or 28 is reported in a school with classification 41, 43 or 45 and the student has an overlapping record elsewhere.'
+	
+	
+rule 10.10.64832
+	when {MultipleEnrollment}.[SchoolClassificationLeft] is in ['41','42','45']
+	and {MultipleEnrollment}.[StateAidCategoryLeft] is in ['27','28']
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] <> 'PS'
+	and {MultipleEnrollment}.[StudentGradeLevelRight] <> 'PS'
+	and ({MultipleEnrollment}.[StateAidCategoryLeft] <> '46' and {MultipleEnrollment}.[StateAidCategoryRight] <> '46')
+	and ({MultipleEnrollment}.[StateAidCategoryLeft] <> '46' and {MultipleEnrollment}.[StateAidCategoryRight] is not in ['43','44'])
+	and ({MultipleEnrollment}.[StateAidCategoryRight] <> '46' and {MultipleEnrollment}.[StateAidCategoryLeft] is not in ['43','44']) 
+	and ({MultipleEnrollment}.[MembershipLeft] <> 1 and {MultipleEnrollment}.[StateAidCategoryRight] = '46')
+	and ({MultipleEnrollment}.[MembershipRight] <> 1 and {MultipleEnrollment}.[StateAidCategoryLeft] = '46')
+	and {MultipleEnrollment}.[DistrictIdLeft] <> {MultipleEnrollment}.[DistrictIdRight]
+	and {MultipleEnrollment}.[StatusEndDateLeft] >= {MultipleEnrollment}.[StatusEndDateRight] then 
+	expect days since {MultipleEnrollment}.[StatusBeginDateRight] as of {MultipleEnrollment}.[StatusEndDateRight] <= 1
+	and days since {MultipleEnrollment}.[StatusBeginDateRight] as of {MultipleEnrollment}.[StatusEndDateLeft] < 2
+	else '343. A student with a State Aid Category of 27 or 28 is reported in a school with classification 41, 43 or 45 and the student has an overlapping record elsewhere.'
+
+
+rule 10.10.64841
+	when {MultipleEnrollment}.[SchoolClassificationRight] is in ['41','42','45']
+	and {MultipleEnrollment}.[StateAidCategoryRight] is in ['27','28']
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] <> 'PS'
+	and {MultipleEnrollment}.[StudentGradeLevelRight] <> 'PS'
+	and ({MultipleEnrollment}.[StateAidCategoryLeft] <> '46' and {MultipleEnrollment}.[StateAidCategoryRight] <> '46')
+	and ({MultipleEnrollment}.[StateAidCategoryLeft] <> '46' and {MultipleEnrollment}.[StateAidCategoryRight] is not in ['43','44'])
+	and ({MultipleEnrollment}.[StateAidCategoryRight] <> '46' and {MultipleEnrollment}.[StateAidCategoryLeft] is not in ['43','44']) 
+	and ({MultipleEnrollment}.[MembershipLeft] <> 1 and {MultipleEnrollment}.[StateAidCategoryRight] = '46')
+	and ({MultipleEnrollment}.[MembershipRight] <> 1 and {MultipleEnrollment}.[StateAidCategoryLeft] = '46')
+	and {MultipleEnrollment}.[DistrictIdLeft] <> {MultipleEnrollment}.[DistrictIdRight]
+	and {MultipleEnrollment}.[StatusEndDateLeft] < {MultipleEnrollment}.[StatusEndDateRight] then 
+	expect days since {MultipleEnrollment}.[StatusBeginDateRight] as of {MultipleEnrollment}.[StatusEndDateLeft] <= 1
+	and days since {MultipleEnrollment}.[StatusBeginDateRight] as of {MultipleEnrollment}.[StatusEndDateLeft] < 2
+	else '343. A student with a State Aid Category of 27 or 28 is reported in a school with classification 41, 43 or 45 and the student has an overlapping record elsewhere.'
+
+
+rule 10.10.64842
+	when {MultipleEnrollment}.[SchoolClassificationRight] is in ['41','42','45']
+	and {MultipleEnrollment}.[StateAidCategoryRight] is in ['27','28']
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] <> 'PS'
+	and {MultipleEnrollment}.[StudentGradeLevelRight] <> 'PS'
+	and ({MultipleEnrollment}.[StateAidCategoryLeft] <> '46' and {MultipleEnrollment}.[StateAidCategoryRight] <> '46')
+	and ({MultipleEnrollment}.[StateAidCategoryLeft] <> '46' and {MultipleEnrollment}.[StateAidCategoryRight] is not in ['43','44'])
+	and ({MultipleEnrollment}.[StateAidCategoryRight] <> '46' and {MultipleEnrollment}.[StateAidCategoryLeft] is not in ['43','44']) 
+	and ({MultipleEnrollment}.[MembershipLeft] <> 1 and {MultipleEnrollment}.[StateAidCategoryRight] = '46')
+	and ({MultipleEnrollment}.[MembershipRight] <> 1 and {MultipleEnrollment}.[StateAidCategoryLeft] = '46')
+	and {MultipleEnrollment}.[DistrictIdLeft] <> {MultipleEnrollment}.[DistrictIdRight]
+	and {MultipleEnrollment}.[StatusEndDateLeft] >= {MultipleEnrollment}.[StatusEndDateRight] then 
+	expect days since {MultipleEnrollment}.[StatusBeginDateRight] as of {MultipleEnrollment}.[StatusEndDateRight] <= 1
+	and days since {MultipleEnrollment}.[StatusBeginDateRight] as of {MultipleEnrollment}.[StatusEndDateLeft] < 2
+	else '343. A student with a State Aid Category of 27 or 28 is reported in a school with classification 41, 43 or 45 and the student has an overlapping record elsewhere.'
+	
+	
+rule 10.10.6385 
+	when {MultipleEnrollment}.[SchoolClassificationLeft] = '45'
+	and {MultipleEnrollment}.[PercentEnrolledRight] < 100
+	and {MultipleEnrollment}.[SchoolClassificationRight] is not in ['41','42','45']
+	and {MultipleEnrollment}.[StateAidCategoryLeft] <> '46'
+	and {MultipleEnrollment}.[StateAidCategoryRight] <> '46'
+	and {MultipleEnrollment}.[StudentGradeLevelRight] is not in ['PS','HK']
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] <> 'PS'
+	and count({MultipleEnrollment} when {MultipleEnrollment}.[SchoolClassificationRight] is in ['41','42']) = 0
+	and count({MultipleEnrollment} when {MultipleEnrollment}.[SchoolClassificationLeft] is in ['41','42']) = 0 
+	require {MultipleEnrollment}.[DualEnrolledIndicator] <> 1
+	else '93. To be dual enrolled, a student must be 100% enrolled at the traditional school and 999% enrolled at the public alternative program. To be concurrently enrolled, a student must be less than 100% enrolled at the traditional school and 998% enrolled at the public alternative program. Refer to Procedure 8.'
