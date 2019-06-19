@@ -197,7 +197,11 @@ rule 10.10.6180
 	else '132. The student\'s birthdate as well as the student\'s gender must match on all records within the district.'
 	
 rule 10.10.6241
+<<<<<<< HEAD
+	when {StudentDemographic}.[EnglishLearnerServed] = 'Yes' then
+=======
 	when {StudentDemographic}.[EnglishLearner] = 1 then
+>>>>>>> develop-MN-v31
 	require that {StudentDemographic}.[HomePrimaryLanguage] is not in ['11','42']
 	else '48. A student who has been identified by a Home Language of English (011) or American Sign Language (042) cannot be identified as an English Learner.  Also check the student\'s Home Language.'
 	
