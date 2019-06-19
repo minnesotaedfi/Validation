@@ -48,6 +48,7 @@ namespace ValidationWeb.Services.Implementations
             using (var validationPortalContext = ValidationPortalDataContextFactory.Create())
             {
                 return validationPortalContext.DynamicReportDefinitions
+                    .Include(x => x.RulesView)
                     .Include(x => x.Fields)
                     .Include(x => x.Fields.Select(y => y.Field))
                     .Include(x => x.SchoolYear)
@@ -58,8 +59,11 @@ namespace ValidationWeb.Services.Implementations
         public IList<dynamic> GetReportData(DynamicReportRequest request)
         {
             var reportDefinition = GetReportDefinition(request.ReportDefinitionId);
+            
+            // todo: implement user ordering, this at least mimics the admin definition screen 
             var selectedFields = reportDefinition.Fields
                 .Where(x => request.SelectedFields.Contains(x.Id.ToString()))
+                .OrderBy(x => x.Field.Id)
                 .ToList();
 
             var viewName = $"[{reportDefinition.RulesView.Schema}].[{reportDefinition.RulesView.Name}]";

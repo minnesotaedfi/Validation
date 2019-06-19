@@ -1,8 +1,9 @@
 ﻿using System.IO;
-using Newtonsoft.Json;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
+
+using Newtonsoft.Json;
 using ValidationWeb.Models;
 using ValidationWeb.Services.Interfaces;
 using ValidationWeb.Utility;
@@ -74,5 +75,11 @@ namespace ValidationWeb.Controllers
             return new FileStreamResult(memoryStream, "text/csv");
         }
 
+        public ActionResult RefreshRulesViews(int schoolYearId)
+        {
+            DynamicReportingService.DeleteViewsAndRulesForSchoolYear(schoolYearId);
+            DynamicReportingService.UpdateViewsAndRulesForSchoolYear(schoolYearId);
+            return new HttpStatusCodeResult(HttpStatusCode.OK);
+        }
     }
 }

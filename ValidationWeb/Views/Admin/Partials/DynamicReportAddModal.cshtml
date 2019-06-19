@@ -9,8 +9,7 @@
         <div class="modal-body">
             <div class="row form-group">
                 <div class="col-md-8 offset-2">
-                    @using (Html.BeginForm())
-                    {
+                    <form id="newReportForm">
                         <div class="row" id="report-validation-summary-row">
                             @Html.ValidationSummary(false, "Errors:", new
                             {
@@ -58,11 +57,11 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="modal-footer">
                             <button type="submit" id="save-new-report" class="btn prime-blue white-heavy-text">Save Report</button>
                         </div>
-                    }
+                    </form>
                 </div>
             </div>
         </div>

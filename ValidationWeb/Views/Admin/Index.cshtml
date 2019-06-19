@@ -238,10 +238,9 @@
 
             $('#reportModal').on('shown.bs.modal',
                 function() {
-                    debugger;
                     updateRulesViews($('#edit-dynamic-reports-schoolYearId').val());
                     setModalHeaderText("report", ModelNameToDisplay["report"]);
-                    $("#save-new-report").click({ modalName: "DynamicReport" }, saveDynamicReport);
+                    $("#newReportForm").on('submit', saveDynamicReport);
                 });
 
             $('#submissioncycleModal').on('shown.bs.modal',
@@ -379,12 +378,13 @@
         }
 
         function saveDynamicReport() {
+            debugger;
             var rulesViewId = $('#rulesViewSelect').val();
             var reportTitle = $('#report-name').val();
             var reportDescription = $('#report-description').val();
             var reportTable = $('#rulesTable-' + rulesViewId).dataTable();
             var schoolYearId = $('#edit-dynamic-reports-schoolYearId').val();
-            debugger;
+            
             var dynamicReportDefinition = {
                 name: reportTitle,
                 description: reportDescription,
@@ -478,7 +478,6 @@
         }
 
         function CreateAddDynamicReportModal(event) {
-            debugger;
             var modalNameRaw = event.data.modalName;
             var modalAddRoute = event.data.modalAddRoute;
 

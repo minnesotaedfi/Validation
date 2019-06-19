@@ -67,48 +67,49 @@ namespace ValidationWeb.Services.Implementations
             ValidationReportSummary newReportSummary;
             using (var odsRawDbContext = OdsDbContextFactory.CreateWithParameter(fourDigitOdsDbYear))
             {
-                using (var validationDbContext = DbContextFactory.Create())
+                LoggingService.LogDebugMessage(
+                    $"Connecting to the Ed Fi ODS {fourDigitOdsDbYear} to run the Rules Engine. Submitting the RulesValidation run ID.");
+
+                // Add a new execution of the Validation Engine to the ODS database, (required by the Engine) and get an ID back representing this execution.
+                var newRuleValidationExecution = new RuleValidation { CollectionId = collectionId };
+                odsRawDbContext.RuleValidations.Add(newRuleValidationExecution);
+                odsRawDbContext.SaveChanges();
+
+                LoggingService.LogDebugMessage(
+                    $"Successfully submitted RuleValidationId {newRuleValidationExecution.RuleValidationId.ToString()} to the Rules Engine database table.");
+
+                // Add a new execution of the Validation Engine to the Validation database, (required by the Portal) and get an ID back representing this execution.
+
+                /* todo: using this (Id, SchoolYearId) as a PK - this isn't reliable because it comes from the ods's id. 
+                    we can stomp other execution runs from other districts etc. the ID is the identity column in another database. 
+                    it doesn't know about what we're doing ... change the ID to the ods's execution id and set up our own identity column
+                    that's independent (and change all references to this "id" 
+                */
+
+                newReportSummary = new ValidationReportSummary
                 {
-                    LoggingService.LogDebugMessage(
-                        $"Connecting to the Ed Fi ODS {fourDigitOdsDbYear} to run the Rules Engine. Submitting the RulesValidation run ID.");
+                    Collection = collectionId,
+                    CompletedWhen = null,
+                    ErrorCount = null,
+                    WarningCount = null,
+                    TotalCount = 0,
+                    RuleValidationId = newRuleValidationExecution.RuleValidationId,
+                    EdOrgId = AppUserService.GetSession().FocusedEdOrgId,
+                    SchoolYearId = schoolYear.Id,
+                    InitiatedBy = AppUserService.GetUser().FullName,
+                    RequestedWhen = DateTime.UtcNow,
+                    Status = "In Progress - Starting"
+                };
 
-                    // Add a new execution of the Validation Engine to the ODS database, (required by the Engine) and get an ID back representing this execution.
-                    var newRuleValidationExecution = new RuleValidation { CollectionId = collectionId };
-                    odsRawDbContext.RuleValidations.Add(newRuleValidationExecution);
-                    odsRawDbContext.SaveChanges();
+                LoggingService.LogDebugMessage(
+                    $"Successfully submitted Validation Report Summary ID {newReportSummary.ValidationReportSummaryId} " +
+                    $"to the Validation Portal database for Rules Validation Run {newRuleValidationExecution.RuleValidationId.ToString()}.");
+            }
 
-                    LoggingService.LogDebugMessage(
-                        $"Successfully submitted RuleValidationId {newRuleValidationExecution.RuleValidationId.ToString()} to the Rules Engine database table.");
-
-                    // Add a new execution of the Validation Engine to the Validation database, (required by the Portal) and get an ID back representing this execution.
-
-                    /* todo: using this (Id, SchoolYearId) as a PK - this isn't reliable because it comes from the ods's id. 
-                        we can stomp other execution runs from other districts etc. the ID is the identity column in another database. 
-                        it doesn't know about what we're doing ... change the ID to the ods's execution id and set up our own identity column
-                        that's independent (and change all references to this "id" 
-                    */
-
-                    newReportSummary = new ValidationReportSummary
-                    {
-                        Collection = collectionId,
-                        CompletedWhen = null,
-                        ErrorCount = null,
-                        WarningCount = null,
-                        TotalCount = 0,
-                        RuleValidationId = newRuleValidationExecution.RuleValidationId,
-                        EdOrgId = AppUserService.GetSession().FocusedEdOrgId,
-                        SchoolYearId = schoolYear.Id,
-                        InitiatedBy = AppUserService.GetUser().FullName,
-                        RequestedWhen = DateTime.UtcNow,
-                        Status = "In Progress - Starting"
-                    };
-
-                    validationDbContext.ValidationReportSummaries.Add(newReportSummary);
-                    validationDbContext.SaveChanges();
-                    LoggingService.LogDebugMessage(
-                        $"Successfully submitted Validation Report Summary ID {newReportSummary.ValidationReportSummaryId} " +
-                        $"to the Validation Portal database for Rules Validation Run {newRuleValidationExecution.RuleValidationId.ToString()}.");
-                }
+            using (var validationDbContext = DbContextFactory.Create())
+            {
+                validationDbContext.ValidationReportSummaries.Add(newReportSummary);
+                validationDbContext.SaveChanges();
             }
 
             return newReportSummary;
