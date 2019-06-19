@@ -1,7 +1,7 @@
 ruleset StudentEnrollment
 
 rule 10.10.6142 
-	require {StudentEnrollment}.[DistrictType] is in ['1','2','3','5','6','7','8','34','35','50','51','52','53','60','61','62','70','83']
+	require that {StudentEnrollment}.[DistrictType] is in ['1','2','3','5','6','7','8','34','35','50','51','52','53','60','61','62','70','83']
 	else '6. The field given contains an invalid value as defined in the MARSS Manual. Note: Fields are edited only if they are required in that reporting cycle (fall or end-of-year).'
 
 rule 10.10.6211 
@@ -34,22 +34,25 @@ rule 10.10.6215
 	require {StudentEnrollment}.[StatusBeginDate] > first Monday in September
 	else '64. Status Start Date cannot be before the state-wide start date (specified by statute) for regular schools for students in grades K-12.  (This edit excludes students enrolled in Area Learning Centers and other state-approved alternative program sites, summer graduates, summer dropouts and other summer leavers, SAC 46 (ESY) students, and early childhood and kindergarten disabled students.'
 
+/*
 rule 10.10.6216
 	when {StudentEnrollment}.[DistrictType] is in ['7','34','70']
 	and {StudentEnrollment}.[StateAidCategory] <> '98' then
 	require {StudentEnrollment}.[StatusBeginDate] >= 1-July
 	else '29. By statute the school year for early childhood special education and kindergarten disabled students may start July 1 and continue through June 30.  However, any membership that occurs before July 1 is part of the prior school year. Schools with classifications of 02 and District Types 07 and 34 are also held to this start date.'
-
+*/
+/*
 rule 10.10.6217
 	when {StudentEnrollment}.[StateAidCategory] <> '98' then
 	require {StudentEnrollment}.[StatusBeginDate] >= 1-July
 	else '29. By statute the school year for early childhood special education and kindergarten disabled students may start July 1 and continue through June 30.  However, any membership that occurs before July 1 is part of the prior school year. Schools with classifications of 02 and District Types 07 and 34 are also held to this start date.'
-
+*/
+/*
 rule 10.10.6218
 	when {StudentEnrollment}.[StateAidCategory] <> '98' then
 	require {StudentEnrollment}.[StatusBeginDate] >= 1-June
 	else '80. For Area Learning Center (ALC) and Learning Year Program Site (LYPS) students only:  Status Start Date must be within the school year.  The school year for ALC\'s and other state-approved alternative programs may start in June after the end of the just prior school year, usually early to mid-June, and running for the following 12 months, generally ending early the following June.  This error occurs when the student\'s Status Start Date is prior to June 1.  For example, an ALC student\'s Status Start Date cannot be before June 1, 2018 for FY 2019.'
-
+*/
 rule 10.10.6221
 	when {StudentEnrollment}.[StudentGradeLevel] = 'HK' then
 	require that {StudentEnrollment}.[SpecialEducationEvaluationStatus] exists and {StudentEnrollment}.[SpecialEducationEvaluationStatus] is in ['4','6','9']
@@ -252,7 +255,7 @@ rule 10.10.6564
 	when {StudentEnrollment}.[SchoolNumber] <> '005'
 	and {StudentEnrollment}.[StudentGradeLevel] is not in ['KA','KB','KC','KD','KE','KF','KG','KI','KJ','KK','KL','KM','KN','KO','KP','KQ','KR','KS','KT','KU','KV','KW','KX','KY','KZ','PA','PB','PC','PD','PE','PF','PG','PH','PI','PJ','RA','RB','RC','RD','RE','RF','RG','RH','RI','RJ']
 	and count({StudentDemographic} when {StudentDemographic}.[Gender] is in ['Male', 'Female'] ) > 0 then
-	expect count({StudentDemographic} when {StudentDemographic}.[SpecialEducationEvaluationStatus] in ['4', '6', '9']) > 0 
+	expect count({StudentDemographic} when {StudentDemographic}.[SpecialEducationEvaluationStatus] is in ['4', '6', '9']) > 0 
 	else '171. This message warns that no students were reported with Special Education Evaluation Status = 4, 6 or 9.  Verify that no students were served in Special Education.'
 
 rule 30.10.6539
@@ -302,17 +305,16 @@ rule 10.10.65102
 	when {StudentEnrollment}.[EnrollmentSequence] = '1'
 	and years since {StudentDemographic}.[BirthDate] as of {StudentEnrollment}.[StatusBeginDate] >= 21
 	and years since {StudentDemographic}.[BirthDate] as of 1-July >= 21
-	and years since {StudentDemographic}.[BirthDate] as of 1 year before 30-June >= 21
+	and years since {StudentDemographic}.[BirthDate] as of 30-June >= 22
 	and {StudentEnrollment}.[SpecialEducationEvaluationStatus] is in ['4','6', '9'] then
 	require {StudentEnrollment}.[StateAidCategory] = '98'
 	else '128. Special education students who turn age 21 prior to July 1 are ineligible to generate general education revenue.  Also check the student\'s birthdate. Under limited conditions, records with State Aid Category 98 (summer leavers) may exceed this age restriction.'
-
 
 rule 10.10.65112
 	when {StudentEnrollment}.[EnrollmentSequence] = '1'
 	and years since {StudentDemographic}.[BirthDate] as of {StudentEnrollment}.[StatusBeginDate] >= 21
 	and years since {StudentDemographic}.[BirthDate] as of 1-July >= 21
-	and years since {StudentDemographic}.[BirthDate] as of 1 year before 30-June >= 21
+	and years since {StudentDemographic}.[BirthDate] as of 30-June >= 22
 	and {StudentEnrollment}.[SpecialEducationEvaluationStatus] is in ['4','6', '9'] 
 	and {StudentEnrollment}.[StateAidCategory] = '98' then
 	require years since {StudentDemographic}.[BirthDate] as of {StudentEnrollment}.[StatusBeginDate] <= 29
@@ -413,7 +415,7 @@ rule 10.10.6199
 	when {StudentEnrollment}.[StateAidCategory] = '07'
 	or {StudentEnrollment}.[StateAidCategory] = '14' then
 	require that {StudentEnrollment}.[DistrictType] is in ['01','02','03','06','62']
-	else '92. State Aid Categories 14 (resident student enrolled in an out-of-state school via care and treatment or an IEP) and 28 (resident student enrolled in a Minnesota nonpublic school via care and treatment or an IEP) require that the reporting District Type be 1, 2, 3 or 62.  Also check the student'\s State Aid Category.'
+	else '92. State Aid Categories 14 (resident student enrolled in an out-of-state school via care and treatment or an IEP) and 28 (resident student enrolled in a Minnesota nonpublic school via care and treatment or an IEP) require that the reporting District Type be 1, 2, 3 or 62.  Also check the student\'s State Aid Category.'
 
 rule 10.10.6200
 	when {StudentEnrollment}.[StateAidCategory] = '26' then
@@ -434,12 +436,12 @@ rule 10.10.6203
 	when {StudentEnrollment}.[StateAidCategory] is in ['02', '24', '46', '52', '98',  '15','18'] then
 	require that {StudentEnrollment}.[PSEOProgramIndicator] <> '1'
 	else '97. Students who are not residents of Minnesota (State Aid Category SAC 15); shared time students who is a resident of other than Minnesota (SAC 18); who are foreign exchange students (SAC 02); who are enrolled in an extended school year special education program (SAC 46); who are enrolled in South Dakota under reciprocity (SAC 52); or who are summer graduates or summer leavers (SAC 98) are ineligible to participate in the postsecondary enrollment options (PSEO) program during this enrollment period.  Also check the student\'s State Aid Category.'
-
+/*
 rule 10.10.6203
 	when {StudentEnrollment}.[StateAidCategory] is in ['02', '24', '46', '52', '98',  '15','18'] then
 	require that {StudentEnrollment}.[PSEOProgramIndicator] <> '1'
 	else '97. Students who are not residents of Minnesota (State Aid Category SAC 15); shared time students who is a resident of other than Minnesota (SAC 18); who are foreign exchange students (SAC 02); who are enrolled in an extended school year special education program (SAC 46); who are enrolled in South Dakota under reciprocity (SAC 52); or who are summer graduates or summer leavers (SAC 98) are ineligible to participate in the postsecondary enrollment options (PSEO) program during this enrollment period.  Also check the student\'s State Aid Category.'
-
+	*/
 rule 10.10.6204
 	when {StudentEnrollment}.[StateAidCategory] = '04' then
 	require that {StudentEnrollment}.[StudentGradelevel] is in ['11', '12']
@@ -458,20 +460,20 @@ rule 10.10.6206
 rule 10.10.62071
 	when {StudentEnrollment}.[StateAidCategory] = '15' then
 	require that {StudentEnrollment}.[StudentResidentDistrictNumber] = '9998'
-	else '35. State Aid Category 15 (resident of other than Minnesota) requires that the Resident District Number be 9998 and the Resident District Type be 98.    Also check the student'\s Resident District Number/Type.  Additionally, Resident District Number 9998 may only be reported on students with State Aid Categories of 15, 18, or 41-45.'                                                                                  
+	else '35. State Aid Category 15 (resident of other than Minnesota) requires that the Resident District Number be 9998 and the Resident District Type be 98.    Also check the student\'s Resident District Number/Type.  Additionally, Resident District Number 9998 may only be reported on students with State Aid Categories of 15, 18, or 41-45.'                                                                                  
 
 rule 10.10.62072
 	when {StudentEnrollment}.[StudentResidentDistrictNumber] = '9998' then
 	require that {StudentEnrollment}.[StateAidCategory] is in ['98','15','18','46','41','42','43','44','45']
-	else '35. State Aid Category 15 (resident of other than Minnesota) requires that the Resident District Number be 9998 and the Resident District Type be 98.    Also check the student'\s Resident District Number/Type.  Additionally, Resident District Number 9998 may only be reported on students with State Aid Categories of 15, 18, or 41-45.'                                                                                  
+	else '35. State Aid Category 15 (resident of other than Minnesota) requires that the Resident District Number be 9998 and the Resident District Type be 98.    Also check the student\'s Resident District Number/Type.  Additionally, Resident District Number 9998 may only be reported on students with State Aid Categories of 15, 18, or 41-45.'                                                                                  
 
 rule 10.10.6209
-	when {StudentEnrollment}.PercentEnrolled >= 101
-	and {StudentEnrollment}.PercentEnrolled <= 998
+	when {StudentEnrollment}.[PercentEnrolled] >= 101
+	and {StudentEnrollment}.[PercentEnrolled] <= 998
 	and {StudentEnrollment}.[StudentGradelevel] is not in ['PS','HK']
 	and {StudentEnrollment}.[StateAidCategory] is not in ['46', '98'] then
 	require that {StudentEnrollment}.[SchoolClassification] is in ['41','42','43','44','45']
-	else '6. The field given contains an invalid value as defined in the MARSS Manual.  Note:  Fields are edited only if they are required in that reporting cycle (fall or end-of-year).'                                                                                  
+	else '6. The field given contains an invalid value as defined in the MARSS Manual.  Note:  Fields are edited only if they are required in that reporting cycle (fall or end-of-year).'
 
 /*****GAP HERE*****/
 rule 10.10.6219
@@ -614,11 +616,11 @@ rule 10.10.6337
 
 rule 10.10.6364
 	when {StudentEnrollment}.[StateAidCategory] is in ['01','04','05','11','12','20'] then
-	require that {StudentEnrollment}.[DistrictType] is in ['01','02','03','07','08','62','34]
+	require that {StudentEnrollment}.[DistrictType] is in ['01','02','03','07','08','62','34']
 	else '16. State Aid Categories 1, 4, 5, 11, 12, 13, 20 and 21 require that the serving District Type be 1, 2, 3, 7 or 62.  Also check serving District Number/Type.'
 
 rule 10.10.6383
-	when {StudentEnrollment}.HomeboundServiceIndicator = 'true' 
+	when {StudentEnrollment}.[HomeboundServiceIndicator] = 'true' 
 	and {StudentEnrollment}.[StateAidCategory] <> '46'
 	and {StudentEnrollment}.[StudentGradeLevel] <> 'PS' then
 	require that {StudentEnrollment}.[IndependentStudyIndicator] <> 1
@@ -655,7 +657,7 @@ rule 10.10.6475
 
 rule 10.10.6490
 	when {StudentEnrollment}.[DistrictType]= '08' then
-	require that {StudentEnrollment}.[StateAidCategory] in ['01', '02', '15', '16', '17', '18', '46', '98']
+	require that {StudentEnrollment}.[StateAidCategory] is in ['01', '02', '15', '16', '17', '18', '46', '98']
 	else '380. District type 08 can only report state aid categories 01, 02, 15, 16, 17, 18, 46, 98.'
 
  rule 10.10.6576
@@ -756,9 +758,9 @@ rule 30.10.6384
 	when collection is EOY_Enrollment_And_Demographic
 	and {StudentEnrollment}.[SpecialEducationEvaluationStatus] is in ['4','6','9']
 	and years since {StudentDemographic}.[BirthDate] as of {StudentEnrollment}.[StatusEndDate] > 6
-	and years since {StudentDemographic}.[BirthDate] as of first Monday in Dec = 6 then
+	and years since {StudentDemographic}.[BirthDate] as of first Monday in December = 6 then
 	require that {StudentEnrollment}.[PrimaryDisability] <> '12'
-	else '106. The student\'s assigned Primary Disability is not appropriate for the student\'s age computed as of December 1.  Students age 7 or older may not be assigned Primary Disability 12 (Developmental Delay).  In order to be included on the December 1 Child Count the Primary Disability must be changed to reflect the determination of the child\'s IEP team.  The team may determine that this child is no longer a child with a disability, in which case a new enrollment record must be created prior to the child\'s birthdate.
+	else '106. The student\'s assigned Primary Disability is not appropriate for the student\'s age computed as of December 1.  Students age 7 or older may not be assigned Primary Disability 12 (Developmental Delay).  In order to be included on the December 1 Child Count the Primary Disability must be changed to reflect the determination of the child\'s IEP team.  The team may determine that this child is no longer a child with a disability, in which case a new enrollment record must be created prior to the child\'s birthdate.'
 
 rule 30.10.6452
 	when collection is EOY_Enrollment_And_Demographic
@@ -786,11 +788,11 @@ rule 30.10.6522
 
 rule 10.10.6223
 	when {StudentEnrollment}.[SpecialEducationEvaluationStatus] is in ['4','5','6','9'] then
-	expect that ({StudentEnrollment}.[PrimaryDisability] = '01' and years since {StudentDemographic}.[BirthDate] as of first Monday in Dec >= 1)
-	or ({StudentEnrollment}.[PrimaryDisability] is in ['02','03','08'] and years since {StudentDemographic}.[BirthDate] as of first Monday in Dec >= 3)
-	or ({StudentEnrollment}.[PrimaryDisability] = '07' and years since {StudentDemographic}.[BirthDate] as of first Monday in Dec >= 4)
-	or ({StudentEnrollment}.[PrimaryDisability] = '11' and years since {StudentDemographic}.[BirthDate] as of first Monday in Dec >= 2)   
-	else '207. This warning occurs with the student\'s Primary Disability = 01 (Speech) and the student's age as of September 1 is less than 1. Additional warnings are created for:   Students less than 3 years of age with Primary Disabilities 02, 03, or 08 (MMI, MSI, EBD);    Students less than 4 years of age with Primary disability 7 (LD);   Students less than 2 year old with Primary Disability 11 (autistic).   Check the student's Primary Disability or the student\'s Birth Date.'
+	expect that ({StudentEnrollment}.[PrimaryDisability] = '01' and years since {StudentDemographic}.[BirthDate] as of first Monday in December >= 1)
+	or ({StudentEnrollment}.[PrimaryDisability] is in ['02','03','08'] and years since {StudentDemographic}.[BirthDate] as of first Monday in December >= 3)
+	or ({StudentEnrollment}.[PrimaryDisability] = '07' and years since {StudentDemographic}.[BirthDate] as of first Monday in December >= 4)
+	or ({StudentEnrollment}.[PrimaryDisability] = '11' and years since {StudentDemographic}.[BirthDate] as of first Monday in December >= 2)   
+	else '207. This warning occurs with the student\'s Primary Disability = 01 (Speech) and the student\'s age as of September 1 is less than 1. Additional warnings are created for:   Students less than 3 years of age with Primary Disabilities 02, 03, or 08 (MMI, MSI, EBD);    Students less than 4 years of age with Primary disability 7 (LD);   Students less than 2 year old with Primary Disability 11 (autistic).   Check the student\'s Primary Disability or the student\'s Birth Date.'
 
 rule 10.10.6230
 	when {StudentEnrollment}.[StudentGradeLevel] = 'EC'
@@ -889,7 +891,7 @@ rule 10.10.6415
 	else '304. Status end codes 60-66 only valid for records with SAC 41-45.'
 
 rule 10.10.6416
-	when {StudentEnrollment}.[StatusEnd] is in [28','29','30'] then
+	when {StudentEnrollment}.[StatusEnd] is in ['28','29','30'] then
 	require that {StudentEnrollment}.[InstructionalSetting] is in ['11','12','13','14','15','16','17']
 	else '305. Status end codes 28-30 only valid with grade level EC and instructional setting equals 11-17.'	
 
@@ -925,7 +927,8 @@ rule 10.10.6443
 
 rule 10.10.6445
 	when {StudentEnrollment}.[StudentGradeLevel] is in ['PA','PB','PC','PD','PE','PF','PG','PH','PI','PJ','RA','RB','RC','RD','RE','RF','RG','RH','RI','RJ']
-	and years since {StudentDemographic}.[BirthDate] as of 1-September is in [3, 5]
+	and years since {StudentDemograhic}.[BirthDate] as of 1-September >= 3
+	and years since {StudentDemograhic}.[BirthDate] as of 1-September <= 5
 	and {StudentEnrollment}.[StudentGradeLevel] <> 'PS' then
 	require that {StudentEnrollment}.[StateAidCategory] is in ['20','21','29']
 	or ({StudentEnrollment}.[StateAidCategory] = '15' and {StudentEnrollment}.[StudentResidentDistrictNumber] = '9998')
@@ -949,7 +952,7 @@ rule 10.10.6458
 	
 rule 10.10.6459
 	when {StudentEnrollment}.[TransportationCategory] = '07' then
-	require that {StudentEnrollment}.HomelessStudentFlag <> '1'
+	require that {StudentEnrollment}.[HomelessStudentFlag] <> '1'
 	else '415. Transportation category 07 is invalid if the homeless = Y or primary disability = 54.'
 	
 rule 10.10.6460
@@ -1042,6 +1045,7 @@ rule 20.10.6234
 	expect that {StudentEnrollment}.[PercentEnrolled] = '999'
 	else '155. Students reported in grade EC (early childhood) must always have a Percent Enrolled of 999 and attendance and membership reported in terms of hours.  This applies whether the child received assessment services only (Special Education Evaluation Status = ) or the student had an IEP/IFSP (Special Education Evaluation Status = 4 or 6).'
 
+/*
 rule 20.10.6247
 	when collection is Fall_Enrollment_And_Demographic
 	and {StudentEnrollment}.[SpecialEducationEvaluationStatus] is in ['4','6','9']
@@ -1052,7 +1056,8 @@ rule 20.10.6247
 			and (years since {StudentDemographic}.[BirthDate] as of {StudentEnrollment}.[StatusEndDate]
 					or years since {StudentDemographic}.[BirthDate] as of 30-June) <= 5 
 	else '262. Instructional Setting must correspond to the student\'s age based on the status start and end dates.  Students less than 3 years old must have a Instructional Setting of 11-17.    Students age 3 through 5 must have a Instructional Setting of 30-45.   Students age 6 and older must have a Instructional Setting of 01-08.   Check the student\'s Birth Date in relation to the status being and end dates.'
-	
+*/
+
 rule 20.10.6334
 	when collection is Fall_Enrollment_And_Demographic
 	and {StudentEnrollment}.[TransportationCategory] = '06'
@@ -1061,7 +1066,7 @@ rule 20.10.6334
 	expect that {StudentEnrollment}.[StateAidCategory] is in ['27','28','77']
 	or {StudentEnrollment}.[HomelessStudentFlag] = 1
 	or {StudentEnrollment}.[PrimaryDisability] = '54'
-	else '377. Students reported with Transportation Category 6 must meet at least one of the following:  - Have a 504 Plan, Primary Disability = 54; or  - Be placed for care and treatment, State Aid Category 27 or 28; or  - Be flagged as homeless.  The student may or may not have an IEP. If the student has an IEP and the IEP placed the student for special education services outside the student/'s normal school attendance boundaries, report Transportation Category 3.'
+	else '377. Students reported with Transportation Category 6 must meet at least one of the following:  - Have a 504 Plan, Primary Disability = 54; or  - Be placed for care and treatment, State Aid Category 27 or 28; or  - Be flagged as homeless.  The student may or may not have an IEP. If the student has an IEP and the IEP placed the student for special education services outside the student\'s normal school attendance boundaries, report Transportation Category 3.'
 
 rule 20.10.6520
 	when collection is Fall_Enrollment_And_Demographic
@@ -1090,10 +1095,10 @@ rule 20.10.6636
 	when collection is Fall_Enrollment_And_Demographic
 	and {StudentEnrollment}.[SpecialEducationEvaluationStatus] is in ['4','6','9']
 	and {StudentEnrollment}.[InstructionalSetting] is in ['01','02','03','04','05','06','07','08']
-	and {StudentEnrollment}.[StatusBeginDate] <= first Monday in Dec
-	and ({StudentEnrollment}.[StatusEndDate] >= first Monday in Dec or {StudentEnrollment}.[StatusEndDate] does not exist)
+	and {StudentEnrollment}.[StatusBeginDate] <= first Monday in December
+	and ({StudentEnrollment}.[StatusEndDate] >= first Monday in December or {StudentEnrollment}.[StatusEndDate] does not exist)
 	and {StudentEnrollment}.[StudentGradeLevel] <> 'PS' then
-	require that years since {StudentDemographic}.[BirthDate] as of first Monday in Dec >= 6
+	require that years since {StudentDemographic}.[BirthDate] as of first Monday in December >= 6
 	else '206. Primary Disability Instructional Setting must correspond to the student\'s age based on the status start and end dates.  Students less than 3 years old must have a Primary Disability Instructional Setting of 11-17.    Students age 3 through 5 must have a Primary Disability Instructional Setting of 30-45.   Students age 6 and older must have a Primary Disability Instructional Setting of 01-08.   Check the student\'s Birth Date in relation to the status being and end dates.'
 
 rule 30.10.6235
@@ -1122,6 +1127,7 @@ rule 30.10.6354
 	require that years since {StudentDemographic}.[BirthDate] as of {StudentEnrollment}.[StatusEndDate] >= 6
 	else '206. Primary Disability Instructional Setting must correspond to the student\'s age based on the status start and end dates.  Students less than 3 years old must have a Primary Disability Instructional Setting of 11-17.    Students age 3 through 5 must have a Primary Disability Instructional Setting of 30-45.   Students age 6 and older must have a Primary Disability Instructional Setting of 01-08.   Check the student\'s Birth Date in relation to the status being and end dates.'
 
+	/*
 rule 30.10.6454
 	when collection is EOY_Enrollment_And_Demographic
 	and {StudentEnrollment}.[StudentGradeLevel] <> 'EC'
@@ -1130,6 +1136,7 @@ rule 30.10.6454
 	and {StudentEnrollment}.[Membership] <> 0 then
 	require that {StudentEnrollment}.[SpecialEducationServiceHours] <= ({StudentEnrollment}.[Membership] * 3)
 	else '412. Special Education Service hours for grade EC are greater than 3 times the membership hours.  Service hours are excessive for this record.'
+	*/
 
 rule 30.10.6597
 	when collection is EOY_Enrollment_And_Demographic
@@ -1139,7 +1146,7 @@ rule 30.10.6597
 	require that years since {StudentDemographic}.[BirthDate] as of {StudentEnrollment}.[StatusBeginDate] >= 6
 	else '206. Primary Disability Instructional Setting must correspond to the student\'s age based on the status start and end dates.  Students less than 3 years old must have a Primary Disability Instructional Setting of 11-17.    Students age 3 through 5 must have a Primary Disability Instructional Setting of 30-45.   Students age 6 and older must have a Primary Disability Instructional Setting of 01-08.   Check the student\'s Birth Date in relation to the status being and end dates.'
 
-rule 30.10.6629
+rule 30.10.66291
 	when collection is EOY_Enrollment_And_Demographic
 	and {StudentEnrollment}.[DistrictType] <> '70'
 	and {StudentEnrollment}.[SchoolClassification] is not in ['45','51']
@@ -1150,7 +1157,7 @@ rule 30.10.6629
 	expect that {StudentEnrollment}.[SpecialEducationServiceHours] <= {StudentEnrollment}.[Membership]
 	else '270. Special Education Service Hours greater than membership hours.  For grades EC and HK this is possible.  Verify the special education service hours are correct.'
 
-rule 30.10.6629
+rule 30.10.66292
 	when collection is EOY_Enrollment_And_Demographic
 	and {StudentEnrollment}.[StateAidCategory] = '46'
 	and {StudentEnrollment}.[SpecialEducationEvaluationStatus] is in ['4','6','9']
@@ -1160,6 +1167,7 @@ rule 30.10.6629
 	require that {StudentEnrollment}.[SpecialEducationServiceHours] exists and {StudentEnrollment}.[SpecialEducationServiceHours] > 0
 	else '270. Special Education Service Hours must be greater than zero when SAC = 46 and must be numeric.'
 	
+	/*
 rule 10.10.6215
 	when {StudentEnrollment}.[DistrictType] is in ['1','2','3']
 	and {StudentEnrollment}.[StudentGradeLevel] is not in ['HK','EC','PS'] 
@@ -1169,7 +1177,7 @@ rule 10.10.6215
 	and {StudentEnrollment}.[SchoolNumber] is not in ['931','941'] then
 	require {StudentEnrollment}.[StatusBeginDate] > first Monday in September
 	else '64. Status Start Date cannot be before the state-wide start date (specified by statute) for regular schools for students in grades K-12.  (This edit excludes students enrolled in Area Learning Centers and other state-approved alternative program sites, summer graduates, summer dropouts and other summer leavers, SAC 46 (ESY) students, and early childhood and kindergarten disabled students.'
-	
+	*/
 	
 rule 10.10.6216
 	when {StudentEnrollment}.[SchoolClassification] is not in ['41','42','43','44','45','02']
@@ -1344,9 +1352,9 @@ rule 20.10.6352
 	and {StudentEnrollment}.[SpecialEducationEvaluationStatus] is in ['4','6','9']
 	and (
 		({StudentEnrollment}.[StatusEndDate] does not exist 
-			and years since {StudentDemographic}.[BirthDate] as of 1-Dec > 6)
+			and years since {StudentDemographic}.[BirthDate] as of 1-December > 6)
 		or ({StudentEnrollment}.[StatusEndDate] >= earliest(first Monday in December, first Tuesday in December, first Wednesday in December, first Thursday in December, first Friday in December) 
-			and years since {StudentDemographic}.[BirthDate] as of 1-Dec > 6)
+			and years since {StudentDemographic}.[BirthDate] as of 1-December > 6)
 		or ({StudentEnrollment}.[StatusEndDate] > earliest(first Monday in December, first Tuesday in December, first Wednesday in December, first Thursday in December, first Friday in December) 
 			and years since {StudentDemographic}.[BirthDate] as of {StudentEnrollment}.[StatusEndDate] > 6)
 	) then
@@ -1397,7 +1405,7 @@ rule 20.10.6637
 	and ({StudentEnrollment}.[StatusEndDate] does not exist
 		or {StudentEnrollment}.[StatusEndDate] >= earliest(first Monday in December, first Tuesday in December, first Wednesday in December, first Thursday in December, first Friday in December))
 	and {StudentEnrollment}.[StudentGradeLevel] <> 'PS'
-	and years since {StudentDemographic}.[BirthDate] as of 1-Dec > 2 then
+	and years since {StudentDemographic}.[BirthDate] as of 1-December > 2 then
 	require {StudentEnrollment}.[InstructionalSetting] is not in ['11','12','13','14','15','16','17']
 	else '206. Primary Disability Instructional Setting must correspond to the student\'s age based on the status start and end dates. Students less than 3 years old must have a Primary Disability Instructional Setting of 11-17. Students age 3 through 5 must have a Primary Disability Instructional Setting of 30-45. Students age 6 and older must have a Primary Disability Instructional Setting of 01-08. Check the student\'s Birth Date in relation to the status being and end dates.'	
 	
@@ -1409,8 +1417,8 @@ rule 20.10.6638
 	and ({StudentEnrollment}.[StatusEndDate] does not exist
 		or {StudentEnrollment}.[StatusEndDate] >= earliest(first Monday in December, first Tuesday in December, first Wednesday in December, first Thursday in December, first Friday in December))
 	and {StudentEnrollment}.[StudentGradeLevel] <> 'PS'
-	and (years since {StudentDemographic}.[BirthDate] as of 1-Dec < 3
-		or years since {StudentDemographic}.[BirthDate] as of 1-Dec > 5) then
+	and (years since {StudentDemographic}.[BirthDate] as of 1-December < 3
+		or years since {StudentDemographic}.[BirthDate] as of 1-December > 5) then
 	require {StudentEnrollment}.[InstructionalSetting] is not in ['39','30','31','32','33','34','41','42','43','44','45']
 	else '206. Primary Disability Instructional Setting must correspond to the student\'s age based on the status start and end dates. Students less than 3 years old must have a Primary Disability Instructional Setting of 11-17. Students age 3 through 5 must have a Primary Disability Instructional Setting of 30-45. Students age 6 and older must have a Primary Disability Instructional Setting of 01-08. Check the student\'s Birth Date in relation to the status being and end dates.'
 	
