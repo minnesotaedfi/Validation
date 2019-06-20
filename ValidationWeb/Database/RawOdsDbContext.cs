@@ -12,18 +12,34 @@ namespace ValidationWeb.Database
             // Fixes a known bug in which EntityFramework.SqlServer.dll is not copied into consumer even when CopyLocal is True.
             // todo: i'm unsure about that entire comment
             var includeSqlServerDLLInConsumer = System.Data.Entity.SqlServer.SqlProviderServices.Instance;
+
         }
+
+        #if DEBUG
+        public RawOdsDbContext()
+            : base(new OdsConfigurationValues().GetRawOdsConnectionString("2020"))
+        {
+        }
+        #endif
 
         // TOOD: remove ... 
         public RawOdsDbContext(string fourDigitYear)
             : base(new OdsConfigurationValues().GetRawOdsConnectionString(fourDigitYear))
         {
+#if DEBUG
+            Database.Log = x => System.Diagnostics.Debug.Write(x);
+#endif
         }
         
         // Use of connection string ensures that a new database won't be created by default.
         public RawOdsDbContext(IOdsConfigurationValues odsConfigurationValues, string fourDigitYear)
             : base(odsConfigurationValues.GetRawOdsConnectionString(fourDigitYear))
         {
+            System.Data.Entity.Database.SetInitializer(new MigrateDatabaseToLatestVersion<RawOdsDbContext, RawOdsDbMigrationConfiguration>(true));
+
+#if DEBUG
+            Database.Log = x => System.Diagnostics.Debug.Write(x);
+#endif
         }
         
         public virtual DbSet<RuleValidation> RuleValidations { get; set; }

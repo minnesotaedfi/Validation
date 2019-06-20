@@ -19,9 +19,9 @@ namespace ValidationWeb.Services.Implementations
             return string.Format(_rawOdsConnectionStringTemplate, fourDigitYear);
         }
 
-        public string GetValidatedOdsConnectionString(string fourDigitYear)
-        {
-            return string.Format(_validatedOdsConnectionStringTemplate, fourDigitYear);
-        }
+        //public string GetValidatedOdsConnectionString(string fourDigitYear)
+        //{
+        //    return string.Format(_validatedOdsConnectionStringTemplate, fourDigitYear);
+        //}
     }
 }

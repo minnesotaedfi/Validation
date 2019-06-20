@@ -947,6 +947,7 @@
     <Compile Include="Database\SchoolYearDbContextFactory.cs">
       <DependentUpon>ISchoolYearDbContextFactory.cs</DependentUpon>
     </Compile>
+    <Compile Include="Database\RawOdsDbMigrationConfiguration.cs" />
     <Compile Include="Migrations\201906121506338_ValidationRules.cs" />
     <Compile Include="Migrations\201906121506338_ValidationRules.Designer.cs">
       <DependentUpon>201906121506338_ValidationRules.cs</DependentUpon>
@@ -1001,7 +1002,6 @@
     <Compile Include="ViewModels\EnvironmentViewModel.cs" />
     <Compile Include="ViewModels\DynamicReportViewModel.cs" />
     <Compile Include="ViewModels\StudentDrillDownReportType.cs" />
-    <Compile Include="Database\ValidatedOdsDbContext.cs" />
     <Compile Include="Database\ValidationPortalDbContext.cs" />
     <Compile Include="Database\ValidationPortalDbMigrationConfiguration.cs" />
     <Compile Include="DataCache\CacheManager.cs" />

@@ -5,6 +5,8 @@ namespace ValidationWeb.Database
     
     public partial class ValidationRules : DbMigration
     {
+        // todo: disable all automatic migrations, retry manual for BOTH dbcontexts!  
+        // make a 
         public override void Up()
         {
             CreateTable(

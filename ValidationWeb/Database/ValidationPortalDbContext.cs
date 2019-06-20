@@ -15,11 +15,13 @@ namespace ValidationWeb.Database
         public ValidationPortalDbContext()
             : base("name=ValidationPortalDbContext")
         {
-            System.Data.Entity.Database.SetInitializer(new MigrateDatabaseToLatestVersion<ValidationPortalDbContext, ValidationPortalDbMigrationConfiguration>(true));
+            System.Data.Entity.Database.SetInitializer(
+                new MigrateDatabaseToLatestVersion<ValidationPortalDbContext, ValidationPortalDbMigrationConfiguration>(true));
+
             Configuration.LazyLoadingEnabled = false;
           
             #if DEBUG
-            // Database.Log = x => System.Diagnostics.Debug.Write(x);
+            Database.Log = x => System.Diagnostics.Debug.Write(x);
             #endif
         }
 

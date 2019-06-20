@@ -4,6 +4,6 @@
     {
         string GetRawOdsConnectionString(string fourDigitYear);
 
-        string GetValidatedOdsConnectionString(string fourDigitYear);
+       // string GetValidatedOdsConnectionString(string fourDigitYear);
     }
 }

@@ -13,9 +13,9 @@ namespace ValidationWeb.Database
 
         public ValidationPortalDbMigrationConfiguration()
         {
-            AutomaticMigrationsEnabled = true;
-            AutomaticMigrationDataLossAllowed = true;
-            ContextKey = "ValidationWeb.ValidationPortalDbContext";
+            AutomaticMigrationsEnabled = false;
+            AutomaticMigrationDataLossAllowed = false;
+            ContextKey = "ValidationWeb.Database.ValidationPortalDbContext";
         }
 
         public static EdOrgTypeLookup[] EdOrgTypeLookups = 
@@ -41,18 +41,7 @@ namespace ValidationWeb.Database
             new RecordsRequestTypeLookup { Id = (int)RecordsRequestType.Evaluation, CodeValue = "Evaluation", Description = "Evaluation"},
             new RecordsRequestTypeLookup { Id = (int)RecordsRequestType.Immunizations, CodeValue = "Immunizations", Description = "Immunizations"}
         };
-
-        //public static string[] RulesViewNames = new[]
-        //{
-        //    "StudentEnrollment",
-        //    "StudentDemographic",
-        //    "SSDC",
-        //    "StudentProgram",
-        //    "MultipleEnrollment",
-        //    "SchoolCalendar",
-        //    "SchoolGrade"
-        //};
-
+        
         /// <summary>
         /// Called after migration.
         /// </summary>
