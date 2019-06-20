@@ -39,6 +39,7 @@ namespace ValidationWeb.Services.Implementations
                     .Include(x => x.Fields)
                     .Include(x => x.Fields.Select(y => y.Field))
                     .Include(x => x.SchoolYear)
+                    .Include(x => x.RulesView)
                     .ToList();
             }
         }
@@ -56,6 +57,10 @@ namespace ValidationWeb.Services.Implementations
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage(
+            "Microsoft.Security", 
+            "CA2100:Review SQL queries for security vulnerabilities",
+            Justification = "Values are taken from the database schema, not user input")]
         public IList<dynamic> GetReportData(DynamicReportRequest request)
         {
             var reportDefinition = GetReportDefinition(request.ReportDefinitionId);
