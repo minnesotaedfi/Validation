@@ -8,6 +8,8 @@ namespace ValidationWeb.Database
         {
             AutomaticMigrationsEnabled = false;
             AutomaticMigrationDataLossAllowed = false;
+
+            // warning! don't refactor or "fix" this. it doesn't have to be our namespace
             ContextKey = "ValidationWeb.Database.RawOdsDbContext";
         }
     }

@@ -486,8 +486,8 @@ rule 30.10.6365
 	and {MultipleEnrollment}.[DistrictIdLeft] = {MultipleEnrollment}.[DistrictIdRight]
 	and {MultipleEnrollment}.[StateAidCategoryLeft] <> '46'
 	and {MultipleEnrollment}.[StateAidCategoryRight] <> '46'
-	and {StudentEnrollment}.[StudentGradeLevelLeft] <> 'PS'
-	and {StudentEnrollment}.[StudentGradeLevelRight] <> 'PS' then
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] <> 'PS'
+	and {MultipleEnrollment}.[StudentGradeLevelRight] <> 'PS' then
 	require count({MultipleEnrollment} by [StatusEndLeft] when {MultipleEnrollment}.[StatusEndLeft] is in ['8','11','40']) <= 1
 	else '94. This message indicates that a student was withdrawn using any of Status End codes 8 - 11 (graduate or deceased), 40 (end-of-year) and then re-enrolled in the same district.  The prior Status End code must be changed to reflect the re-enrollment.'
 	

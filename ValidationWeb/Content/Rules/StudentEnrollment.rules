@@ -251,12 +251,14 @@ rule 10.10.6563
 	expect count({StudentDemographic} when {StudentDemographic}.[HomePrimaryLanguage] <> '011') > 0 
 	else '143. This message warns that all students at the requested level (district,school,grade) are identified with a Home Language of English (011).  Verify that no students have some other Home Language.'	
 
+	/*
 rule 10.10.6564
 	when {StudentEnrollment}.[SchoolNumber] <> '005'
 	and {StudentEnrollment}.[StudentGradeLevel] is not in ['KA','KB','KC','KD','KE','KF','KG','KI','KJ','KK','KL','KM','KN','KO','KP','KQ','KR','KS','KT','KU','KV','KW','KX','KY','KZ','PA','PB','PC','PD','PE','PF','PG','PH','PI','PJ','RA','RB','RC','RD','RE','RF','RG','RH','RI','RJ']
 	and count({StudentDemographic} when {StudentDemographic}.[Gender] is in ['Male', 'Female'] ) > 0 then
 	expect count({StudentDemographic} when {StudentDemographic}.[SpecialEducationEvaluationStatus] is in ['4', '6', '9']) > 0 
 	else '171. This message warns that no students were reported with Special Education Evaluation Status = 4, 6 or 9.  Verify that no students were served in Special Education.'
+*/
 
 rule 30.10.6539
 	when collection is EOY_Enrollment_And_Demographic 
@@ -927,8 +929,8 @@ rule 10.10.6443
 
 rule 10.10.6445
 	when {StudentEnrollment}.[StudentGradeLevel] is in ['PA','PB','PC','PD','PE','PF','PG','PH','PI','PJ','RA','RB','RC','RD','RE','RF','RG','RH','RI','RJ']
-	and years since {StudentDemograhic}.[BirthDate] as of 1-September >= 3
-	and years since {StudentDemograhic}.[BirthDate] as of 1-September <= 5
+	and years since {StudentDemographic}.[BirthDate] as of 1-September >= 3
+	and years since {StudentDemographic}.[BirthDate] as of 1-September <= 5
 	and {StudentEnrollment}.[StudentGradeLevel] <> 'PS' then
 	require that {StudentEnrollment}.[StateAidCategory] is in ['20','21','29']
 	or ({StudentEnrollment}.[StateAidCategory] = '15' and {StudentEnrollment}.[StudentResidentDistrictNumber] = '9998')
@@ -1001,7 +1003,7 @@ rule 10.10.6481
 rule 10.10.6492
 	when {StudentEnrollment}.[StateAidCategory] = '02' then
 	expect that {StudentDemographic}.[EnglishLearnerServed] = '0'
-	else '382. This message indicates that a foreign exchange student (SAC 02) is reported as having been evaluated as needing EL services.   Minnesota Rules require that the participating students “have a command of the English language that enables them to participate in an English-speaking academic and community environment.”    Verify that the student has received an EL evaluation under the district\’s/charter school\’s English Learners Written Plan of Service.   If the student has not been evaluated or does not meet the criteria, update the EL status to ‘\N\’. However, if the student does meet the criteria as defined in the EL Written Plan of Service, the student can be reported as needing EL services.'
+	else '382. This message indicates that a foreign exchange student (SAC 02) is reported as having been evaluated as needing EL services.   Minnesota Rules require that the participating students "have a command of the English language that enables them to participate in an English-speaking academic and community environment."    Verify that the student has received an EL evaluation under the district\'s/charter school\’s English Learners Written Plan of Service.   If the student has not been evaluated or does not meet the criteria, update the EL status to ‘\N\’. However, if the student does meet the criteria as defined in the EL Written Plan of Service, the student can be reported as needing EL services.'
 
 rule 10.10.6494
 	when {StudentEnrollment}.[StateAidCategory] = '00' then
@@ -1251,7 +1253,7 @@ rule 10.10.6578
 	
 
 rule 10.10.6585
-	when {StudentEnrollment}.[PSEOProgramIndicator] = 'Y'
+	when {StudentEnrollment}.[PSEOProgramIndicator] = 1
 	and {StudentEnrollment}.[StateAidCategory] is not in ['16','17','46']
 	and {StudentEnrollment}.[SchoolClassification] is not in ['41','42','43','44','45']
 	and {StudentEnrollment}.[StudentGradeLevel] <> 'PS' then
@@ -1393,7 +1395,7 @@ rule 20.10.6467
 	and {StudentEnrollment}.[DistrictType] <> '70'
 	and {StudentEnrollment}.[SchoolClassification] is not in ['45','51'] 
 	and {StudentEnrollment}.[StateAidCategory] is not in ['16','17','18','14','28','34','35','52'] 
-	and {StudentEnrollment}.[StudentGradeLeve] <> 'PS' then
+	and {StudentEnrollment}.[StudentGradeLevel] <> 'PS' then
 	expect {StudentEnrollment}.[SpecialEducationServiceHours] > 2
 	else '361. The special education service hours reported are less than 2.0.'
 
@@ -1466,7 +1468,7 @@ rule 30.10.6284
 	when collection is EOY_Enrollment_And_Demographic 
 	and {StudentEnrollment}.[StudentGradeLevel] <> 'PS'
 	and {StudentEnrollment}.[StateAidCategory] <> '46' then
-	expect count({StudentEnrollment} by [DisrictId,StatusEnd] when {StudentEnrollment}.[StatusEnd] is in ['8','11','40']) <= 1
+	expect count({StudentEnrollment} by [DistrictId,StatusEnd] when {StudentEnrollment}.[StatusEnd] is in ['8','11','40']) <= 1
 	else '334. Status End codes 8 (graduate), 11 (deceased) and 40 (end of year) may be reported only once per student per year. This edit is performed at both the local and state levels.'
 
 

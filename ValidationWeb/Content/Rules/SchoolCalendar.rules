@@ -27,14 +27,14 @@ rule 10.10.63224
 rule 10.10.6329
 	when {SchoolCalendar}.[GradeLevel] is in ['KA', 'KB', 'KC', 'KD', 'KE', 'KF', 'KG', 'KI', 'KJ', 'KK']
 	and {SchoolCalendar}.[SchoolClassification] is not in ['51', '45'] 
-	and {SchoolCalendar}.[KindergratenScheduleCode] is in ['E','F','H'] then
+	and {SchoolCalendar}.[KindergartenScheduleCode] is in ['E','F','H'] then
 	require {SchoolCalendar}.[LengthOfYearInHours] >= 850
 	else '373. Full day daily Kindergarten (schedules E or H) requires at least 850 instructional hours.'
 
 rule 10.10.6493
-	when {SchoolCalendar}.[KindergratenScheduleCode] is in ['A','B','C',',G'] then
+	when {SchoolCalendar}.[KindergartenScheduleCode] is in ['A','B','C',',G'] then
 	expect {SchoolCalendar}.[LengthOfYearInHours] < 850
-	else '383. Kindergarten Schedule is used to determine the eligibility of a student\’s ADM to generate 1.0 pupil unit effective starting FY 2015. The annual instructional hours reported provide at least 850 annual instructional hours (instructional days times the length of day in terms of minutes divided by 60). However, the Kindergarten Schedule reported is either half-day, daily (A), full-day, alternate day (B) or full-day, 3-days per week. Double check Kindergarten Schedule, Instructional Days and Length of Day to determine which is in error.'	
+	else '383. Kindergarten Schedule is used to determine the eligibility of a student\'s ADM to generate 1.0 pupil unit effective starting FY 2015. The annual instructional hours reported provide at least 850 annual instructional hours (instructional days times the length of day in terms of minutes divided by 60). However, the Kindergarten Schedule reported is either half-day, daily (A), full-day, alternate day (B) or full-day, 3-days per week. Double check Kindergarten Schedule, Instructional Days and Length of Day to determine which is in error.'	
 	
 rule 10.10.6541
 	when {SchoolCalendar}.[GradeLevel] is in ['09','10','11','12']
@@ -93,7 +93,7 @@ rule 10.10.6549
 
 rule 10.10.6558
 	when {SchoolCalendar}.[GradeLevel] is in ['KA', 'KB', 'KC', 'KD', 'KE', 'KF', 'KG', 'KI', 'KJ', 'KK'] then
-	require that {SchoolCalendar}.[KindergratenScheduleCode] exists
+	require that {SchoolCalendar}.[KindergartenScheduleCode] exists
 	else '6. The field given contains an invalid value as defined in the MARSS Manual.  Note:  Fields are edited only if they are required in that reporting cycle (fall or end-of-year).'	
 	
 rule 30.10.6345
