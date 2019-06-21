@@ -1,0 +1,12 @@
+﻿<ProjectConfiguration>
+  <Settings>
+    <AdditionalFilesToIncludeForProject>
+      <Value>..\packages\**.*</Value>
+      <Value>Language\**.*</Value>
+    </AdditionalFilesToIncludeForProject>
+    <HiddenComponentWarnings />
+    <IgnoredTests>
+      <AllTestsSelector />
+    </IgnoredTests>
+  </Settings>
+</ProjectConfiguration>

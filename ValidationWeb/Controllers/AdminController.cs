@@ -15,7 +15,7 @@ using ValidationWeb.ViewModels;
 
 namespace ValidationWeb.Controllers
 {
-    [PortalAuthorize(Roles = "Administrator")]
+    [PortalAuthorize(Roles = PortalRoleNames.Admin)]
     public class AdminController : Controller
     {
         private readonly IAppUserService _appUserService;

@@ -1,10 +1,10 @@
-﻿using Moq;
-using NUnit.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Diagnostics.CodeAnalysis;
+using Moq;
+using NUnit.Framework;
 using Should;
 using ValidationWeb.Database;
 using ValidationWeb.Models;
@@ -56,11 +56,8 @@ namespace ValidationWeb.Tests.Services
             LoggingServiceMock = MockRepository.Create<ILoggingService>();
             ValidationPortalDbContextMock = MockRepository.Create<ValidationPortalDbContext>();
             DbContextFactoryMock = MockRepository.Create<IDbContextFactory<ValidationPortalDbContext>>();
-
             OdsConfigurationValuesMock = MockRepository.Create<IOdsConfigurationValues>();
-
             SchoolYearDbContextMock = MockRepository.Create<RawOdsDbContext>(OdsConfigurationValuesMock.Object, It.IsAny<string>());
-
             SchoolYearDbContextFactoryMock = MockRepository.Create<ISchoolYearDbContextFactory>();
         }
 

@@ -1,5 +1,6 @@
 ﻿using System.Web.Mvc;
 using System.Web.Routing;
+using ValidationWeb.Models;
 
 namespace ValidationWeb.Filters
 {
@@ -14,7 +15,7 @@ namespace ValidationWeb.Filters
             }
             else
             {
-                if (filterContext.HttpContext.User.IsInRole("Administrator") 
+                if (filterContext.HttpContext.User.IsInRole(PortalRoleNames.Admin) 
                     && filterContext.ActionDescriptor.ControllerDescriptor.ControllerName != "Admin")
                 {
 

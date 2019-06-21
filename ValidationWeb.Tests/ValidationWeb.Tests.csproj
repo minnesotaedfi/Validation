@@ -104,6 +104,22 @@
       <Project>{7dd0bd93-1ee3-4c63-9d54-e8a9c9b1ad6b}</Project>
       <Name>Engine</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Validation.Configuration\Validation.Configuration.csproj">
+      <Project>{58CD1EE0-C40F-4F27-8247-040FD53E4E1D}</Project>
+      <Name>Validation.Configuration</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Validation.DataModels\Validation.DataModels.csproj">
+      <Project>{5ab4b706-ed10-42f0-869f-7e70a7aa1738}</Project>
+      <Name>Validation.DataModels</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Validation.DbContext.EdFiOds\Validation.DbContext.EdFiOds.csproj">
+      <Project>{270F6187-A1EE-46D9-B34F-A485D3706C5A}</Project>
+      <Name>Validation.DbContext.EdFiOds</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Validation.DbContext.ValidationPortal\Validation.DbContext.ValidationPortal.csproj">
+      <Project>{A537FE81-A960-4B0E-B11A-89180ABE904D}</Project>
+      <Name>Validation.DbContext.ValidationPortal</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ValidationWeb\ValidationWeb.csproj">
       <Project>{0748540c-3f9c-499a-a9c1-15cc5c9d9a30}</Project>
       <Name>ValidationWeb</Name>

@@ -3,10 +3,8 @@ namespace ValidationWeb.Database
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class ValidationRules : DbMigration
+    public partial class ValidationReportViews : DbMigration
     {
-        // todo: disable all automatic migrations, retry manual for BOTH dbcontexts!  
-        // make a 
         public override void Up()
         {
             CreateTable(

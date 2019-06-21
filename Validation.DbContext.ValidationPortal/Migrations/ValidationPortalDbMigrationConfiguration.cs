@@ -14,8 +14,14 @@ namespace ValidationWeb.Database
         public ValidationPortalDbMigrationConfiguration()
         {
             AutomaticMigrationsEnabled = false;
-            AutomaticMigrationDataLossAllowed = false;
-            ContextKey = "ValidationWeb.Database.ValidationPortalDbContext";
+            AutomaticMigrationDataLossAllowed = false; 
+
+            // don't "fix" or change this! or refactor it or anything!
+            // else, EF will try to auto-migrate all VP tables.
+            // pre-3.1x validation portal used automatic migrations and any existing 
+            // migration history will have this context key in it. it doesn't have to
+            // be correct, just unique. 
+            ContextKey = "ValidationWeb.ValidationPortalDbContext"; 
         }
 
         public static EdOrgTypeLookup[] EdOrgTypeLookups = 

@@ -3,7 +3,5 @@
     public interface IOdsConfigurationValues
     {
         string GetRawOdsConnectionString(string fourDigitYear);
-
-       // string GetValidatedOdsConnectionString(string fourDigitYear);
     }
 }

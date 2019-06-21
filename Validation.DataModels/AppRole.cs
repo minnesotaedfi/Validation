@@ -10,15 +10,15 @@ namespace ValidationWeb.Models
     {
         public static AppRole Unauthorized => CreateAppRole("Unauthorized");
 
-        public static AppRole Administrator => CreateAppRole("Administrator");
+        public static AppRole Administrator => CreateAppRole(PortalRoleNames.Admin);
         
-        public static AppRole HelpDesk => CreateAppRole("HelpDesk");
+        public static AppRole HelpDesk => CreateAppRole(PortalRoleNames.HelpDesk);
         
-        public static AppRole DataOwner => CreateAppRole("DataOwner");
+        public static AppRole DataOwner => CreateAppRole(PortalRoleNames.DataOwner);
         
-        public static AppRole DistrictUser => CreateAppRole("DistrictUser");
+        public static AppRole DistrictUser => CreateAppRole(PortalRoleNames.DistrictUser);
         
-        public static AppRole RegionUser => CreateAppRole("RegionUser");
+        public static AppRole RegionUser => CreateAppRole(PortalRoleNames.RegionUser);
         
         public string Name { get; set; }
 
@@ -26,23 +26,23 @@ namespace ValidationWeb.Models
         {
             if (string.CompareOrdinal(name, SSORoleNames.Admin) == 0)
             {
-                return new AppRole { Name = "Administrator" };
+                return new AppRole { Name = PortalRoleNames.Admin };
             }
             if (string.CompareOrdinal(name, SSORoleNames.DataOwner) == 0)
             {
-                return new AppRole { Name = "DataOwner" };
+                return new AppRole { Name = PortalRoleNames.DataOwner };
             }
             if (string.CompareOrdinal(name, SSORoleNames.DistrictUser) == 0)
             {
-                return new AppRole { Name = "DistrictUser" };
+                return new AppRole { Name = PortalRoleNames.DistrictUser };
             }
             if (string.CompareOrdinal(name, SSORoleNames.RegionUser) == 0)
             {
-                return new AppRole { Name = "RegionUser" };
+                return new AppRole { Name = PortalRoleNames.RegionUser };
             }
             if (string.CompareOrdinal(name, SSORoleNames.HelpDesk) == 0)
             {
-                return new AppRole { Name = "HelpDesk" };
+                return new AppRole { Name = PortalRoleNames.HelpDesk };
             }
 
             return new AppRole { Name = "Unauthorized" };

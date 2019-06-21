@@ -4,6 +4,7 @@ using System.Net;
 using System.Web.Mvc;
 
 using Newtonsoft.Json;
+using ValidationWeb.Filters;
 using ValidationWeb.Models;
 using ValidationWeb.Services.Interfaces;
 using ValidationWeb.Utility;
@@ -11,6 +12,7 @@ using ValidationWeb.ViewModels;
 
 namespace ValidationWeb.Controllers
 {
+    [PortalAuthorize(Roles = "DataOwner,DistrictUser,HelpDesk")]
     public class DynamicController : Controller
     {
         public DynamicController(

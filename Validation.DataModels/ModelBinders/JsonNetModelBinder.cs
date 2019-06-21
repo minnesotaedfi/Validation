@@ -1,12 +1,11 @@
-﻿namespace ValidationWeb.ApiControllers.ModelBinders
+﻿using System.IO;
+using System.Text;
+using System.Web.Mvc;
+using Newtonsoft.Json;
+
+namespace ValidationWeb.ApiControllers.ModelBinders
 {
-    using System.IO;
-    using System.Text;
-    using System.Web.Mvc;
-
-    using Newtonsoft.Json;
-
-    internal class JsonNetModelBinder : IModelBinder
+    public class JsonNetModelBinder : IModelBinder
     {
         public object BindModel(ControllerContext controllerContext, ModelBindingContext bindingContext)
         {

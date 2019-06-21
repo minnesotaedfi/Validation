@@ -931,8 +931,6 @@
     <Content Include="Views\Home\Announcements.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ApiControllers\ModelBinders\JsonNetModelBinder.cs" />
-    <Compile Include="ApiControllers\ModelBinders\ValidationErrorFilterModelBinder.cs" />
     <Compile Include="ApiControllers\UserSessionController.cs" />
     <Compile Include="ApiControllers\ValidationController.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
@@ -947,31 +945,13 @@
     <Compile Include="Database\SchoolYearDbContextFactory.cs">
       <DependentUpon>ISchoolYearDbContextFactory.cs</DependentUpon>
     </Compile>
-    <Compile Include="Database\RawOdsDbMigrationConfiguration.cs" />
-    <Compile Include="Migrations\201906121506338_ValidationRules.cs" />
-    <Compile Include="Migrations\201906121506338_ValidationRules.Designer.cs">
-      <DependentUpon>201906121506338_ValidationRules.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Models\DynamicReportRequest.cs" />
-    <Compile Include="Models\DynamicReportField.cs" />
-    <Compile Include="Models\ValidationPortalIdentity.cs" />
-    <Compile Include="Models\ValidationRulesField.cs" />
-    <Compile Include="Models\DynamicReportDefinition.cs" />
-    <Compile Include="Models\ValidationRulesView.cs" />
     <Compile Include="Services\Interfaces\IDynamicReportingService.cs" />
     <Compile Include="Services\Implementations\RecordsRequestService.cs" />
     <Compile Include="Services\Implementations\DynamicReportingService.cs" />
     <Compile Include="Services\Interfaces\IRecordsRequestService.cs" />
     <Compile Include="Utility\IIdentityExtensions.cs" />
-    <Compile Include="Models\Log.cs" />
-    <Compile Include="Models\PortalRoleNames.cs" />
-    <Compile Include="Models\RecordsRequestFormData.cs" />
-    <Compile Include="Models\RecordsResponseFormData.cs" />
-    <Compile Include="Models\RolePermissions.cs" />
-    <Compile Include="Models\SSORoleNames.cs" />
     <Compile Include="Services\Implementations\EdFiApiLogService.cs" />
     <Compile Include="Services\Interfaces\IEdFiApiLogService.cs" />
-    <Compile Include="Utility\BoolConverter.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\NavController.cs" />
@@ -979,7 +959,6 @@
     <Compile Include="Controllers\RulesController.cs" />
     <Compile Include="Controllers\ValidationController.cs" />
     <Compile Include="Database\DbContextFactory.cs" />
-    <Compile Include="Database\EnumLookup.cs" />
     <Compile Include="Database\IDbContextFactory.cs" />
     <Compile Include="Database\Queries\ChangeOfEnrollmentReportQuery.cs" />
     <Compile Include="Database\Queries\DemographicsCountReportQuery.cs" />
@@ -990,10 +969,6 @@
     <Compile Include="Database\Queries\StudentDataFromId.cs" />
     <Compile Include="Database\Queries\StudentDrillDownQuery.cs" />
     <Compile Include="Database\Queries\StudentProgramsCountReportQuery.cs" />
-    <Compile Include="Database\RawOdsDbContext.cs" />
-    <Compile Include="Models\RecordsRequestType.cs" />
-    <Compile Include="Models\RecordsRequest.cs" />
-    <Compile Include="Models\RecordsRequestDetail.cs" />
     <Compile Include="Utility\DataRecordExtensions.cs" />
     <Compile Include="Utility\GradeLevelComparer.cs" />
     <Compile Include="Utility\ImportPropertySelectionBehavior.cs" />
@@ -1002,8 +977,6 @@
     <Compile Include="ViewModels\EnvironmentViewModel.cs" />
     <Compile Include="ViewModels\DynamicReportViewModel.cs" />
     <Compile Include="ViewModels\StudentDrillDownReportType.cs" />
-    <Compile Include="Database\ValidationPortalDbContext.cs" />
-    <Compile Include="Database\ValidationPortalDbMigrationConfiguration.cs" />
     <Compile Include="DataCache\CacheManager.cs" />
     <Compile Include="DataCache\ICacheManager.cs" />
     <Compile Include="Filters\AddChallengeOnUnauthorizedResult.cs" />
@@ -1013,35 +986,13 @@
     <Compile Include="Filters\ProfilingFilter.cs" />
     <Compile Include="Filters\ValidationAuthenticationFilter.cs" />
     <Compile Include="Filters\ValidationExceptionLogger.cs" />
-    <Compile Include="Models\ValidationPortalPrincipal.cs" />
     <Compile Include="Filters\ValidationWebExceptionFilterAttribute.cs" />
-    <Compile Include="Models\Announcement.cs" />
-    <Compile Include="Models\AppRole.cs" />
-    <Compile Include="Models\AppUserSession.cs" />
-    <Compile Include="Models\EdOrgType.cs" />
-    <Compile Include="Models\EdOrg.cs" />
-    <Compile Include="Models\ErrorSeverity.cs" />
-    <Compile Include="Models\FilteredValidationErrors.cs" />
-    <Compile Include="Models\RulesEngineExecutionException.cs" />
-    <Compile Include="Models\RuleValidation.cs" />
-    <Compile Include="Models\RuleValidationDetail.cs" />
-    <Compile Include="Models\RuleValidationRuleComponent.cs" />
-    <Compile Include="Models\SchoolYear.cs" />
-    <Compile Include="Models\SsoUserAuthorization.cs" />
-    <Compile Include="Models\SubmissionCycle.cs" />
-    <Compile Include="Models\ValidationErrorEnrollmentDetail.cs" />
-    <Compile Include="Models\ValidationErrorFilter.cs" />
-    <Compile Include="Models\ValidationErrorSummary.cs" />
-    <Compile Include="Models\ValidationReportDetails.cs" />
-    <Compile Include="Models\ValidationReportSummary.cs" />
     <Compile Include="Services\Implementations\AnnouncementService.cs" />
     <Compile Include="Services\Implementations\AppUserService.cs" />
-    <Compile Include="Services\Implementations\AppSettingsFileConfigurationValues.cs" />
     <Compile Include="Services\Implementations\EdOrgService.cs" />
     <Compile Include="Services\Implementations\EngineSchemaProvider.cs" />
     <Compile Include="Services\Implementations\HttpContextProvider.cs" />
     <Compile Include="Services\Implementations\LoggingService.cs" />
-    <Compile Include="Services\Implementations\OdsConfigurationValues.cs" />
     <Compile Include="Services\Implementations\OdsDataService.cs" />
     <Compile Include="Services\Implementations\RequestMessageAccessor.cs" />
     <Compile Include="Services\Implementations\RulesEngineConfigurationValues.cs" />
@@ -1052,11 +1003,9 @@
     <Compile Include="Services\Implementations\ValidationResultsService.cs" />
     <Compile Include="Services\Interfaces\IAnnouncementService.cs" />
     <Compile Include="Services\Interfaces\IAppUserService.cs" />
-    <Compile Include="Services\Interfaces\IConfigurationValues.cs" />
     <Compile Include="Services\Interfaces\IEdOrgService.cs" />
     <Compile Include="Services\Interfaces\IHttpContextProvider.cs" />
     <Compile Include="Services\Interfaces\ILoggingService.cs" />
-    <Compile Include="Services\Interfaces\IOdsConfigurationValues.cs" />
     <Compile Include="Services\Interfaces\IOdsDataService.cs" />
     <Compile Include="Services\Interfaces\IRequestMessageAccessor.cs" />
     <Compile Include="Services\Interfaces\IRulesEngineConfigurationValues.cs" />
@@ -1099,6 +1048,22 @@
       <Project>{7dd0bd93-1ee3-4c63-9d54-e8a9c9b1ad6b}</Project>
       <Name>Engine</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Validation.Configuration\Validation.Configuration.csproj">
+      <Project>{58CD1EE0-C40F-4F27-8247-040FD53E4E1D}</Project>
+      <Name>Validation.Configuration</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Validation.DataModels\Validation.DataModels.csproj">
+      <Project>{5AB4B706-ED10-42F0-869F-7E70A7AA1738}</Project>
+      <Name>Validation.DataModels</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Validation.DbContext.EdFiOds\Validation.DbContext.EdFiOds.csproj">
+      <Project>{270f6187-a1ee-46d9-b34f-a485d3706c5a}</Project>
+      <Name>Validation.DbContext.EdFiOds</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Validation.DbContext.ValidationPortal\Validation.DbContext.ValidationPortal.csproj">
+      <Project>{a537fe81-a960-4b0e-b11a-89180abe904d}</Project>
+      <Name>Validation.DbContext.ValidationPortal</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\Rules\Collections.rules">
@@ -1114,11 +1079,6 @@
     <Content Include="Content\Rules\StudentEnrollment.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\201906121506338_ValidationRules.resx">
-      <DependentUpon>201906121506338_ValidationRules.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <!--<ItemGroup>
     <TypeScriptCompile Include="Scripts\index.d.ts" />
