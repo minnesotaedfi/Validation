@@ -276,7 +276,7 @@ div#NewValidationModal select {
         border-color: rgb(120, 190, 33);
     }
 
- select.form-control {
+select.form-control {
     height: unset;
     padding: 0px 10px;
     margin: 0 10px;
@@ -886,7 +886,7 @@ table {
     width: 100%;
 }
 
-/*tr, th, td {
+    /*tr, th, td {
     border-bottom: 1px solid #000;
 }
 
@@ -925,16 +925,16 @@ td {
     position: relative;
 }*/
 
-/*.edge--table-fix::after,
+    /*.edge--table-fix::after,
 .edge--table-fix::before,
 .edge--table-fix:focus::after,
 .edge--table-fix:focus::before {
     bottom: 12px !important;
 }*/
 
-/* dataTables CSS modification & positioning */
+    /* dataTables CSS modification & positioning */
 
-/*table.dataTable thead .sorting:before,
+    /*table.dataTable thead .sorting:before,
 table.dataTable thead .sorting:after,
 table.dataTable thead .sorting_asc:before,
 table.dataTable thead .sorting_asc:after,
@@ -949,60 +949,60 @@ table.dataTable thead .sorting_desc_disabled:after {
     bottom: 0px !important;
 }*/
 
-table.dataTable thead .sorting::before,
-table.dataTable thead .sorting::after {
-    color: rgb(184, 218, 255);
-    opacity: 1.0 !important;
-}
+    table.dataTable thead .sorting::before,
+    table.dataTable thead .sorting::after {
+        color: rgb(184, 218, 255);
+        opacity: 1.0 !important;
+    }
 
-table.dataTable thead th.sorting_asc::after,
-table.dataTable thead th.sorting_desc::before {
-    color: rgb(184, 218, 255);
-}
+    table.dataTable thead th.sorting_asc::after,
+    table.dataTable thead th.sorting_desc::before {
+        color: rgb(184, 218, 255);
+    }
 
-table.dataTable thead .sorting::before,
-table.dataTable thead .sorting_asc::before,
-table.dataTable thead .sorting_desc::before {
-    right: 0.9em;
-    content: "\2191";
-    opacity: 1.0 !important;
-}
+    table.dataTable thead .sorting::before,
+    table.dataTable thead .sorting_asc::before,
+    table.dataTable thead .sorting_desc::before {
+        right: 0.9em;
+        content: "\2191";
+        opacity: 1.0 !important;
+    }
 
-table.dataTable thead .sorting::after,
-table.dataTable thead .sorting_asc::after,
-table.dataTable thead .sorting_desc::after {
-    right: 0.05em;
-    content: "\2193";
-    opacity: 1.0 !important;
-}
+    table.dataTable thead .sorting::after,
+    table.dataTable thead .sorting_asc::after,
+    table.dataTable thead .sorting_desc::after {
+        right: 0.05em;
+        content: "\2193";
+        opacity: 1.0 !important;
+    }
 
-table.dataTable thead th.sorting:focus {
-    color: #003865;
-}
-
-    table.dataTable thead th.sorting:focus::before {
+    table.dataTable thead th.sorting:focus {
         color: #003865;
     }
 
-    table.dataTable thead th.sorting:focus::after {
+        table.dataTable thead th.sorting:focus::before {
+            color: #003865;
+        }
+
+        table.dataTable thead th.sorting:focus::after {
+            color: #003865;
+        }
+
+    table.dataTable thead.table-primary th.sorting_asc:focus {
         color: #003865;
     }
 
-table.dataTable thead.table-primary th.sorting_asc:focus {
-    color: #003865;
-}
+        table.dataTable thead.table-primary th.sorting_asc:focus::after {
+            color: white;
+        }
 
-    table.dataTable thead.table-primary th.sorting_asc:focus::after {
-        color: white;
+    table.dataTable thead.table-primary th.sorting_desc:focus {
+        color: #003865;
     }
 
-table.dataTable thead.table-primary th.sorting_desc:focus {
-    color: #003865;
-}
-
-    table.dataTable thead.table-primary th.sorting_desc:focus::before {
-        color: white;
-    }
+        table.dataTable thead.table-primary th.sorting_desc:focus::before {
+            color: white;
+        }
 
 .table-primary th {
     border-color: #003865;
@@ -1036,5 +1036,13 @@ table.dataTable thead th div.DataTables_sort_wrapper {
 
 
 .report-edit {
+}
 
+.report-delete {
+}
+
+.report-disable {
+}
+
+.report-enable {
 }

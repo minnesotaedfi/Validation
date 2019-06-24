@@ -168,6 +168,27 @@ namespace ValidationWeb.Controllers
             return PartialView("Partials/DynamicReportEditModal", dynamicReport);
         }
 
+        [HttpGet]
+        public ActionResult DisableDynamicReportDefinition(int id)
+        {
+            _dynamicReportingService.DisableReportDefinition(id);
+            return new HttpStatusCodeResult(HttpStatusCode.OK);
+        }
+
+        [HttpGet]
+        public ActionResult EnableDynamicReportDefinition(int id)
+        {
+            _dynamicReportingService.EnableReportDefinition(id);
+            return new HttpStatusCodeResult(HttpStatusCode.OK);
+        }
+
+        [HttpDelete]
+        public ActionResult DeleteDynamicReportDefinition(int id)
+        {
+            _dynamicReportingService.DeleteReportDefinition(id);
+            return new HttpStatusCodeResult(HttpStatusCode.OK);
+        }
+
         public ActionResult AddSubmissionCycle()
         {
             PopulateDropDownLists();

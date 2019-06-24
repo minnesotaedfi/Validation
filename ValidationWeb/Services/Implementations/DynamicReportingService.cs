@@ -15,7 +15,7 @@ namespace ValidationWeb.Services.Implementations
 {
     public class DynamicReportingService : IDynamicReportingService
     {
-        public DynamicReportingService( 
+        public DynamicReportingService(
             IDbContextFactory<ValidationPortalDbContext> validationPortalDataContextFactory,
             ISchoolYearDbContextFactory schoolYearDbContextFactory,
             ISchoolYearService schoolYearService)
@@ -58,13 +58,13 @@ namespace ValidationWeb.Services.Implementations
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage(
-            "Microsoft.Security", 
+            "Microsoft.Security",
             "CA2100:Review SQL queries for security vulnerabilities",
             Justification = "Values are taken from the database schema, not user input")]
         public IList<dynamic> GetReportData(DynamicReportRequest request)
         {
             var reportDefinition = GetReportDefinition(request.ReportDefinitionId);
-            
+
             // todo: implement user ordering, this at least mimics the admin definition screen 
             var selectedFields = reportDefinition.Fields
                 .Where(x => request.SelectedFields.Contains(x.Id.ToString()))
@@ -74,7 +74,7 @@ namespace ValidationWeb.Services.Implementations
             var viewName = $"[{reportDefinition.RulesView.Schema}].[{reportDefinition.RulesView.Name}]";
             var fieldNames = string.Join(", ", selectedFields.Select(x => $"[{x.Field.Name}]"));
 
-            var report = new List<dynamic>(); 
+            var report = new List<dynamic>();
 
             using (var schoolYearContext = SchoolYearDbContextFactory.CreateWithParameter(reportDefinition.SchoolYear.EndYear))
             {
@@ -88,7 +88,7 @@ namespace ValidationWeb.Services.Implementations
                 using (var reader = queryCommand.ExecuteReader())
                 {
                     while (reader.Read())
-                    { 
+                    {
                         var dynamicObject = new ExpandoObject() as IDictionary<string, object>;
 
                         foreach (var field in selectedFields)
@@ -103,6 +103,59 @@ namespace ValidationWeb.Services.Implementations
             }
 
             return report;
+        }
+
+        public void EnableReportDefinition(int id)
+        {
+            using (var validationPortalContext = ValidationPortalDataContextFactory.Create())
+            {
+                var report = validationPortalContext.DynamicReportDefinitions
+                    .SingleOrDefault(x => x.Id == id);
+
+                if (report == null)
+                {
+                    throw new InvalidOperationException($"Unable to find a report definition with id {id}");
+                }
+
+                report.Enabled = true;
+                validationPortalContext.SaveChanges();
+            }
+        }
+
+        public void DisableReportDefinition(int id)
+        {
+            using (var validationPortalContext = ValidationPortalDataContextFactory.Create())
+            {
+                var report = validationPortalContext.DynamicReportDefinitions
+                    .SingleOrDefault(x => x.Id == id);
+
+                if (report == null)
+                {
+                    throw new InvalidOperationException($"Unable to find a report definition with id {id}");
+                }
+
+                report.Enabled = false;
+                validationPortalContext.SaveChanges();
+            }
+        }
+
+        public void DeleteReportDefinition(int id)
+        {
+            using (var validationPortalContext = ValidationPortalDataContextFactory.Create())
+            {
+                var report = validationPortalContext.DynamicReportDefinitions
+                    .Include(x => x.Fields)
+                    .SingleOrDefault(x => x.Id == id);
+
+                if (report == null)
+                {
+                    throw new InvalidOperationException($"Unable to find a report definition with id {id}");
+                }
+
+                validationPortalContext.DynamicReportFields.RemoveRange(report.Fields);
+                validationPortalContext.DynamicReportDefinitions.Remove(report);
+                validationPortalContext.SaveChanges();
+            }
         }
 
         public void SaveReportDefinition(DynamicReportDefinition reportDefinition)
@@ -179,7 +232,7 @@ namespace ValidationWeb.Services.Implementations
                     var fieldNames = GetFieldsForView(schoolYear, view.Schema, view.Name);
                     foreach (var fieldName in fieldNames)
                     {
-                        var rulesField = new ValidationRulesField {Enabled = true, Name = fieldName};
+                        var rulesField = new ValidationRulesField { Enabled = true, Name = fieldName };
                         validationPortalContext.ValidationRulesFields.Add(rulesField);
                         view.RulesFields.Add(rulesField);
                     }

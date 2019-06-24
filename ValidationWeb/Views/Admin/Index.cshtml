@@ -221,6 +221,12 @@
             var EditDynamicReportRoute = "@Url.Content("~/Admin/EditDynamicReportDefinition")";
             $(".report-edit").click({ modalName: "report", modalEditRoute: EditDynamicReportRoute }, CreateEditDynamicReportModal);
 
+            var DisableDynamicReportRoute = "@Url.Content("~/Admin/DisableDynamicReportDefinition")";
+            $(".report-disable").click({ modelName: "report", disableRoute: DisableDynamicReportRoute }, DisableDynamicReport);
+            
+            var EnableDynamicReportRoute = "@Url.Content("~/Admin/EnableDynamicReportDefinition")";
+            $(".report-enable").click({ modelName: "report", enableRoute: EnableDynamicReportRoute }, EnableDynamicReport);
+
             var DeleteDynamicReportRoute = "@Url.Content("~/Admin/DeleteDynamicReportDefinition")";
             $(".report-delete").click({ modelName: "report", deleteRoute: DeleteDynamicReportRoute }, DeleteModel);
 
@@ -538,6 +544,7 @@
         }
 
         function DeleteModel(event) {
+            debugger;
             var modelName = event.data.modelName;
             var deleteRoute = event.data.deleteRoute;
             var modelDisplayName = ModelNameToDisplay[modelName];
@@ -582,6 +589,48 @@
                     alert('Could not retrieve the ' + modalNameRaw + ' for editing.');
                 }
             });
+        }
+
+        function DisableDynamicReport(event) {
+            var $buttonClicked = $(this);
+            var id = $buttonClicked.attr('data-id');
+            var disableRoute = event.data.disableRoute;
+
+            $.ajax({
+                type: "GET",
+                url: disableRoute + '/' + id,
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    location.reload(true);
+                },
+                error: function () {
+                    alert('Could not disable the report with id ' + id);
+                }
+            });
+        }
+
+        function EnableDynamicReport(event) {
+            var $buttonClicked = $(this);
+            var id = $buttonClicked.attr('data-id');
+            var enableRoute = event.data.enableRoute;
+
+            $.ajax({
+                type: "GET",
+                url: enableRoute + '/' + id,
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    location.reload(true);
+                },
+                error: function () {
+                    alert('Could not enable the report with id ' + id);
+                }
+            });
+
+        }
+
+        function DeleteDynamicReport(event) {
+            debugger; 
+
         }
 
         function DeleteModel(event) {

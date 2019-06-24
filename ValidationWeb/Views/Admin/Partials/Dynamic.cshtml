@@ -101,6 +101,21 @@
                     <a href="javascript:void(0);" class="report-edit btn btn-sm prime-blue white-heavy-text" data-id="@view.Id">
                         Edit
                     </a>
+                    @if (view.Enabled)
+                    {
+                        <a href="javascript:void(0);" class="report-disable btn btn-sm prime-blue white-heavy-text" data-id="@view.Id">
+                            Disable
+                        </a>
+                    }
+                    else
+                    {
+                        <a href="javascript:void(0);" class="report-enable btn btn-sm prime-blue white-heavy-text" data-id="@view.Id">
+                            Enable
+                        </a>
+                    }
+                    <a href="javascript:void(0);" class="report-delete btn btn-sm prime-blue white-heavy-text" data-id="@view.Id">
+                        Delete
+                    </a>
                 </th>
             </tr>
         }
