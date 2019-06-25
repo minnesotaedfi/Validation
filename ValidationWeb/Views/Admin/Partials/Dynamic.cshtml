@@ -1,55 +1,5 @@
 ﻿@model AdminIndexViewModel
 
-@*<form id="editDynamicReport">
-        <div class="row form-group">
-            <div class="col-sm-8">
-                <div class="row">
-                    <div class="col-md-12">
-                        <h3>
-                            UI TEST
-                        </h3>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-6 form-group">
-                        <select id='rulesViewSelect' class="form-control" onchange="changeRulesViewTab(this)" required></select>
-                    </div>
-                </div>
-                <div class="row" style="display: none;">
-                    <div class="col-sm-12 form-group">
-                        <ul class="nav nav-pills mb-3" id="rulesViewTabs"></ul>
-                    </div>
-                </div>
-                <div class="row form-group">
-                    <div class="col-sm-3">
-                        <label for="report-name">Report Name</label>
-                    </div>
-                    <div class="col-sm-9">
-                        <input class="form-control" type="text" id="report-name" required />
-                    </div>
-                </div>
-                <div class="row form-group">
-                    <div class="col-sm-3">
-                        <label for="report-description">Report Description</label>
-                    </div>
-                    <div class="col-sm-9">
-                        <input class="form-control" type="text" id="report-description" required />
-                    </div>
-                </div>
-                <div class="row" form-group>
-                    <div class="col-sm-12 form-group">
-                        <div class="tab-content" id="rulesViewPanes">
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <button type="button" class="btn btn-primary" onclick="saveDynamicReport()">Submit</button>
-                </div>
-            </div>
-        </div>
-    </form>
-    <hr />*@
-
 <div class="row">
     <div class="col-10">
         <div id="report-warning" class="alert alert-danger alert-dismissible" style="display:none" role="alert">
@@ -80,46 +30,7 @@
     </div>
 </div>
 <div class="row tbmargin10">
-    <table class="table table-sm table-responsive-md table-bordered" id="reportsTable">
-        <tr class="table-primary">
-            <th class="id-hide-column">Id</th>
-            <th>Name</th>
-            <th>Rules View</th>
-            <th>School Year</th>
-            <th>Status</th>
-            <th>Actions</th>
-        </tr>
-        @foreach (var view in Model.ReportDefinitions.OrderBy(x => x.Name))
-        {
-            <tr>
-                <td class="id-hide-column">@view.Id</td>
-                <td>@view.Name</td>
-                <td>@view.RulesView.Name</td>
-                <td>@view.SchoolYear.ToString()</td>
-                <td>@(view.Enabled ? "Enabled" : "Disabled")</td>
-                <th>
-                    <a href="javascript:void(0);" class="report-edit btn btn-sm prime-blue white-heavy-text" data-id="@view.Id">
-                        Edit
-                    </a>
-                    @if (view.Enabled)
-                    {
-                        <a href="javascript:void(0);" class="report-disable btn btn-sm prime-blue white-heavy-text" data-id="@view.Id">
-                            Disable
-                        </a>
-                    }
-                    else
-                    {
-                        <a href="javascript:void(0);" class="report-enable btn btn-sm prime-blue white-heavy-text" data-id="@view.Id">
-                            Enable
-                        </a>
-                    }
-                    <a href="javascript:void(0);" class="report-delete btn btn-sm prime-blue white-heavy-text" data-id="@view.Id">
-                        Delete
-                    </a>
-                </th>
-            </tr>
-        }
-    </table>
+    <table class="table table-sm table-responsive-md table-bordered" id="reportDefinitionsTable"></table>
 </div>
 
 <div id='reportModal' class="modal fade" role="dialog" tabindex="-1">

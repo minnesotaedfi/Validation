@@ -67,7 +67,6 @@ namespace ValidationWeb.Controllers
                 RuleCollections = _rulesEngineService.GetCollections(),
                 SubmissionCycles = _submissionCycleService.GetSubmissionCycles(),
                 Announcements = _announcementService.GetAnnouncements(),
-                ReportDefinitions = _dynamicReportingService.GetReportDefinitions(),
                 RulesViewsPerSchoolYearId = viewsPerYear
             };
 
@@ -125,6 +124,21 @@ namespace ValidationWeb.Controllers
 
             var serializedResult = JsonConvert.SerializeObject(
                 result,
+                Formatting.None,
+                new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+
+            return Content(serializedResult, "application/json");
+        }
+
+        public ActionResult GetReportDefinitionsPerSchoolYearId(int schoolYearId)
+        {
+            var result = _dynamicReportingService.GetReportDefinitions()
+                .Where(x => x.SchoolYearId == schoolYearId)
+                .OrderBy(x => x.Name)
+                .ToList();
+
+            var serializedResult = JsonConvert.SerializeObject(
+                new { data = result },
                 Formatting.None,
                 new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
 

@@ -346,11 +346,15 @@ div.dataTables_scrollBody {
     min-height: 350px
 }
 
+div.dataTables_processing {
+    z-index: 999;
+    opacity: 1.0;
+}
+
 /*div.DTS
 tbody > tr.odd {
     background-color: #fff !important;
 }*/
-
 table.dataTable tr.selected {
     background-color: #B0BED9 !important;
 }

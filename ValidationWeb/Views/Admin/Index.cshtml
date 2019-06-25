@@ -197,6 +197,104 @@
                 $("#add-end-year").val(Number($("#add-start-year").val()) + 1);
             });
 
+            $('#edit-dynamic-reports-schoolYearId').change(function() {
+                $('#reportDefinitionsTable').DataTable()
+                    .ajax
+                    .url('@Url.Action("GetReportDefinitionsPerSchoolYearId")?schoolYearId=' +
+                        $('#edit-dynamic-reports-schoolYearId').val())
+                    .load();
+            });
+
+            var dataTable = $('#reportDefinitionsTable').DataTable({
+                dom: 'r<t>',
+                ordering: false,
+                paging: false,
+                processing: true,
+                language: {
+                    loadingRecords: 'Loading...',
+                    processing: "Loading...",
+                },
+                columns: [
+                    {
+                        data: 'Id',
+                        searchable: false,
+                        sortable: false,
+                        visible: false
+                    },
+                    {
+                        data: 'Name',
+                        title: 'Name',
+                        searchable: false,
+                        sortable: false
+                    },
+                    {
+                        data: 'RulesView.Name',
+                        title: 'Rules View',
+                        searchable: false,
+                        sortable: false
+                    },
+                    {
+                        data: 'SchoolYear',
+                        title: 'School Year',
+                        searchable: false,
+                        sortable: false,
+                        render: function(data, type, row) {
+                            if (type === 'display') {
+                                return data.StartYear + '&nbsp;&ndash;&nbsp;' + data.EndYear;
+                            } else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        data: 'Enabled',
+                        title: 'Status',
+                        searchable: false,
+                        sortable: false,
+                        render: function(data, type, row) {
+                            if (type === 'display') {
+                                var enabled = data === true;
+                                return enabled ? "Enabled" : "Disabled";
+                            } else {
+                                return data;
+                            }
+                        },
+                    },
+                    {
+                        title: 'Actions',
+                        data: null,
+                        searchable: false,
+                        sortable: false,
+                        render: function(data, type, row) {
+                            if (type === 'display') {
+
+                                var html =
+                                    '<a href="javascript:void(0);" class="report-edit btn btn-sm prime-blue white-heavy-text" data-id="'+data.Id+'">Edit</a> ';
+
+                                var cssClass = (data.Enabled === true ? 'report-disable' : 'report-enable');
+                                var text = (data.Enabled ? 'Disable' : 'Enable');
+
+                                html += '<a href="javascript:void(0);" class="' +cssClass+' btn btn-sm prime-blue white-heavy-text" data-id="' +data.Id +'">' +text +'</a>';
+                                html += ' <a href="javascript:void(0);" class="report-delete btn btn-sm prime-blue white-heavy-text" data-id="' +data.Id +'">Delete</a>';
+                                return html;
+                            } else {
+                                return data;
+                            }
+                        },
+                    }
+                ],
+                ajax: {
+                    url: '@Url.Action("GetReportDefinitionsPerSchoolYearId")?schoolYearId=' +
+                        $('#edit-dynamic-reports-schoolYearId').val(),
+                    complete: function() {
+                        var dataTable = $($("#reportDefinitionsTable").DataTable().table().header());
+                        dataTable.find('th').removeAttr('aria-label');
+                    }
+                }
+            });
+
+            $(dataTable.table().header()).addClass('table-primary');
+            
             @* todo: why so many warnings here? *@
             var AddAnnouncementRoute = "@Url.Content("~/Admin/AddAnnouncement")";
             $("#announcement-add").click({ modalName: "Announcement", modalAddRoute: AddAnnouncementRoute },
@@ -218,17 +316,19 @@
                 },
                 CreateAddDynamicReportModal);
 
+            // changing these to bind to future elements not yet present
+
             var EditDynamicReportRoute = "@Url.Content("~/Admin/EditDynamicReportDefinition")";
-            $(".report-edit").click({ modalName: "report", modalEditRoute: EditDynamicReportRoute }, CreateEditDynamicReportModal);
+            $('body').on('click', '.report-edit', { modalName: "report", modalEditRoute: EditDynamicReportRoute }, CreateEditDynamicReportModal);
 
             var DisableDynamicReportRoute = "@Url.Content("~/Admin/DisableDynamicReportDefinition")";
-            $(".report-disable").click({ modelName: "report", disableRoute: DisableDynamicReportRoute }, DisableDynamicReport);
-            
+            $('body').on('click', '.report-disable', { modelName: "report", disableRoute: DisableDynamicReportRoute }, DisableDynamicReport);
+
             var EnableDynamicReportRoute = "@Url.Content("~/Admin/EnableDynamicReportDefinition")";
-            $(".report-enable").click({ modelName: "report", enableRoute: EnableDynamicReportRoute }, EnableDynamicReport);
+            $('body').on('click', '.report-enable', { modelName: "report", enableRoute: EnableDynamicReportRoute }, EnableDynamicReport);
 
             var DeleteDynamicReportRoute = "@Url.Content("~/Admin/DeleteDynamicReportDefinition")";
-            $(".report-delete").click({ modelName: "report", deleteRoute: DeleteDynamicReportRoute }, DeleteModel);
+            $('body').on('click', '.report-delete', { modelName: "report", deleteRoute: DeleteDynamicReportRoute }, DeleteModel);
 
             var AddSubmissionCycleRoute = "@Url.Content("~/Admin/AddSubmissionCycle")";
             $("#submissioncycle-add").click({ modalName: "SubmissionCycle", modalAddRoute: AddSubmissionCycleRoute },
@@ -350,7 +450,7 @@
                                                     checked = true; // todo? this isn't binded to anything
                                                 }
 
-                                                return '<input type="checkbox" '+(checked ? 'checked' : '')+'>';
+                                                return '<input type="checkbox" ' + (checked ? 'checked' : '') + '>';
                                             } else {
                                                 return data;
                                             }
@@ -390,18 +490,18 @@
             var reportDescription = $('#report-description').val();
             var reportTable = $('#rulesTable-' + rulesViewId).dataTable();
             var schoolYearId = $('#edit-dynamic-reports-schoolYearId').val();
-            
+
             var dynamicReportDefinition = {
                 name: reportTitle,
                 description: reportDescription,
                 enabled: true,
-                schoolYearId: schoolYearId, 
+                schoolYearId: schoolYearId,
                 validationRulesViewId: rulesViewId
             };
 
             var reportFields = [];
 
-            reportTable.api().rows().eq(0).each( function (index) {
+            reportTable.api().rows().eq(0).each(function(index) {
                 var row = reportTable.api().row(index);
                 var data = row.data();
                 var node = $(row.node());
@@ -415,18 +515,18 @@
                 });
             });
 
-            dynamicReportDefinition.Fields = reportFields; 
-            
+            dynamicReportDefinition.Fields = reportFields;
+
             $.ajax({
                 type: "POST",
                 url: '@Url.Action("SaveDynamicReportDefinition", "Admin")',
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify(dynamicReportDefinition),
                 datatype: "json",
-                success: function (data) {
+                success: function(data) {
                     location.reload(true);
                 },
-                error: function (data) {
+                error: function(data) {
                     debugger;
                     alert('Unable to save report definition');
                 }
@@ -505,13 +605,13 @@
                 contentType: "application/json; charset=utf-8",
                 data: {},
                 datatype: "json",
-                success: function (data) {
+                success: function(data) {
                     $(modelModalContent).html(data);
                     $(modelModal).modal(options);
                     $(modelModal).modal('show');
 
                 },
-                error: function () {
+                error: function() {
                     alert('Could not open a dialog to create ' + modelDisplayName);
                 }
             });
@@ -580,12 +680,12 @@
                 contentType: "application/json; charset=utf-8",
                 data: { "Id": id },
                 datatype: "json",
-                success: function (data) {
+                success: function(data) {
                     $(modelModalContent).html(data);
                     $(modelModal).modal(options);
                     $(modelModal).modal('show');
                 },
-                error: function () {
+                error: function() {
                     alert('Could not retrieve the ' + modalNameRaw + ' for editing.');
                 }
             });
@@ -600,10 +700,10 @@
                 type: "GET",
                 url: disableRoute + '/' + id,
                 contentType: "application/json; charset=utf-8",
-                success: function (data) {
+                success: function(data) {
                     location.reload(true);
                 },
-                error: function () {
+                error: function() {
                     alert('Could not disable the report with id ' + id);
                 }
             });
@@ -618,10 +718,10 @@
                 type: "GET",
                 url: enableRoute + '/' + id,
                 contentType: "application/json; charset=utf-8",
-                success: function (data) {
+                success: function(data) {
                     location.reload(true);
                 },
-                error: function () {
+                error: function() {
                     alert('Could not enable the report with id ' + id);
                 }
             });
@@ -629,7 +729,7 @@
         }
 
         function DeleteDynamicReport(event) {
-            debugger; 
+            debugger;
 
         }
 
@@ -644,10 +744,10 @@
                 $.ajax({
                     type: "DELETE",
                     url: deleteRoute + '/' + id,
-                    success: function (/*data*/) {
+                    success: function(/*data*/) {
                         location.reload(true);
                     },
-                    error: function () {
+                    error: function() {
                         alert('Could not delete the ' + modelDisplayName);
                     }
                 });
