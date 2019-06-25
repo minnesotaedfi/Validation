@@ -1,4 +1,5 @@
-﻿@model ValidationWeb.ViewModels.AdminDynamicReportViewModel
+﻿@using MoreLinq.Extensions
+@model ValidationWeb.Models.DynamicReportDefinition
 
 <div>
     <div id="report-modal-content" class="modal-content" tabindex="-1">
@@ -8,135 +9,87 @@
         </div>
         <div class="modal-body">
 
-            @using (Html.BeginForm())
-            {
-                <div class="row" id="announcement-validation-summary-row">
-                    @Html.ValidationSummary(false, "Errors:", new
-                    {
-                        @class = "alert alert-danger",
-                        style = "width: 100%"
-                    })
-                </div>
-                @Html.HiddenFor(m => m.DynamicReportDefinition.Id, new
-                {
-                    id = "edit-report-id"
-                })
-
-                <div class="row form-group">
-                    <div class="col-sm-3">
-                        @Html.LabelFor(m => m.DynamicReportDefinition.Name, "Report Name")
-                    </div>
-                    <div class="col-sm-9">
-                        @Html.TextBoxFor(
-                            m => m.DynamicReportDefinition.Name, 
-                            new { id = "edit-report-name", @class = "form-control", required = "required" })
-                    </div>
-                </div>
-                <div class="row form-group">
-                    <div class="col-sm-3">
-                        @Html.LabelFor(m => m.DynamicReportDefinition.Description, "Description")
-                    </div>
-                    <div class="col-sm-9">
-                        @Html.TextBoxFor(
-                            m => m.DynamicReportDefinition.Description,
-                            new { id = "edit-report-description", @class = "form-control", required = "required" })
-                    </div>
-                </div>
-                <div class="row form-group">
-                    <div class="col-sm-3">
-                        @Html.LabelFor(m => m.DynamicReportDefinition.ValidationRulesViewId, "Rules View")
-                    </div>
-                    <div class="col-sm-9">
-                        @Html.DropDownListFor(
-                            m => m.DynamicReportDefinition.ValidationRulesViewId,
-                            Model.ValidationRulesViews.Select(x => new SelectListItem {Text = x.Name, Value = x.Id.ToString()}),
-                            "Select a view",
-                            new
-                            {
-                                id = "select-rules-view",
-                                @class = "form-control",
-                                @onchange="updateRulesView(this.value)"
-                            })
-                    </div>
-                </div>
-
-
-                @*
-            <div class="row form-group">
-                <div class="col-lg-3">
-                    <label for="edit-priority">Sort Order:</label>
-                </div>
-                <div class="col-lg-9">
-                    @Html.TextBoxFor(m => m.Priority, new
-                    {
-                        id = "edit-announcement-priority",
-                        pattern = "\\d*",
-                        title = "Priority must be a number",
-                        @class = "form-control"
-                    })
-                </div>
-            </div>
-            <div class="row form-group">
-                <div class="col-sm-3">
-                    <label for="edit-message">Message: <span style="color: red">*</span></label>
-                </div>
-                <div class="col-sm-9">
-                    @Html.TextAreaFor(
-                        m => m.Message,
-                        new
+            <form id="editReportForm">
+                <div class="col-md-10 offset-1">
+                    <div class="row" id="announcement-validation-summary-row">
+                        @Html.ValidationSummary(false, "Errors:", new
                         {
-                            id = "edit-announcement-message",
-                            rows = 4,
-                            @class = "form-control",
-                            required = "required"
+                            @class = "alert alert-danger",
+                            style = "width: 100%"
                         })
+                    </div>
+                    @Html.HiddenFor(m => m.Id, new
+                    {
+                        id = "edit-report-id"
+                    })
 
-                    @Html.ValidationMessageFor(m => m.Message)
+                    <div class="row form-group">
+                        <div class="col-sm-3">
+                            @Html.LabelFor(m => m.ValidationRulesViewId, "Rules View")
+                        </div>
+                        <div class="col-sm-9">
+                            @Html.DisplayTextFor(m => m.RulesView.Name)
+                        </div>
+                    </div>
+
+                    <div class="row form-group">
+                        <div class="col-sm-3">
+                            @Html.LabelFor(m => m.Name, "Report Name")
+                        </div>
+                        <div class="col-sm-9">
+                            @Html.TextBoxFor(
+                                m => m.Name,
+                                new { id = "edit-report-name", @class = "form-control", required = "required" })
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-sm-3">
+                            @Html.LabelFor(m => m.Description, "Description")
+                        </div>
+                        <div class="col-sm-9">
+                            @Html.TextBoxFor(
+                                m => m.Description,
+                                new { id = "edit-report-description", @class = "form-control", required = "required" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 form-group">
+                            <table class="table table-sm table-responsive-md table-bordered" id="editRulesTable">
+                                <thead>
+                                    <tr class="table-primary">
+                                        <th>Id</th>
+                                        <th>Enabled</th>
+                                        <th>Field Name</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var rule in Model.Fields)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @Html.HiddenFor(x => rule.Id)
+                                            </td>
+                                            <td>
+                                                @Html.CheckBoxFor(x => rule.Enabled)
+                                            </td>
+                                            <td>
+                                                @rule.Field.Name
+                                            </td>
+                                            <td>
+                                                @Html.TextBox("Description", rule.Description ?? string.Empty)
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="row form-group">
-                <div class="col-sm-3">
-                    <label for="edit-contactInfo">Contact Info:</label>
-                </div>
-                <div class="col-sm-9">
-                    @Html.TextBoxFor(m => m.ContactInfo, new
-                    {
-                        id = "edit-announcement-contactInfo",
-                        @class = "form-control"
-                    })
-                </div>
-            </div>
-            <div class="row form-group">
-                <div class="col-sm-3">
-                    <label for="edit-linkUrl">Link Url: </label>
-                </div>
-                <div class="col-sm-9">
-                    @Html.TextBoxFor(m => m.LinkUrl, new
-                    {
-                        id = "edit-announcement-linkUrl",
-                        @class = "form-control"
-                    })
-                </div>
-            </div>
-            <div class="row form-group">
-                <div class="col-sm-3">
-                    <label for="edit-expiration-date-picker">Expiration: <span style="color: red">*</span></label>
-                </div>
-                <div class="col-sm-9">
-                    @Html.TextBoxFor(m => m.Expiration, new
-                    {
-                        id = "edit-announcement-expiration",
-                        @class = "form-control",
-                        required = "required"
-                    })
-                    @Html.ValidationMessageFor(m => m.Expiration)
-                </div>
-            </div>
-                *@
                 <div class="modal-footer">
                     <button type="submit" id="save-report" class="btn prime-blue white-heavy-text">Save Report</button>
                 </div>
-            }
+            </form>
         </div>
     </div>
 </div>

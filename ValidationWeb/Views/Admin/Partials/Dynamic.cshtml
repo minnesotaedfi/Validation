@@ -12,8 +12,8 @@
 <div class="row form-group">
     <div class="col-auto mr-md-auto">
         @Html.LabelFor(
-            m => m.ReportSchoolYearId, 
-            "School Year", 
+            m => m.ReportSchoolYearId,
+            "School Year",
             new { @class = "col-form-label pt-0 pr-1" })
 
         @Html.DropDownListFor(
@@ -34,9 +34,18 @@
 </div>
 
 <div id='reportModal' class="modal fade" role="dialog" tabindex="-1">
-    <div class="modal-dialog modal-xl">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div id='report-modal-content'></div>
         </div>
     </div>
 </div>
+
+<div id='edit-reportModal' class="modal fade" role="dialog" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div id='edit-report-modal-content'></div>
+        </div>
+    </div>
+</div>
+

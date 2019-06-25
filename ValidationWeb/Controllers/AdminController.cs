@@ -170,9 +170,7 @@ namespace ValidationWeb.Controllers
 
         public ActionResult SaveDynamicReportDefinition(DynamicReportDefinition reportDefinition)
         {
-            // todo: validate!
             _dynamicReportingService.SaveReportDefinition(reportDefinition);
-
             return new HttpStatusCodeResult(HttpStatusCode.OK);
         }
 
@@ -180,6 +178,12 @@ namespace ValidationWeb.Controllers
         {
             var dynamicReport = _dynamicReportingService.GetReportDefinition(id);
             return PartialView("Partials/DynamicReportEditModal", dynamicReport);
+        }
+
+        public ActionResult UpdateDynamicReportDefinition(DynamicReportDefinition formResponse)
+        {
+            //_dynamicReportingService.SaveReportDefinition(reportDefinition);
+            return new HttpStatusCodeResult(HttpStatusCode.OK);
         }
 
         [HttpGet]

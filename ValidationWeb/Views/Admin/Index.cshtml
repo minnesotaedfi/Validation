@@ -349,6 +349,44 @@
                     $("#newReportForm").on('submit', saveDynamicReport);
                 });
 
+            $('#edit-reportModal').on('shown.bs.modal',
+                function() {
+                    debugger;
+                    $('#editRulesTable').DataTable({
+                        dom: '<t>',
+                        scrollY: '200px',
+                        scrollCollapse: true,
+                        ordering: false,
+                        paging: false,
+                        columns: [
+                            {
+                                title: "Id",
+                                searchable: false,
+                                sortable: false,
+                                visible: false
+                            },
+                            {
+                                title: "Enabled",
+                                searchable: false,
+                                sortable: false,
+                            },
+                            {
+                                title: "Name",
+                                searchable: false,
+                                sortable: false
+                            },
+                            {
+                                title: "Description",
+                                searchable: false,
+                                sortable: false,
+                            }
+                        ]
+                    });
+
+                    setModalHeaderText("report", ModelNameToDisplay["report"]);
+                    $("#editReportForm").on('submit', updateDynamicReport);
+                });
+
             $('#submissioncycleModal').on('shown.bs.modal',
                 function() {
                     setModalHeaderText("submissioncycle", ModelNameToDisplay["submissioncycle"]);
@@ -426,7 +464,7 @@
                             tableContent += '</tbody></table>';
                             viewContent.append(tableContent);
 
-                            $('#rulesTable-' + item.Id).dataTable({
+                            $('#rulesTable-' + item.Id).DataTable({
                                 dom: '<t>',
                                 scrollY: '200px',
                                 scrollCollapse: true,
@@ -484,11 +522,10 @@
         }
 
         function saveDynamicReport() {
-            debugger;
             var rulesViewId = $('#rulesViewSelect').val();
             var reportTitle = $('#report-name').val();
             var reportDescription = $('#report-description').val();
-            var reportTable = $('#rulesTable-' + rulesViewId).dataTable();
+            var reportTable = $('#rulesTable-' + rulesViewId).DataTable();
             var schoolYearId = $('#edit-dynamic-reports-schoolYearId').val();
 
             var dynamicReportDefinition = {
@@ -501,8 +538,8 @@
 
             var reportFields = [];
 
-            reportTable.api().rows().eq(0).each(function(index) {
-                var row = reportTable.api().row(index);
+            reportTable.rows().eq(0).each(function(index) {
+                var row = reportTable.row(index);
                 var data = row.data();
                 var node = $(row.node());
                 var enabled = node.find('input[type=checkbox]').is(':checked');
@@ -535,6 +572,55 @@
             return false;
         }
 
+        function updateDynamicReport() {
+            debugger;
+            var reportId = $('edit-report-id').val();
+            var reportTitle = $('#report-name').val();
+            var reportDescription = $('#report-description').val();
+
+            var dynamicReportUpdate = {
+                id: reportId,
+                name: reportTitle,
+                description: reportDescription
+            };
+
+            var reportFields = [];
+
+            var reportTable = $('#editRulesTable').DataTable();
+
+            reportTable.rows().eq(0).each(function(index) {
+                var row = reportTable.row(index);
+                var data = row.data();
+                var node = $(row.node());
+                var enabled = node.find('input[type=checkbox]').is(':checked');
+                var description = $(node).find('input[type=text]').val();
+                reportFields.push({
+                    ValidationRulesFieldId: data.Id,
+                    Name: data.Name,
+                    Description: description.trim(),
+                    Enabled: enabled
+                });
+            });
+
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("UpdateDynamicReportDefinition", "Admin")',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(dynamicReportUpdate),
+                datatype: "json",
+                success: function(data) {
+                    location.reload(true);
+                },
+                error: function(data) {
+                    debugger;
+                    alert('Unable to save report definition');
+                }
+            });
+
+            return false;
+        }
+
         function changeRulesViewTab(sender) {
             var senderId = $(sender).val();
             var tabHref = '#rulesViewTabContent-' + senderId;
@@ -542,7 +628,7 @@
             if (tab && tab.length) {
                 tab.tab('show');
                 var rulesTable = $('#rulesTable-' + senderId);
-                rulesTable.dataTable().api().columns().draw();
+                rulesTable.DataTable().columns().draw();
             } else {
                 $('#rulesViewTabs li a[class$="active"]').removeClass('active');
                 $('#rulesViewPanes div[class$="active"]').removeClass('active');
@@ -669,8 +755,8 @@
             var modalNameRaw = event.data.modalName;
             var modalEditRoute = event.data.modalEditRoute;
             var modelName = modalNameRaw.toLowerCase();
-            var modelModalContent = '#' + modelName + '-modal-content';
-            var modelModal = '#' + modelName + 'Modal';
+            var modelModalContent = '#edit-' + modelName + '-modal-content';
+            var modelModal = '#edit-' + modelName + 'Modal';
             var $buttonClicked = $(this);
             var id = $buttonClicked.attr('data-id');
             var options = { "backdrop": "static", keyboard: true };
