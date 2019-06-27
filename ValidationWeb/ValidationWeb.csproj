@@ -999,7 +999,6 @@
     <Compile Include="Services\Implementations\RulesEngineService.cs" />
     <Compile Include="Services\Implementations\SchoolYearService.cs" />
     <Compile Include="Services\Implementations\SubmissionCycleService.cs" />
-    <Compile Include="Services\Implementations\ValidatedDataSubmissionService.cs" />
     <Compile Include="Services\Implementations\ValidationResultsService.cs" />
     <Compile Include="Services\Interfaces\IAnnouncementService.cs" />
     <Compile Include="Services\Interfaces\IAppUserService.cs" />

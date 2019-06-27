@@ -1,17 +1,15 @@
 ﻿using Engine.Language;
+using ValidationWeb.Services.Interfaces;
 
 namespace ValidationWeb.Services.Implementations
 {
     public class EngineSchemaProvider : ISchemaProvider
     {
-        private static readonly string _ruleEngineResultsSchema;
-
-        static EngineSchemaProvider()
+        public EngineSchemaProvider(IRulesEngineConfigurationValues rulesEngineConfigurationValues)
         {
-            // todo: di... 
-            _ruleEngineResultsSchema = (new RulesEngineConfigurationValues()).RuleEngineResultsSchema;
+            Value = rulesEngineConfigurationValues.RuleEngineResultsSchema;
         }
 
-        public string Value => _ruleEngineResultsSchema;
+        public string Value { get; }
     }
 }

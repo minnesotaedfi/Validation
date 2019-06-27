@@ -96,11 +96,5 @@ namespace ValidationWeb.Services.Implementations
                 LoggingService.LogErrorMessage($"An error occurred when updating focused School Year ID to {newFocusedSchoolYearId.ToString()}: {ex.ChainInnerExceptionMessages()}");
             }
         }
-
-        // todo: orphan? 
-        private void UpdateUserSession(AppUserSession session)
-        {
-            HttpContextProvider.CurrentHttpContext.Items[SessionItemName] = session;
-        }
     }
 }

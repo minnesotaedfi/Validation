@@ -87,7 +87,6 @@ namespace ValidationWeb
             container.Register<IEdOrgService, EdOrgService>(Lifestyle.Scoped);
             container.Register<IHttpContextProvider, HttpContextProvider>(Lifestyle.Scoped);
             container.Register<ISchoolYearService, SchoolYearService>(Lifestyle.Scoped);
-            container.Register<IValidatedDataSubmissionService, ValidatedDataSubmissionService>(Lifestyle.Scoped);
             container.Register<IValidationResultsService, ValidationResultsService>(Lifestyle.Scoped);
             container.Register<ISubmissionCycleService, SubmissionCycleService>(Lifestyle.Scoped);
             container.Register<IEdFiApiLogService, EdFiApiLogService>(Lifestyle.Scoped);
@@ -105,15 +104,20 @@ namespace ValidationWeb
             container.Register<ISchemaProvider, EngineSchemaProvider>(Lifestyle.Scoped);
             container.Register<IRulesEngineService, RulesEngineService>(Lifestyle.Scoped);
             container.Register<IRulesEngineConfigurationValues, RulesEngineConfigurationValues>(Lifestyle.Scoped);
-            var asConfiguredRulesDirectory = new RulesEngineConfigurationValues().RulesFileFolder;
+
+            var rulesEngineConfigurationValues = new RulesEngineConfigurationValues();
+            var asConfiguredRulesDirectory = rulesEngineConfigurationValues.RulesFileFolder;
             if (asConfiguredRulesDirectory.StartsWith("~"))
             {
                 asConfiguredRulesDirectory = Server.MapPath(asConfiguredRulesDirectory);
             }
 
+            var engineSchemaProvider = new EngineSchemaProvider(rulesEngineConfigurationValues);
+
             Func<Model> modelCreatorDelegate =
                 () => new ModelBuilder(
-                    new DirectoryRulesStreams(asConfiguredRulesDirectory).Streams).Build(null, new EngineSchemaProvider());
+                    new DirectoryRulesStreams(asConfiguredRulesDirectory).Streams)
+                    .Build(null, engineSchemaProvider);
 
             container.Register(modelCreatorDelegate, Lifestyle.Scoped);
             container.Register<IOdsDataService, OdsDataService>(Lifestyle.Scoped);
