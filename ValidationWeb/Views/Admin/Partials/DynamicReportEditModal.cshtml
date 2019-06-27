@@ -18,10 +18,8 @@
                             style = "width: 100%"
                         })
                     </div>
-                    @Html.HiddenFor(m => m.Id, new
-                    {
-                        id = "edit-report-id"
-                    })
+
+                    @Html.HiddenFor(m => m.Id, new { id = "edit-report-id" })
 
                     <div class="row form-group">
                         <div class="col-sm-3">
@@ -68,7 +66,7 @@
                                     {
                                         <tr>
                                             <td>
-                                                @Html.HiddenFor(x => rule.Id)
+                                                @rule.Id
                                             </td>
                                             <td>
                                                 @Html.CheckBoxFor(x => rule.Enabled)

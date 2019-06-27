@@ -182,7 +182,7 @@ namespace ValidationWeb.Controllers
 
         public ActionResult UpdateDynamicReportDefinition(DynamicReportDefinition formResponse)
         {
-            //_dynamicReportingService.SaveReportDefinition(reportDefinition);
+            _dynamicReportingService.UpdateReportDefinition(formResponse);
             return new HttpStatusCodeResult(HttpStatusCode.OK);
         }
 

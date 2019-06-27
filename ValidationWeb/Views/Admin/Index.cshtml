@@ -219,7 +219,10 @@
                         data: 'Id',
                         searchable: false,
                         sortable: false,
-                        visible: false
+                        visible: false,
+                        render: function(data, type, row) {
+                            return data;
+                        }
                     },
                     {
                         data: 'Name',
@@ -574,9 +577,9 @@
 
         function updateDynamicReport() {
             debugger;
-            var reportId = $('edit-report-id').val();
-            var reportTitle = $('#report-name').val();
-            var reportDescription = $('#report-description').val();
+            var reportId = $('#edit-report-id').val();
+            var reportTitle = $('#edit-report-name').val();
+            var reportDescription = $('#edit-report-description').val();
 
             var dynamicReportUpdate = {
                 id: reportId,
@@ -595,14 +598,14 @@
                 var enabled = node.find('input[type=checkbox]').is(':checked');
                 var description = $(node).find('input[type=text]').val();
                 reportFields.push({
-                    ValidationRulesFieldId: data.Id,
-                    Name: data.Name,
+                    Id: data[0],
                     Description: description.trim(),
                     Enabled: enabled
                 });
             });
 
-
+            dynamicReportUpdate.Fields = reportFields;
+            
             $.ajax({
                 type: "POST",
                 url: '@Url.Action("UpdateDynamicReportDefinition", "Admin")',
@@ -613,7 +616,6 @@
                     location.reload(true);
                 },
                 error: function(data) {
-                    debugger;
                     alert('Unable to save report definition');
                 }
             });

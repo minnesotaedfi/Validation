@@ -166,6 +166,28 @@ namespace ValidationWeb.Services.Implementations
                 validationPortalContext.SaveChanges();
             }
         }
+        
+        public void UpdateReportDefinition(DynamicReportDefinition newReportDefinition)
+        {
+            using (var validationPortalContext = ValidationPortalDataContextFactory.Create())
+            {
+                var existingReportDefinition = validationPortalContext.DynamicReportDefinitions
+                    .Include(x => x.Fields)
+                    .Single(x => x.Id == newReportDefinition.Id);
+
+                existingReportDefinition.Name = newReportDefinition.Name?.Trim();
+                existingReportDefinition.Description = newReportDefinition.Description?.Trim();
+
+                foreach (var newField in newReportDefinition.Fields)
+                {
+                    var existingField = existingReportDefinition.Fields.Single(x => x.Id == newField.Id);
+                    existingField.Enabled = newField.Enabled;
+                    existingField.Description = newField.Description?.Trim();
+                }
+
+                validationPortalContext.SaveChanges();
+            }
+        }
 
         public IEnumerable<ValidationRulesView> GetRulesViews(int schoolYearId)
         {

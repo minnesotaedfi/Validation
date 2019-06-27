@@ -15,6 +15,8 @@ namespace ValidationWeb.Services.Interfaces
         
         void SaveReportDefinition(DynamicReportDefinition reportDefinition);
 
+        void UpdateReportDefinition(DynamicReportDefinition newReportDefinition);
+        
         DynamicReportDefinition GetReportDefinition(int id);
 
         IList<dynamic> GetReportData(DynamicReportRequest request);
@@ -23,6 +25,6 @@ namespace ValidationWeb.Services.Interfaces
         
         void DisableReportDefinition(int id);
 
-        void DeleteReportDefinition(int id); 
+        void DeleteReportDefinition(int id);
     }
 }
