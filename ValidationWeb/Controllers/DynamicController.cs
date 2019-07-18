@@ -4,6 +4,7 @@ using System.Net;
 using System.Web.Mvc;
 
 using Newtonsoft.Json;
+
 using ValidationWeb.Filters;
 using ValidationWeb.Models;
 using ValidationWeb.Services.Interfaces;
@@ -68,9 +69,9 @@ namespace ValidationWeb.Controllers
             return Content(serializedResult, "application/json");
         }
 
-        public ActionResult GenerateReport(DynamicReportRequest request)
+        public ActionResult GenerateReport(DynamicReportRequest request, int districtId)
         {
-            var report = DynamicReportingService.GetReportData(request);
+            var report = DynamicReportingService.GetReportData(request, districtId);
             var csvArray = Csv.WriteCsvToMemory(report);
             var memoryStream = new MemoryStream(csvArray);
 

@@ -61,7 +61,7 @@ namespace ValidationWeb.Services.Implementations
             "Microsoft.Security",
             "CA2100:Review SQL queries for security vulnerabilities",
             Justification = "Values are taken from the database schema, not user input")]
-        public IList<dynamic> GetReportData(DynamicReportRequest request)
+        public IList<dynamic> GetReportData(DynamicReportRequest request, int districtId)
         {
             var reportDefinition = GetReportDefinition(request.ReportDefinitionId);
 
@@ -84,6 +84,12 @@ namespace ValidationWeb.Services.Implementations
                 var queryCommand = connection.CreateCommand();
                 queryCommand.CommandType = System.Data.CommandType.Text;
                 queryCommand.CommandText = $"SELECT {fieldNames} FROM {viewName}";
+
+                if (selectedFields.Any(x =>
+                    x.Field.Name.Equals("DistrictId", StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    queryCommand.CommandText += $" where [DistrictId] = {districtId}";
+                }
 
                 using (var reader = queryCommand.ExecuteReader())
                 {

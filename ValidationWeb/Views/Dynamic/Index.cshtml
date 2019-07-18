@@ -86,7 +86,7 @@
             selectElement.on('change',
                 function(e) {
                     var newState = $(this).val();
-                    
+
                     var generateReport = $('#generateReport');
                     if (newState && newState.length) {
                         generateReport.show();
@@ -183,19 +183,11 @@
             xhttp.open("POST", '@Url.Action("GenerateReport", "Dynamic")');
             xhttp.setRequestHeader("Content-Type", "application/json");
             xhttp.responseType = 'blob';
-            xhttp.send(JSON.stringify(reportRequest));
-
-            @*$.ajax({
-                type: "POST",
-                url: '@Url.Action("GenerateReport", "Dynamic")',
-                contentType: "application/json; charset=utf-8",
-                data: JSON.stringify(reportRequest),
-                datatype: "json",
-                success: function(data) {
-
-                }
-            });*@
-
-        }
+            xhttp.send(JSON.stringify(
+                {
+                    'request': reportRequest,
+                    'districtId': '@Model.FocusedEdOrg.Id'
+                }));
+    }
     </script>
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+
 using ValidationWeb.Models;
 
 namespace ValidationWeb.Services.Interfaces
@@ -19,7 +20,7 @@ namespace ValidationWeb.Services.Interfaces
         
         DynamicReportDefinition GetReportDefinition(int id);
 
-        IList<dynamic> GetReportData(DynamicReportRequest request);
+        IList<dynamic> GetReportData(DynamicReportRequest request, int districtId);
 
         void EnableReportDefinition(int id);
         
