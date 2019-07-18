@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+
 using ValidationWeb.Models;
 using ValidationWeb.Services.Interfaces;
 
@@ -19,7 +20,10 @@ namespace ValidationWeb.Services.Implementations
         private static readonly List<SchoolYear> _seedSchoolYears = new List<SchoolYear>();
         private static readonly string _environmentName;
         private static readonly string _marssComparisonUrl;
-        
+        private static readonly string _ediamProfileLink;
+        private static readonly string _ediamLogoutLink; 
+
+
         static AppSettingsFileConfigurationValues()
         {
             _appId = ConfigurationManager.AppSettings["SsoAppId"];
@@ -52,6 +56,9 @@ namespace ValidationWeb.Services.Implementations
 
             _environmentName = ConfigurationManager.AppSettings["EnvironmentName"];
             _marssComparisonUrl = ConfigurationManager.AppSettings["MarssComparisonUrl"];
+
+            _ediamLogoutLink = ConfigurationManager.AppSettings["EdiamLogoutLink"];
+            _ediamProfileLink = ConfigurationManager.AppSettings["EdiamProfileLink"];
         }
 
         public string AppId => _appId;
@@ -79,5 +86,9 @@ namespace ValidationWeb.Services.Implementations
         public string EnvironmentName => _environmentName;
 
         public string MarssComparisonUrl => _marssComparisonUrl;
+
+        public string EdiamProfileLink => _ediamProfileLink;
+
+        public string EdiamLogoutLink => _ediamLogoutLink;
     }
 }

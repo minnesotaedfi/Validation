@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Web.Mvc;
+
 using ValidationWeb.Services.Interfaces;
 using ValidationWeb.ViewModels;
 
@@ -36,7 +37,9 @@ namespace ValidationWeb.Controllers
             {
                 AppUserSession = _appUserService.GetSession(),
                 EdOrgs = _edOrgService.GetAuthorizedEdOrgs(),
-                SchoolYears = _schoolYearService.GetSubmittableSchoolYears().OrderByDescending(x => x.EndYear)
+                SchoolYears = _schoolYearService.GetSubmittableSchoolYears().OrderByDescending(x => x.EndYear),
+                EdiamProfileLink = _configurationValues.EdiamProfileLink,
+                EdiamLogoutLink = _configurationValues.EdiamLogoutLink
             };
 
             // Set focused information after using the service to initialize the model.
