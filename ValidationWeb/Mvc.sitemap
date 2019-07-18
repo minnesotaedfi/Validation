@@ -38,11 +38,13 @@
             <mvcSiteMapNode title="Residents Enrolled Elsewhere" controller="Ods" action="ResidentsEnrolledElsewhereReport"/>
             <mvcSiteMapNode title="Student Identity Issues" controller="Ods" action="IdentityIssuesReport"/>
             <mvcSiteMapNode title="Level 1 Validation Issues" controller="Ods" action="Level1IssuesReport"/>
-        </mvcSiteMapNode>
+            <mvcSiteMapNode title="Dynamic Reports" controller="Dynamic" action="Index" tab="" key="dynamic">
+            </mvcSiteMapNode>
         <mvcSiteMapNode title="Validation Results" controller="Validation" action="Reports">
             <mvcSiteMapNode title="Submissions" controller="Validation" action="Submissions" />
             <mvcSiteMapNode title="Result" controller="Validation" action="Report"/>
         </mvcSiteMapNode>
+      </mvcSiteMapNode>
         <mvcSiteMapNode title="Admin" controller="Admin" action="Index" tab="" key="admin">
             <mvcSiteMapNode title="School Years" controller="Admin" action="Index" tab="" key="admin-0" />
             <mvcSiteMapNode title="Collection Cycles" controller="Admin" action="Index" tab="submissioncycles" key="admin-1" />

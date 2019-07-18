@@ -8,31 +8,34 @@
 
 <form>
     <div class="form-group row">
-        <div class="col-sm-2 ">
-            <label for="selectDataView" class="text-right col-form-label col-form-label-sm">Select Data View</label>
+        <div class="col-sm-6">
+            <div class="row">
+                <div class="col-sm-3 pull-right text-right">
+                    <label for="selectDataView" class="text-right col-form-label col-form-label-sm">Report Name</label>
+                </div>
+                <div class="nav-item col-sm-6">
+                    <select class="form-control validation-dropdown-menu" id="selectDataView" name="selectDataView" style="width: 100%">
+                        <option selected="selected" value="">- make a selection -</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row" style="margin-top: 15px; display:none" id="selectWrapper">
+                <div class="col-md-12">
+                    <select multiple="multiple" size="15" class="form-control form-control-sm" id="fieldSelect" name="fieldSelect[]"></select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-3">
+                    <button type="button" style="margin-top: 15px; display:none" id="generateReport" class="btn prime-blue white-heavy-text margin10 justify-self-end">Generate Report</button>
+                </div>
+            </div>
         </div>
-        <div class="nav-item col-sm-6">
-            <select class="form-control validation-dropdown-menu" id="selectDataView" name="selectDataView">
-                <option selected="selected" value="">- make a selection -</option>
-            </select>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-6 offset-2">
+        <div class="col-sm-4 offset-1">
+            <h4 id="reportTitle"></h4>
             <p id="reportDescription"></p>
         </div>
     </div>
-    <div class="row" style="margin-top: 15px; display:none" id="selectWrapper">
-        <div class="col-md-6">
-            <select multiple="multiple" size="15" class="form-control form-control-sm" id="fieldSelect" name="fieldSelect[]"></select>
-        </div>
-    </div>
-    <div class="form-group row">
-        <div class="col-sm-3">
-            <button type="button" style="margin-top: 15px; display:none" id="generateReport" class="btn prime-blue white-heavy-text margin10 justify-self-end">Generate Report</button>
-        </div>
 
-    </div>
 </form>
 
 @section scripts
@@ -47,7 +50,7 @@
                 // console.log("%c Focus Event ", "background:green; color:white", e);
 
                 var initialFocusEvent = e.originalEvent; //don't re-open on close focus event
-                var targetIsInput = e.target && $(e.target).is("input"); // don't open when focused from input 
+                var targetIsInput = e.target && $(e.target).is("input"); // don't open when focused from input
                 var relTargetIsInput = e.relatedTarget && $(e.relatedTarget).is("input");
                 var anyTargetIsInput = targetIsInput || relTargetIsInput;
 
@@ -61,7 +64,9 @@
         $(document).ready(function() {
 
             $('#selectDataView').select2({
-                minimumResultsForSearch: Infinity
+                minimumResultsForSearch: Infinity,
+                dropdownAutoWidth: true,
+                width: 'resolve'
             });
 
             $('#generateReport').on('click', createReport);
@@ -81,8 +86,7 @@
             selectElement.on('change',
                 function(e) {
                     var newState = $(this).val();
-                    //console.log(newState);
-
+                    
                     var generateReport = $('#generateReport');
                     if (newState && newState.length) {
                         generateReport.show();
@@ -99,7 +103,7 @@
                 success: function(data) {
                     var selectDataView = $('#selectDataView');
                     selectDataView.empty();
-                    selectDataView.append($('<option>', { value: '', text: '- select a view -' }));
+                    selectDataView.append($('<option>', { value: '', text: '- select a report -' }));
                     $.each(data,
                         function(i, item) {
                             selectDataView.append($('<option>', { value: item.Id, text: item.Name }));
@@ -127,6 +131,7 @@
                 $('#generateReport').hide();
 
                 var rules = viewData[dataView];
+                $('#reportTitle').text(rules.Name)
                 $('#reportDescription').text(rules.Description);
 
                 if (dataView.length > 0) {
@@ -179,7 +184,7 @@
             xhttp.setRequestHeader("Content-Type", "application/json");
             xhttp.responseType = 'blob';
             xhttp.send(JSON.stringify(reportRequest));
-            
+
             @*$.ajax({
                 type: "POST",
                 url: '@Url.Action("GenerateReport", "Dynamic")',
@@ -190,7 +195,7 @@
 
                 }
             });*@
-            
+
         }
     </script>
 }

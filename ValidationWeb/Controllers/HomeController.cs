@@ -16,7 +16,6 @@ namespace ValidationWeb.Controllers
             IEdOrgService edOrgService,
             ISchoolYearService schoolYearService,
             IOdsDataService odsDataService,
-            IValidatedDataSubmissionService validatedDataSubmissionService,
             ISubmissionCycleService submissionCycleService,
             IRecordsRequestService recordsRequestService, 
             IConfigurationValues configurationValues)
@@ -26,7 +25,6 @@ namespace ValidationWeb.Controllers
             EdOrgService = edOrgService;
             SchoolYearService = schoolYearService;
             OdsDataService = odsDataService;
-            ValidatedDataSubmissionService = validatedDataSubmissionService;
             SubmissionCycleService = submissionCycleService;
             RecordsRequestService = recordsRequestService;
             ConfigurationValues = configurationValues;
@@ -42,8 +40,6 @@ namespace ValidationWeb.Controllers
         
         protected IOdsDataService OdsDataService { get; set; }
         
-        protected IValidatedDataSubmissionService ValidatedDataSubmissionService { get; set; }
-
         protected ISubmissionCycleService SubmissionCycleService { get; set; }
 
         protected IRecordsRequestService RecordsRequestService { get; set; }
@@ -73,7 +69,7 @@ namespace ValidationWeb.Controllers
             {
                 AppUserSession = AppUserService.GetSession(),
                 Announcements = AnnouncementService.GetAnnouncements(),
-                YearsOpenForDataSubmission = ValidatedDataSubmissionService.GetYearsOpenForDataSubmission(),
+                YearsOpenForDataSubmission = SchoolYearService.GetSubmittableSchoolYears(),
                 AuthorizedEdOrgs = EdOrgService.GetAuthorizedEdOrgs(),
                 FocusedEdOrg = focusedEdOrg,
                 RecordsRequests = recordsRequests,
