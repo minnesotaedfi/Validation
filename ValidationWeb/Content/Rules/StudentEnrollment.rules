@@ -1303,14 +1303,6 @@ rule 10.10.6595
 	else '250. IS flag is "Y" and student\'s age is between 12-15 based on the student\'s enrollment start date.  Student\'s enrolled in IS program are normally age 16 or older.  Verify student\'s birth date and IS flag.'	
 
 
-rule 10.10.6602
-	when {StudentEnrollment}.[StatusEnd] is in ['8','9']
-	and {StudentEnrollment}.[StateAidCategory] <> '46' 
-	and {StudentEnrollment}.[StudentGradeLevel] <> 'PS' then
-	require years since {StudentDemographic}.[BirthDate] as of {StudentEnrollment}.[StatusEndDate] >= 15
-	else '189. Status End or 08 (graduate) requires the student\'s age be at least 16 when he or she graduates. Check the Status End Date, Student Birth Date, and the Status End Code.'
-
-
 rule 10.10.6611
 	when years since {StudentDemographic}.[BirthDate] as of 1-Sep >= 21
 	and {StudentEnrollment}.[SpecialEducationEvaluationStatus] is not in ['4','6','9'] 
@@ -1546,18 +1538,6 @@ rule 30.10.6361
 	and {StudentEnrollment}.[StudentGradeLevel] <> 'PS' then
 	require count({StudentEnrollment} by [StatusEnd] when {StudentEnrollment}.[StatusEnd] is in ['8','11','40']) <= 1
 	else '66. Status End codes 8 (graduate), 11 (deceased), 40 (end of year) may be reported only once per student. This edit is performed at both the local and state levels.'
-
-
-rule 30.10.6379
-	when collection is EOY_Enrollment_And_Demographic 
-	and {StudentEnrollment}.[SpecialEducationEvaluationStatus] is in ['4','6','9']
-	and {StudentEnrollment}.[StudentGradeLevel] is not in ['EC','HK','PS']
-	and {StudentEnrollment}.[StateAidCategory] is not in ['16','17','18'] 
-	and {StudentEnrollment}.[DistrictType] <> '70'
-	and {StudentEnrollment}.[SchoolClassification] is not in ['45','51'] then
-	expect {StudentEnrollment}.[SpecialEducationServiceHours] <= {StudentEnrollment}.[Membership]
-	else '270. Special Education Service Hours greater than membership hours.  For grades EC and HK this is possible.  Verify the special education service hours are correct.'
-
 
 
 rule 30.10.6388
