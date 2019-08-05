@@ -59,6 +59,7 @@ namespace ValidationWeb.Controllers
         {
             var result = DynamicReportingService.GetReportDefinitions()
                 .Where(x => x.SchoolYearId == schoolYearId)
+                .Where(x => x.Enabled)
                 .OrderBy(x => x.Name);
 
             var serializedResult = JsonConvert.SerializeObject(
