@@ -2,22 +2,22 @@
 <Project ToolsVersion="12.0" DefaultTargets="PublishWebPackages" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <!--<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU'">-->
     <PropertyGroup>
-        <ValidationPortalIisPath>Default Web Site/ValidationPortal</ValidationPortalIisPath>
+        <ValidationPortalIisPath>Default Web Site/EDVP</ValidationPortalIisPath>
         <ValidationPortalIisAppPool Condition=" '$(ValidationPortalIisAppPool)'==''">DefaultAppPool</ValidationPortalIisAppPool>
-        <ValidationPortalIisPathToRoot Condition=" '$(ValidationPortalIisPathToRoot)'==''">D:\ValidationPortal</ValidationPortalIisPathToRoot>
+        <ValidationPortalIisPathToRoot Condition=" '$(ValidationPortalIisPathToRoot)'==''">C:\inetpub\wwwroot\ValidationPortal</ValidationPortalIisPathToRoot>
         <AuthenticationServerRedirectUrl Condition=" '$(AuthenticationServerRedirectUrl)'==''">http://www.wearedoubleline.com/</AuthenticationServerRedirectUrl>
         <AuthorizationStoredProcedureName Condition=" '$(AuthorizationStoredProcedureName)'==''">dbo.EDVP_MidmsEdiamUser_View</AuthorizationStoredProcedureName>
         <SsoAppId Condition=" '$(SsoAppId)'==''">VAL</SsoAppId>
         <RulesFileFolder Condition=" '$(RulesFileFolder)'==''">~/Content/Rules</RulesFileFolder>
         <RuleEngineResultsSchema Condition=" '$(RuleEngineResultsSchema)'==''">rules</RuleEngineResultsSchema>
         <UseFakeViewModelData Condition=" '$(UseFakeViewModelData)'==''">false</UseFakeViewModelData>
-        <EnvironmentName Condition="'$(EnvironmentName)' == ''">MN-Dev</EnvironmentName>
-        <SessionState Condition=" '$(SessionState)'==''">data source=MN-DEV;integrated security=True;MultipleActiveResultSets=True;</SessionState>
-        <ValidationPortalDbContext Condition=" '$(ValidationPortalDbContext)'==''">Data Source=MN-DEV;Initial Catalog=ValidationPortal;Integrated Security=True;MultipleActiveResultSets=True;Application Name=EntityFramework</ValidationPortalDbContext>
-        <SingleSignOnDatabase Condition="'$(SingleSignOnDatabase)'==''">Data Source=MN-DEV;Initial Catalog=ValidationPortalSsoMock;Integrated Security=True;MultipleActiveResultSets=True;App=EntityFramework</SingleSignOnDatabase>
-        <RawOdsDbContext Condition="'$(RawOdsDbContext)'==''">Data Source=MN-DEV;Initial Catalog=EdFi_Ods_{0};Integrated Security=True;MultipleActiveResultSets=True;App=EntityFramework</RawOdsDbContext>
-        <ValidatedOdsDbContext Condition="'$(ValidatedOdsDbContext)'==''">data source=MN-DEV;initial catalog=ValidationPortal;integrated security=True;MultipleActiveResultSets=True;App=EntityFramework</ValidatedOdsDbContext>
-        <EdFiLogDbContext Condition=" '$(EdFiLogDbContext)'==''">data source=MN-DEV;initial catalog=EdFi_Log;integrated security=True;MultipleActiveResultSets=True;App=EntityFramework</EdFiLogDbContext>
+        <EnvironmentName Condition="'$(EnvironmentName)' == ''">MN-Dev2</EnvironmentName>
+        <SessionState Condition=" '$(SessionState)'==''">data source=MN-DEV2;integrated security=True;MultipleActiveResultSets=True;</SessionState>
+        <ValidationPortalDbContext Condition=" '$(ValidationPortalDbContext)'==''">Data Source=MN-DEV2;Initial Catalog=ValidationPortal;Integrated Security=True;MultipleActiveResultSets=True;Application Name=EntityFramework</ValidationPortalDbContext>
+        <SingleSignOnDatabase Condition="'$(SingleSignOnDatabase)'==''">Data Source=MN-DEV2;Initial Catalog=ValidationPortalSsoMock;Integrated Security=True;MultipleActiveResultSets=True;App=EntityFramework</SingleSignOnDatabase>
+        <RawOdsDbContext Condition="'$(RawOdsDbContext)'==''">Data Source=MN-DEV2;Initial Catalog=EdFi_Ods_{0};Integrated Security=True;MultipleActiveResultSets=True;App=EntityFramework</RawOdsDbContext>
+        <ValidatedOdsDbContext Condition="'$(ValidatedOdsDbContext)'==''">data source=MN-DEV2;initial catalog=ValidationPortal;integrated security=True;MultipleActiveResultSets=True;App=EntityFramework</ValidatedOdsDbContext>
+        <EdFiLogDbContext Condition=" '$(EdFiLogDbContext)'==''">data source=MN-DEV2;initial catalog=EdFi_Log;integrated security=True;MultipleActiveResultSets=True;App=EntityFramework</EdFiLogDbContext>
     </PropertyGroup>
     <ItemGroup>
         <PublishPackages Include="ValidationPortal.deploy.cmd">
@@ -38,7 +38,7 @@
             <UseFakeViewModelDataParamName>UseFakeViewModelData</UseFakeViewModelDataParamName>
             <UseFakeViewModelDataParamValue>false</UseFakeViewModelDataParamValue>
             <EnvironmentNameParamName>EnvironmentName</EnvironmentNameParamName>
-            <EnvironmentNameParamValue>MN-Dev</EnvironmentNameParamValue>
+            <EnvironmentNameParamValue>MN-Dev2</EnvironmentNameParamValue>
             <MarssComparisonUrlParamName>MarssComparisonUrl</MarssComparisonUrlParamName>
             <MarssComparisonUrlParamValue>http://wearedoubleline.com?test</MarssComparisonUrlParamValue>
             <SessionStateConnectionString>$(SessionState.Replace(";","%3b"))</SessionStateConnectionString>
@@ -61,7 +61,7 @@
         <XmlPoke
               XmlInputPath="%(PublishPackages.ParametersXml)"
               Query="//parameters/setParameter[@name='IIS Web Application Name']/@value"
-              Value="Default Web Site/ValidationPortal"
+              Value="Default Web Site/EDVP"
               Condition =" '%(PublishPackages.IisWebAppNameParamValue)'!=''" />
         <XmlPoke
             XmlInputPath="%(PublishPackages.ParametersXml)"
@@ -148,7 +148,7 @@
                 Value="%(PublishPackages.SessionStateConnectionString)" 
                 Condition=" '%(PublishPackages.SessionStateConnectionString)'!=''"/>
 
-        <Exec Condition="'$(Configuration)'!='Debug'" Command="..\obj\$(Configuration)\Package\ValidationWeb.deploy.cmd /Y /M:mn-dev" />
+        <Exec Condition="'$(Configuration)'!='Debug'" Command="..\obj\$(Configuration)\Package\ValidationWeb.deploy.cmd /Y /M:mn-dev2.doubleline.us" />
         <!--<Exec Command="..\obj\$(Configuration)\Package\ValidationWeb.deploy.cmd /Y /M:mn-dev -verbose" />-->
     </Target>
 </Project>

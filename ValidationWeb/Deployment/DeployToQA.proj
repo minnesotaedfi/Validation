@@ -13,24 +13,24 @@
         <UseFakeViewModelData Condition=" '$(UseFakeViewModelData)'==''">false</UseFakeViewModelData>
         <EnvironmentName Condition="'$(EnvironmentName)' == ''">MN-QA</EnvironmentName>
         <MarssComparisonUrl Condition="'$(MarssComparisonUrl)' == ''">http://edu-devapache:81/MDEAnalytics/DataTopic.jsp?TOPICID=474</MarssComparisonUrl>
-        <SessionState Condition=" '$(SessionState)'==''">data source=EDU-EDFIODSQ01;integrated security=True;MultipleActiveResultSets=True;</SessionState>
-        <ValidationPortalDbContext Condition=" '$(ValidationPortalDbContext)'==''">Data Source=EDU-EDFIODSQ01;Initial Catalog=ValidationPortal;Integrated Security=True;MultipleActiveResultSets=True;Application Name=EntityFramework</ValidationPortalDbContext>
-        <SingleSignOnDatabase Condition="'$(SingleSignOnDatabase)'==''">Data Source=EDU-SQL2014DEV;Initial Catalog=MidmsAudit_10g;Integrated Security=True;MultipleActiveResultSets=True;App=EntityFramework</SingleSignOnDatabase>
-        <RawOdsDbContext Condition="'$(RawOdsDbContext)'==''">Data Source=EDU-EDFIODSQ01;Initial Catalog=EdFi_Ods_{0};Integrated Security=True;MultipleActiveResultSets=True;App=EntityFramework</RawOdsDbContext>
-        <ValidatedOdsDbContext Condition="'$(ValidatedOdsDbContext)'==''">data source=EDU-EDFIODSQ01;initial catalog=ValidationPortal;integrated security=True;MultipleActiveResultSets=True;App=EntityFramework</ValidatedOdsDbContext>
-        <EdFiLogDbContext Condition=" '$(EdFiLogDbContext)'==''">data source=EDU-EDFIODSQ01;initial catalog=EdFi_Log;integrated security=True;MultipleActiveResultSets=True;App=EntityFramework</EdFiLogDbContext>
+        <SessionState Condition=" '$(SessionState)'==''">data source=EDU-EDFIODSQ31;integrated security=True;MultipleActiveResultSets=True;</SessionState>
+        <ValidationPortalDbContext Condition=" '$(ValidationPortalDbContext)'==''">Data Source=EDU-EDFIODSQ31;Initial Catalog=ValidationPortal;Integrated Security=True;MultipleActiveResultSets=True;Application Name=EntityFramework</ValidationPortalDbContext>
+        <SingleSignOnDatabase Condition="'$(SingleSignOnDatabase)'==''">Data Source=EDU-SQL2014DEV;Initial Catalog=EDIAM;Integrated Security=True;MultipleActiveResultSets=True;App=EntityFramework</SingleSignOnDatabase>
+        <RawOdsDbContext Condition="'$(RawOdsDbContext)'==''">Data Source=EDU-EDFIODSQ31;Initial Catalog=EdFi_Ods_{0};Integrated Security=True;MultipleActiveResultSets=True;App=EntityFramework</RawOdsDbContext>
+        <ValidatedOdsDbContext Condition="'$(ValidatedOdsDbContext)'==''">data source=EDU-EDFIODSQ31;initial catalog=ValidationPortal;integrated security=True;MultipleActiveResultSets=True;App=EntityFramework</ValidatedOdsDbContext>
+        <EdFiLogDbContext Condition=" '$(EdFiLogDbContext)'==''">data source=EDU-EDFIODSQ31;initial catalog=EdFi_Log;integrated security=True;MultipleActiveResultSets=True;App=EntityFramework</EdFiLogDbContext>
     </PropertyGroup>
     <ItemGroup>
         <PublishPackages Include="ValidationPortal.deploy.cmd">
             <ParametersXml>..\obj\$(Configuration)\Package\ValidationWeb.SetParameters.xml</ParametersXml>
             <IisWebAppNameParamValue>$(ValidationPortalIisPath)</IisWebAppNameParamValue>
             <ValidationPortalIisPathToRootParamName>ValidationPortalIisPathToRoot</ValidationPortalIisPathToRootParamName>
-            <ValidationPortalIisPathToRootParamValue>D:\ValidationPortal</ValidationPortalIisPathToRootParamValue>
+            <ValidationPortalIisPathToRootParamValue>E:\inetpub\wwwroot\ValidationPortal</ValidationPortalIisPathToRootParamValue>
             <AuthenticationServerRedirectUrlParamName>AuthenticationServerRedirectUrl</AuthenticationServerRedirectUrlParamName>
             <AuthenticationServerRedirectUrlParamValue>http://www.wearedoubleline.com/</AuthenticationServerRedirectUrlParamValue>
             <AuthorizationStoredProcedureNameParamName>AuthorizationStoredProcedureName</AuthorizationStoredProcedureNameParamName>
-            <AuthorizationStoredProcedureNameParamValue>dbo.EDVP_MidmsEdiamUser_View</AuthorizationStoredProcedureNameParamValue>
-            <SsoAppIdParamName>SsoAppId</SsoAppIdParamName>
+            <AuthorizationStoredProcedureNameParamValue>edvp_app_user.uvw_UserToRole</AuthorizationStoredProcedureNameParamValue>
+            <SsoAppIdParamName>AppId</SsoAppIdParamName>
             <SsoAppIdParamValue>EDVP</SsoAppIdParamValue>
             <RulesFileFolderParamName>RulesFileFolder</RulesFileFolderParamName>
             <RulesFileFolderParamValue>~/Content/Rules</RulesFileFolderParamValue>
@@ -142,6 +142,6 @@
                 Value="%(PublishPackages.SessionStateConnectionString)"
                 Condition=" '%(PublishPackages.SessionStateConnectionString)'!=''"/>
 
-        <Exec Condition="'$(Configuration)'!='Debug'" Command="..\obj\$(Configuration)\Package\ValidationWeb.deploy.cmd /Y /M:edu-edfiapiq01.educ.state.mn.us" />
+        <Exec Condition="'$(Configuration)'!='Debug'" Command="..\obj\$(Configuration)\Package\ValidationWeb.deploy.cmd /Y /M:edu-edfiapiq31.educ.state.mn.us" />
     </Target>
 </Project>

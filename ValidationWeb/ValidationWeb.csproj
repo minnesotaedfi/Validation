@@ -825,7 +825,7 @@
     <Content Include="Views\Ods\ResidentsEnrolledElsewhereReport.cshtml" />
     <Content Include="Views\Ods\IdentityIssuesReport.cshtml" />
     <Content Include="Views\Ods\Level1IssuesReport.cshtml" />
-    <Content Include="Deployment\DeployToMnDev.proj">
+    <Content Include="Deployment\DeployToMnDev2.proj">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Deployment\DeployToQA.proj" />
