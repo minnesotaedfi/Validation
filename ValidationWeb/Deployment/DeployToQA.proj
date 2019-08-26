@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="PublishWebPackages" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="14.0" DefaultTargets="PublishWebPackages" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <!--<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU'">-->
     <PropertyGroup>
         <ValidationPortalIisPath>Default Web Site/ValidationPortal</ValidationPortalIisPath>
@@ -22,7 +22,7 @@
     </PropertyGroup>
     <ItemGroup>
         <PublishPackages Include="ValidationPortal.deploy.cmd">
-            <ParametersXml>..\obj\$(Configuration)\Package\ValidationWeb.SetParameters.xml</ParametersXml>
+            <ParametersXml>$(ProjectDir)..\obj\$(Configuration)\Package\ValidationWeb.SetParameters.xml</ParametersXml>
             <IisWebAppNameParamValue>$(ValidationPortalIisPath)</IisWebAppNameParamValue>
             <ValidationPortalIisPathToRootParamName>ValidationPortalIisPathToRoot</ValidationPortalIisPathToRootParamName>
             <ValidationPortalIisPathToRootParamValue>E:\inetpub\wwwroot\ValidationPortal</ValidationPortalIisPathToRootParamValue>
