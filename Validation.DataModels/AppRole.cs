@@ -18,8 +18,6 @@ namespace ValidationWeb.Models
         
         public static AppRole DistrictUser => CreateAppRole(PortalRoleNames.DistrictUser);
         
-        public static AppRole RegionUser => CreateAppRole(PortalRoleNames.RegionUser);
-        
         public string Name { get; set; }
 
         public static AppRole CreateAppRole(string name)
@@ -35,10 +33,6 @@ namespace ValidationWeb.Models
             if (string.CompareOrdinal(name, SSORoleNames.DistrictUser) == 0)
             {
                 return new AppRole { Name = PortalRoleNames.DistrictUser };
-            }
-            if (string.CompareOrdinal(name, SSORoleNames.RegionUser) == 0)
-            {
-                return new AppRole { Name = PortalRoleNames.RegionUser };
             }
             if (string.CompareOrdinal(name, SSORoleNames.HelpDesk) == 0)
             {

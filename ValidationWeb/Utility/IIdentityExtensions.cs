@@ -1,4 +1,5 @@
 ﻿using System.Security.Principal;
+
 using ValidationWeb.Models;
 
 namespace ValidationWeb.Utility
@@ -22,8 +23,14 @@ namespace ValidationWeb.Utility
             switch (role.Name)
             {
                 case PortalRoleNames.Admin:
-                    rolePermissions.CanAccessAdminFeatures = true; 
+                    rolePermissions.CanAccessAdminFeatures = true;
+                    rolePermissions.CanViewMarssComparisonLink = true;
+                    rolePermissions.CanViewStudentLevelReports = true;
+                    rolePermissions.CanViewStudentDrilldownReports = true;
+                    rolePermissions.CanViewValidationReports = true;
+                    rolePermissions.CanAccessAllDistrictsMode = true;
                     break;
+
                 case PortalRoleNames.HelpDesk:
                     rolePermissions.CanViewOdsReports = true;
                     rolePermissions.CanViewStudentDrilldownReports = true;
@@ -31,10 +38,12 @@ namespace ValidationWeb.Utility
                     rolePermissions.CanAccessAllDistrictsMode = true;
                     rolePermissions.CanViewMarssComparisonLink = true;
                     break; 
+                
                 case PortalRoleNames.DataOwner:
                     rolePermissions.CanViewOdsReports = true;
                     rolePermissions.CanAccessAllDistrictsMode = true; 
                     break; 
+                
                 case PortalRoleNames.DistrictUser:
                     rolePermissions.CanViewOdsReports = true;
                     rolePermissions.CanModifyRecordsRequests = true;
@@ -42,15 +51,8 @@ namespace ValidationWeb.Utility
                     rolePermissions.CanViewValidationReports = true;
                     rolePermissions.CanRunValidationReports = true;
                     rolePermissions.CanViewMarssComparisonLink = true;
+                    rolePermissions.CanViewStudentLevelReports = true;
                     break;
-                case PortalRoleNames.RegionUser:
-                    rolePermissions.CanViewOdsReports = true;
-                    rolePermissions.CanModifyRecordsRequests = true;
-                    rolePermissions.CanViewStudentDrilldownReports = true;
-                    rolePermissions.CanViewValidationReports = true;
-                    rolePermissions.CanRunValidationReports = true;
-                    rolePermissions.CanViewMarssComparisonLink = true;
-                    break; 
             }
 
             return rolePermissions;

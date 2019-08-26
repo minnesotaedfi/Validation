@@ -4,10 +4,12 @@ using System.IO;
 using System.Linq;
 using System.Web.Hosting;
 using System.Web.Mvc;
-using CsvHelper;
+
 using DataTables.AspNet.Core;
 using DataTables.AspNet.Mvc5;
+
 using Engine.Models;
+
 using ValidationWeb.Filters;
 using ValidationWeb.Models;
 using ValidationWeb.Services.Interfaces;
@@ -16,7 +18,7 @@ using ValidationWeb.ViewModels;
 
 namespace ValidationWeb.Controllers
 {
-    [PortalAuthorize(Roles = "DistrictUser,HelpDesk")]
+    [PortalAuthorize(Roles = "DistrictUser,HelpDesk,Admin")]
     public class ValidationController : Controller
     {
         protected readonly IAppUserService _appUserService;

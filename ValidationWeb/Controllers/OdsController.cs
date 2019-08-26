@@ -1,11 +1,15 @@
-﻿using DataTables.AspNet.Core;
-using DataTables.AspNet.Mvc5;
-using Engine.Models;
-using MoreLinq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+
+using DataTables.AspNet.Core;
+using DataTables.AspNet.Mvc5;
+
+using Engine.Models;
+
+using MoreLinq;
+
 using ValidationWeb.ApiControllers.ModelBinders;
 using ValidationWeb.Database.Queries;
 using ValidationWeb.DataCache;
@@ -18,7 +22,7 @@ using ValidationWeb.ViewModels;
 namespace ValidationWeb.Controllers
 {
     // TODO: refactor repeated code. move cache manager and serialization calls into a separate layer. -pocky
-    [PortalAuthorize(Roles = "DataOwner,DistrictUser,HelpDesk")]
+    [PortalAuthorize(Roles = "Admin,DataOwner,DistrictUser,HelpDesk")]
     public class OdsController : Controller
     {
         public OdsController(

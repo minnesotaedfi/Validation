@@ -1,6 +1,4 @@
 ﻿using System.Web.Mvc;
-using System.Web.Routing;
-using ValidationWeb.Models;
 
 namespace ValidationWeb.Filters
 {
@@ -13,16 +11,16 @@ namespace ValidationWeb.Filters
             {
                 base.OnAuthorization(filterContext);
             }
-            else
-            {
-                if (filterContext.HttpContext.User.IsInRole(PortalRoleNames.Admin) 
-                    && filterContext.ActionDescriptor.ControllerDescriptor.ControllerName != "Admin")
-                {
+            //else
+            //{
+            //    if (filterContext.HttpContext.User.IsInRole(PortalRoleNames.Admin) 
+            //        && filterContext.ActionDescriptor.ControllerDescriptor.ControllerName != "Admin")
+            //    {
 
-                    filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary(new { controller = "Admin", action = "Index" }));
-                    filterContext.Result.ExecuteResult(filterContext.Controller.ControllerContext);
-                }
-            }
+            //        filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary(new { controller = "Admin", action = "Index" }));
+            //        filterContext.Result.ExecuteResult(filterContext.Controller.ControllerContext);
+            //    }
+            //}
         }
     }
 }

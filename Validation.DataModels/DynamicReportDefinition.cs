@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Security.Permissions;
 
 namespace ValidationWeb.Models
 {
@@ -35,5 +34,7 @@ namespace ValidationWeb.Models
         public ValidationRulesView RulesView { get; set; }
 
         public ICollection<DynamicReportField> Fields { get; set; }
+
+        public bool IsOrgLevelReport { get; set; }
     }
 }

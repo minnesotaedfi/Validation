@@ -17,5 +17,7 @@
         public bool CanAccessAllDistrictsMode { get; set; }
 
         public bool CanViewMarssComparisonLink { get; set; }
+
+        public bool CanViewStudentLevelReports { get; set; }
     }
 }

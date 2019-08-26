@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.UI;
+
 using ValidationWeb.Services.Interfaces;
 
 namespace ValidationWeb.Controllers
@@ -54,9 +55,13 @@ namespace ValidationWeb.Controllers
                 }
             }
 
+            var loginReturn = string.IsNullOrWhiteSpace(returnUrl) ? 
+                                  Url.Action("Index", "Home", new { }, Request.Url?.Scheme) : 
+                                  returnUrl;
+
             var viewModel = new LoginViewModel
                             {
-                                ReturnUrl = new Uri(returnUrl),
+                                ReturnUrl = new Uri(loginReturn),
                                 LoginUsers = results
                             };
 
@@ -77,18 +82,19 @@ namespace ValidationWeb.Controllers
                                 };
 
             HttpContext.Response.Cookies.Add(cookie);
+            return View();
 
-            return RedirectToAction(
-                "Index", 
-                "Login", 
-                new
-                {
-                    returnUrl = Url.Action(
-                        "Index", 
-                        "Home", 
-                        new { }, 
-                        Request.Url?.Scheme)
-                });
+            //return RedirectToAction(
+            //    "Index", 
+            //    "Login", 
+            //    new
+            //    {
+            //        returnUrl = Url.Action(
+            //            "Index", 
+            //            "Home", 
+            //            new { }, 
+            //            Request.Url?.Scheme)
+            //    });
         }
 
         [AllowAnonymous]

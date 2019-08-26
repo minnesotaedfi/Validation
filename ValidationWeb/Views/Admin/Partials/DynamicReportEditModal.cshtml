@@ -50,6 +50,14 @@
                                 new { id = "edit-report-description", @class = "form-control", required = "required" })
                         </div>
                     </div>
+                    <div class="row form-group">
+                        <div class="col-sm-9 offset-3">
+                            <div class="form-check">
+                                @Html.CheckBoxFor(m => m.IsOrgLevelReport, new { id = "edit-report-is-org-level", @class="form-check-input" })
+                                @Html.LabelFor(m => m.IsOrgLevelReport, "Report is Org-Level", new { @class="form-check-label", @for="edit-report-is-org-level" })
+                            </div>
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="col-sm-12 form-group">
                             <table class="table table-sm table-responsive-md table-bordered" id="editRulesTable">

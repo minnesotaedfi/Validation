@@ -57,6 +57,10 @@
     <Compile Include="Migrations\201908260048472_RulesFieldUpdate.Designer.cs">
       <DependentUpon>201908260048472_RulesFieldUpdate.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201908261759334_OrgLevelReport.cs" />
+    <Compile Include="Migrations\201908261759334_OrgLevelReport.Designer.cs">
+      <DependentUpon>201908261759334_OrgLevelReport.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ValidationPortalDbContext.cs" />
     <Compile Include="Migrations\ValidationPortalDbMigrationConfiguration.cs" />
@@ -81,6 +85,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201908260048472_RulesFieldUpdate.resx">
       <DependentUpon>201908260048472_RulesFieldUpdate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201908261759334_OrgLevelReport.resx">
+      <DependentUpon>201908261759334_OrgLevelReport.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

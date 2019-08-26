@@ -1,154 +1,161 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="PublishWebPackages" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <!--<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU'">-->
-    <PropertyGroup>
-        <ValidationPortalIisPath>Default Web Site/EDVP</ValidationPortalIisPath>
-        <ValidationPortalIisAppPool Condition=" '$(ValidationPortalIisAppPool)'==''">DefaultAppPool</ValidationPortalIisAppPool>
-        <ValidationPortalIisPathToRoot Condition=" '$(ValidationPortalIisPathToRoot)'==''">C:\inetpub\wwwroot\ValidationPortal</ValidationPortalIisPathToRoot>
-        <AuthenticationServerRedirectUrl Condition=" '$(AuthenticationServerRedirectUrl)'==''">http://www.wearedoubleline.com/</AuthenticationServerRedirectUrl>
-        <AuthorizationStoredProcedureName Condition=" '$(AuthorizationStoredProcedureName)'==''">dbo.EDVP_MidmsEdiamUser_View</AuthorizationStoredProcedureName>
-        <SsoAppId Condition=" '$(SsoAppId)'==''">VAL</SsoAppId>
-        <RulesFileFolder Condition=" '$(RulesFileFolder)'==''">~/Content/Rules</RulesFileFolder>
-        <RuleEngineResultsSchema Condition=" '$(RuleEngineResultsSchema)'==''">rules</RuleEngineResultsSchema>
-        <UseFakeViewModelData Condition=" '$(UseFakeViewModelData)'==''">false</UseFakeViewModelData>
-        <EnvironmentName Condition="'$(EnvironmentName)' == ''">MN-Dev2</EnvironmentName>
-        <SessionState Condition=" '$(SessionState)'==''">data source=MN-DEV2;integrated security=True;MultipleActiveResultSets=True;</SessionState>
-        <ValidationPortalDbContext Condition=" '$(ValidationPortalDbContext)'==''">Data Source=MN-DEV2;Initial Catalog=ValidationPortal;Integrated Security=True;MultipleActiveResultSets=True;Application Name=EntityFramework</ValidationPortalDbContext>
-        <SingleSignOnDatabase Condition="'$(SingleSignOnDatabase)'==''">Data Source=MN-DEV2;Initial Catalog=ValidationPortalSsoMock;Integrated Security=True;MultipleActiveResultSets=True;App=EntityFramework</SingleSignOnDatabase>
-        <RawOdsDbContext Condition="'$(RawOdsDbContext)'==''">Data Source=MN-DEV2;Initial Catalog=EdFi_Ods_{0};Integrated Security=True;MultipleActiveResultSets=True;App=EntityFramework</RawOdsDbContext>
-        <ValidatedOdsDbContext Condition="'$(ValidatedOdsDbContext)'==''">data source=MN-DEV2;initial catalog=ValidationPortal;integrated security=True;MultipleActiveResultSets=True;App=EntityFramework</ValidatedOdsDbContext>
-        <EdFiLogDbContext Condition=" '$(EdFiLogDbContext)'==''">data source=MN-DEV2;initial catalog=EdFi_Log;integrated security=True;MultipleActiveResultSets=True;App=EntityFramework</EdFiLogDbContext>
-    </PropertyGroup>
-    <ItemGroup>
-        <PublishPackages Include="ValidationPortal.deploy.cmd">
-            <ParametersXml>..\obj\$(Configuration)\Package\ValidationWeb.SetParameters.xml</ParametersXml>
-            <IisWebAppNameParamValue>$(ValidationPortalIisPath)</IisWebAppNameParamValue>
-            <ValidationPortalIisPathToRootParamName>ValidationPortalIisPathToRoot</ValidationPortalIisPathToRootParamName>
-            <ValidationPortalIisPathToRootParamValue>D:\ValidationPortal</ValidationPortalIisPathToRootParamValue>
-            <AuthenticationServerRedirectUrlParamName>AuthenticationServerRedirectUrl</AuthenticationServerRedirectUrlParamName>
-            <AuthenticationServerRedirectUrlParamValue>~/Login</AuthenticationServerRedirectUrlParamValue>
-            <AuthorizationStoredProcedureNameParamName>AuthorizationStoredProcedureName</AuthorizationStoredProcedureNameParamName>
-            <AuthorizationStoredProcedureNameParamValue>dbo.EDVP_MidmsEdiamUser_View</AuthorizationStoredProcedureNameParamValue>
-            <SsoAppIdParamName>SsoAppId</SsoAppIdParamName>
-            <SsoAppIdParamValue>VAL</SsoAppIdParamValue>
-            <RulesFileFolderParamName>RulesFileFolder</RulesFileFolderParamName>
-            <RulesFileFolderParamValue>~/Content/Rules</RulesFileFolderParamValue>
-            <RuleEngineResultsSchemaParamName>RuleEngineResultsSchema</RuleEngineResultsSchemaParamName>
-            <RuleEngineResultsSchemaParamValue>rules</RuleEngineResultsSchemaParamValue>
-            <UseFakeViewModelDataParamName>UseFakeViewModelData</UseFakeViewModelDataParamName>
-            <UseFakeViewModelDataParamValue>false</UseFakeViewModelDataParamValue>
-            <EnvironmentNameParamName>EnvironmentName</EnvironmentNameParamName>
-            <EnvironmentNameParamValue>MN-Dev2</EnvironmentNameParamValue>
-            <MarssComparisonUrlParamName>MarssComparisonUrl</MarssComparisonUrlParamName>
-            <MarssComparisonUrlParamValue>http://wearedoubleline.com?test</MarssComparisonUrlParamValue>
-            <SessionStateConnectionString>$(SessionState.Replace(";","%3b"))</SessionStateConnectionString>
-            <!-- These are the string values that get added to the Web.Config file - not to determine where the DB is actually deployed. -->
-            <ValidationPortalDbContextName>ValidationPortalDbContext-Web.config Connection String</ValidationPortalDbContextName>
-            <ValidationPortalDbContextConnectionString>$(ValidationPortalDbContext.Replace(";","%3b"))</ValidationPortalDbContextConnectionString>
-            <SingleSignOnDbContextName>SingleSignOnDatabase-Web.config Connection String</SingleSignOnDbContextName>
-            <SingleSignOnDbContextConnectionString>$(SingleSignOnDatabase.Replace(";","%3b"))</SingleSignOnDbContextConnectionString>
-            <RawOdsDbContextName>RawOdsDbContext-Web.config Connection String</RawOdsDbContextName>
-            <RawOdsDbContextConnectionString>$(RawOdsDbContext.Replace(";","%3b"))</RawOdsDbContextConnectionString>
-            <ValidatedOdsDbContextName>ValidatedOdsDbContext-Web.config Connection String</ValidatedOdsDbContextName>
-            <ValidatedOdsDbContextConnectionString>$(ValidatedOdsDbContext.Replace(";","%3b"))</ValidatedOdsDbContextConnectionString>
-            <EdFiLogDbContextName>EdFiLogDbContext-Web.config Connection String</EdFiLogDbContextName>
-            <EdFiLogDbContextConnectionString>$(EdFiLogDbContext.Replace(";","%3b"))</EdFiLogDbContextConnectionString>
-        </PublishPackages>
-    </ItemGroup>
-    <Target Name="PublishWebPackages" Outputs="%(PublishPackages.Identity)">
-        <!--<Message Text="%(PublishPackages.SingleSignOnDbContextName)" />-->
-        
-        <XmlPoke
-              XmlInputPath="%(PublishPackages.ParametersXml)"
-              Query="//parameters/setParameter[@name='IIS Web Application Name']/@value"
-              Value="Default Web Site/EDVP"
-              Condition =" '%(PublishPackages.IisWebAppNameParamValue)'!=''" />
-        <XmlPoke
-            XmlInputPath="%(PublishPackages.ParametersXml)"
-            Query="//parameters/setParameter[@name='%(PublishPackages.ValidationPortalIisPathToRootParamName)']/@value"
-            Value="%(PublishPackages.ValidationPortalIisPathToRootParamValue)"
-            Condition =" '%(PublishPackages.ValidationPortalIisPathToRootParamValue)'!=''" />
-        <XmlPoke
-                XmlInputPath="%(PublishPackages.ParametersXml)"
-                Query="//parameters/setParameter[@name='%(PublishPackages.AuthenticationServerRedirectUrlParamName)']/@value"
-                Value="%(PublishPackages.AuthenticationServerRedirectUrlParamValue)"
-                Condition =" '%(PublishPackages.AuthenticationServerRedirectUrlParamValue)'!=''" />
-        <XmlPoke
-                XmlInputPath="%(PublishPackages.ParametersXml)"
-                Query="//parameters/setParameter[@name='%(PublishPackages.AuthorizationStoredProcedureNameParamName)']/@value"
-                Value="%(PublishPackages.AuthorizationStoredProcedureNameParamValue)"
-                Condition =" '%(PublishPackages.AuthorizationStoredProcedureNameParamValue)'!=''" />
-        <XmlPoke
-                XmlInputPath="%(PublishPackages.ParametersXml)"
-                Query="//parameters/setParameter[@name='%(PublishPackages.SsoAppIdParamName)']/@value"
-                Value="%(PublishPackages.SsoAppIdParamValue)"
-                Condition =" '%(PublishPackages.SsoAppIdParamValue)'!=''" />
-        <XmlPoke
-                XmlInputPath="%(PublishPackages.ParametersXml)"
-                Query="//parameters/setParameter[@name='%(PublishPackages.RulesFileFolderParamName)']/@value"
-                Value="%(PublishPackages.RulesFileFolderParamValue)"
-                Condition =" '%(PublishPackages.RulesFileFolderParamValue)'!=''" />
-        <XmlPoke
-                XmlInputPath="%(PublishPackages.ParametersXml)"
-                Query="//parameters/setParameter[@name='%(PublishPackages.RuleEngineResultsSchemaParamName)']/@value"
-                Value="%(PublishPackages.RuleEngineResultsSchemaParamValue)"
-                Condition =" '%(PublishPackages.RuleEngineResultsSchemaParamValue)'!=''" />
-        <XmlPoke
-                XmlInputPath="%(PublishPackages.ParametersXml)"
-                Query="//parameters/setParameter[@name='%(PublishPackages.UseFakeViewModelDataParamName)']/@value"
-                Value="%(PublishPackages.UseFakeViewModelDataParamValue)"
-                Condition =" '%(PublishPackages.UseFakeViewModelDataParamValue)'!=''" />
-        <XmlPoke
-                XmlInputPath="%(PublishPackages.ParametersXml)"
-                Query="//parameters/setParameter[@name='%(PublishPackages.EnvironmentNameParamName)']/@value"
-                Value="%(PublishPackages.EnvironmentNameParamValue)"
-                Condition =" '%(PublishPackages.EnvironmentNameParamValue)'!=''" />
-        <Message Text="%(PublishPackages.MarssComparisonUrlParamName) = %(PublishPackages.MarssComparisonUrlParamValue)" />
-        <XmlPoke
-                XmlInputPath="%(PublishPackages.ParametersXml)"
-                Query="//parameters/setParameter[@name='%(PublishPackages.MarssComparisonUrlParamName)']/@value"
-                Value="%(PublishPackages.MarssComparisonUrlParamValue)"
-                Condition =" '%(PublishPackages.MarssComparisonUrlParamvalue)'!=''" />
-        <XmlPoke
-                XmlInputPath="%(PublishPackages.ParametersXml)"
-                Query="//parameters/setParameter [@name='%(PublishPackages.ValidationPortalDbContextName)']/@value"
-                Value='%(PublishPackages.ValidationPortalDbContextConnectionString)'
-                Condition =" '%(PublishPackages.ValidationPortalDbContextConnectionString)'!=''" />
-        <XmlPoke
-                XmlInputPath="%(PublishPackages.ParametersXml)"
-                Query="//parameters/setParameter[@name='%(PublishPackages.SingleSignOnDbContextName)']/@value"
-                Value="%(PublishPackages.SingleSignOnDbContextConnectionString)"
-                Condition =" '%(PublishPackages.SingleSignOnDbContextConnectionString)'!=''" />
-        <XmlPoke
-                XmlInputPath="%(PublishPackages.ParametersXml)"
-                Query="//parameters/setParameter[@name='%(PublishPackages.RawOdsDbContextName)']/@value"
-                Value="%(PublishPackages.RawOdsDbContextConnectionString)"
-                Condition =" '%(PublishPackages.RawOdsDbContextConnectionString)'!=''" />
-        <XmlPoke
-                XmlInputPath="%(PublishPackages.ParametersXml)"
-                Query="//parameters/setParameter[@name='%(PublishPackages.ValidatedOdsDbContextName)']/@value"
-                Value="%(PublishPackages.ValidatedOdsDbContextConnectionString)"
-                Condition =" '%(PublishPackages.ValidatedOdsDbContextConnectionString)'!=''" />
-        <XmlPoke
-                XmlInputPath="%(PublishPackages.ParametersXml)"
-                Query="//parameters/setParameter[@name='%(PublishPackages.EdFiLogDbContextName)']/@value"
-                Value="%(PublishPackages.EdFiLogDbContextConnectionString)"
-                Condition =" '%(PublishPackages.EdFiLogDbContextConnectionString)'!=''" />
-        <XmlPoke
-                XmlInputPath="%(PublishPackages.ParametersXml)"
-                Query="//parameters/setParameter[@name='UseSimulatedSSO']/@value"
-                Value="true"  />
-        <XmlPoke
-                XmlInputPath="%(PublishPackages.ParametersXml)"
-                Query="//parameters/setParameter[@name='SimulatedUserName']/@value"
-                Value="jane" />
-        <XmlPoke
-                XmlInputPath="%(PublishPackages.ParametersXml)"
-                Query="//parameters/setParameter[@name='SessionStateConnectionString']/@value"
-                Value="%(PublishPackages.SessionStateConnectionString)" 
-                Condition=" '%(PublishPackages.SessionStateConnectionString)'!=''"/>
+  <!--<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU'">-->
+  <PropertyGroup>
+    <ValidationPortalIisPath>Default Web Site/EDVP</ValidationPortalIisPath>
+    <ValidationPortalIisAppPool Condition=" '$(ValidationPortalIisAppPool)'==''">DefaultAppPool</ValidationPortalIisAppPool>
+    <ValidationPortalIisPathToRoot Condition=" '$(ValidationPortalIisPathToRoot)'==''">C:\inetpub\wwwroot\ValidationPortal</ValidationPortalIisPathToRoot>
+    <AuthenticationServerRedirectUrl Condition=" '$(AuthenticationServerRedirectUrl)'==''">http://www.wearedoubleline.com/</AuthenticationServerRedirectUrl>
+    <AuthorizationStoredProcedureName Condition=" '$(AuthorizationStoredProcedureName)'==''">dbo.EDVP_MidmsEdiamUser_View</AuthorizationStoredProcedureName>
+    <EdiamLogoutLink Condition=" '$(EdiamLogoutLink)'==''">~/Login/Logout</EdiamLogoutLink>
+    <SsoAppId Condition=" '$(SsoAppId)'==''">VAL</SsoAppId>
+    <RulesFileFolder Condition=" '$(RulesFileFolder)'==''">~/Content/Rules</RulesFileFolder>
+    <RuleEngineResultsSchema Condition=" '$(RuleEngineResultsSchema)'==''">rules</RuleEngineResultsSchema>
+    <UseFakeViewModelData Condition=" '$(UseFakeViewModelData)'==''">false</UseFakeViewModelData>
+    <EnvironmentName Condition="'$(EnvironmentName)' == ''">MN-Dev2</EnvironmentName>
+    <SessionState Condition=" '$(SessionState)'==''">data source=MN-DEV2;integrated security=True;MultipleActiveResultSets=True;</SessionState>
+    <ValidationPortalDbContext Condition=" '$(ValidationPortalDbContext)'==''">Data Source=MN-DEV2;Initial Catalog=ValidationPortal;Integrated Security=True;MultipleActiveResultSets=True;Application Name=EntityFramework</ValidationPortalDbContext>
+    <SingleSignOnDatabase Condition="'$(SingleSignOnDatabase)'==''">Data Source=MN-DEV2;Initial Catalog=ValidationPortalSsoMock;Integrated Security=True;MultipleActiveResultSets=True;App=EntityFramework</SingleSignOnDatabase>
+    <RawOdsDbContext Condition="'$(RawOdsDbContext)'==''">Data Source=MN-DEV2;Initial Catalog=EdFi_Ods_{0};Integrated Security=True;MultipleActiveResultSets=True;App=EntityFramework</RawOdsDbContext>
+    <ValidatedOdsDbContext Condition="'$(ValidatedOdsDbContext)'==''">data source=MN-DEV2;initial catalog=ValidationPortal;integrated security=True;MultipleActiveResultSets=True;App=EntityFramework</ValidatedOdsDbContext>
+    <EdFiLogDbContext Condition=" '$(EdFiLogDbContext)'==''">data source=MN-DEV2;initial catalog=EdFi_Log;integrated security=True;MultipleActiveResultSets=True;App=EntityFramework</EdFiLogDbContext>
+  </PropertyGroup>
+  <ItemGroup>
+    <PublishPackages Include="ValidationPortal.deploy.cmd">
+      <ParametersXml>..\obj\$(Configuration)\Package\ValidationWeb.SetParameters.xml</ParametersXml>
+      <IisWebAppNameParamValue>$(ValidationPortalIisPath)</IisWebAppNameParamValue>
+      <ValidationPortalIisPathToRootParamName>ValidationPortalIisPathToRoot</ValidationPortalIisPathToRootParamName>
+      <ValidationPortalIisPathToRootParamValue>D:\ValidationPortal</ValidationPortalIisPathToRootParamValue>
+      <AuthenticationServerRedirectUrlParamName>AuthenticationServerRedirectUrl</AuthenticationServerRedirectUrlParamName>
+      <AuthenticationServerRedirectUrlParamValue>~/Login</AuthenticationServerRedirectUrlParamValue>
+      <AuthorizationStoredProcedureNameParamName>AuthorizationStoredProcedureName</AuthorizationStoredProcedureNameParamName>
+      <AuthorizationStoredProcedureNameParamValue>dbo.EDVP_MidmsEdiamUser_View</AuthorizationStoredProcedureNameParamValue>
+      <EdiamLogoutLinkParamName>EdiamLogoutLink</EdiamLogoutLinkParamName>
+      <EdiamLogoutLinkParamValue>~/Login/Logout</EdiamLogoutLinkParamValue>
+      <SsoAppIdParamName>SsoAppId</SsoAppIdParamName>
+      <SsoAppIdParamValue>VAL</SsoAppIdParamValue>
+      <RulesFileFolderParamName>RulesFileFolder</RulesFileFolderParamName>
+      <RulesFileFolderParamValue>~/Content/Rules</RulesFileFolderParamValue>
+      <RuleEngineResultsSchemaParamName>RuleEngineResultsSchema</RuleEngineResultsSchemaParamName>
+      <RuleEngineResultsSchemaParamValue>rules</RuleEngineResultsSchemaParamValue>
+      <UseFakeViewModelDataParamName>UseFakeViewModelData</UseFakeViewModelDataParamName>
+      <UseFakeViewModelDataParamValue>false</UseFakeViewModelDataParamValue>
+      <EnvironmentNameParamName>EnvironmentName</EnvironmentNameParamName>
+      <EnvironmentNameParamValue>MN-Dev2</EnvironmentNameParamValue>
+      <MarssComparisonUrlParamName>MarssComparisonUrl</MarssComparisonUrlParamName>
+      <MarssComparisonUrlParamValue>http://wearedoubleline.com?test</MarssComparisonUrlParamValue>
+      <SessionStateConnectionString>$(SessionState.Replace(";","%3b"))</SessionStateConnectionString>
+      <!-- These are the string values that get added to the Web.Config file - not to determine where the DB is actually deployed. -->
+      <ValidationPortalDbContextName>ValidationPortalDbContext-Web.config Connection String</ValidationPortalDbContextName>
+      <ValidationPortalDbContextConnectionString>$(ValidationPortalDbContext.Replace(";","%3b"))</ValidationPortalDbContextConnectionString>
+      <SingleSignOnDbContextName>SingleSignOnDatabase-Web.config Connection String</SingleSignOnDbContextName>
+      <SingleSignOnDbContextConnectionString>$(SingleSignOnDatabase.Replace(";","%3b"))</SingleSignOnDbContextConnectionString>
+      <RawOdsDbContextName>RawOdsDbContext-Web.config Connection String</RawOdsDbContextName>
+      <RawOdsDbContextConnectionString>$(RawOdsDbContext.Replace(";","%3b"))</RawOdsDbContextConnectionString>
+      <ValidatedOdsDbContextName>ValidatedOdsDbContext-Web.config Connection String</ValidatedOdsDbContextName>
+      <ValidatedOdsDbContextConnectionString>$(ValidatedOdsDbContext.Replace(";","%3b"))</ValidatedOdsDbContextConnectionString>
+      <EdFiLogDbContextName>EdFiLogDbContext-Web.config Connection String</EdFiLogDbContextName>
+      <EdFiLogDbContextConnectionString>$(EdFiLogDbContext.Replace(";","%3b"))</EdFiLogDbContextConnectionString>
+    </PublishPackages>
+  </ItemGroup>
+  <Target Name="PublishWebPackages" Outputs="%(PublishPackages.Identity)">
+    <!--<Message Text="%(PublishPackages.SingleSignOnDbContextName)" />-->
 
-        <Exec Condition="'$(Configuration)'!='Debug'" Command="..\obj\$(Configuration)\Package\ValidationWeb.deploy.cmd /Y /M:mn-dev2.doubleline.us" />
-        <!--<Exec Command="..\obj\$(Configuration)\Package\ValidationWeb.deploy.cmd /Y /M:mn-dev -verbose" />-->
-    </Target>
+    <XmlPoke
+          XmlInputPath="%(PublishPackages.ParametersXml)"
+          Query="//parameters/setParameter[@name='IIS Web Application Name']/@value"
+          Value="Default Web Site/EDVP"
+          Condition =" '%(PublishPackages.IisWebAppNameParamValue)'!=''" />
+    <XmlPoke
+        XmlInputPath="%(PublishPackages.ParametersXml)"
+        Query="//parameters/setParameter[@name='%(PublishPackages.ValidationPortalIisPathToRootParamName)']/@value"
+        Value="%(PublishPackages.ValidationPortalIisPathToRootParamValue)"
+        Condition =" '%(PublishPackages.ValidationPortalIisPathToRootParamValue)'!=''" />
+    <XmlPoke
+            XmlInputPath="%(PublishPackages.ParametersXml)"
+            Query="//parameters/setParameter[@name='%(PublishPackages.AuthenticationServerRedirectUrlParamName)']/@value"
+            Value="%(PublishPackages.AuthenticationServerRedirectUrlParamValue)"
+            Condition =" '%(PublishPackages.AuthenticationServerRedirectUrlParamValue)'!=''" />
+    <XmlPoke
+            XmlInputPath="%(PublishPackages.ParametersXml)"
+            Query="//parameters/setParameter[@name='%(PublishPackages.AuthorizationStoredProcedureNameParamName)']/@value"
+            Value="%(PublishPackages.AuthorizationStoredProcedureNameParamValue)"
+            Condition =" '%(PublishPackages.AuthorizationStoredProcedureNameParamValue)'!=''" />
+    <XmlPoke
+            XmlInputPath="%(PublishPackages.ParametersXml)"
+            Query="//parameters/setParameter[@name='%(PublishPackages.SsoAppIdParamName)']/@value"
+            Value="%(PublishPackages.SsoAppIdParamValue)"
+            Condition =" '%(PublishPackages.SsoAppIdParamValue)'!=''" />
+    <XmlPoke
+            XmlInputPath="%(PublishPackages.ParametersXml)"
+            Query="//parameters/setParameter[@name='%(PublishPackages.RulesFileFolderParamName)']/@value"
+            Value="%(PublishPackages.RulesFileFolderParamValue)"
+            Condition =" '%(PublishPackages.RulesFileFolderParamValue)'!=''" />
+    <XmlPoke
+            XmlInputPath="%(PublishPackages.ParametersXml)"
+            Query="//parameters/setParameter[@name='%(PublishPackages.RuleEngineResultsSchemaParamName)']/@value"
+            Value="%(PublishPackages.RuleEngineResultsSchemaParamValue)"
+            Condition =" '%(PublishPackages.RuleEngineResultsSchemaParamValue)'!=''" />
+    <XmlPoke
+            XmlInputPath="%(PublishPackages.ParametersXml)"
+            Query="//parameters/setParameter[@name='%(PublishPackages.UseFakeViewModelDataParamName)']/@value"
+            Value="%(PublishPackages.UseFakeViewModelDataParamValue)"
+            Condition =" '%(PublishPackages.UseFakeViewModelDataParamValue)'!=''" />
+    <XmlPoke
+            XmlInputPath="%(PublishPackages.ParametersXml)"
+            Query="//parameters/setParameter[@name='%(PublishPackages.EnvironmentNameParamName)']/@value"
+            Value="%(PublishPackages.EnvironmentNameParamValue)"
+            Condition =" '%(PublishPackages.EnvironmentNameParamValue)'!=''" />
+    <Message Text="%(PublishPackages.MarssComparisonUrlParamName) = %(PublishPackages.MarssComparisonUrlParamValue)" />
+    <XmlPoke
+            XmlInputPath="%(PublishPackages.ParametersXml)"
+            Query="//parameters/setParameter[@name='%(PublishPackages.MarssComparisonUrlParamName)']/@value"
+            Value="%(PublishPackages.MarssComparisonUrlParamValue)"
+            Condition =" '%(PublishPackages.MarssComparisonUrlParamvalue)'!=''" />
+    <XmlPoke
+            XmlInputPath="%(PublishPackages.ParametersXml)"
+            Query="//parameters/setParameter [@name='%(PublishPackages.ValidationPortalDbContextName)']/@value"
+            Value='%(PublishPackages.ValidationPortalDbContextConnectionString)'
+            Condition =" '%(PublishPackages.ValidationPortalDbContextConnectionString)'!=''" />
+    <XmlPoke
+            XmlInputPath="%(PublishPackages.ParametersXml)"
+            Query="//parameters/setParameter[@name='%(PublishPackages.SingleSignOnDbContextName)']/@value"
+            Value="%(PublishPackages.SingleSignOnDbContextConnectionString)"
+            Condition =" '%(PublishPackages.SingleSignOnDbContextConnectionString)'!=''" />
+    <XmlPoke
+            XmlInputPath="%(PublishPackages.ParametersXml)"
+            Query="//parameters/setParameter[@name='%(PublishPackages.RawOdsDbContextName)']/@value"
+            Value="%(PublishPackages.RawOdsDbContextConnectionString)"
+            Condition =" '%(PublishPackages.RawOdsDbContextConnectionString)'!=''" />
+    <XmlPoke
+            XmlInputPath="%(PublishPackages.ParametersXml)"
+            Query="//parameters/setParameter[@name='%(PublishPackages.ValidatedOdsDbContextName)']/@value"
+            Value="%(PublishPackages.ValidatedOdsDbContextConnectionString)"
+            Condition =" '%(PublishPackages.ValidatedOdsDbContextConnectionString)'!=''" />
+    <XmlPoke
+            XmlInputPath="%(PublishPackages.ParametersXml)"
+            Query="//parameters/setParameter[@name='%(PublishPackages.EdFiLogDbContextName)']/@value"
+            Value="%(PublishPackages.EdFiLogDbContextConnectionString)"
+            Condition =" '%(PublishPackages.EdFiLogDbContextConnectionString)'!=''" />
+    <XmlPoke
+            XmlInputPath="%(PublishPackages.ParametersXml)"
+            Query="//parameters/setParameter[@name='UseSimulatedSSO']/@value"
+            Value="true"  />
+    <XmlPoke
+            XmlInputPath="%(PublishPackages.ParametersXml)"
+            Query="//parameters/setParameter[@name='SimulatedUserName']/@value"
+            Value="jane" />
+    <XmlPoke
+            XmlInputPath="%(PublishPackages.ParametersXml)"
+            Query="//parameters/setParameter[@name='EdiamLogoutLink']/@value"
+            Value="~/Login/Logout" />
+    <XmlPoke
+            XmlInputPath="%(PublishPackages.ParametersXml)"
+            Query="//parameters/setParameter[@name='SessionStateConnectionString']/@value"
+            Value="%(PublishPackages.SessionStateConnectionString)"
+            Condition=" '%(PublishPackages.SessionStateConnectionString)'!=''"/>
+
+    <Exec Condition="'$(Configuration)'!='Debug'" Command="..\obj\$(Configuration)\Package\ValidationWeb.deploy.cmd /Y /M:mn-dev2.doubleline.us" />
+    <!--<Exec Command="..\obj\$(Configuration)\Package\ValidationWeb.deploy.cmd /Y /M:mn-dev -verbose" />-->
+  </Target>
 </Project>

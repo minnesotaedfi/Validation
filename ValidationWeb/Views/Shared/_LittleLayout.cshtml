@@ -39,7 +39,7 @@
         <div class="row noprint">
             <div class="col-12">
                 <nav id="layout-navbar" role="navigation" aria-label="Main navigation" class="navbar navbar-expand-sm prime-blue">
-                    
+
                     <div class="collapse navbar-collapse w-100 order-1 order-md-0" id="theNavBar">
                         <ul class="navbar-nav mr-auto">
                             <li class="nav-item">
@@ -58,7 +58,7 @@
                                     @Html.Raw(Html.ActionLink("LinkText", "Reports", "Ods", new { area = "" }, new { @class = "nav-link validation-nav-link show-page-loading" }).ToHtmlString().Replace("LinkText", "Reports"))
                                 </li>
                             }
-                            
+
                             <li class="nav-item">
                                 <a class="nav-link validation-nav-link mr-auto" href="https://w1.education.state.mn.us/MIDMSWEB/MDELogin.html">MARSS WES</a>
                             </li>
@@ -67,6 +67,20 @@
                             {
                                 <li class="nav-item">
                                     @{ Html.RenderAction("MarssLink", "Nav"); }
+                                </li>
+                            }
+
+
+                            @if (permissions.CanAccessAdminFeatures)
+                            {
+                                <li class="nav-item">
+                                    @Html.Raw(
+                                        Html.ActionLink(
+                                            "Admin",
+                                            "Index",
+                                            "Admin",
+                                            new { area = "" },
+                                            new { @class = "nav-link validation-nav-link show-page-loading" }).ToHtmlString())
                                 </li>
                             }
                         </ul>
@@ -82,20 +96,20 @@
         </div>
         <div class="row layout mainSection">
             <div class="col-12" role="main">
-                <a name="skipnavigation" id="skipNavigationAnchor" tabindex="-1"></a>       
+                <a name="skipnavigation" id="skipNavigationAnchor" tabindex="-1"></a>
                 @RenderBody()
-        </div>
+            </div>
         </div>
         @Html.Partial("_LittleFooter")
     </div>
 
     <!-- Turn this overlay on and off when loading new data asynchronously or screens. -->
     <div id="overlay"><span id="overlay-text" role="status" aria-live="polite">Loading ... <i class="fas fa-cog fa-spin"></i></span></div>
-    
+
     @{
         Html.RenderAction("Environment", "Nav");
     }
-    
+
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/bundles/jqueryUI")
@@ -192,7 +206,7 @@
                                 // containerCssClass: 'validation-dropdown-menu'
                             });
 
-                            setupSelectKeyHandling(); 
+                            setupSelectKeyHandling();
 
                             dropDown.on('select2:select', changeEdOrg);
                         })
@@ -236,15 +250,15 @@
                 // console.log("%c Focus Event ", "background:green; color:white", e);
 
                 var initialFocusEvent = e.originalEvent; //don't re-open on close focus event
-                var targetIsInput = e.target && $(e.target).is("input"); // don't open when focused from input 
+                var targetIsInput = e.target && $(e.target).is("input"); // don't open when focused from input
                 var relTargetIsInput = e.relatedTarget && $(e.relatedTarget).is("input");
                 var anyTargetIsInput = targetIsInput || relTargetIsInput;
-  
+
                 // only open on original attempt - close focus event should not fire open
                 if (initialFocusEvent && !anyTargetIsInput) {
                     // console.log("%c Call Select2 Open ", "background:orange; color:white");
                     $(this).siblings('select').select2('open');
-                } 
+                }
             });
 
             //$(document).on('click', '.select2.select2-container', function (e) {
@@ -254,7 +268,7 @@
             //$(document).on('keyup', '.select2.select2-container', function (e) {
             //    if (e.which == 9) {
             //        console.log("%c Tab Event ", "background:blue; color:white", e);
-            //    } 
+            //    }
             //});
         }
     </script>

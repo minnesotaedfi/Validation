@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Web.Mvc;
+
 using ValidationWeb.Filters;
 using ValidationWeb.Models;
 using ValidationWeb.Services.Interfaces;
@@ -7,7 +8,7 @@ using ValidationWeb.ViewModels;
 
 namespace ValidationWeb.Controllers
 {
-    [PortalAuthorize(Roles = "DataOwner,DistrictUser,HelpDesk")]
+    [PortalAuthorize(Roles = "Admin,DataOwner,DistrictUser,HelpDesk")]
     public class HomeController : Controller
     {
         public HomeController(

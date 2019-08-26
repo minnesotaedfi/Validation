@@ -9,32 +9,30 @@
 <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
     <ul class="navbar-nav ml-auto">
 
-        @if (!permissions.CanAccessAdminFeatures)
-        {
-            @*dropdown pull-right *@
-            <li class="nav-item dropdown">
-                @if (Model.EdOrgs.Count() > 1)
-                {
-                    <select id="edOrgNames" class="form-control validation-dropdown-menu district-dropdown" style="visibility: hidden"></select>
-                }
-            </li>
 
-            <li class="nav-item">
-                @Html.DropDownList(
-                    "newActionDropdownYear",
-                    new SelectList(Model.SchoolYears
-                        .OrderBy(x => x.ToString())
-                        .Select(x => new SelectListItem
-                                     {
-                                         Text = x.ToString(),
-                                         Value = x.Id.ToString()
-                                     }),
-                        "Value",
-                        "Text",
-                        Model.FocusedSchoolYear.Id),
-                    new { @class= "form-control", style="visibility: hidden" })
-            </li>
-        }
+        @*dropdown pull-right *@
+        <li class="nav-item dropdown">
+            @if (Model.EdOrgs.Count() > 1)
+            {
+                <select id="edOrgNames" class="form-control validation-dropdown-menu district-dropdown" style="visibility: hidden"></select>
+            }
+        </li>
+
+        <li class="nav-item">
+            @Html.DropDownList(
+                "newActionDropdownYear",
+                new SelectList(Model.SchoolYears
+                    .OrderBy(x => x.ToString())
+                    .Select(x => new SelectListItem
+                                 {
+                                     Text = x.ToString(),
+                                     Value = x.Id.ToString()
+                                 }),
+                    "Value",
+                    "Text",
+                    Model.FocusedSchoolYear.Id),
+                new { @class = "form-control", style = "visibility: hidden" })
+        </li>
 
         <li class="nav-item dropdown" style="padding-left: 10px;" tabindex="0">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

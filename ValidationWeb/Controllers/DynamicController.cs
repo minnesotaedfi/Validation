@@ -13,7 +13,7 @@ using ValidationWeb.ViewModels;
 
 namespace ValidationWeb.Controllers
 {
-    [PortalAuthorize(Roles = "DataOwner,DistrictUser,HelpDesk")]
+    [PortalAuthorize(Roles = "Admin,DataOwner,DistrictUser,HelpDesk")]
     public class DynamicController : Controller
     {
         public DynamicController(
@@ -57,13 +57,20 @@ namespace ValidationWeb.Controllers
 
         public ActionResult GetReportDefinitions(int schoolYearId)
         {
+            var identity = (ValidationPortalIdentity)User.Identity;
+            var permissions = User.Identity.GetViewPermissions(identity.AppRole);
+
             var result = DynamicReportingService.GetReportDefinitions()
                 .Where(x => x.SchoolYearId == schoolYearId)
-                .Where(x => x.Enabled)
-                .OrderBy(x => x.Name);
+                .Where(x => x.Enabled);
+
+            if (!permissions.CanViewStudentLevelReports)
+            {
+                result = result.Where(x => x.IsOrgLevelReport);
+            }
 
             var serializedResult = JsonConvert.SerializeObject(
-                result,
+                result.OrderBy(x => x.Name),
                 Formatting.None,
                 new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
 

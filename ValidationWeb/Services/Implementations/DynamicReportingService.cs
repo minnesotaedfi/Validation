@@ -183,6 +183,7 @@ namespace ValidationWeb.Services.Implementations
 
                 existingReportDefinition.Name = newReportDefinition.Name?.Trim();
                 existingReportDefinition.Description = newReportDefinition.Description?.Trim();
+                existingReportDefinition.IsOrgLevelReport = newReportDefinition.IsOrgLevelReport;
 
                 foreach (var newField in newReportDefinition.Fields)
                 {
