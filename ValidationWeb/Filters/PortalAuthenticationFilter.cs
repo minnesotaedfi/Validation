@@ -6,8 +6,11 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Mvc.Filters;
+
 using MoreLinq;
+
 using SimpleInjector;
+
 using ValidationWeb.Database;
 using ValidationWeb.Models;
 using ValidationWeb.Services.Interfaces;
@@ -238,10 +241,10 @@ namespace ValidationWeb.Filters
                         // TODO: make sure this lines up with what's really coming from the new MN SSO view 
                         // var stateOrganizationId = $"{ssoReader["districtType"]}{ssoReader["districtNumber"]:D4}000";
                         var stateOrganizationId = $"{ssoReader["stateOrganizationId"]}";
-                        //if (stateOrganizationId.EndsWith("000"))
-                        //{
-                        //    stateOrganizationId = stateOrganizationId.Substring(0, stateOrganizationId.Length - 3);
-                        //}
+                        if (stateOrganizationId.EndsWith("000"))
+                        {
+                            stateOrganizationId = stateOrganizationId.Substring(0, stateOrganizationId.Length - 3);
+                        }
 
                         var theAppId = ssoReader["AppId"]?.ToString();
 
@@ -253,7 +256,6 @@ namespace ValidationWeb.Filters
                                     AppId = theAppId,
                                     AppName = ssoReader["AppName"]?.ToString(),
                                     DistrictNumber = int.Parse(stateOrganizationId),
-                                    //DistrictType = hasDistrictType ? (int?)districtType : null,
                                     Email = ssoReader["Email"]?.ToString(),
                                     FirstName = ssoReader["FirstName"]?.ToString(),
                                     MiddleName = ssoReader["MiddleName"]?.ToString(),
@@ -261,7 +263,6 @@ namespace ValidationWeb.Filters
                                     FullName = ssoReader["FullName"]?.ToString(),
                                     UserId = ssoReader["UserId"]?.ToString(),
                                     StateOrganizationId = stateOrganizationId,
-                                    //FormattedOrganizationId = ssoReader["FormattedOrganizationId"]?.ToString(),
                                     OrganizationName = ssoReader["OrganizationName"]?.ToString(),
                                     RoleDescription = ssoReader["RoleDescription"]?.ToString(),
                                     RoleId = ssoReader["RoleId"]?.ToString()

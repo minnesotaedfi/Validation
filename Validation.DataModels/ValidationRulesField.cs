@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Web;
 
 namespace ValidationWeb.Models
 {
@@ -27,5 +23,7 @@ namespace ValidationWeb.Models
         public int RulesViewId { get; set; }
 
         public ValidationRulesView RulesView { get; set; }
+
+        public int DisplayOrder { get; set; }
     }
 }
