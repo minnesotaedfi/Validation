@@ -106,6 +106,16 @@
               match="/configuration/appSettings/add[@key='SimulatedUserName']/@value"
          />
     </parameter>
+  <parameter
+      name="EdiamLogoutLink"
+      description="Logout ."
+      defaultValue="https://edu-websecd01.educ.state.mn.us/EDIAMWEB/logout">
+    <parameterEntry
+        kind="XmlFile"
+        scope="Web.config"
+        match="/configuration/appSettings/add[@key='EdiamLogoutLink']/@value"
+    />
+  </parameter>
     <parameter
         name="EnvironmentName"
         description="Displays at the top of all pages; hidden if set to 'Production'."
