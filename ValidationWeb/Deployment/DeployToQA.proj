@@ -8,7 +8,7 @@
     <AuthenticationServerRedirectUrl Condition=" '$(AuthenticationServerRedirectUrl)'==''">http://www.wearedoubleline.com/</AuthenticationServerRedirectUrl>
     <AuthorizationStoredProcedureName Condition=" '$(AuthorizationStoredProcedureName)'==''">dbo.EDVP_MidmsEdiamUser_View</AuthorizationStoredProcedureName>
     <EdiamLogoutLink Condition=" '$(EdiamLogoutLink)'==''">https://edu-websecd01.educ.state.mn.us/EDIAMWEB/logout</EdiamLogoutLink>
-
+    <EdiamProfileLink Condition=" '$(EdiamLogoutLink)'==''">https://edu-websecd01.educ.state.mn.us/EDIAMProfile</EdiamProfileLink>
     <SsoAppId Condition=" '$(SsoAppId)'==''">EDVP</SsoAppId>
     <RulesFileFolder Condition=" '$(RulesFileFolder)'==''">~/Content/Rules</RulesFileFolder>
     <RuleEngineResultsSchema Condition=" '$(RuleEngineResultsSchema)'==''">rules</RuleEngineResultsSchema>
