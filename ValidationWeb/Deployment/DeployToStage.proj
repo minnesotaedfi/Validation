@@ -65,7 +65,7 @@
     <XmlPoke
         XmlInputPath="%(PublishPackages.ParametersXml)"
         Query="//parameters/setParameter[@name='IIS Web Application Name']/@value"
-        Value="Default Web Site/ValidationPortal"
+        Value="Default Web Site/EDVPTest"
         Condition =" '%(PublishPackages.IisWebAppNameParamValue)'!=''" />
     <XmlPoke
         XmlInputPath="%(PublishPackages.ParametersXml)"
