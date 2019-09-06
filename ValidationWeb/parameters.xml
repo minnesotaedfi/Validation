@@ -96,16 +96,6 @@
               match="/configuration/appSettings/add[@key='UseSimulatedSSO']/@value"
          />
     </parameter>
-    <parameter
-        name="SimulatedUserName"
-        description="If UseSimulatedSSO is true, then chooses the user name to simulate for all requests."
-        defaultValue="jane">
-        <parameterEntry
-              kind="XmlFile"
-              scope="Web.config"
-              match="/configuration/appSettings/add[@key='SimulatedUserName']/@value"
-         />
-    </parameter>
 
   <parameter
     name="EdiamProfileLink"

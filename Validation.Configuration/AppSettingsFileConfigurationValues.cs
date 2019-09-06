@@ -16,7 +16,6 @@ namespace ValidationWeb.Services.Implementations
         private static readonly int _sessionTimeoutInMinutes;
         private static readonly bool _useFakeViewModelData;
         private static readonly bool _isSsoSimulated;
-        private static readonly string _ssoSimulatedUserName;
         private static readonly List<SchoolYear> _seedSchoolYears = new List<SchoolYear>();
         private static readonly string _environmentName;
         private static readonly string _marssComparisonUrl;
@@ -32,7 +31,6 @@ namespace ValidationWeb.Services.Implementations
             _singleSignOnDatabaseConnectionString = ConfigurationManager.ConnectionStrings["SingleSignOnDatabase"]?.ConnectionString;
             _useFakeViewModelData = ConfigurationManager.AppSettings["UseFakeViewModelData"] == "true";
             _isSsoSimulated = ConfigurationManager.AppSettings["UseSimulatedSSO"] == "true";
-            _ssoSimulatedUserName = ConfigurationManager.AppSettings["SimulatedUserName"];
 
             if (!int.TryParse(ConfigurationManager.AppSettings["SessionTimeoutInMinutes"], out _sessionTimeoutInMinutes))
             {
@@ -79,7 +77,6 @@ namespace ValidationWeb.Services.Implementations
 
         public bool UseSimulatedSSO => _isSsoSimulated;
 
-        public string SimulatedUserName => _ssoSimulatedUserName;
 
         public List<SchoolYear> SeedSchoolYears => _seedSchoolYears;
 

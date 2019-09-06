@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+
 using ValidationWeb.Models;
 
 namespace ValidationWeb.Services.Interfaces
@@ -16,7 +17,6 @@ namespace ValidationWeb.Services.Interfaces
         /// </summary>
         bool UseFakeViewModelData { get; }
         bool UseSimulatedSSO { get; }
-        string SimulatedUserName { get; }
         List<SchoolYear> SeedSchoolYears { get; }
 
         string EnvironmentName { get; }

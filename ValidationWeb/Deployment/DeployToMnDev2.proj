@@ -143,10 +143,6 @@
             Value="true"  />
     <XmlPoke
             XmlInputPath="%(PublishPackages.ParametersXml)"
-            Query="//parameters/setParameter[@name='SimulatedUserName']/@value"
-            Value="jane" />
-    <XmlPoke
-            XmlInputPath="%(PublishPackages.ParametersXml)"
             Query="//parameters/setParameter[@name='EdiamLogoutLink']/@value"
             Value="~/Login/Logout" />
     <XmlPoke
