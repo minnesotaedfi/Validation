@@ -158,6 +158,6 @@
             Condition=" '%(PublishPackages.SessionStateConnectionString)'!=''"/>
 
     <Exec Condition="'$(Configuration)'!='Debug'" Command="..\obj\$(Configuration)\Package\ValidationWeb.deploy.cmd /Y /M:EDU-EDFIAPIS31a.educ.state.mn.us" />
-    <Exec Condition="'$(Configuration)'!='Debug'" Command="..\obj\$(Configuration)\Package\ValidationWeb.deploy.cmd /Y /M:EDU-EDFIAPIS31b.educ.state.mn.us" />
+    <Exec Condition="'$(Configuration)'!='Debug'" Command="..\obj\$(Configuration)\Package\ValidationWeb.deploy.cmd /Y /M:EDU-EDFIAPPS31.educ.state.mn.us" />
   </Target>
 </Project>
