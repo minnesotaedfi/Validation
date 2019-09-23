@@ -16,86 +16,86 @@
 -->
 <!-- App Settings -->
 <parameters>
-    <parameter
-        name="IIS Web Application Name"
-        description="IIS Web Application Name"
-        defaultValue="IIS Web Application Name">
-        <parameterEntry
-              kind="XmlFile"
-              scope="Web.config"
-              match="/configuration/appSettings/add[@key='IIS Web Application Name']/@value"
+  <parameter
+      name="IIS Web Application Name"
+      description="IIS Web Application Name"
+      defaultValue="IIS Web Application Name">
+    <parameterEntry
+          kind="XmlFile"
+          scope="Web.config"
+          match="/configuration/appSettings/add[@key='IIS Web Application Name']/@value"
          />
-    </parameter>
-    <parameter
-        name="AuthenticationServerRedirectUrl"
-        description="URL to sign in with the Single Sign On authorization server. Redirect users here when not authenticated."
-        defaultValue="http://www.wearedoubleline.com/">
-        <parameterEntry
-              kind="XmlFile"
-              scope="Web.config"
-              match="/configuration/appSettings/add[@key='AuthenticationServerRedirectUrl']/@value"
+  </parameter>
+  <parameter
+      name="AuthenticationServerRedirectUrl"
+      description="URL to sign in with the Single Sign On authorization server. Redirect users here when not authenticated."
+      defaultValue="http://www.wearedoubleline.com/">
+    <parameterEntry
+          kind="XmlFile"
+          scope="Web.config"
+          match="/configuration/appSettings/add[@key='AuthenticationServerRedirectUrl']/@value"
          />
-    </parameter>
-    <parameter
-        name="AuthorizationStoredProcedureName"
-        description="Name of the stored procedure to call in the Single Sign On database to retrieve which resources the user is authorized to access."
-        defaultValue="dbo.EDVP_MidmsEdiamUser_View">
-        <parameterEntry
-              kind="XmlFile"
-              scope="Web.config"
-              match="/configuration/appSettings/add[@key='AuthorizationStoredProcedureName']/@value"
+  </parameter>
+  <parameter
+      name="AuthorizationStoredProcedureName"
+      description="Name of the stored procedure to call in the Single Sign On database to retrieve which resources the user is authorized to access."
+      defaultValue="dbo.EDVP_MidmsEdiamUser_View">
+    <parameterEntry
+          kind="XmlFile"
+          scope="Web.config"
+          match="/configuration/appSettings/add[@key='AuthorizationStoredProcedureName']/@value"
          />
-    </parameter>
-    <parameter
-        name="SsoAppId"
-        description="How the Single Sign On database refers to this web application.."
-        defaultValue="EDVP">
-        <parameterEntry
-              kind="XmlFile"
-              scope="Web.config"
-              match="/configuration/appSettings/add[@key='SsoAppId']/@value"
+  </parameter>
+  <parameter
+      name="SsoAppId"
+      description="How the Single Sign On database refers to this web application.."
+      defaultValue="EDVP">
+    <parameterEntry
+          kind="XmlFile"
+          scope="Web.config"
+          match="/configuration/appSettings/add[@key='SsoAppId']/@value"
          />
-    </parameter>
-    <parameter
-        name="RulesFileFolder"
-        description="Relative(to the 'bin' folder at deployment time) or Absolute, or UNC file path to the directory hosting the *.rules text files. Code correctly handles with/without trailing slash. (required for the Rules Engine)."
-        defaultValue="~/Content/Rules">
-        <parameterEntry
-              kind="XmlFile"
-              scope="Web.config"
-              match="/configuration/appSettings/add[@key='RulesFileFolder']/@value"
+  </parameter>
+  <parameter
+      name="RulesFileFolder"
+      description="Relative(to the 'bin' folder at deployment time) or Absolute, or UNC file path to the directory hosting the *.rules text files. Code correctly handles with/without trailing slash. (required for the Rules Engine)."
+      defaultValue="~/Content/Rules">
+    <parameterEntry
+          kind="XmlFile"
+          scope="Web.config"
+          match="/configuration/appSettings/add[@key='RulesFileFolder']/@value"
          />
-    </parameter>
-    <parameter
-        name="RuleEngineResultsSchema"
-        description="Database schema inside the ODS database that stores the Rules engine output."
-        defaultValue="rules">
-        <parameterEntry
-              kind="XmlFile"
-              scope="Web.config"
-              match="/configuration/appSettings/add[@key='RuleEngineResultsSchema']/@value"
+  </parameter>
+  <parameter
+      name="RuleEngineResultsSchema"
+      description="Database schema inside the ODS database that stores the Rules engine output."
+      defaultValue="rules">
+    <parameterEntry
+          kind="XmlFile"
+          scope="Web.config"
+          match="/configuration/appSettings/add[@key='RuleEngineResultsSchema']/@value"
          />
-    </parameter>
-    <parameter
-        name="UseFakeViewModelData"
-        description="If true, dependency injection containers will register Test or Mock version of services for simple unit testing."
-        defaultValue="false">
-        <parameterEntry
-              kind="XmlFile"
-              scope="Web.config"
-              match="/configuration/appSettings/add[@key='UseFakeViewModelData']/@value"
+  </parameter>
+  <parameter
+      name="UseFakeViewModelData"
+      description="If true, dependency injection containers will register Test or Mock version of services for simple unit testing."
+      defaultValue="false">
+    <parameterEntry
+          kind="XmlFile"
+          scope="Web.config"
+          match="/configuration/appSettings/add[@key='UseFakeViewModelData']/@value"
          />
-    </parameter>
-    <parameter
-        name="UseSimulatedSSO"
-        description="If true, will override all requests, passing in the name of the simulated SSO User."
-        defaultValue="true">
-        <parameterEntry
-              kind="XmlFile"
-              scope="Web.config"
-              match="/configuration/appSettings/add[@key='UseSimulatedSSO']/@value"
+  </parameter>
+  <parameter
+      name="UseSimulatedSSO"
+      description="If true, will override all requests, passing in the name of the simulated SSO User."
+      defaultValue="true">
+    <parameterEntry
+          kind="XmlFile"
+          scope="Web.config"
+          match="/configuration/appSettings/add[@key='UseSimulatedSSO']/@value"
          />
-    </parameter>
+  </parameter>
 
   <parameter
     name="EdiamProfileLink"
@@ -117,34 +117,44 @@
         match="/configuration/appSettings/add[@key='EdiamLogoutLink']/@value"
     />
   </parameter>
-    <parameter
-        name="EnvironmentName"
-        description="Displays at the top of all pages; hidden if set to 'Production'."
-        defaultValue="Production">
-        <parameterEntry
-            kind="XmlFile"
-            scope="Web.config"
-            match="/configuration/appSettings/add[@key='EnvironmentName']/@value"
+  <parameter
+    name="EdiamUnauthorizedLink"
+    description="user authenticated, but not authorized for the app or any districts"
+    defaultValue="https://[xxx].educ.state.mn.us/EDIAMWEB/EDIAMProfile/unauthorized?applicationCode=EDVP">
+    <parameterEntry
+      kind="XmlFile"
+      scope="Web.config"
+      match="/configuration/appSettings/add[@key='EdiamUnauthorizedLink']/@value"
+      />
+  </parameter>
+  <parameter
+      name="EnvironmentName"
+      description="Displays at the top of all pages; hidden if set to 'Production'."
+      defaultValue="Production">
+    <parameterEntry
+        kind="XmlFile"
+        scope="Web.config"
+        match="/configuration/appSettings/add[@key='EnvironmentName']/@value"
         />
-    </parameter>
-    <parameter
-        name="MarssComparisonUrl"
-        description="link to MARSS/Ed-Fi Comparison Report."
-        defaultValue="">
-        <parameterEntry
-            kind="XmlFile"
-            scope="Web.config"
-            match="/configuration/appSettings/add[@key='MarssComparisonUrl']/@value"
+  </parameter>
+  <parameter
+      name="MarssComparisonUrl"
+      description="link to MARSS/Ed-Fi Comparison Report."
+      defaultValue="">
+    <parameterEntry
+        kind="XmlFile"
+        scope="Web.config"
+        match="/configuration/appSettings/add[@key='MarssComparisonUrl']/@value"
         />
-    </parameter>
-    <parameter
-        name="SessionStateConnectionString"
-        description="Connection string to use for ASP session state server"
-        defaultValue="localhost">
-        <parameterEntry
-            kind="XmlFile"
-            scope="Web.config"
-            match="/configuration/system.web/sessionState/@sqlConnectionString"
+  </parameter>
+  <parameter
+      name="SessionStateConnectionString"
+      description="Connection string to use for ASP session state server"
+      defaultValue="localhost">
+    <parameterEntry
+        kind="XmlFile"
+        scope="Web.config"
+        match="/configuration/system.web/sessionState/@sqlConnectionString"
          />
-    </parameter>
+  </parameter>
 </parameters>

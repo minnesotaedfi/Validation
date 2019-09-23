@@ -24,29 +24,31 @@ namespace ValidationWeb.Filters
     public class PortalAuthenticationFilter : ActionFilterAttribute, IAuthenticationFilter
     {
         private static readonly object StaticValuesLock = new object();
-        
+
         private static IConfigurationValues _config;
-        
+
         /// <summary>
         /// Used to call the stored procedure that obtains detailed information about the user represented by the single sign-on token/header-value.
         /// </summary>
         private static string _authorizationStoredProcedureName;
-        
+
         /// <summary>
         /// Used to call the stored procedure that obtains detailed information about the user represented by the single sign-on token/header-value.
         /// </summary>
         private static string _singleSignOnDatabaseConnectionString;
-        
+
         /// <summary>
         /// The ID of this web application as assigned/recognized by the authentication server.
         /// </summary>
         private static string _appId;
-        
+
+        private static string _unauthorizedUrl; 
+
         /// <summary>
         /// Name of the ASP.NET/OWIN-provided Session object within the HttpContext
         /// </summary>
         public const string SessionItemName = "Session";
-        
+
         /// <summary>
         /// Key property value of the ASP.NET/OWIN-provided HttpContext.Session object for the user's session, if it exists. 
         /// </summary>
@@ -56,11 +58,11 @@ namespace ValidationWeb.Filters
         /// Name of the cached object in the ASP.NET/OWIN-provided HttpContext.Session that contains user information that's not specific to the session.
         /// </summary>
         public const string SessionIdentityKey = "LoggedInUserIdentity";
-        
+
         private readonly IEdOrgService _edOrgService;
-        
+
         private readonly ILoggingService _loggingService;
-        
+
         private readonly IDbContextFactory<ValidationPortalDbContext> _dbContextFactory;
 
         public PortalAuthenticationFilter(Container container)
@@ -76,6 +78,7 @@ namespace ValidationWeb.Filters
                         _authorizationStoredProcedureName = _config.AuthorizationStoredProcedureName;
                         _singleSignOnDatabaseConnectionString = _config.SingleSignOnDatabaseConnectionString;
                         _appId = _config.AppId;
+                        _unauthorizedUrl = _config.EdiamUnauthorizedLink;
                     }
                 }
             }
@@ -84,13 +87,20 @@ namespace ValidationWeb.Filters
             _loggingService = container.GetInstance<ILoggingService>();
             _dbContextFactory = container.GetInstance<IDbContextFactory<ValidationPortalDbContext>>();
         }
-        
+
         protected bool IsAnonymousAction(ActionDescriptor descriptor)
         {
-            return descriptor
+            var action = descriptor
                 .GetCustomAttributes(true)
-                .OfType<AllowAnonymousAttribute>() 
+                .OfType<AllowAnonymousAttribute>()
                 .Any();
+
+            var controller = descriptor.ControllerDescriptor
+                .GetCustomAttributes(true)
+                .OfType<AllowAnonymousAttribute>()
+                .Any();
+
+            return action || controller;
         }
 
         /// <summary>
@@ -98,7 +108,7 @@ namespace ValidationWeb.Filters
         /// </summary>
         /// <param name="filterContext">The <see cref="AuthenticationContext"/></param>
         [System.Diagnostics.CodeAnalysis.SuppressMessage(
-            "Microsoft.Security", 
+            "Microsoft.Security",
             "CA2100:Review SQL queries for security vulnerabilities",
             Justification = "Values are read from the config file")]
         public void OnAuthentication(AuthenticationContext filterContext)
@@ -107,6 +117,8 @@ namespace ValidationWeb.Filters
             {
                 return;
             }
+
+            var isAuthenticated = false;
 
             var httpContext = filterContext.RequestContext.HttpContext;
             var session = httpContext.Session;
@@ -156,10 +168,10 @@ namespace ValidationWeb.Filters
                                 currentSession.ExpiresUtc = currentSession.ExpiresUtc.AddMinutes(30);
                                 dbContext.SaveChanges();
                                 _loggingService.LogInfoMessage($"Existing session extended for user {userIdentity.FullName}.");
-                                
+
                                 // Fill in the user's Identity info on the session instance, which is not persisted in the database.
                                 currentSession.UserIdentity = userIdentity;
-                                
+
                                 // Make the session accessible throughout the request.
                                 httpContext.Items[SessionItemName] = currentSession;
 
@@ -172,12 +184,12 @@ namespace ValidationWeb.Filters
                                 _loggingService.LogInfoMessage($"Expired session for user {userIdentity.FullName} removed.");
                                 dbContext.AppUserSessions.Remove(currentSession);
                                 dbContext.SaveChanges();
-                                
+
                                 // And some clean-up ...
                                 //IEnumerable<AppUserSession> expiredUserSessions = dbContext.AppUserSessions.Where(s => s.UserIdentity == null || (s.UserIdentity.UserId == userIdentity.UserId && s.ExpiresUtc < DateTime.UtcNow));
                                 // TODO - IDENTITIES NOT IN EF
                                 //dbContext.AppUserSessions.RemoveRange(expiredUserSessions);
-                                
+
                                 dbContext.SaveChanges();
                             }
                         }
@@ -192,15 +204,15 @@ namespace ValidationWeb.Filters
             if (_config.UseSimulatedSSO)
             {
                 var cookie = filterContext.HttpContext.Request.Cookies["MockSSOAuth"];
-                
+
                 if (cookie == null)
                 {
                     filterContext.Result = new HttpUnauthorizedResult();
                     return;
                 }
-                
+
                 authHeaderValue = cookie.Value;
-                
+
                 _loggingService.LogInfoMessage($"Test mock for Single Sign On is activated - simulated user is {authHeaderValue}");
             }
             else
@@ -227,10 +239,10 @@ namespace ValidationWeb.Filters
                     {
                         CommandType = CommandType.Text
                     };
-                    
+
                     var userIdInput = ssoCommand.Parameters.Add("@UserId", SqlDbType.VarChar);
                     userIdInput.Value = authHeaderValue;
-                    
+
                     var appIdInput = ssoCommand.Parameters.Add("@AppId", SqlDbType.VarChar);
                     appIdInput.Value = _appId;
 
@@ -303,7 +315,7 @@ namespace ValidationWeb.Filters
                 }
 
                 var theRole = userAuthWithAnyRole.RoleId;
-                
+
                 _loggingService.LogDebugMessage($"User: {authHeaderValue}, Role: {theRole}.");
                 var appRole = AppRole.CreateAppRole(theRole);
 
@@ -386,8 +398,8 @@ namespace ValidationWeb.Filters
                 // todo: add to the logic in IIdentityExtensions.GetViewPermissions() 
                 var allDistrictRoles = new[]
                                        {
-                                           PortalRoleNames.HelpDesk, 
-                                           PortalRoleNames.DataOwner, 
+                                           PortalRoleNames.HelpDesk,
+                                           PortalRoleNames.DataOwner,
                                            PortalRoleNames.Admin
                                        };
 
@@ -415,17 +427,17 @@ namespace ValidationWeb.Filters
 
                 // Success - now store the authenticated Principal and create a new session.
                 var newUserIdentity = new ValidationPortalIdentity
-                                      {
-                                          AppRole = appRole,
-                                          AuthorizedEdOrgs = authorizedEdOrgs,
-                                          Email = theEmail,
-                                          FirstName = firstName,
-                                          MiddleName = middleName,
-                                          LastName = lastName,
-                                          FullName = fullName,
-                                          Name = theUserId,
-                                          UserId = theUserId 
-                                      };
+                {
+                    AppRole = appRole,
+                    AuthorizedEdOrgs = authorizedEdOrgs,
+                    Email = theEmail,
+                    FirstName = firstName,
+                    MiddleName = middleName,
+                    LastName = lastName,
+                    FullName = fullName,
+                    Name = theUserId,
+                    UserId = theUserId
+                };
 
                 filterContext.HttpContext.User = new ValidationPortalPrincipal(newUserIdentity);
                 _loggingService.LogInfoMessage(
@@ -435,17 +447,17 @@ namespace ValidationWeb.Filters
 
                 var firstEdOrg = newUserIdentity.AuthorizedEdOrgs.FirstOrDefault();
                 var newCurrentSession = new AppUserSession
-                                        {
-                                            Id = Guid.NewGuid().ToString(),
-                                            ExpiresUtc = DateTime.UtcNow.AddMinutes(30),    // oof this is configurable! TODO
-                                            FocusedEdOrgId =
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    ExpiresUtc = DateTime.UtcNow.AddMinutes(30),    // oof this is configurable! TODO
+                    FocusedEdOrgId =
                                                 (previousSessionFocusedEdOrgId == 0)
                                                     ? firstEdOrg.Id
                                                     : previousSessionFocusedEdOrgId,
-                                            FocusedSchoolYearId =
+                    FocusedSchoolYearId =
                                                 previousSessionFocusedSchoolYearId ?? validYears.First().Id,
-                                            UserIdentity = newUserIdentity
-                                        };
+                    UserIdentity = newUserIdentity
+                };
 
                 // Make the session accessible throughout the request.
                 httpContext.Items[SessionItemName] = newCurrentSession;
@@ -461,12 +473,18 @@ namespace ValidationWeb.Filters
                 }
 
                 _loggingService.LogInfoMessage($"User {authHeaderValue}; session {newCurrentSession.Id} saved.");
+                isAuthenticated = true;
 
                 #endregion Create and add a new user session to the database.
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _loggingService.LogErrorMessage($"Error occurred when retrieving authorization for user {authHeaderValue}. {ex.ChainInnerExceptionMessages()}");
+            }
+
+            if (!isAuthenticated)
+            {
+                filterContext.Result = new RedirectResult(_unauthorizedUrl);
             }
         }
 
@@ -474,15 +492,19 @@ namespace ValidationWeb.Filters
         {
             if (IsAnonymousAction(filterContext.ActionDescriptor))
             {
-                return; 
+                return;
             }
 
             var user = filterContext.HttpContext.User;
-            if (user == null || !user.Identity.IsAuthenticated)
+            if (user == null)
             {
                 _loggingService.LogInfoMessage($"User unauthenticated. Redirecting to login page {_config.AuthenticationServerRedirectUrl ?? "null"} and return URL {filterContext.HttpContext.Request.Url}.");
                 var redirectUrl = $"{_config.AuthenticationServerRedirectUrl}?returnUrl={System.Net.WebUtility.UrlEncode(filterContext.HttpContext.Request.Url?.ToString())}";
                 filterContext.Result = new RedirectResult(redirectUrl);
+            }
+            else if (!user.Identity.IsAuthenticated)
+            {
+                filterContext.Result = new RedirectResult(_unauthorizedUrl);
             }
         }
     }

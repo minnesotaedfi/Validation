@@ -20,7 +20,8 @@ namespace ValidationWeb.Services.Implementations
         private static readonly string _environmentName;
         private static readonly string _marssComparisonUrl;
         private static readonly string _ediamProfileLink;
-        private static readonly string _ediamLogoutLink; 
+        private static readonly string _ediamLogoutLink;
+        private static readonly string _ediamUnauthorizedLink;
 
 
         static AppSettingsFileConfigurationValues()
@@ -57,6 +58,7 @@ namespace ValidationWeb.Services.Implementations
 
             _ediamLogoutLink = ConfigurationManager.AppSettings["EdiamLogoutLink"];
             _ediamProfileLink = ConfigurationManager.AppSettings["EdiamProfileLink"];
+            _ediamUnauthorizedLink = ConfigurationManager.AppSettings["EdiamUnauthorizedLink"];
         }
 
         public string AppId => _appId;
@@ -77,7 +79,6 @@ namespace ValidationWeb.Services.Implementations
 
         public bool UseSimulatedSSO => _isSsoSimulated;
 
-
         public List<SchoolYear> SeedSchoolYears => _seedSchoolYears;
 
         public string EnvironmentName => _environmentName;
@@ -87,5 +88,7 @@ namespace ValidationWeb.Services.Implementations
         public string EdiamProfileLink => _ediamProfileLink;
 
         public string EdiamLogoutLink => _ediamLogoutLink;
+
+        public string EdiamUnauthorizedLink => _ediamUnauthorizedLink;
     }
 }

@@ -19,40 +19,42 @@ namespace ValidationWeb.Utility
         public static RolePermissions GetViewPermissions(this IIdentity identity, AppRole role) 
         {
             var rolePermissions = new RolePermissions();
-
-            switch (role.Name)
+            if (role != null)
             {
-                case PortalRoleNames.Admin:
-                    rolePermissions.CanAccessAdminFeatures = true;
-                    rolePermissions.CanViewMarssComparisonLink = true;
-                    rolePermissions.CanViewStudentLevelReports = true;
-                    rolePermissions.CanViewStudentDrilldownReports = true;
-                    rolePermissions.CanViewValidationReports = true;
-                    rolePermissions.CanAccessAllDistrictsMode = true;
-                    break;
+                switch (role.Name)
+                {
+                    case PortalRoleNames.Admin:
+                        rolePermissions.CanAccessAdminFeatures = true;
+                        rolePermissions.CanViewMarssComparisonLink = true;
+                        rolePermissions.CanViewStudentLevelReports = true;
+                        rolePermissions.CanViewStudentDrilldownReports = true;
+                        rolePermissions.CanViewValidationReports = true;
+                        rolePermissions.CanAccessAllDistrictsMode = true;
+                        break;
 
-                case PortalRoleNames.HelpDesk:
-                    rolePermissions.CanViewOdsReports = true;
-                    rolePermissions.CanViewStudentDrilldownReports = true;
-                    rolePermissions.CanViewValidationReports = true;
-                    rolePermissions.CanAccessAllDistrictsMode = true;
-                    rolePermissions.CanViewMarssComparisonLink = true;
-                    break; 
-                
-                case PortalRoleNames.DataOwner:
-                    rolePermissions.CanViewOdsReports = true;
-                    rolePermissions.CanAccessAllDistrictsMode = true; 
-                    break; 
-                
-                case PortalRoleNames.DistrictUser:
-                    rolePermissions.CanViewOdsReports = true;
-                    rolePermissions.CanModifyRecordsRequests = true;
-                    rolePermissions.CanViewStudentDrilldownReports = true;
-                    rolePermissions.CanViewValidationReports = true;
-                    rolePermissions.CanRunValidationReports = true;
-                    rolePermissions.CanViewMarssComparisonLink = true;
-                    rolePermissions.CanViewStudentLevelReports = true;
-                    break;
+                    case PortalRoleNames.HelpDesk:
+                        rolePermissions.CanViewOdsReports = true;
+                        rolePermissions.CanViewStudentDrilldownReports = true;
+                        rolePermissions.CanViewValidationReports = true;
+                        rolePermissions.CanAccessAllDistrictsMode = true;
+                        rolePermissions.CanViewMarssComparisonLink = true;
+                        break;
+
+                    case PortalRoleNames.DataOwner:
+                        rolePermissions.CanViewOdsReports = true;
+                        rolePermissions.CanAccessAllDistrictsMode = true;
+                        break;
+
+                    case PortalRoleNames.DistrictUser:
+                        rolePermissions.CanViewOdsReports = true;
+                        rolePermissions.CanModifyRecordsRequests = true;
+                        rolePermissions.CanViewStudentDrilldownReports = true;
+                        rolePermissions.CanViewValidationReports = true;
+                        rolePermissions.CanRunValidationReports = true;
+                        rolePermissions.CanViewMarssComparisonLink = true;
+                        rolePermissions.CanViewStudentLevelReports = true;
+                        break;
+                }
             }
 
             return rolePermissions;

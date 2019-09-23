@@ -1,4 +1,5 @@
 ﻿using System.Web.Http;
+
 using ValidationWeb.Services.Interfaces;
 
 namespace ValidationWeb.ApiControllers
@@ -24,8 +25,15 @@ namespace ValidationWeb.ApiControllers
         [Route("ed-org/get")]
         public IHttpActionResult GetEdOrgId()
         {
-            var result = _appUserService.GetSession().FocusedEdOrgId;
-            return Json(new { id = result });
+            var session = _appUserService.GetSession();
+
+            if (session != null)
+            {
+                var result = session.FocusedEdOrgId;
+                return Json(new { id = result });
+            }
+
+            return Json(new {});
         }
 
         [Route("school-year/select")]

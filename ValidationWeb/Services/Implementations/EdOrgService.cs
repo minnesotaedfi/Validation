@@ -5,6 +5,7 @@ using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Migrations;
 using System.Data.SqlClient;
 using System.Linq;
+
 using ValidationWeb.Database;
 using ValidationWeb.Database.Queries;
 using ValidationWeb.Models;
@@ -42,8 +43,15 @@ namespace ValidationWeb.Services.Implementations
         public List<EdOrg> GetAuthorizedEdOrgs()
         {
             // todo! refactor- this almost doesn't need to exist ... it's in user identity already
-            var userIdentity = AppUserService.GetSession().UserIdentity;
-            return userIdentity.AuthorizedEdOrgs.OrderBy(eo => eo.OrganizationName).ToList();
+
+            var session = AppUserService.GetSession();
+            if (session != null)
+            {
+                var userIdentity = AppUserService.GetSession().UserIdentity;
+                return userIdentity.AuthorizedEdOrgs.OrderBy(eo => eo.OrganizationName).ToList();
+            }
+
+            return new List<EdOrg>();
         }
 
         public List<EdOrg> GetAllEdOrgs()

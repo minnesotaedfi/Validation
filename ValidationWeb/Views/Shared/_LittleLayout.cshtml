@@ -2,9 +2,8 @@
 @using ValidationWeb.Models
 @using ValidationWeb.Utility
 @{
-    var identity = (ValidationPortalIdentity)User.Identity;
-    var permissions = User.Identity.GetViewPermissions(identity.AppRole);
-
+    var identity = User.Identity as ValidationPortalIdentity;
+    var permissions = User?.Identity?.GetViewPermissions(identity?.AppRole);
 }
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
@@ -39,7 +38,6 @@
         <div class="row noprint">
             <div class="col-12">
                 <nav id="layout-navbar" role="navigation" aria-label="Main navigation" class="navbar navbar-expand-sm prime-blue">
-
                     <div class="collapse navbar-collapse w-100 order-1 order-md-0" id="theNavBar">
                         <ul class="navbar-nav mr-auto">
                             <li class="nav-item">
@@ -85,7 +83,8 @@
                             }
                         </ul>
                     </div>
-                    @Html.Action("NavDropDowns", "Nav")
+                    
+                    @Html.Action("NavDropDowns", "Nav");
                 </nav>
             </div>
         </div>

@@ -7,6 +7,7 @@ using ValidationWeb.ViewModels;
 
 namespace ValidationWeb.Controllers
 {
+    [AllowAnonymous]
     public class NavController : Controller
     {
         private static readonly string _version;
@@ -17,7 +18,7 @@ namespace ValidationWeb.Controllers
 
         static NavController()
         {
-            _version = "3.1.1.0"; // new Version(FileVersionInfo.GetVersionInfo(Assembly.GetCallingAssembly().Location).ProductVersion).ToString();
+            _version = "3.1.2"; // new Version(FileVersionInfo.GetVersionInfo(Assembly.GetCallingAssembly().Location).ProductVersion).ToString();
         }
 
         public NavController(

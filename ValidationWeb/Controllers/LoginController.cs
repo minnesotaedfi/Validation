@@ -33,8 +33,8 @@ namespace ValidationWeb.Controllers
                     $@"select distinct au.UserId, au.FullName, aa.RoleId, ar.RoleDescription 
                         from apps.AppUser au
                         join apps.AppAuthorization aa on aa.UserId = au.UserId
-                        join apps.AppRole ar on ar.RoleId=aa.RoleId
-                        where ar.appid='{ConfigurationValues.AppId}';";
+                        join apps.AppRole ar on ar.RoleId=aa.RoleId";
+                        // where ar.appid='{ConfigurationValues.AppId}';";
 
                 using (var ssoCommand = new SqlCommand(commandText, ssoDatabaseConnection))
                 {

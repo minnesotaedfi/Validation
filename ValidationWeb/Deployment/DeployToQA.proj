@@ -9,6 +9,7 @@
     <AuthorizationStoredProcedureName Condition=" '$(AuthorizationStoredProcedureName)'==''">dbo.EDVP_MidmsEdiamUser_View</AuthorizationStoredProcedureName>
     <EdiamLogoutLink Condition=" '$(EdiamLogoutLink)'==''">https://edu-websecd01.educ.state.mn.us/EDIAMWEB/logout</EdiamLogoutLink>
     <EdiamProfileLink Condition=" '$(EdiamLogoutLink)'==''">https://edu-websecd01.educ.state.mn.us/EDIAMProfile</EdiamProfileLink>
+    <EdiamUnauthorizedLink Condition=" '$(EdiamUnauthorizedLink)'==''">https://edu-websecd01.educ.state.mn.us/EDIAMProfile/unauthorized?applicationCode=EDVP</EdiamUnauthorizedLink>
     <SsoAppId Condition=" '$(SsoAppId)'==''">EDVP</SsoAppId>
     <RulesFileFolder Condition=" '$(RulesFileFolder)'==''">~/Content/Rules</RulesFileFolder>
     <RuleEngineResultsSchema Condition=" '$(RuleEngineResultsSchema)'==''">rules</RuleEngineResultsSchema>
@@ -34,6 +35,8 @@
       <AuthorizationStoredProcedureNameParamValue>edvp_app_user.uvw_UserToRole</AuthorizationStoredProcedureNameParamValue>
       <EdiamLogoutLinkParamName>EdiamLogoutLink</EdiamLogoutLinkParamName>
       <EdiamLogoutLinkParamValue>https://edu-websecd01.educ.state.mn.us/EDIAMWEB/logout</EdiamLogoutLinkParamValue>
+      <EdiamUnauthorizedLinkParamName>EdiamUnauthorizedLink</EdiamUnauthorizedLinkParamName>
+      <EdiamUnauthorizedLinkParamValue>https://edu-websecd01.educ.state.mn.us/EDIAMProfile/unauthorized?applicationCode=EDVP</EdiamUnauthorizedLinkParamValue>
       <SsoAppIdParamName>AppId</SsoAppIdParamName>
       <SsoAppIdParamValue>EDVP</SsoAppIdParamValue>
       <RulesFileFolderParamName>RulesFileFolder</RulesFileFolderParamName>
@@ -144,6 +147,11 @@
             XmlInputPath="%(PublishPackages.ParametersXml)"
             Query="//parameters/setParameter[@name='EdiamLogoutLink']/@value"
             Value="https://edu-websecd01.educ.state.mn.us/EDIAMWEB/logout" />
+
+    <XmlPoke
+          XmlInputPath="%(PublishPackages.ParametersXml)"
+          Query="//parameters/setParameter[@name='EdiamUnauthorizedLink']/@value"
+          Value="https://edu-websecd01.educ.state.mn.us/EDIAMProfile/unauthorized?applicationCode=EDVP" />
     <XmlPoke
             XmlInputPath="%(PublishPackages.ParametersXml)"
             Query="//parameters/setParameter[@name='SessionStateConnectionString']/@value"

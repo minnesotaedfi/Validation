@@ -26,5 +26,7 @@ namespace ValidationWeb.Services.Interfaces
         string EdiamProfileLink { get; }
 
         string EdiamLogoutLink { get; }
+
+        string EdiamUnauthorizedLink { get; }
     }
 }
