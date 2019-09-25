@@ -369,7 +369,7 @@ namespace ValidationWeb.Services.Implementations
 
                     foreach (var queryResult in queryResults.ToArray())
                     {
-                        studentQueryCmd.Parameters["@student_unique_id"].Value = queryResult.Id; // .ToString("D13");
+                        studentQueryCmd.Parameters["@student_unique_id"].Value = queryResult.Id.ToString("D13");
                         var singleStudentData = new List<StudentDataFromId>();
                         using (var reader = studentQueryCmd.ExecuteReader())
                         {

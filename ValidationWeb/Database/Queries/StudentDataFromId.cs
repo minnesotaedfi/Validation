@@ -15,7 +15,7 @@ namespace ValidationWeb.Database.Queries
     LEFT OUTER JOIN edfi.School sch ON sch.SchoolId = ssa.SchoolId
     LEFT OUTER JOIN edfi.EducationOrganization eorg ON eorg.EducationOrganizationId = sch.SchoolId 
     LEFT OUTER JOIN edfi.Descriptor d ON d.DescriptorId = ssa.EntryGradeLevelDescriptorId
-    WHERE s.StudentUniqueId=replace(ltrim(replace(@student_unique_id, '0', ' ')), ' ', 0)";
+    WHERE s.StudentUniqueId=@student_unique_id";
 
         public const string FirstNameColumnName = "FirstName";
         public const string MiddleNameColumnName = "MiddleName";
