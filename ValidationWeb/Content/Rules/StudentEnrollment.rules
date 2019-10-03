@@ -1554,7 +1554,7 @@ rule 30.10.6388
 	else '254. For students with Special Education Evaluation Status (SEES) equals 4, 6 or 9, Special Education Service Hours are required if: A. Grade = EC or HK. B. Homebound Indicator = Y OR D. State Aid Category = 16, 17, 18, 26 or 27 OR E. Students are in the school types - Multidisciplinary Teaching Model, Inclusive Program, Cooperative Teaching Model, Project Based. Additionally, for these students attending State Approved Alternative Programs (SAAP schools have classifications 41, 42 or 45) or OLL program (classification 46), Special Education Service Hours are required if: F. There is no other overlapping enrollment record in this district OR G. The only overlapping enrollment is from a SAAP or OL Program without Special Education Service Hours.'	
 
 
-rule 30.10.6448
+/* rule 30.10.6448
 	when collection is EOY_Enrollment_And_Demographic 
 	and {StudentEnrollment}.[StudentGradeLevel] = 'EC'
 	and {StudentEnrollment}.[SpecialEducationEvaluationStatus] <> '2'
@@ -1562,3 +1562,4 @@ rule 30.10.6448
 	and {StudentEnrollment}.[StateAidCategory] is not in ['14', '16', '17', '18', '28', '52'] then
 	expect count({MultipleEnrollment} when {MultipleEnrollment}.[StatusEndRight] is not in ['4','12','20','24','99'] and {MultipleEnrollment}.[EnrollmentSequenceRight] = max({MultipleEnrollment}.[EnrollmentSequenceRight])) >= 1
 	else '406. This student has a status end code that would indicate a later enrollment record should exist, but one was not found in this district or anywhere in the state for this fiscal year. Check the status end code and if correct, confirm the student is being reported as enrolled in another school or district.'	
+*/
