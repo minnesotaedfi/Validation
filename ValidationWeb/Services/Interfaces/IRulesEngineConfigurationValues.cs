@@ -7,5 +7,7 @@
         string RuleEngineResultsSchema { get; }
 
         string RuleEngineResultsConnectionString { get; }
+
+        int RulesExecutionTimeout { get; }
     }
 }

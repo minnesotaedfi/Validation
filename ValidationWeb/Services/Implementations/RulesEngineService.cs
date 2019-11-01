@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Engine.Models;
+
 using ValidationWeb.Database;
 using ValidationWeb.Database.Queries;
 using ValidationWeb.Models;
@@ -251,12 +252,15 @@ namespace ValidationWeb.Services.Implementations
                                                    "@RuleValidationId",
                                                    newRuleValidationExecution.RuleValidationId)
                                            };
+
                             detailParams.AddRange(
                                 EngineObjectModel.GetParameters(collectionId)
                                     .Select(x => new SqlParameter(x.ParameterName, x.Value)));
-                            odsRawDbContext.Database.CommandTimeout = 60;
+                            
+                            odsRawDbContext.Database.CommandTimeout = EngineConfig.RulesExecutionTimeout;
 
                             var result = odsRawDbContext.Database.ExecuteSqlCommand(rule.ExecSql, detailParams.ToArray<object>());
+
                             LoggingService.LogDebugMessage($"Executing Rule {rule.RuleId} rows affected = {result}.");
 
                             // Record the results of this rule in the Validation Portal database, accompanied by more detailed information.

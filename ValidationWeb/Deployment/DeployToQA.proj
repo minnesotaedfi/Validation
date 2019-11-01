@@ -15,7 +15,7 @@
     <RuleEngineResultsSchema Condition=" '$(RuleEngineResultsSchema)'==''">rules</RuleEngineResultsSchema>
     <UseFakeViewModelData Condition=" '$(UseFakeViewModelData)'==''">false</UseFakeViewModelData>
     <EnvironmentName Condition="'$(EnvironmentName)' == ''">MN-QA</EnvironmentName>
-    <MarssComparisonUrl Condition="'$(MarssComparisonUrl)' == ''">http://edu-devapache:81/MDEAnalytics/DataTopic.jsp?TOPICID=474</MarssComparisonUrl>
+    <MarssComparisonUrl Condition="'$(MarssComparisonUrl)' == ''">https://edu-websecd01.educ.state.mn.us/MDEAnalytics/DataTopic.jsp?TOPICID=474</MarssComparisonUrl>
     <SessionState Condition=" '$(SessionState)'==''">data source=EDU-EDFIODSQ31;integrated security=True;MultipleActiveResultSets=True;</SessionState>
     <ValidationPortalDbContext Condition=" '$(ValidationPortalDbContext)'==''">Data Source=EDU-EDFIODSQ31;Initial Catalog=ValidationPortal;Integrated Security=True;MultipleActiveResultSets=True;Application Name=EntityFramework</ValidationPortalDbContext>
     <SingleSignOnDatabase Condition="'$(SingleSignOnDatabase)'==''">Data Source=EDU-SQL2014DEV;Initial Catalog=EDIAM;Integrated Security=True;MultipleActiveResultSets=True;App=EntityFramework</SingleSignOnDatabase>
@@ -48,7 +48,7 @@
       <EnvironmentNameParamName>EnvironmentName</EnvironmentNameParamName>
       <EnvironmentNameParamValue>MN-QA</EnvironmentNameParamValue>
       <MarssComparisonUrlParamName>MarssComparisonUrl</MarssComparisonUrlParamName>
-      <MarssComparisonUrlParamValue>http://edu-devapache:81/MDEAnalytics/DataTopic.jsp?TOPICID=474</MarssComparisonUrlParamValue>
+      <MarssComparisonUrlParamValue>https://edu-websecd01.educ.state.mn.us/MDEAnalytics/DataTopic.jsp?TOPICID=474</MarssComparisonUrlParamValue>
       <SessionStateConnectionString>$(SessionState.Replace(";","%3b"))</SessionStateConnectionString>
       <!-- These are the string values that get added to the Web.Config file - not to determine where the DB is actually deployed. -->
       <ValidationPortalDbContextName>ValidationPortalDbContext-Web.config Connection String</ValidationPortalDbContextName>
