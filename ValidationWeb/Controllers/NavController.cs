@@ -71,9 +71,14 @@ namespace ValidationWeb.Controllers
             return PartialView("~/Views/Shared/_Environment.cshtml", viewModel);
         }
 
-        public PartialViewResult MarssLink()
+        public PartialViewResult MarssWesLink()
         {
-            return PartialView("~/Views/Shared/_MarssLink.cshtml", _configurationValues.MarssComparisonUrl);
+            return PartialView("~/Views/Shared/_MarssWesLink.cshtml", _configurationValues.MarssWesUrl);
+        }
+
+        public PartialViewResult MarssComparisonLink()
+        {
+            return PartialView("~/Views/Shared/_MarssComparisonLink.cshtml", _configurationValues.MarssComparisonUrl);
         }
     }
 }

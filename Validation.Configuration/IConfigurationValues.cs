@@ -22,7 +22,9 @@ namespace ValidationWeb.Services.Interfaces
         string EnvironmentName { get; }
 
         string MarssComparisonUrl { get; }
-
+        
+        string MarssWesUrl { get; }
+        
         string EdiamProfileLink { get; }
 
         string EdiamLogoutLink { get; }
