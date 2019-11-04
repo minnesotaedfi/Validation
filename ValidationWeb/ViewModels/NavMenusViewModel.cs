@@ -19,8 +19,6 @@ namespace ValidationWeb.ViewModels
 
         public IEnumerable<EdOrg> EdOrgs { get; set; }
 
-        public bool ShowLogoutLink { get; set; }
-
         public string EdiamProfileLink { get; set; }
 
         public string EdiamLogoutLink { get; set; }

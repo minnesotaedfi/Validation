@@ -96,37 +96,6 @@
           match="/configuration/appSettings/add[@key='UseSimulatedSSO']/@value"
          />
   </parameter>
-
-  <parameter
-    name="EdiamProfileLink"
-    description="Ediam Profile Link"
-    defaultValue="https://edu-websecd01.educ.state.mn.us/EDIAMWEB/logout">
-    <parameterEntry
-      kind="XmlFile"
-      scope="Web.config"
-      match="/configuration/appSettings/add[@key='EdiamProfileLink']/@value"
-    />
-  </parameter>
-  <parameter
-      name="EdiamLogoutLink"
-      description="Logout ."
-      defaultValue="https://edu-websecd01.educ.state.mn.us/EDIAMWEB/logout">
-    <parameterEntry
-        kind="XmlFile"
-        scope="Web.config"
-        match="/configuration/appSettings/add[@key='EdiamLogoutLink']/@value"
-    />
-  </parameter>
-  <parameter
-    name="EdiamUnauthorizedLink"
-    description="user authenticated, but not authorized for the app or any districts"
-    defaultValue="https://[xxx].educ.state.mn.us/EDIAMWEB/EDIAMProfile/unauthorized?applicationCode=EDVP">
-    <parameterEntry
-      kind="XmlFile"
-      scope="Web.config"
-      match="/configuration/appSettings/add[@key='EdiamUnauthorizedLink']/@value"
-      />
-  </parameter>
   <parameter
       name="EnvironmentName"
       description="Displays at the top of all pages; hidden if set to 'Production'."

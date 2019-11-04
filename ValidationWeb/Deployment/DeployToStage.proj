@@ -30,10 +30,6 @@
                         <AuthenticationServerRedirectUrlParamValue>http://www.wearedoubleline.com/</AuthenticationServerRedirectUrlParamValue>
                         <AuthorizationStoredProcedureNameParamName>AuthorizationStoredProcedureName</AuthorizationStoredProcedureNameParamName>
                         <AuthorizationStoredProcedureNameParamValue>edvp_app_user.uvw_UserToRole</AuthorizationStoredProcedureNameParamValue>
-                        <EdiamLogoutLinkParamName>EdiamLogoutLink</EdiamLogoutLinkParamName>
-                        <EdiamLogoutLinkParamValue>https://secure.education.mn.gov/EDIAMWEB/logout</EdiamLogoutLinkParamValue>
-                        <EdiamProfileLinkParamName>EdiamProfileLink</EdiamProfileLinkParamName>
-                        <EdiamProfileLinkParamValue>https://secure.education.mn.gov/EDIAMProfile</EdiamProfileLinkParamValue>
                         <SsoAppIdParamName>AppId</SsoAppIdParamName>
                         <SsoAppIdParamValue>EDVP</SsoAppIdParamValue>
                         <RulesFileFolderParamName>RulesFileFolder</RulesFileFolderParamName>
@@ -133,16 +129,6 @@
                         XmlInputPath="%(PublishPackages.ParametersXml)"
                         Query="//parameters/setParameter[@name='UseSimulatedSSO']/@value"
                         Value="false"  />
-                <XmlPoke
-                  XmlInputPath="%(PublishPackages.ParametersXml)"
-                  Query="//parameters/setParameter[@name='EdiamProfileLink']/@value"
-                  Value="https://secure.education.mn.gov/EDIAMProfile/" />
-
-                <XmlPoke
-                        XmlInputPath="%(PublishPackages.ParametersXml)"
-                        Query="//parameters/setParameter[@name='EdiamLogoutLink']/@value"
-                        Value="https://secure.education.mn.gov/EDIAMWEB/logout" />
-
                 <XmlPoke
                         XmlInputPath="%(PublishPackages.ParametersXml)"
                         Query="//parameters/setParameter[@name='SessionStateConnectionString']/@value"

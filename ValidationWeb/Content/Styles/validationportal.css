@@ -161,6 +161,10 @@ a.white-heavy-text {
         text-decoration: none;
     }
 
+.dropdown-menu :first-child {
+    border-bottom: #78BE21 1px dashed;
+}
+
 .dropdown-item:hover, .dropdown-item:focus {
     color: #003865;
     font-weight: bold;
@@ -449,7 +453,7 @@ table.dataTable tbody th, table.dataTable tbody td {
 .navbar-nav a {
     color: rgb(255, 255, 255);
     background-color: rgb(0, 56, 101);
-    padding: 0;
+    padding: 0.25rem 1.5rem;
 }
 
     .navbar-nav a:focus {

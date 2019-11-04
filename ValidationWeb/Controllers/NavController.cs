@@ -55,8 +55,6 @@ namespace ValidationWeb.Controllers
                                         .FirstOrDefault(sy => sy.Id == _appUserService.GetSession().FocusedSchoolYearId) ??
                                         _schoolYearService.GetSubmittableSchoolYears().First();
 
-            model.ShowLogoutLink = _configurationValues.UseSimulatedSSO;
-
             return PartialView("_NavDropDowns", model);
         }
 
