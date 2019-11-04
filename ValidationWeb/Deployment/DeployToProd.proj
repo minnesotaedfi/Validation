@@ -6,7 +6,7 @@
                 <ValidationPortalIisAppPool Condition=" '$(ValidationPortalIisAppPool)'==''">DefaultAppPool</ValidationPortalIisAppPool>
                 <ValidationPortalIisPathToRoot Condition=" '$(ValidationPortalIisPathToRoot)'==''">D:\ValidationPortal</ValidationPortalIisPathToRoot>
                 <AuthenticationServerRedirectUrl Condition=" '$(AuthenticationServerRedirectUrl)'==''">http://www.wearedoubleline.com/</AuthenticationServerRedirectUrl>
-                <AuthorizationStoredProcedureName Condition=" '$(AuthorizationStoredProcedureName)'==''">dbo.EDVP_MidmsEdiamUser_View</AuthorizationStoredProcedureName>
+                <AuthorizationStoredProcedureName Condition=" '$(AuthorizationStoredProcedureName)'==''">edvp_app_user.uvw_UserToRole</AuthorizationStoredProcedureName>
                 <SsoAppId Condition=" '$(SsoAppId)'==''">EDVP</SsoAppId>
                 <RulesFileFolder Condition=" '$(RulesFileFolder)'==''">~/Content/Rules</RulesFileFolder>
                 <RuleEngineResultsSchema Condition=" '$(RuleEngineResultsSchema)'==''">rules</RuleEngineResultsSchema>
@@ -19,7 +19,7 @@
 
                 <SessionState Condition=" '$(SessionState)'==''">data source=EDU-EDFIODSP01;integrated security=True;MultipleActiveResultSets=True;</SessionState>
                 <ValidationPortalDbContext Condition=" '$(ValidationPortalDbContext)'==''">Data Source=EDU-EDFIODSP01;Initial Catalog=ValidationPortal;Integrated Security=True;MultipleActiveResultSets=True;Application Name=EntityFramework</ValidationPortalDbContext>
-                <SingleSignOnDatabase Condition="'$(SingleSignOnDatabase)'==''">Data Source=EDU-SQL2014PROD;Initial Catalog=MidmsAudit_10g;Integrated Security=True;MultipleActiveResultSets=True;App=EntityFramework</SingleSignOnDatabase>
+                <SingleSignOnDatabase Condition="'$(SingleSignOnDatabase)'==''">Data Source=EDU-SQL2014PROD;Initial Catalog=EDIAM;Integrated Security=True;MultipleActiveResultSets=True;App=EntityFramework</SingleSignOnDatabase>
                 <RawOdsDbContext Condition="'$(RawOdsDbContext)'==''">Data Source=EDU-EDFIODSP01;Initial Catalog=EdFi_Ods_{0};Integrated Security=True;MultipleActiveResultSets=True;App=EntityFramework</RawOdsDbContext>
                 <ValidatedOdsDbContext Condition="'$(ValidatedOdsDbContext)'==''">data source=EDU-EDFIODSP01;initial catalog=ValidationPortal;integrated security=True;MultipleActiveResultSets=True;App=EntityFramework</ValidatedOdsDbContext>
                 <EdFiLogDbContext Condition=" '$(EdFiLogDbContext)'==''">data source=EDU-EDFIODSP01;initial catalog=EdFi_Log;integrated security=True;MultipleActiveResultSets=True;App=EntityFramework</EdFiLogDbContext>
@@ -33,7 +33,7 @@
                         <AuthenticationServerRedirectUrlParamName>AuthenticationServerRedirectUrl</AuthenticationServerRedirectUrlParamName>
                         <AuthenticationServerRedirectUrlParamValue>http://www.wearedoubleline.com/</AuthenticationServerRedirectUrlParamValue>
                         <AuthorizationStoredProcedureNameParamName>AuthorizationStoredProcedureName</AuthorizationStoredProcedureNameParamName>
-                        <AuthorizationStoredProcedureNameParamValue>dbo.EDVP_MidmsEdiamUser_View</AuthorizationStoredProcedureNameParamValue>
+                        <AuthorizationStoredProcedureNameParamValue>edvp_app_user.uvw_UserToRole</AuthorizationStoredProcedureNameParamValue>
                         <SsoAppIdParamName>SsoAppId</SsoAppIdParamName>
                         <SsoAppIdParamValue>EDVP</SsoAppIdParamValue>
                         <RulesFileFolderParamName>RulesFileFolder</RulesFileFolderParamName>
