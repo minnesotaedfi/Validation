@@ -1,8 +1,10 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Security.Principal;
+
 using NUnit.Framework;
+
 using Should;
-using ValidationWeb.Filters;
+
 using ValidationWeb.Models;
 using ValidationWeb.Utility;
 
@@ -37,13 +39,13 @@ namespace ValidationWeb.Tests.Utility
                     result.CanViewValidationReports.ShouldBeFalse();
                     break;
                 case SSORoleNames.Admin:
-                    result.CanViewStudentDrilldownReports.ShouldBeFalse();
+                    result.CanViewStudentDrilldownReports.ShouldBeTrue();
                     result.CanAccessAdminFeatures.ShouldBeTrue();
-                    result.CanAccessAllDistrictsMode.ShouldBeFalse();
+                    result.CanAccessAllDistrictsMode.ShouldBeTrue();
                     result.CanModifyRecordsRequests.ShouldBeFalse();
                     result.CanRunValidationReports.ShouldBeFalse();
                     result.CanViewOdsReports.ShouldBeFalse();
-                    result.CanViewValidationReports.ShouldBeFalse();
+                    result.CanViewValidationReports.ShouldBeTrue();
                     break;
                 case SSORoleNames.DistrictUser:
                     result.CanViewStudentDrilldownReports.ShouldBeTrue();
@@ -64,13 +66,13 @@ namespace ValidationWeb.Tests.Utility
                     result.CanViewValidationReports.ShouldBeTrue();
                     break;
                 case SSORoleNames.RegionUser:
-                    result.CanViewStudentDrilldownReports.ShouldBeTrue();
+                    result.CanViewStudentDrilldownReports.ShouldBeFalse();
                     result.CanAccessAdminFeatures.ShouldBeFalse();
                     result.CanAccessAllDistrictsMode.ShouldBeFalse();
-                    result.CanModifyRecordsRequests.ShouldBeTrue();
-                    result.CanRunValidationReports.ShouldBeTrue();
-                    result.CanViewOdsReports.ShouldBeTrue();
-                    result.CanViewValidationReports.ShouldBeTrue();
+                    result.CanModifyRecordsRequests.ShouldBeFalse();
+                    result.CanRunValidationReports.ShouldBeFalse();
+                    result.CanViewOdsReports.ShouldBeFalse();
+                    result.CanViewValidationReports.ShouldBeFalse();
                     break;
             }
         }
