@@ -25,7 +25,6 @@ namespace ValidationWeb.Utility
                 {
                     case PortalRoleNames.Admin:
                         rolePermissions.CanAccessAdminFeatures = true;
-                        rolePermissions.CanViewMarssComparisonLink = true;
                         rolePermissions.CanViewStudentLevelReports = true;
                         rolePermissions.CanViewStudentDrilldownReports = true;
                         rolePermissions.CanViewValidationReports = true;
@@ -37,7 +36,6 @@ namespace ValidationWeb.Utility
                         rolePermissions.CanViewStudentDrilldownReports = true;
                         rolePermissions.CanViewValidationReports = true;
                         rolePermissions.CanAccessAllDistrictsMode = true;
-                        rolePermissions.CanViewMarssComparisonLink = true;
                         break;
 
                     case PortalRoleNames.DataOwner:
@@ -51,7 +49,6 @@ namespace ValidationWeb.Utility
                         rolePermissions.CanViewStudentDrilldownReports = true;
                         rolePermissions.CanViewValidationReports = true;
                         rolePermissions.CanRunValidationReports = true;
-                        rolePermissions.CanViewMarssComparisonLink = true;
                         rolePermissions.CanViewStudentLevelReports = true;
                         break;
                 }

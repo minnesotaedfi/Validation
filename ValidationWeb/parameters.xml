@@ -138,26 +138,6 @@
         />
   </parameter>
   <parameter
-      name="MarssComparisonUrl"
-      description="link to MARSS/Ed-Fi Comparison Report."
-      defaultValue="">
-    <parameterEntry
-        kind="XmlFile"
-        scope="Web.config"
-        match="/configuration/appSettings/add[@key='MarssComparisonUrl']/@value"
-        />
-  </parameter>
-  <parameter
-    name="MarssWesUrl"
-    description="link to MARSS WES."
-    defaultValue="">
-    <parameterEntry
-      kind="XmlFile"
-      scope="Web.config"
-      match="/configuration/appSettings/add[@key='MarssWesUrl']/@value"
-    />
-  </parameter>
-  <parameter
       name="SessionStateConnectionString"
       description="Connection string to use for ASP session state server"
       defaultValue="localhost">

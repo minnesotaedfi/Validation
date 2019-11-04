@@ -57,17 +57,6 @@
                                 </li>
                             }
 
-                            <li class="nav-item">
-                                @{ Html.RenderAction("MarssWesLink", "Nav"); }
-                            </li>
-
-                            @if (permissions.CanViewMarssComparisonLink)
-                            {
-                                <li class="nav-item">
-                                    @{ Html.RenderAction("MarssComparisonLink", "Nav"); }
-                                </li>
-                            }
-
 
                             @if (permissions.CanAccessAdminFeatures)
                             {

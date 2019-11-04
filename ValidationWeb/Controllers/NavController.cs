@@ -70,15 +70,5 @@ namespace ValidationWeb.Controllers
             var viewModel = new EnvironmentViewModel { EnvironmentName = _configurationValues.EnvironmentName };
             return PartialView("~/Views/Shared/_Environment.cshtml", viewModel);
         }
-
-        public PartialViewResult MarssWesLink()
-        {
-            return PartialView("~/Views/Shared/_MarssWesLink.cshtml", _configurationValues.MarssWesUrl);
-        }
-
-        public PartialViewResult MarssComparisonLink()
-        {
-            return PartialView("~/Views/Shared/_MarssComparisonLink.cshtml", _configurationValues.MarssComparisonUrl);
-        }
     }
 }

@@ -42,8 +42,6 @@
       <UseFakeViewModelDataParamValue>false</UseFakeViewModelDataParamValue>
       <EnvironmentNameParamName>EnvironmentName</EnvironmentNameParamName>
       <EnvironmentNameParamValue>MN-Dev2</EnvironmentNameParamValue>
-      <MarssComparisonUrlParamName>MarssComparisonUrl</MarssComparisonUrlParamName>
-      <MarssComparisonUrlParamValue>http://wearedoubleline.com?test</MarssComparisonUrlParamValue>
       <SessionStateConnectionString>$(SessionState.Replace(";","%3b"))</SessionStateConnectionString>
       <!-- These are the string values that get added to the Web.Config file - not to determine where the DB is actually deployed. -->
       <ValidationPortalDbContextName>ValidationPortalDbContext-Web.config Connection String</ValidationPortalDbContextName>
@@ -106,12 +104,6 @@
             Query="//parameters/setParameter[@name='%(PublishPackages.EnvironmentNameParamName)']/@value"
             Value="%(PublishPackages.EnvironmentNameParamValue)"
             Condition =" '%(PublishPackages.EnvironmentNameParamValue)'!=''" />
-    <Message Text="%(PublishPackages.MarssComparisonUrlParamName) = %(PublishPackages.MarssComparisonUrlParamValue)" />
-    <XmlPoke
-            XmlInputPath="%(PublishPackages.ParametersXml)"
-            Query="//parameters/setParameter[@name='%(PublishPackages.MarssComparisonUrlParamName)']/@value"
-            Value="%(PublishPackages.MarssComparisonUrlParamValue)"
-            Condition =" '%(PublishPackages.MarssComparisonUrlParamvalue)'!=''" />
     <XmlPoke
             XmlInputPath="%(PublishPackages.ParametersXml)"
             Query="//parameters/setParameter [@name='%(PublishPackages.ValidationPortalDbContextName)']/@value"

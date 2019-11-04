@@ -20,10 +20,6 @@ namespace ValidationWeb.Services.Interfaces
         List<SchoolYear> SeedSchoolYears { get; }
 
         string EnvironmentName { get; }
-
-        string MarssComparisonUrl { get; }
-        
-        string MarssWesUrl { get; }
         
         string EdiamProfileLink { get; }
 
