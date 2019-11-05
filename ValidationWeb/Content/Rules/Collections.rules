@@ -1,11 +1,17 @@
-collection Fall_Enrollment_And_Demographic includes 
-  StudentDemographic, 
+collection Fall_Enrollment_And_Demographic includes
   StudentEnrollment, 
-  MultipleEnrollment,
+  StudentDemographic,
+  MultipleEnrollment
+  
+collection Fall_School includes
+  SchoolGrade,
   SchoolCalendar
 
 collection EOY_Enrollment_And_Demographic includes 
-  StudentDemographic, 
-  StudentEnrollment, 
-  MultipleEnrollment,
+  StudentEnrollment,
+  StudentDemographic,
+  MultipleEnrollment
+  
+collection EOY_School includes 
+  SchoolGrade,
   SchoolCalendar
