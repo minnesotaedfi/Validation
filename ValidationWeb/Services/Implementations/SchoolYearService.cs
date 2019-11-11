@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
+
 using ValidationWeb.Database;
 using ValidationWeb.Models;
 using ValidationWeb.Services.Interfaces;
@@ -10,19 +11,18 @@ namespace ValidationWeb.Services.Implementations
 {
     public class SchoolYearService : ISchoolYearService
     {
-
         public SchoolYearService(IDbContextFactory<ValidationPortalDbContext> validationPortalDataContextFactory)
         {
             ValidationPortalDataContextFactory = validationPortalDataContextFactory;
         }
 
-        protected IDbContextFactory<ValidationPortalDbContext> ValidationPortalDataContextFactory { get; set; }
+        private IDbContextFactory<ValidationPortalDbContext> ValidationPortalDataContextFactory { get; }
 
         public IList<SchoolYear> GetSubmittableSchoolYears()
         {
             using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create()) 
             {
-                return validationPortalDataContext.SchoolYears.ToList();
+                return validationPortalDataContext.SchoolYears.Where(x => x.Enabled).ToList();
             }
         }
 

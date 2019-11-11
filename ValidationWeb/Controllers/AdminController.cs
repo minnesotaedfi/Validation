@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Web.Http.Results;
 using System.Web.Mvc;
+
 using MoreLinq;
-using MvcSiteMapProvider.Reflection;
+
 using Newtonsoft.Json;
+
 using ValidationWeb.Filters;
 using ValidationWeb.Models;
 using ValidationWeb.Services.Interfaces;
@@ -67,7 +68,8 @@ namespace ValidationWeb.Controllers
                 RuleCollections = _rulesEngineService.GetCollections(),
                 SubmissionCycles = _submissionCycleService.GetSubmissionCycles(),
                 Announcements = _announcementService.GetAnnouncements(),
-                RulesViewsPerSchoolYearId = viewsPerYear
+                RulesViewsPerSchoolYearId = viewsPerYear,
+                ReportSchoolYearId = _appUserService.GetSession().FocusedSchoolYearId
             };
 
             PopulateDropDownLists();

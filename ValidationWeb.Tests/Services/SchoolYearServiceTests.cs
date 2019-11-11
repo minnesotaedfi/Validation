@@ -4,10 +4,13 @@ using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+
 using Moq;
+
 using NUnit.Framework;
+
 using Should;
-using Should.Extensions;
+
 using ValidationWeb.Database;
 using ValidationWeb.Models;
 using ValidationWeb.Services.Implementations;
@@ -79,7 +82,7 @@ namespace ValidationWeb.Tests.Services
 
             var result = schoolYearService.GetSubmittableSchoolYears();
 
-            result.ShouldEqual(TestSchoolYears);
+            result.ShouldEqual(TestSchoolYears.Where(x => x.Enabled));
         }
 
         [Test]

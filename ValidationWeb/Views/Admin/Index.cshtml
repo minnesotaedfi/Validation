@@ -197,13 +197,13 @@
                 $("#add-end-year").val(Number($("#add-start-year").val()) + 1);
             });
 
-            $('#edit-dynamic-reports-schoolYearId').change(function() {
+            @*$('#edit-dynamic-reports-schoolYearId').change(function() {
                 $('#reportDefinitionsTable').DataTable()
                     .ajax
                     .url('@Url.Action("GetReportDefinitionsPerSchoolYearId")?schoolYearId=' +
                         $('#edit-dynamic-reports-schoolYearId').val())
                     .load();
-            });
+            });*@
 
             var dataTable = $('#reportDefinitionsTable').DataTable({
                 dom: 'r<t>',
@@ -287,9 +287,8 @@
                     }
                 ],
                 ajax: {
-                    url: '@Url.Action("GetReportDefinitionsPerSchoolYearId")?schoolYearId=' +
-                        $('#edit-dynamic-reports-schoolYearId').val(),
-                    complete: function() {
+                    url: '@Url.Action("GetReportDefinitionsPerSchoolYearId")?schoolYearId=@(Model.ReportSchoolYearId)',
+                        complete: function() {
                         var dataTable = $($("#reportDefinitionsTable").DataTable().table().header());
                         dataTable.find('th').removeAttr('aria-label');
                     }
@@ -347,7 +346,7 @@
 
             $('#reportModal').on('shown.bs.modal',
                 function() {
-                    updateRulesViews($('#edit-dynamic-reports-schoolYearId').val());
+                    updateRulesViews(@Model.ReportSchoolYearId);
                     setModalHeaderText("report", ModelNameToDisplay["report"]);
                     $("#newReportForm").on('submit', saveDynamicReport);
                 });
@@ -530,7 +529,7 @@
             var reportDescription = $('#report-description').val();
             var reportIsOrgLevel = $('#report-is-org-level').is(':checked');
             var reportTable = $('#rulesTable-' + rulesViewId).DataTable();
-            var schoolYearId = $('#edit-dynamic-reports-schoolYearId').val();
+            var schoolYearId = @Model.ReportSchoolYearId;
 
             var dynamicReportDefinition = {
                 name: reportTitle,
@@ -578,7 +577,7 @@
         }
 
         function updateDynamicReport() {
-            debugger;
+            
             var reportId = $('#edit-report-id').val();
             var reportTitle = $('#edit-report-name').val();
             var reportDescription = $('#edit-report-description').val();
@@ -594,6 +593,7 @@
             var reportFields = [];
 
             var reportTable = $('#editRulesTable').DataTable();
+            debugger;
 
             reportTable.rows().eq(0).each(function(index) {
                 var row = reportTable.row(index);
@@ -684,11 +684,13 @@
             var modelModal = '#' + modelName + 'Modal';
             var modelDisplayName = ModelNameToDisplay[modelName];
 
-            var optionSelector = event.data.option;
+            //var optionSelector = event.data.option;
 
-            if (optionSelector) {
-                modalAddRoute += "?schoolYearId=" + $(optionSelector).val();
-            }
+            //if (optionSelector) {
+            //    modalAddRoute += "?schoolYearId=" + $(optionSelector).val();
+            //}
+
+            modalAddRoute += "?schoolYearId=@(Model.ReportSchoolYearId)";
 
             var options = { "backdrop": "static", keyboard: true };
             $.ajax({
