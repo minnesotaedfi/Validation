@@ -209,6 +209,13 @@ namespace ValidationWeb.Controllers
             return new HttpStatusCodeResult(HttpStatusCode.OK);
         }
 
+        [HttpGet]
+        public ActionResult RefreshRulesViews(int schoolYearId)
+        {
+            _dynamicReportingService.RefreshRulesViews(schoolYearId);
+            return new HttpStatusCodeResult(HttpStatusCode.OK); 
+        }
+
         public ActionResult AddSubmissionCycle()
         {
             PopulateDropDownLists();

@@ -164,6 +164,11 @@ namespace ValidationWeb.Services.Implementations
             }
         }
 
+        public void RefreshRulesViews(int schoolYearId)
+        {
+            // todo
+        }
+
         public void SaveReportDefinition(DynamicReportDefinition reportDefinition)
         {
             using (var validationPortalContext = ValidationPortalDataContextFactory.Create())

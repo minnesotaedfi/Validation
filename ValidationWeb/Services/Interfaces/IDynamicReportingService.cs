@@ -27,5 +27,7 @@ namespace ValidationWeb.Services.Interfaces
         void DisableReportDefinition(int id);
 
         void DeleteReportDefinition(int id);
+
+        void RefreshRulesViews(int schoolYearId);
     }
 }

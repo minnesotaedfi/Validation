@@ -46,19 +46,23 @@
             });
 
         function loadNonDefaultTab(tabName) {
+            $('#nav-tabContent').hide();
             var location = window.location.href;
             var queryStringIndex = window.location.href.indexOf('?');
             if (queryStringIndex > -1) {
                 location = location.slice(0, queryStringIndex);
             }
             window.location.href = location + '?tab=' + tabName;
+            $('#nav-tabContent').show();
         }
 
         function loadDefaultTab() {
+            $('#nav-tabContent').hide();
             var queryStringIndex = window.location.href.indexOf('?');
             if (queryStringIndex > -1) {
                 window.location.href = window.location.href.slice(0, queryStringIndex);
             }
+            $('#nav-tabContent').show();
         }
 
         function assignAnnouncementDateHandlers() {
@@ -296,7 +300,7 @@
             });
 
             $(dataTable.table().header()).addClass('table-primary');
-            
+
             @* todo: why so many warnings here? *@
             var AddAnnouncementRoute = "@Url.Content("~/Admin/AddAnnouncement")";
             $("#announcement-add").click({ modalName: "Announcement", modalAddRoute: AddAnnouncementRoute },
@@ -317,6 +321,25 @@
                     option: '#edit-dynamic-reports-schoolYearId'
                 },
                 CreateAddDynamicReportModal);
+
+            $('#refresh-reports').click(function (event) {
+                event.preventDefault();
+                var confirmationString =
+                    'This will delete all dynamic reports and refresh the views from the selected school year\'s ODS. This operation cannot be undone. Continue?';
+
+                if (confirm(confirmationString)) {
+                    $.ajax({
+                        type: "GET",
+                        url: "@Url.Action("RefreshRulesViews", new { schoolYearId = Model.ReportSchoolYearId })",
+                        success: function(/*data*/) {
+                            location.reload(true);
+                        },
+                        error: function() {
+                            alert('Could not refresh the rules views.');
+                        }
+                    });
+                }
+            });
 
             // changing these to bind to future elements not yet present
 
@@ -577,7 +600,7 @@
         }
 
         function updateDynamicReport() {
-            
+
             var reportId = $('#edit-report-id').val();
             var reportTitle = $('#edit-report-name').val();
             var reportDescription = $('#edit-report-description').val();
@@ -609,7 +632,7 @@
             });
 
             dynamicReportUpdate.Fields = reportFields;
-            
+
             $.ajax({
                 type: "POST",
                 url: '@Url.Action("UpdateDynamicReportDefinition", "Admin")',
