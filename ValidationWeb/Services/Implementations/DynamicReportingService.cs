@@ -18,18 +18,19 @@ namespace ValidationWeb.Services.Implementations
         public DynamicReportingService(
             IDbContextFactory<ValidationPortalDbContext> validationPortalDataContextFactory,
             ISchoolYearDbContextFactory schoolYearDbContextFactory,
-            ISchoolYearService schoolYearService)
+            ISchoolYearService schoolYearService,
+            ILoggingService loggingService)
         {
             ValidationPortalDataContextFactory = validationPortalDataContextFactory;
             SchoolYearDbContextFactory = schoolYearDbContextFactory;
             SchoolYearService = schoolYearService;
+            LoggingService = loggingService;
         }
 
-        protected IDbContextFactory<ValidationPortalDbContext> ValidationPortalDataContextFactory { get; set; }
-
-        protected ISchoolYearDbContextFactory SchoolYearDbContextFactory { get; set; }
-
-        protected ISchoolYearService SchoolYearService { get; set; }
+        private IDbContextFactory<ValidationPortalDbContext> ValidationPortalDataContextFactory { get; }
+        private ISchoolYearDbContextFactory SchoolYearDbContextFactory { get; }
+        private ISchoolYearService SchoolYearService { get; }
+        private ILoggingService LoggingService { get; }
 
         public IEnumerable<DynamicReportDefinition> GetReportDefinitions()
         {
@@ -61,7 +62,7 @@ namespace ValidationWeb.Services.Implementations
             "Microsoft.Security",
             "CA2100:Review SQL queries for security vulnerabilities",
             Justification = "Values are taken from the database schema, not user input")]
-        public IList<dynamic> GetReportData(DynamicReportRequest request, int districtId)
+        public IList<dynamic> GetReportData(DynamicReportRequest request, int? districtId)
         {
             var reportDefinition = GetReportDefinition(request.ReportDefinitionId);
 
@@ -82,15 +83,17 @@ namespace ValidationWeb.Services.Implementations
                 connection.Open();
 
                 var queryCommand = connection.CreateCommand();
+                queryCommand.CommandTimeout = 500;
                 queryCommand.CommandType = System.Data.CommandType.Text;
                 queryCommand.CommandText = $"SELECT {fieldNames} FROM {viewName}";
 
-                if (selectedFields.Any(x =>
-                    x.Field.Name.Equals("DistrictId", StringComparison.InvariantCultureIgnoreCase)))
+                if ((!reportDefinition.IsOrgLevelReport || districtId.HasValue) && 
+                    selectedFields.Any(x => x.Field.Name.Equals("DistrictId", StringComparison.InvariantCultureIgnoreCase)))
                 {
                     queryCommand.CommandText += $" where [DistrictId] = {districtId}";
                 }
 
+                LoggingService.LogInfoMessage($"Executing dynamic report SQL: {queryCommand.CommandText}");
                 using (var reader = queryCommand.ExecuteReader())
                 {
                     while (reader.Read())
@@ -164,11 +167,6 @@ namespace ValidationWeb.Services.Implementations
             }
         }
 
-        public void RefreshRulesViews(int schoolYearId)
-        {
-            // todo
-        }
-
         public void SaveReportDefinition(DynamicReportDefinition reportDefinition)
         {
             using (var validationPortalContext = ValidationPortalDataContextFactory.Create())
@@ -177,7 +175,7 @@ namespace ValidationWeb.Services.Implementations
                 validationPortalContext.SaveChanges();
             }
         }
-        
+
         public void UpdateReportDefinition(DynamicReportDefinition newReportDefinition)
         {
             using (var validationPortalContext = ValidationPortalDataContextFactory.Create())

@@ -20,14 +20,12 @@ namespace ValidationWeb.Services.Interfaces
         
         DynamicReportDefinition GetReportDefinition(int id);
 
-        IList<dynamic> GetReportData(DynamicReportRequest request, int districtId);
+        IList<dynamic> GetReportData(DynamicReportRequest request, int? districtId);
 
         void EnableReportDefinition(int id);
         
         void DisableReportDefinition(int id);
 
         void DeleteReportDefinition(int id);
-
-        void RefreshRulesViews(int schoolYearId);
     }
 }

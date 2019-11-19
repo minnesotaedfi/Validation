@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using System.Linq;
-using System.Net;
 using System.Web.Mvc;
 
 using Newtonsoft.Json;
@@ -28,13 +27,10 @@ namespace ValidationWeb.Controllers
             SchoolYearService = schoolYearService;
         }
 
-        protected IDynamicReportingService DynamicReportingService { get; set; }
-
-        protected IAppUserService AppUserService { get; set; }
-
-        protected IEdOrgService EdOrgService { get; set; }
-
-        protected ISchoolYearService SchoolYearService { get; set; }
+        private IDynamicReportingService DynamicReportingService { get; }
+        private IAppUserService AppUserService { get; }
+        private IEdOrgService EdOrgService { get; }
+        private ISchoolYearService SchoolYearService { get; }
 
         // GET: Dynamic
         public ActionResult Index()
@@ -49,7 +45,8 @@ namespace ValidationWeb.Controllers
             var viewModel = new DynamicReportViewModel
             {
                 FocusedEdOrg = focusedEdOrg,
-                SchoolYear = focusedSchoolYear
+                SchoolYear = focusedSchoolYear,
+                User = AppUserService.GetUser()
             };
 
             return View(viewModel);
@@ -79,18 +76,13 @@ namespace ValidationWeb.Controllers
 
         public ActionResult GenerateReport(DynamicReportRequest request, int districtId)
         {
-            var report = DynamicReportingService.GetReportData(request, districtId);
+            var user = AppUserService.GetUser();
+            var filterByDistrict = user.AppRole.Name != PortalRoleNames.DataOwner;
+            var report = DynamicReportingService.GetReportData(request, filterByDistrict ? districtId : (int?)null);
             var csvArray = Csv.WriteCsvToMemory(report);
             var memoryStream = new MemoryStream(csvArray);
 
             return new FileStreamResult(memoryStream, "text/csv");
-        }
-
-        public ActionResult RefreshRulesViews(int schoolYearId)
-        {
-            DynamicReportingService.DeleteViewsAndRulesForSchoolYear(schoolYearId);
-            DynamicReportingService.UpdateViewsAndRulesForSchoolYear(schoolYearId);
-            return new HttpStatusCodeResult(HttpStatusCode.OK);
         }
     }
 }

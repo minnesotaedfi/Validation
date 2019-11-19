@@ -212,7 +212,8 @@ namespace ValidationWeb.Controllers
         [HttpGet]
         public ActionResult RefreshRulesViews(int schoolYearId)
         {
-            _dynamicReportingService.RefreshRulesViews(schoolYearId);
+            _dynamicReportingService.DeleteViewsAndRulesForSchoolYear(schoolYearId);
+            _dynamicReportingService.UpdateViewsAndRulesForSchoolYear(schoolYearId);
             return new HttpStatusCodeResult(HttpStatusCode.OK); 
         }
 
