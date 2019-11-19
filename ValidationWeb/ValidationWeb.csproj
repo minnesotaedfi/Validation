@@ -207,6 +207,9 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\css\select2.css" />
     <Content Include="Content\css\select2.min.css" />
+    <Content Include="Content\SqlRules\StudentEnrollment\10.1.blah.123.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\Styles\bootstrap-duallistbox.css" />
     <Content Include="Content\Styles\bootstrap-duallistbox.min.css">
       <DependentUpon>bootstrap-duallistbox.css</DependentUpon>
