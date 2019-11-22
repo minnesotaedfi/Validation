@@ -93,6 +93,7 @@ namespace ValidationWeb
             container.Register<IRecordsRequestService, RecordsRequestService>(Lifestyle.Scoped);
             container.Register<IOdsConfigurationValues, OdsConfigurationValues>(Lifestyle.Singleton);
             container.Register<IDynamicReportingService, DynamicReportingService>(Lifestyle.Scoped);
+            container.Register<IManualRuleExecutionService, ManualRuleExecutionService>(Lifestyle.Scoped);
 
             // singletons
             container.Register<ICacheManager, CacheManager>(Lifestyle.Singleton);
