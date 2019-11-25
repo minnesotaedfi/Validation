@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.Remoting.Channels;
 using System.Threading.Tasks;
 using ValidationWeb.Services.Interfaces;
 
@@ -15,7 +16,8 @@ namespace ValidationWeb.Services.Implementations
         }
         public async Task<List<string>> GetManualSqlFile(string ruleSetId, string ruleId)
         {
-            var readingDirectory = $"{_rulesEngineConfigurationValues.SqlRulesFileFolder}/{ruleSetId}";
+            var readingDirectory = $@"{_rulesEngineConfigurationValues.SqlRulesFileFolder}\{ruleSetId}";
+            //var readingDirectory = Server. $"~/Content/SqlRules/{ruleSetId}";
 
             if (ruleSetId == "StudentEnrollment")
             {
@@ -24,11 +26,14 @@ namespace ValidationWeb.Services.Implementations
 
             var manualInstructionsToExecute = new List<string>();
 
+            //var directory = Directory.GetCurrentDirectory();
+            //Console.WriteLine(directory);
+
             if (Directory.Exists(readingDirectory))
             {
                 foreach (var fileName in Directory.EnumerateFiles(readingDirectory))
                 {
-                    if (fileName.Contains(fileName))
+                    if (fileName.Contains(ruleId))
                     {
                         using (var reader = File.OpenText(fileName))
                         {

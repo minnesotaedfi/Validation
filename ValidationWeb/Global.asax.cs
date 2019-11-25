@@ -113,6 +113,7 @@ namespace ValidationWeb
                 asConfiguredRulesDirectory = Server.MapPath(asConfiguredRulesDirectory);
             }
 
+            rulesEngineConfigurationValues.SqlRulesFileFolder = Server.MapPath("~/Content/SqlRules");
             var engineSchemaProvider = new EngineSchemaProvider(rulesEngineConfigurationValues);
 
             Func<Model> modelCreatorDelegate =

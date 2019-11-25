@@ -12,7 +12,7 @@ namespace ValidationWeb.Services.Interfaces
 
         int RulesExecutionTimeout { get; }
 		
-		string SqlRulesFileFolder { get; }
+        string SqlRulesFileFolder { get; set; }
         
 		List<string> RulesTableExclusions { get; }
     }

@@ -12,7 +12,7 @@ namespace ValidationWeb.Services.Implementations
         private static readonly string _ruleEngineResultsSchema;
         private static readonly string _ruleEngineResultsConnectionString;
         private static readonly int _rulesExecutionTimeout;
-        private static readonly string _sqlRulesFileFolder;
+        private static string _sqlRulesFileFolder;
 		private static readonly List<string> _rulesTableExclusions;
 
         static RulesEngineConfigurationValues()
@@ -34,6 +34,10 @@ namespace ValidationWeb.Services.Implementations
         public int RulesExecutionTimeout => _rulesExecutionTimeout;
 
         public List<string> RulesTableExclusions => _rulesTableExclusions;
-		public string SqlRulesFileFolder => _sqlRulesFileFolder;
+        public string SqlRulesFileFolder
+        {
+            get { return _sqlRulesFileFolder; }
+            set { _sqlRulesFileFolder = value; }
+        }
     }
 }

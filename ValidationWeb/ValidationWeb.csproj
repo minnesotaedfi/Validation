@@ -210,6 +210,9 @@
     <Content Include="Content\SqlRules\StudentEnrollment\10.1.blah.123.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\SqlRules\StudentEnrollment\student-enrollment-rule10.10.6226.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\Styles\bootstrap-duallistbox.css" />
     <Content Include="Content\Styles\bootstrap-duallistbox.min.css">
       <DependentUpon>bootstrap-duallistbox.css</DependentUpon>
