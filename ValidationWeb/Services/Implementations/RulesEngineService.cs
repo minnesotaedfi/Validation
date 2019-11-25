@@ -269,20 +269,24 @@ namespace ValidationWeb.Services.Implementations
                             
                             odsRawDbContext.Database.CommandTimeout = EngineConfig.RulesExecutionTimeout;
 
-                            foreach (var sql in toExecute)
+                            if (toExecute.Count > 0)
                             {
-                                detailParams.Add(
-                                    new SqlParameter(
-                                        "@DistrictId",
-                                        newReportSummary.EdOrgId)
-                                );
-                                var resultManualSql = odsRawDbContext.Database.ExecuteSqlCommand(sql, detailParams.ToArray<object>());
-                                LoggingService.LogDebugMessage($"Executing Rule {rule.RuleId} rows affected = {resultManualSql}.");
+                                foreach (var sql in toExecute)
+                                {
+                                    detailParams.Add(
+                                        new SqlParameter(
+                                            "@DistrictId",
+                                            newReportSummary.EdOrgId)
+                                    );
+                                    var resultManualSql = odsRawDbContext.Database.ExecuteSqlCommand(sql, detailParams.ToArray<object>());
+                                    LoggingService.LogDebugMessage($"Executing Rule {rule.RuleId} rows affected = {resultManualSql}.");
+                                }
                             }
-                            
-                            var result = odsRawDbContext.Database.ExecuteSqlCommand(rule.ExecSql, detailParams.ToArray<object>());
-
-                            LoggingService.LogDebugMessage($"Executing Rule {rule.RuleId} rows affected = {result}.");
+                            else
+                            {
+                                var result = odsRawDbContext.Database.ExecuteSqlCommand(rule.ExecSql, detailParams.ToArray<object>());
+                                LoggingService.LogDebugMessage($"Executing Rule {rule.RuleId} rows affected = {result}.");
+                            }
 
                             // Record the results of this rule in the Validation Portal database, accompanied by more detailed information.
                             PopulateErrorDetailsFromViews(

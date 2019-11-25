@@ -17,17 +17,7 @@ namespace ValidationWeb.Services.Implementations
         public async Task<List<string>> GetManualSqlFile(string ruleSetId, string ruleId)
         {
             var readingDirectory = $@"{_rulesEngineConfigurationValues.SqlRulesFileFolder}\{ruleSetId}";
-            //var readingDirectory = Server. $"~/Content/SqlRules/{ruleSetId}";
-
-            if (ruleSetId == "StudentEnrollment")
-            {
-                Console.WriteLine("Ok");
-            }
-
             var manualInstructionsToExecute = new List<string>();
-
-            //var directory = Directory.GetCurrentDirectory();
-            //Console.WriteLine(directory);
 
             if (Directory.Exists(readingDirectory))
             {

@@ -20,7 +20,7 @@ namespace ValidationWeb.Services.Implementations
             _rulesFileFolder = ConfigurationManager.AppSettings["RulesFileFolder"];
             _ruleEngineResultsSchema = ConfigurationManager.AppSettings["RuleEngineResultsSchema"];
             _ruleEngineResultsConnectionString = ConfigurationManager.ConnectionStrings["ValidationPortalDbContext"]?.ToString();
-            _sqlRulesFileFolder = ConfigurationManager.ConnectionStrings["SqlRulesFileFolder"]?.ToString();
+            _sqlRulesFileFolder = ConfigurationManager.AppSettings["SqlRulesFileFolder"];
             int.TryParse(ConfigurationManager.AppSettings["RulesExecutionTimeout"], out _rulesExecutionTimeout);
 			_rulesTableExclusions = ConfigurationManager.AppSettings["RulesTableExclusions"].Split(',').ToList();
         }

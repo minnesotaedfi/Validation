@@ -10,7 +10,6 @@
     <EdiamLogoutLink Condition=" '$(EdiamLogoutLink)'==''">~/Login/Logout</EdiamLogoutLink>
     <SsoAppId Condition=" '$(SsoAppId)'==''">VAL</SsoAppId>
     <RulesFileFolder Condition=" '$(RulesFileFolder)'==''">~/Content/Rules</RulesFileFolder>
-    <SqlRulesFileFolder Condition=" '$(SqlRulesFileFolder)'==''">~/Content/SqlRules</SqlRulesFileFolder>
     <RuleEngineResultsSchema Condition=" '$(RuleEngineResultsSchema)'==''">rules</RuleEngineResultsSchema>
     <UseFakeViewModelData Condition=" '$(UseFakeViewModelData)'==''">false</UseFakeViewModelData>
     <EnvironmentName Condition="'$(EnvironmentName)' == ''">MN-Dev2</EnvironmentName>
