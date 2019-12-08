@@ -1,4 +1,6 @@
-﻿using System.Configuration;
+﻿using System.Collections.Generic;
+using System.Configuration;
+using System.Linq;
 
 using ValidationWeb.Services.Interfaces;
 
@@ -10,6 +12,7 @@ namespace ValidationWeb.Services.Implementations
         private static readonly string _ruleEngineResultsSchema;
         private static readonly string _ruleEngineResultsConnectionString;
         private static readonly int _rulesExecutionTimeout;
+        private static readonly List<string> _rulesTableExclusions;
 
         static RulesEngineConfigurationValues()
         {
@@ -17,6 +20,7 @@ namespace ValidationWeb.Services.Implementations
             _ruleEngineResultsSchema = ConfigurationManager.AppSettings["RuleEngineResultsSchema"];
             _ruleEngineResultsConnectionString = ConfigurationManager.ConnectionStrings["ValidationPortalDbContext"]?.ToString();
             int.TryParse(ConfigurationManager.AppSettings["RulesExecutionTimeout"], out _rulesExecutionTimeout);
+            _rulesTableExclusions = ConfigurationManager.AppSettings["RulesTableExclusions"].Split(',').ToList();
         }
 
         public string RulesFileFolder => _rulesFileFolder;
@@ -26,5 +30,7 @@ namespace ValidationWeb.Services.Implementations
         public string RuleEngineResultsConnectionString => _ruleEngineResultsConnectionString;
 
         public int RulesExecutionTimeout => _rulesExecutionTimeout;
+
+        public List<string> RulesTableExclusions => _rulesTableExclusions;
     }
 }
