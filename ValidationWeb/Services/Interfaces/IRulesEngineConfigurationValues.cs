@@ -1,4 +1,6 @@
-﻿namespace ValidationWeb.Services.Interfaces
+﻿using System.Collections.Generic;
+
+namespace ValidationWeb.Services.Interfaces
 {
     public interface IRulesEngineConfigurationValues
     {
@@ -9,5 +11,7 @@
         string RuleEngineResultsConnectionString { get; }
 
         int RulesExecutionTimeout { get; }
+
+        List<string> RulesTableExclusions { get; }
     }
 }

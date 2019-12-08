@@ -19,18 +19,21 @@ namespace ValidationWeb.Services.Implementations
             IDbContextFactory<ValidationPortalDbContext> validationPortalDataContextFactory,
             ISchoolYearDbContextFactory schoolYearDbContextFactory,
             ISchoolYearService schoolYearService,
-            ILoggingService loggingService)
+            ILoggingService loggingService,
+            IRulesEngineConfigurationValues rulesEngineConfigurationValues)
         {
             ValidationPortalDataContextFactory = validationPortalDataContextFactory;
             SchoolYearDbContextFactory = schoolYearDbContextFactory;
             SchoolYearService = schoolYearService;
             LoggingService = loggingService;
+            RulesEngineConfigurationValues = rulesEngineConfigurationValues;
         }
 
         private IDbContextFactory<ValidationPortalDbContext> ValidationPortalDataContextFactory { get; }
         private ISchoolYearDbContextFactory SchoolYearDbContextFactory { get; }
         private ISchoolYearService SchoolYearService { get; }
         private ILoggingService LoggingService { get; }
+        private IRulesEngineConfigurationValues RulesEngineConfigurationValues { get; }
 
         public IEnumerable<DynamicReportDefinition> GetReportDefinitions()
         {
@@ -237,22 +240,29 @@ namespace ValidationWeb.Services.Implementations
 
                 var queryCommand = connection.CreateCommand();
                 queryCommand.CommandType = System.Data.CommandType.Text;
-                queryCommand.CommandText = @"select OBJECT_SCHEMA_NAME(v.object_id) [Schema], v.name [Name] FROM sys.views as v where OBJECT_SCHEMA_NAME(v.object_id)=@schemaName";
+                queryCommand.CommandText = @"select OBJECT_SCHEMA_NAME(t.object_id) [Schema], t.name [Name] FROM sys.tables as t where OBJECT_SCHEMA_NAME(t.object_id)=@schemaName";
                 queryCommand.Parameters.Add(new SqlParameter("@schemaName", "rules"));
 
                 using (var reader = queryCommand.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        var rulesView = new ValidationRulesView
+                        // check for exclusions here and just continue 
+                        var tableName = reader["Name"].ToString();
+                        if (!RulesEngineConfigurationValues.RulesTableExclusions.Contains(
+                                tableName,
+                                StringComparer.OrdinalIgnoreCase))
                         {
-                            Enabled = true,
-                            Schema = reader["Schema"].ToString(),
-                            Name = reader["Name"].ToString(),
-                            SchoolYearId = schoolYearId
-                        };
+                            var rulesView = new ValidationRulesView
+                                            {
+                                                Enabled = true,
+                                                Schema = reader["Schema"].ToString(),
+                                                Name = tableName,
+                                                SchoolYearId = schoolYearId
+                                            };
 
-                        viewsForYear.Add(rulesView);
+                            viewsForYear.Add(rulesView);
+                        }
                     }
                 }
             }
