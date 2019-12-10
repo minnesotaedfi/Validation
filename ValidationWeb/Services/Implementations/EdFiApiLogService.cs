@@ -33,7 +33,8 @@ namespace ValidationWeb.Services.Implementations
                 return dbContext.Logs
                     .ToList()
                     .Where(x => 
-                        new Uri(x.Url).PathAndQuery.StartsWith($"/{ApiName}/identity/", StringComparison.OrdinalIgnoreCase));
+                        new Uri(x.Url).PathAndQuery.StartsWith($"/{ApiName}/identity/", StringComparison.OrdinalIgnoreCase) ||
+                        (!string.IsNullOrEmpty(x.ResponseBody) && x.ResponseBody.ToLower().Contains("Validation of 'Student' failed".ToLower())));
             }
         }
 

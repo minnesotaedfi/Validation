@@ -3,10 +3,14 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Diagnostics.CodeAnalysis;
+
 using Moq;
+
 using NUnit.Framework;
+
 using Should;
 using Should.Extensions;
+
 using ValidationWeb.Database;
 using ValidationWeb.Models;
 using ValidationWeb.Services.Implementations;
@@ -53,7 +57,7 @@ namespace ValidationWeb.Tests.Services
                     new Log
                     {
                         Id = i,
-                        Url = new Uri($"https://test.wearedoubleline.com/{EdFiApiLogService.ApiName}/api/identity/").ToString(),
+                        Url = new Uri($"https://test.wearedoubleline.com/{EdFiApiLogService.ApiName}/identity/").ToString(),
                         Method = $"method {i}"
                     });
             }
@@ -67,7 +71,7 @@ namespace ValidationWeb.Tests.Services
                     new Log
                     {
                         Id = i,
-                        Url = new Uri($"https://test.wearedoubleline.com/{EdFiApiLogService.ApiName}/api/v2.0/").ToString(),
+                        Url = new Uri($"https://test.wearedoubleline.com/{EdFiApiLogService.ApiName}/data/v3/").ToString(),
                         Method = $"method {i}"
                     });
             }
