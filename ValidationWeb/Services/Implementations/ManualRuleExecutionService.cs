@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Runtime.Remoting.Channels;
 using System.Threading.Tasks;
+
 using ValidationWeb.Services.Interfaces;
 
 namespace ValidationWeb.Services.Implementations
@@ -14,6 +13,7 @@ namespace ValidationWeb.Services.Implementations
         {
             _rulesEngineConfigurationValues = rulesEngineConfigurationValues;
         }
+
         public async Task<List<string>> GetManualSqlFile(string ruleSetId, string ruleId)
         {
             var readingDirectory = $@"{_rulesEngineConfigurationValues.SqlRulesFileFolder}\{ruleSetId}";

@@ -248,7 +248,7 @@ namespace ValidationWeb.Services.Implementations
                             //Execute the SQL files in here? We have the RuleSetName and the Rule Id
                             //e.g.  RuleSetId = MultipleEnrollment
                             //      RuleId = 10.10.6175
-                            var toExecute =  ManualRuleExecutionService.GetManualSqlFile(rule.RulesetId, rule.RuleId).Result;
+                            var toExecute = ManualRuleExecutionService.GetManualSqlFile(rule.RulesetId, rule.RuleId).Result;
 
                             // By default, rules are run against ALL districts in the Ed Fi ODS. This line filters for multi-district/multi-tenant ODS's.
                             rule.AddDistrictWhereFilter(newReportSummary.EdOrgId);
@@ -276,8 +276,8 @@ namespace ValidationWeb.Services.Implementations
                                     detailParams.Add(
                                         new SqlParameter(
                                             "@DistrictId",
-                                            newReportSummary.EdOrgId)
-                                    );
+                                            newReportSummary.EdOrgId));
+
                                     var resultManualSql = odsRawDbContext.Database.ExecuteSqlCommand(sql, detailParams.ToArray<object>());
                                     LoggingService.LogDebugMessage($"Executing Rule {rule.RuleId} rows affected = {resultManualSql}.");
                                 }
