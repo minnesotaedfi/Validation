@@ -3,9 +3,13 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Diagnostics.CodeAnalysis;
+
 using Moq;
+
 using NUnit.Framework;
+
 using Should;
+
 using ValidationWeb.Database;
 using ValidationWeb.Models;
 using ValidationWeb.Services.Implementations;
@@ -160,7 +164,8 @@ namespace ValidationWeb.Tests.Services
                 LoggingServiceMock.Object,
                 DbContextFactoryMock.Object,
                 SchoolYearDbContextFactoryMock.Object,
-                EngineObjectModel);
+                EngineObjectModel,
+                null);
 
             Assert.Throws<ArgumentException>(() => rulesEngineService.SetupValidationRun(null, null));
         }
@@ -176,7 +181,8 @@ namespace ValidationWeb.Tests.Services
                 LoggingServiceMock.Object,
                 DbContextFactoryMock.Object,
                 SchoolYearDbContextFactoryMock.Object,
-                EngineObjectModel);
+                EngineObjectModel,
+                null);
 
             var submissionCycle = new SubmissionCycle { SchoolYearId = null };
             Assert.Throws<ArgumentException>(() => rulesEngineService.SetupValidationRun(submissionCycle, null));
@@ -193,7 +199,8 @@ namespace ValidationWeb.Tests.Services
                 LoggingServiceMock.Object,
                 DbContextFactoryMock.Object,
                 SchoolYearDbContextFactoryMock.Object,
-                EngineObjectModel);
+                EngineObjectModel,
+                null);
 
             var schoolYear = new SchoolYear
             {

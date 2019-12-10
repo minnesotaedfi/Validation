@@ -35,6 +35,8 @@ namespace ValidationWeb.Services.Implementations
 
         public readonly ISchoolYearDbContextFactory OdsDbContextFactory;
 
+        private readonly IManualRuleExecutionService ManualRuleExecutionService;
+
         public RulesEngineService(
             IAppUserService appUserService,
             IEdOrgService edOrgService,
@@ -43,7 +45,9 @@ namespace ValidationWeb.Services.Implementations
             ILoggingService loggingService,
             IDbContextFactory<ValidationPortalDbContext> dbContextFactory,
             ISchoolYearDbContextFactory odsDbContextFactory,
-            Model engineObjectModel)
+            Model engineObjectModel,
+            IManualRuleExecutionService manualRuleExecutionService
+            )
         {
             AppUserService = appUserService;
             EdOrgService = edOrgService;
@@ -53,6 +57,7 @@ namespace ValidationWeb.Services.Implementations
             DbContextFactory = dbContextFactory;
             OdsDbContextFactory = odsDbContextFactory;
             EngineObjectModel = engineObjectModel;
+            ManualRuleExecutionService = manualRuleExecutionService;
         }
 
         public ValidationReportSummary SetupValidationRun(SubmissionCycle submissionCycle, string collectionId)
@@ -240,6 +245,11 @@ namespace ValidationWeb.Services.Implementations
 
                         try
                         {
+                            //Execute the SQL files in here? We have the RuleSetName and the Rule Id
+                            //e.g.  RuleSetId = MultipleEnrollment
+                            //      RuleId = 10.10.6175
+                            var toExecute = ManualRuleExecutionService.GetManualSqlFile(rule.RulesetId, rule.RuleId).Result;
+
                             // By default, rules are run against ALL districts in the Ed Fi ODS. This line filters for multi-district/multi-tenant ODS's.
                             rule.AddDistrictWhereFilter(newReportSummary.EdOrgId);
 
@@ -259,9 +269,24 @@ namespace ValidationWeb.Services.Implementations
                             
                             odsRawDbContext.Database.CommandTimeout = EngineConfig.RulesExecutionTimeout;
 
-                            var result = odsRawDbContext.Database.ExecuteSqlCommand(rule.ExecSql, detailParams.ToArray<object>());
+                            if (toExecute.Count > 0)
+                            {
+                                foreach (var sql in toExecute)
+                                {
+                                    detailParams.Add(
+                                        new SqlParameter(
+                                            "@DistrictId",
+                                            newReportSummary.EdOrgId));
 
-                            LoggingService.LogDebugMessage($"Executing Rule {rule.RuleId} rows affected = {result}.");
+                                    var resultManualSql = odsRawDbContext.Database.ExecuteSqlCommand(sql, detailParams.ToArray<object>());
+                                    LoggingService.LogDebugMessage($"Executing Rule {rule.RuleId} rows affected = {resultManualSql}.");
+                                }
+                            }
+                            else
+                            {
+                                var result = odsRawDbContext.Database.ExecuteSqlCommand(rule.ExecSql, detailParams.ToArray<object>());
+                                LoggingService.LogDebugMessage($"Executing Rule {rule.RuleId} rows affected = {result}.");
+                            }
 
                             // Record the results of this rule in the Validation Portal database, accompanied by more detailed information.
                             PopulateErrorDetailsFromViews(

@@ -207,7 +207,7 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\css\select2.css" />
     <Content Include="Content\css\select2.min.css" />
-    <Content Include="Content\SqlRules\StudentEnrollment\10.1.blah.123.sql">
+    <Content Include="Content\SqlRules\StudentEnrollment\student-enrollment-rule10.10.6226.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Styles\bootstrap-duallistbox.css" />
@@ -953,9 +953,11 @@
     <Compile Include="Database\SchoolYearDbContextFactory.cs">
       <DependentUpon>ISchoolYearDbContextFactory.cs</DependentUpon>
     </Compile>
+    <Compile Include="Services\Implementations\ManualRuleExecutionService.cs" />
     <Compile Include="Services\Interfaces\IDynamicReportingService.cs" />
     <Compile Include="Services\Implementations\RecordsRequestService.cs" />
     <Compile Include="Services\Implementations\DynamicReportingService.cs" />
+    <Compile Include="Services\Interfaces\IManualRuleExecutionService.cs" />
     <Compile Include="Services\Interfaces\IRecordsRequestService.cs" />
     <Compile Include="Utility\IIdentityExtensions.cs" />
     <Compile Include="Services\Implementations\EdFiApiLogService.cs" />
