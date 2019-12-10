@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using ValidationWeb.Database;
 using ValidationWeb.Models;
 using ValidationWeb.Services.Interfaces;
@@ -31,18 +32,20 @@ namespace ValidationWeb.Services.Implementations
             {
                 return dbContext.Logs
                     .ToList()
-                    .Where(x => new Uri(x.Url).PathAndQuery.StartsWith($"/{ApiName}/api/identity/"));
+                    .Where(x => 
+                        new Uri(x.Url).PathAndQuery.StartsWith($"/{ApiName}/identity/", StringComparison.OrdinalIgnoreCase));
             }
         }
 
         public IEnumerable<Log> GetApiErrors()
         {
-            // todo: make sure this works to collect 3.1.1 errors
             using (var dbContext = DbContextFactory.Create())
             {
                 return dbContext.Logs
                     .ToList()
-                    .Where(x => new Uri(x.Url).PathAndQuery.StartsWith($"/{ApiName}/api/v2.0/"));
+                    .Where(x => 
+                        new Uri(x.Url).PathAndQuery.StartsWith($"/{ApiName}/data/v3/", StringComparison.OrdinalIgnoreCase) ||
+                        new Uri(x.Url).PathAndQuery.StartsWith($"/{ApiName}/oauth/", StringComparison.OrdinalIgnoreCase));
             }
         }
     }
