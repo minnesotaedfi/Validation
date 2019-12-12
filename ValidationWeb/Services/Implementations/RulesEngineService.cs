@@ -254,7 +254,6 @@ namespace ValidationWeb.Services.Implementations
                             rule.AddDistrictWhereFilter(newReportSummary.EdOrgId);
 
                             LoggingService.LogDebugMessage($"Executing Rule {rule.RuleId}.");
-                            LoggingService.LogDebugMessage($"Executing Rule SQL {rule.Sql}.");
 
                             var detailParams = new List<SqlParameter>
                                            {
@@ -278,12 +277,14 @@ namespace ValidationWeb.Services.Implementations
                                             "@DistrictId",
                                             newReportSummary.EdOrgId));
 
+                                    LoggingService.LogDebugMessage($"Executing Rule SQL {sql}.");
                                     var resultManualSql = odsRawDbContext.Database.ExecuteSqlCommand(sql, detailParams.ToArray<object>());
                                     LoggingService.LogDebugMessage($"Executing Rule {rule.RuleId} rows affected = {resultManualSql}.");
                                 }
                             }
                             else
                             {
+                                LoggingService.LogDebugMessage($"Executing Rule SQL {rule.ExecSql}.");
                                 var result = odsRawDbContext.Database.ExecuteSqlCommand(rule.ExecSql, detailParams.ToArray<object>());
                                 LoggingService.LogDebugMessage($"Executing Rule {rule.RuleId} rows affected = {result}.");
                             }
