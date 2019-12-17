@@ -218,6 +218,16 @@
                     loadingRecords: 'Loading...',
                     processing: "Loading...",
                 },
+                columnDefs: [
+                    {
+                        "width": "240px",
+                        "targets": 1
+                    },
+                    {
+                        "width": "82px",
+                        "targets": 5
+                    }
+                ],
                 columns: [
                     {
                         data: 'Id',
@@ -268,6 +278,20 @@
                         },
                     },
                     {
+                        data: 'IsOrgLevelReport',
+                        title: 'Data Owner Report',
+                        searchable: false,
+                        sortable: false,
+                        render: function(data, type, row) {
+                            if (type === 'display') {
+                                var enabled = data === true;
+                                return enabled ? "Yes" : "No";
+                            } else {
+                                return data;
+                            }
+                        },
+                    },
+                    {
                         title: 'Actions',
                         data: null,
                         searchable: false,
@@ -276,13 +300,24 @@
                             if (type === 'display') {
 
                                 var html =
-                                    '<a href="javascript:void(0);" class="report-edit btn btn-sm prime-blue white-heavy-text" data-id="'+data.Id+'">Edit</a> ';
+                                    '<a href="javascript:void(0);" class="report-edit btn btn-sm prime-blue white-heavy-text" data-id="' +
+                                        data.Id +
+                                        '">Edit</a> ';
 
                                 var cssClass = (data.Enabled === true ? 'report-disable' : 'report-enable');
                                 var text = (data.Enabled ? 'Disable' : 'Enable');
 
-                                html += '<a href="javascript:void(0);" class="' +cssClass+' btn btn-sm prime-blue white-heavy-text" data-id="' +data.Id +'">' +text +'</a>';
-                                html += ' <a href="javascript:void(0);" class="report-delete btn btn-sm prime-blue white-heavy-text" data-id="' +data.Id +'">Delete</a>';
+                                html += '<a href="javascript:void(0);" class="' +
+                                    cssClass +
+                                    ' btn btn-sm prime-blue white-heavy-text" data-id="' +
+                                    data.Id +
+                                    '">' +
+                                    text +
+                                    '</a>';
+                                html +=
+                                    ' <a href="javascript:void(0);" class="report-delete btn btn-sm prime-blue white-heavy-text" data-id="' +
+                                    data.Id +
+                                    '">Delete</a>';
                                 return html;
                             } else {
                                 return data;
@@ -292,7 +327,7 @@
                 ],
                 ajax: {
                     url: '@Url.Action("GetReportDefinitionsPerSchoolYearId")?schoolYearId=@(Model.ReportSchoolYearId)',
-                        complete: function() {
+                    complete: function() {
                         var dataTable = $($("#reportDefinitionsTable").DataTable().table().header());
                         dataTable.find('th').removeAttr('aria-label');
                     }
@@ -322,7 +357,7 @@
                 },
                 CreateAddDynamicReportModal);
 
-            $('#refresh-reports').click(function (event) {
+            $('#refresh-reports').click(function(event) {
                 event.preventDefault();
                 var confirmationString =
                     'This will delete all dynamic reports and refresh the views from the selected school year\'s ODS. This operation cannot be undone. Continue?';
@@ -330,7 +365,7 @@
                 if (confirm(confirmationString)) {
                     $.ajax({
                         type: "GET",
-                        url: "@Url.Action("RefreshRulesViews", new { schoolYearId = Model.ReportSchoolYearId })",
+                        url: "@Url.Action("RefreshRulesViews", new {schoolYearId = Model.ReportSchoolYearId})",
                         success: function(/*data*/) {
                             location.reload(true);
                         },
@@ -344,16 +379,28 @@
             // changing these to bind to future elements not yet present
 
             var EditDynamicReportRoute = "@Url.Content("~/Admin/EditDynamicReportDefinition")";
-            $('body').on('click', '.report-edit', { modalName: "report", modalEditRoute: EditDynamicReportRoute }, CreateEditDynamicReportModal);
+            $('body').on('click',
+                '.report-edit',
+                { modalName: "report", modalEditRoute: EditDynamicReportRoute },
+                CreateEditDynamicReportModal);
 
             var DisableDynamicReportRoute = "@Url.Content("~/Admin/DisableDynamicReportDefinition")";
-            $('body').on('click', '.report-disable', { modelName: "report", disableRoute: DisableDynamicReportRoute }, DisableDynamicReport);
+            $('body').on('click',
+                '.report-disable',
+                { modelName: "report", disableRoute: DisableDynamicReportRoute },
+                DisableDynamicReport);
 
             var EnableDynamicReportRoute = "@Url.Content("~/Admin/EnableDynamicReportDefinition")";
-            $('body').on('click', '.report-enable', { modelName: "report", enableRoute: EnableDynamicReportRoute }, EnableDynamicReport);
+            $('body').on('click',
+                '.report-enable',
+                { modelName: "report", enableRoute: EnableDynamicReportRoute },
+                EnableDynamicReport);
 
             var DeleteDynamicReportRoute = "@Url.Content("~/Admin/DeleteDynamicReportDefinition")";
-            $('body').on('click', '.report-delete', { modelName: "report", deleteRoute: DeleteDynamicReportRoute }, DeleteModel);
+            $('body').on('click',
+                '.report-delete',
+                { modelName: "report", deleteRoute: DeleteDynamicReportRoute },
+                DeleteModel);
 
             var AddSubmissionCycleRoute = "@Url.Content("~/Admin/AddSubmissionCycle")";
             $("#submissioncycle-add").click({ modalName: "SubmissionCycle", modalAddRoute: AddSubmissionCycleRoute },

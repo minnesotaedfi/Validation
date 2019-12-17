@@ -33,6 +33,7 @@ namespace ValidationWeb.Utility
 
                     case PortalRoleNames.HelpDesk:
                         rolePermissions.CanViewOdsReports = true;
+                        rolePermissions.CanViewStudentLevelReports = true;
                         rolePermissions.CanViewStudentDrilldownReports = true;
                         rolePermissions.CanViewValidationReports = true;
                         rolePermissions.CanAccessAllDistrictsMode = true;
