@@ -347,7 +347,6 @@ rule 30.10.6630
 	and {StudentEnrollment}.[DistrictType] <> '70' 
 	and {StudentEnrollment}.[IndependentStudyIndicator] = '1'
 	and {StudentEnrollment}.[StudentGradeLevel] <> 'PS'
-	and {MultipleEnrollment}.[EnrollmentOverlap] <> '1' then
 	require {StudentEnrollment}.[SpecialEducationServiceHours] exists and {StudentEnrollment}.[SpecialEducationServiceHours] > 0
 	else '263. Special Education Service Hours required when the Independent Study flag is set to "Y" and the Special Education Evaluation Status = 4 or 6.'
 
@@ -523,6 +522,7 @@ rule 10.10.6244
 	require that {StudentEnrollment}.[StudentGradeLevel] is in ['09','10','11','12']
 	else '56. Postsecondary Enrollment Options participation requires that the student be in one of grades 9, 10, 11 or 12.  Also check the student\'s grade level.'
 
+/* 
 rule 10.10.62631
 	when {MultipleEnrollment}.[EnrollmentOverlap] = 1
 	and {MultipleEnrollment}.[StudentGradeLevelRight] = 'EC'
@@ -533,54 +533,7 @@ rule 10.10.62631
 	and {MultipleEnrollment}.[StudentGradeLevelLeft] is in ['PA','PB','PC','PD','PE','PF','PG','PH','PI','PJ','RA','RB','RC','RD','RE','RF','RG','RH','RI','RJ']
 	else '318. For independent districts EC students cannot be open enrolled during evaluation period.  The resident district needs to report the evaluation record.' 
    
-rule 10.10.62632
-	when {MultipleEnrollment}.[EnrollmentOverlap] = 1
-	and {MultipleEnrollment}.[StudentGradeLevelRight] = 'EC'
-	and {StudentEnrollment}.[StudentGradeLevel] = 'EC'
-	and {StudentEnrollment}.[SpecialEducationEvaluationStatus] = '2'
-	and {StudentEnrollment}.[DistrictType] is in ['01','02','03']
-	and {StudentEnrollment}.[HomelessStudentFlag] = '1' then
-	require that {StudentEnrollment}.[StateAidCategory] ='11' 
-	and {MultipleEnrollment}.[StudentGradeLevelLeft] is in ['PA','PB','PC','PD','PE','PF','PG','PH','PI','PJ','RA','RB','RC','RD','RE','RF','RG','RH','RI','RJ']
-	else '318. For independent districts EC students cannot be open enrolled during evaluation period.  The resident district needs to report the evaluation record.' 
- 
-rule 10.10.62633
-	when {MultipleEnrollment}.[EnrollmentOverlap] = 1
-	and {MultipleEnrollment}.[StudentGradeLevelLeft] = 'EC'
-	and {StudentEnrollment}.[StudentGradeLevel] = 'EC'
-	and {StudentEnrollment}.[SpecialEducationEvaluationStatus] = '2'
-	and {StudentEnrollment}.[DistrictType] is in ['01','02','03'] then
-	require that {StudentEnrollment}.[StateAidCategory] is in ['00','21','15']
-	and {MultipleEnrollment}.[StudentGradeLevelRight] is in ['PA','PB','PC','PD','PE','PF','PG','PH','PI','PJ','RA','RB','RC','RD','RE','RF','RG','RH','RI','RJ']
-	else '318. For independent districts EC students cannot be open enrolled during evaluation period.  The resident district needs to report the evaluation record.' 
- 
-rule 10.10.62634
-	when {MultipleEnrollment}.[EnrollmentOverlap] = 1
-	and {MultipleEnrollment}.[StudentGradeLevelLeft] = 'EC'
-	and {StudentEnrollment}.[StudentGradeLevel] = 'EC'
-	and {StudentEnrollment}.[SpecialEducationEvaluationStatus] = '2'
-	and {StudentEnrollment}.[DistrictType] is in ['01','02','03']
-	and {StudentEnrollment}.[HomelessStudentFlag] = '1' then
-	require that {StudentEnrollment}.[StateAidCategory] ='11' 
-	and {MultipleEnrollment}.[StudentGradeLevelRight] is in ['PA','PB','PC','PD','PE','PF','PG','PH','PI','PJ','RA','RB','RC','RD','RE','RF','RG','RH','RI','RJ']
-	else '318. For independent districts EC students cannot be open enrolled during evaluation period.  The resident district needs to report the evaluation record.' 
-
-rule 10.10.62635
-	when {MultipleEnrollment}.[EnrollmentOverlap] <> 1
-	and {StudentEnrollment}.[StudentGradeLevel] = 'EC'
-	and {StudentEnrollment}.[SpecialEducationEvaluationStatus] = '2'
-	and {StudentEnrollment}.[DistrictType] is in ['01','02','03'] then
-	require that {StudentEnrollment}.[StateAidCategory] is in ['00','21','15']
-	else '318. For independent districts EC students cannot be open enrolled during evaluation period.  The resident district needs to report the evaluation record.' 
-  
-rule 10.10.62636
-	when {MultipleEnrollment}.[EnrollmentOverlap] <> 1
-	and {StudentEnrollment}.[StudentGradeLevel] = 'EC'
-	and {StudentEnrollment}.[SpecialEducationEvaluationStatus] = '2'
-	and {StudentEnrollment}.[DistrictType] is in ['01','02','03']
-	and {StudentEnrollment}.[HomelessStudentFlag] = '1' then
-	require that {StudentEnrollment}.[StateAidCategory] ='11' 
-	else '318. For independent districts EC students cannot be open enrolled during evaluation period.  The resident district needs to report the evaluation record.' 
+*/
 
 rule 10.10.6264
 	when {StudentEnrollment}.[PSEOProgramIndicator] = '1'
@@ -1204,13 +1157,14 @@ rule 10.10.6218
 	
 
 rule 10.10.6508
-	when {MultipleEnrollment} does not exist 
+	when {StudentEnrollment}.[PercentEnrolled] = 998
 	and {StudentEnrollment}.[StateAidCategory] <> '46' 
 	and {StudentEnrollment}.[StudentGradeLevel] <> 'PS' then
-	expect {StudentEnrollment}.[PercentEnrolled] <> 998
+	expect count({StudentEnrollment}) > 1 
 	else '249. Percent enrolled 998 no other enrollment record found for this student.  When reporting a student as concurrently enrolled (percent enrolled 998) then there must be another enrollment record reported for student with a percent enrolled of less than 100 or equal to 999.  Verify percent enrolled and student number. '
 
 
+/*
 rule 10.10.65091
 	when {MultipleEnrollment}.[StatusBeginDateRight] > {MultipleEnrollment}.[StatusBeginDateLeft]
 	and {MultipleEnrollment}.[StudentGradeLevelLeft] = 'PS'
@@ -1227,7 +1181,7 @@ rule 10.10.65092
 	and {MultipleEnrollment}.[StateAidCategoryLeft] = '45' then
 	require {MultipleEnrollment}.[StateAidCategoryRight] <> '41' 
 	else '259. Preschool screening students should not have a SAC 41 on one record and a second record with SAC 45.'
-	
+*/
 	
 rule 10.10.6573
 	when {StudentEnrollment}.[StateAidCategory] <> '46'
@@ -1485,7 +1439,7 @@ rule 30.10.6327
 	expect {StudentEnrollment}.[Attendance] >= 1.1
 	else '362. The attendance or membership reported is 1 hour or less.'
 
-
+/*
 rule 30.10.6348
 	when collection is EOY_Enrollment_And_Demographic 
 	and {StudentEnrollment}.[LastLocationOfAttendance] = '24'
@@ -1493,7 +1447,7 @@ rule 30.10.6348
 	and {StudentEnrollment}.[StudentGradeLevel] <> 'PS' then
 	require count({MultipleEnrollment} when {MultipleEnrollment}.[EnrollmentSequenceLeft] = 1 and {MultipleEnrollment}.[LastLocationOfAttendanceLeft] = '24') = 0
 	else '70. Last Location of Attendance 24 (re-enrollment into the same school or inter-district transfer) requires that there be a prior enrollment record for the student in the district. Also check the student\'s State Reporting Number.'
-
+*/
 
 rule 30.10.6353
 	when collection is EOY_Enrollment_And_Demographic 
@@ -1539,7 +1493,7 @@ rule 30.10.6361
 	require count({StudentEnrollment} by [StatusEnd] when {StudentEnrollment}.[StatusEnd] is in ['8','11','40']) <= 1
 	else '66. Status End codes 8 (graduate), 11 (deceased), 40 (end of year) may be reported only once per student. This edit is performed at both the local and state levels.'
 
-
+/*
 rule 30.10.6388
 	when collection is EOY_Enrollment_And_Demographic 
 	and {StudentEnrollment}.[SpecialEducationEvaluationStatus] is in ['4','6','9']
@@ -1554,7 +1508,7 @@ rule 30.10.6388
 	else '254. For students with Special Education Evaluation Status (SEES) equals 4, 6 or 9, Special Education Service Hours are required if: A. Grade = EC or HK. B. Homebound Indicator = Y OR D. State Aid Category = 16, 17, 18, 26 or 27 OR E. Students are in the school types - Multidisciplinary Teaching Model, Inclusive Program, Cooperative Teaching Model, Project Based. Additionally, for these students attending State Approved Alternative Programs (SAAP schools have classifications 41, 42 or 45) or OLL program (classification 46), Special Education Service Hours are required if: F. There is no other overlapping enrollment record in this district OR G. The only overlapping enrollment is from a SAAP or OL Program without Special Education Service Hours.'	
 
 
-/* rule 30.10.6448
+rule 30.10.6448
 	when collection is EOY_Enrollment_And_Demographic 
 	and {StudentEnrollment}.[StudentGradeLevel] = 'EC'
 	and {StudentEnrollment}.[SpecialEducationEvaluationStatus] <> '2'
