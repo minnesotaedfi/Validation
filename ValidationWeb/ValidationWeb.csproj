@@ -207,6 +207,9 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\css\select2.css" />
     <Content Include="Content\css\select2.min.css" />
+    <Content Include="Content\SqlRules\SchoolGrade\school-grade-rule10.10.6530.sql" />
+    <Content Include="Content\SqlRules\SchoolGrade\school-grade-rule10.10.6642.sql" />
+    <Content Include="Content\SqlRules\SchoolGrade\school-grade-rule10.10.6643.sql" />
     <Content Include="Content\SqlRules\StudentEnrollment\student-enrollment-rule10.10.6226.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
