@@ -90,8 +90,8 @@ namespace ValidationWeb.Services.Implementations
                 queryCommand.CommandType = System.Data.CommandType.Text;
                 queryCommand.CommandText = $"SELECT {fieldNames} FROM {viewName}";
 
-                if ((!reportDefinition.IsOrgLevelReport || districtId.HasValue) && 
-                    selectedFields.Any(x => x.Field.Name.Equals("DistrictId", StringComparison.InvariantCultureIgnoreCase)))
+                if(!reportDefinition.IsOrgLevelReport || districtId.HasValue) 
+                    // && selectedFields.Any(x => x.Field.Name.Equals("DistrictId", StringComparison.InvariantCultureIgnoreCase)))
                 {
                     queryCommand.CommandText += $" where [DistrictId] = {districtId}";
                 }
