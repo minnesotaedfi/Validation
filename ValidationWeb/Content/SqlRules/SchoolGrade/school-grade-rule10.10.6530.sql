@@ -1,8 +1,6 @@
 DECLARE @RuleId NVARCHAR(50) = '10.10.6530';
 DECLARE @RuleDescription NVARCHAR(MAX) = '149. No students were reported in one or more grades for this school, but there exists a SCH/GRD record in the school file. Confirm that there are no students to be reported for this grade in this school.';
 DECLARE @IsError BIT = 0;
-DECLARE @DistrictId INT = 10625000;
-DECLARE @RuleValidationId INT = 89;
 
 WITH School (Id)
 AS (
