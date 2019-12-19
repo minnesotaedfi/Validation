@@ -253,7 +253,7 @@ namespace ValidationWeb.Filters
                         // TODO: make sure this lines up with what's really coming from the new MN SSO view 
                         // var stateOrganizationId = $"{ssoReader["districtType"]}{ssoReader["districtNumber"]:D4}000";
                         var stateOrganizationId = $"{ssoReader["stateOrganizationId"]}";
-                        if (stateOrganizationId.EndsWith("000"))
+                        if (stateOrganizationId.Length == 11 && stateOrganizationId.EndsWith("000"))
                         {
                             stateOrganizationId = stateOrganizationId.Substring(0, stateOrganizationId.Length - 3);
                         }
@@ -365,7 +365,7 @@ namespace ValidationWeb.Filters
                         if (!ssoUserOrg.StateOrganizationId.Equals("ALL", StringComparison.InvariantCultureIgnoreCase))
                         {
                             int authorizedEdOrgId;
-                            if (int.TryParse(ssoUserOrg.StateOrganizationId.Substring(0, 8), out authorizedEdOrgId))
+                            if (int.TryParse(ssoUserOrg.StateOrganizationId/*.Substring(0, 8)*/, out authorizedEdOrgId))
                             {
 
                                 _loggingService.LogDebugMessage(
