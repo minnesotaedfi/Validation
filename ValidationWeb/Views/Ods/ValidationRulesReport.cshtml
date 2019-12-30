@@ -1,0 +1,68 @@
+﻿
+<div class="row tbmargin10" id="pagetop">
+    <h2 class="vp-body-header justify-content-start align-self-center">Validation Rules Report</h2>
+</div>
+
+<div class="row" id="requestedReportContent">
+    <table class="table table-bordered" id="reportsTable" role="grid">
+        <caption class="hidden">Click header to sort by Ruleset, Id, or Message</caption>
+    </table>
+</div>
+
+@section scripts {
+    <script type="text/javascript">
+        $(function() {
+
+            var dataTable = $('#reportsTable').DataTable({
+                paging: true,
+                pagingType: 'full_numbers',
+                info: true,
+                scrollCollapse: true,
+                deferRender: true,
+                searching: true,
+                serverSide: true,
+                processing: true,
+                language: {
+                    loadingRecords: 'Loading...',
+                    processing: "Loading...",
+                    aria: {
+                        paginate: {
+                            first: 'First page',
+                            previous: 'Previous page',
+                            next: 'Next page',
+                            last: 'Last page'
+                        }
+                    }
+                },
+                dom: "<'row'<'col-md-3'l><'col-md-3 offset-6 text-right'f>>" +
+                    "<'row'<'col-sm-12'tr>>" +
+                    "<'row'<'col-md-3'i><'col-md-9 pull-right'p>>",
+                ajax: {
+                    url: "@Html.Raw(Url.Action("GetValidationRulesReportData", new { }))",
+                    complete: function () {
+                        var dataTable = $($("#reportsTable").DataTable().table().header());
+                        dataTable.find('th').removeAttr('aria-label');
+                    }
+                },
+                columns: [
+                    {
+                        title: 'Ruleset',
+                        data: 'ruleset'
+                    },
+                    {
+                        title: 'Rule ID',
+                        data: 'id',
+                    },
+                    {
+                        title: 'Message',
+                        data: 'message',
+                    }
+                ]
+            });
+
+            $(dataTable.table().header()).addClass('table-primary');
+        });
+    </script>
+
+}
+

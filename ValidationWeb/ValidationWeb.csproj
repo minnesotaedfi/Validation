@@ -874,6 +874,7 @@
     <Content Include="Views\Login\Logout.cshtml" />
     <Content Include="Views\Error\Index.cshtml" />
     <Content Include="Views\Error\Unauthorized.cshtml" />
+    <Content Include="Views\Ods\ValidationRulesReport.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -956,7 +957,9 @@
     <Compile Include="Database\SchoolYearDbContextFactory.cs">
       <DependentUpon>ISchoolYearDbContextFactory.cs</DependentUpon>
     </Compile>
+    <Compile Include="Services\Interfaces\IRuleDefinitionService.cs" />
     <Compile Include="Services\Implementations\ManualRuleExecutionService.cs" />
+    <Compile Include="Services\Implementations\RuleDefinitionService.cs" />
     <Compile Include="Services\Interfaces\IDynamicReportingService.cs" />
     <Compile Include="Services\Implementations\RecordsRequestService.cs" />
     <Compile Include="Services\Implementations\DynamicReportingService.cs" />

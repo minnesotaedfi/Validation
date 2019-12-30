@@ -13,56 +13,48 @@
         </tr>
         </thead>
         <tbody role="rowgroup">
-        <tr role="row">
-            <td  role="gridcell">
-                <a id="ancestryLink" class="report-button-link show-data-loading" href="@Url.Action("Index", "Dynamic")">
-                    Dynamic Reports
-                </a>
-            </td>
-            <td  role="gridcell">
-                Run dynamically-generated reports
-            </td>
-        </tr>
-        @*<tr role="row">
+          <tr role="row">
             <td role="gridcell">
-                <a id="dualEnrollmentsLink" class="report-button-link show-data-loading" href="@Url.Action("MultipleEnrollmentsReport", "Ods")">Dual Enrollment Students</a>
+              <a id="ancestryLink" class="report-button-link show-data-loading" href="@Url.Action("Index", "Dynamic")">
+                Dynamic Reports
+              </a>
             </td>
             <td role="gridcell">
-                See the number of students currently enrolled in more than one school or district.
+              Run dynamically-generated reports
             </td>
-        </tr>*@
+          </tr>
         <tr role="row">
             <td role="gridcell">
-                <a id="changeEnrollmentLink" class="report-button-link show-data-loading" href="@Url.Action("ChangeOfEnrollmentReport", "Ods")">Change Of Enrollment</a>
+              <a id="changeEnrollmentLink" class="report-button-link show-data-loading" href="@Url.Action("ChangeOfEnrollmentReport", "Ods")">Change Of Enrollment</a>
             </td>
             <td role="gridcell">
-                View students that have recently enrolled in another school, and request that the previous school forward relevant files, assessment results, and/or immunization information.
+              View students that have recently enrolled in another school, and request that the previous school forward relevant files, assessment results, and/or immunization information.
             </td>
-        </tr>
-        @*<tr role="row">
+          </tr>
+          <tr role="row">
             <td role="gridcell">
-                <a id="residentsElsewhereLink" class="report-button-link show-data-loading" href="@Url.Action("ResidentsEnrolledElsewhereReport", "Ods")">Residents Enrolled Elsewhere</a>
-            </td>
-            <td role="gridcell">
-                View students who reside in the district's boundaries and are enrolled in another district.
-            </td>
-        </tr>*@
-        <tr role="row">
-            <td role="gridcell">
-                <a id="identityIssuesLink" class="report-button-link show-data-loading" href="@Url.Action("IdentityIssuesReport", "Ods")">Student Identity Issues</a>
+              <a id="identityIssuesLink" class="report-button-link show-data-loading" href="@Url.Action("IdentityIssuesReport", "Ods")">Student Identity Issues</a>
             </td>
             <td role="gridcell">
-                View student identity issues flagged by Ed Fi's Identities Interface during data submissions from client software such as student information software systems.
+              View student identity issues flagged by Ed Fi's Identities Interface during data submissions from client software such as student information software systems.
             </td>
-        </tr>
-        <tr role="row">
+          </tr>
+          <tr role="row">
             <td role="gridcell">
-                <a id="level1IssuesLink" class="report-button-link show-data-loading" href="@Url.Action("Level1IssuesReport", "Ods")">Level 1 Validation Issues</a>
+              <a id="level1IssuesLink" class="report-button-link show-data-loading" href="@Url.Action("Level1IssuesReport", "Ods")">Level 1 Validation Issues</a>
             </td>
             <td role="gridcell">
-                View Level 1 issues flagged by Ed Fi's Operation Data Store Interface - errors rejected data submissions to Ed Fi's Operation Data Store from client software such as student information software systems.
+              View Level 1 issues flagged by Ed Fi's Operation Data Store Interface - errors rejected data submissions to Ed Fi's Operation Data Store from client software such as student information software systems.
             </td>
-        </tr>
+          </tr>
+          <tr role="row">
+            <td role="gridcell">
+              <a id="validationRulesLink" class="report-button-link show-data-loading" href="@Url.Action("ValidationRulesReport", "Ods")">Validation Rules Report</a>
+            </td>
+            <td role="gridcell">
+              View the entire set of currently configured validation rules and error messages.
+            </td>
+          </tr>
         </tbody>
     </table>
 </div>

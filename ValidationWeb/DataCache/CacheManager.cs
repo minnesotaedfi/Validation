@@ -1,17 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.Caching;
+
+using Validation.DataModels;
+
 using ValidationWeb.Database.Queries;
+using ValidationWeb.Services.Implementations;
 using ValidationWeb.Services.Interfaces;
 
 namespace ValidationWeb.DataCache
 {
     public class CacheManager : ICacheManager
     {
-        public CacheManager()
+        protected IRuleDefinitionService RuleDefinitionService { get; }
+
+        public CacheManager(IRuleDefinitionService ruleDefinitionService)
         {
             // todo: inject cache factory and let it give us this or whatever else ObjectCache it wants
             Cache = MemoryCache.Default;
+            RuleDefinitionService = ruleDefinitionService;
         }
 
         protected ObjectCache Cache { get; }
@@ -232,6 +239,22 @@ namespace ValidationWeb.DataCache
                 }
 
                 return Cache.Get(cacheKey) as IEnumerable<ChangeOfEnrollmentReportQuery>;
+            }
+        }
+
+        public IEnumerable<RulesetDefinition> GetRulesetDefinitions()
+        {
+            var cacheKey = "GetRulesetDefinitions";
+
+            lock (LockObject)
+            {
+                if (!Cache.Contains(cacheKey))
+                {
+                    var results = RuleDefinitionService.GetRulesetDefinitions();
+                    Cache.Add(cacheKey, results, CacheExpirationOffset);
+                }
+
+                return Cache.Get(cacheKey) as IEnumerable<RulesetDefinition>;
             }
         }
     }

@@ -10,6 +10,8 @@ using Engine.Models;
 
 using MoreLinq;
 
+using Validation.DataModels;
+
 using ValidationWeb.ApiControllers.ModelBinders;
 using ValidationWeb.Database.Queries;
 using ValidationWeb.DataCache;
@@ -47,23 +49,23 @@ namespace ValidationWeb.Controllers
             ApiLogService = apiLogService;
         }
 
-        protected IAppUserService AppUserService { get; set; }
+        protected IAppUserService AppUserService { get; }
 
-        protected IEdOrgService EdOrgService { get; set; }
+        protected IEdOrgService EdOrgService { get; }
 
-        protected IOdsDataService OdsDataService { get; set; }
+        protected IOdsDataService OdsDataService { get; }
 
-        protected IRulesEngineService RulesEngineService { get; set; }
+        protected IRulesEngineService RulesEngineService { get; }
 
-        protected ISchoolYearService SchoolYearService { get; set; }
+        protected ISchoolYearService SchoolYearService { get; }
 
-        protected ICacheManager CacheManager { get; set; }
+        protected ICacheManager CacheManager { get; }
 
-        protected IEdFiApiLogService ApiLogService { get; set; }
+        protected IEdFiApiLogService ApiLogService { get; }
 
-        protected IRecordsRequestService RecordsRequestService { get; set; }
+        protected IRecordsRequestService RecordsRequestService { get; }
 
-        protected Model EngineObjectModel { get; set; }
+        protected Model EngineObjectModel { get; }
 
         // GET: Ods/Reports
         public ActionResult Reports()
@@ -1207,6 +1209,77 @@ namespace ValidationWeb.Controllers
         {
             var model = new OdsLevel1IssuesReportViewModel();
             return View(model);
+        }
+
+        public ActionResult ValidationRulesReport()
+        {
+            return View();
+        }
+
+        public JsonResult GetValidationRulesReportData(IDataTablesRequest request)
+        {
+            var result = CacheManager.GetRulesetDefinitions();
+            var count = result.Count();
+
+            var sortedResults = result.SelectMany(
+                x =>
+                    x.RuleDefinitions.Select(
+                        y =>
+                            new RulesetReportDetail
+                            {
+                                Ruleset = x.Name,
+                                Id = y.Id,
+                                Message = y.Message
+                            }));
+
+            var sortColumn = request.Columns.FirstOrDefault(x => x.Sort != null);
+            if (sortColumn != null)
+            {
+                Func<RulesetReportDetail, string> orderingFunctionString = null;
+
+                switch (sortColumn.Field)
+                {
+                    case "name":
+                        {
+                            orderingFunctionString = x => x.Ruleset;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? sortedResults.OrderBy(orderingFunctionString)
+                                                : sortedResults.OrderByDescending(orderingFunctionString);
+                            break;
+                        }
+                    case "id":
+                        {
+                            orderingFunctionString = x => x.Id;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? sortedResults.OrderBy(orderingFunctionString)
+                                                : sortedResults.OrderByDescending(orderingFunctionString);
+                            break;
+                        }
+                    case "message":
+                        {
+                            orderingFunctionString = x => x.Message;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? sortedResults.OrderBy(orderingFunctionString)
+                                                : sortedResults.OrderByDescending(orderingFunctionString);
+                            break;
+                        }
+                    default:
+                        break;
+                }
+            }
+
+            if (request.Search != null)
+            {
+                sortedResults = sortedResults.Where(x => 
+                    x.Ruleset.IndexOf(request.Search.Value, StringComparison.OrdinalIgnoreCase) >= 0 ||
+                    x.Id.IndexOf(request.Search.Value, StringComparison.OrdinalIgnoreCase) >= 0 ||
+                    x.Message.IndexOf(request.Search.Value, StringComparison.OrdinalIgnoreCase) >= 0);
+            }
+
+            var pagedResults = sortedResults.Skip(request.Start).Take(request.Length);
+            var response = DataTablesResponse.Create(request, count, sortedResults.Count(), pagedResults);
+            var jsonResult = new DataTablesJsonResult(response, JsonRequestBehavior.AllowGet);
+            return jsonResult;
         }
 
         public JsonResult GetRecordsRequestData(int edOrgId, string studentId)

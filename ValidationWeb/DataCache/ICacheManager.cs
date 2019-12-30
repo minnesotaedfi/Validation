@@ -1,4 +1,7 @@
 ﻿using System.Collections.Generic;
+
+using Validation.DataModels;
+
 using ValidationWeb.Database.Queries;
 using ValidationWeb.Services.Interfaces;
 
@@ -63,5 +66,7 @@ namespace ValidationWeb.DataCache
             IOdsDataService odsDataService,
             int edOrgId,
             string fourDigitSchoolYear);
+
+        IEnumerable<RulesetDefinition> GetRulesetDefinitions();
     }
 }

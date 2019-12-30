@@ -10,16 +10,20 @@ using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using System.Web.SessionState;
+
 using Engine.Language;
 using Engine.Models;
 using Engine.Utility;
+
 using log4net;
 using log4net.Config;
+
 using SimpleInjector;
 using SimpleInjector.Integration.Web;
 using SimpleInjector.Integration.Web.Mvc;
 using SimpleInjector.Integration.WebApi;
 using SimpleInjector.Lifestyles;
+
 using ValidationWeb.ApiControllers.ModelBinders;
 using ValidationWeb.Database;
 using ValidationWeb.DataCache;
@@ -97,6 +101,9 @@ namespace ValidationWeb
 
             // singletons
             container.Register<ICacheManager, CacheManager>(Lifestyle.Singleton);
+            container.Register<IRulesEngineConfigurationValues, RulesEngineConfigurationValues>(Lifestyle.Singleton);
+
+            container.Register<IRuleDefinitionService, RuleDefinitionService>(Lifestyle.Singleton);
             container.Register<IDbContextFactory<ValidationPortalDbContext>, DbContextFactory<ValidationPortalDbContext>>(Lifestyle.Singleton);
             container.Register<IDbContextFactory<EdFiLogDbContext>, DbContextFactory<EdFiLogDbContext>>(Lifestyle.Singleton);
             container.Register<ISchoolYearDbContextFactory, SchoolYearDbContextFactory>(Lifestyle.Singleton);
@@ -104,13 +111,12 @@ namespace ValidationWeb
             // Rules Engine
             container.Register<ISchemaProvider, EngineSchemaProvider>(Lifestyle.Scoped);
             container.Register<IRulesEngineService, RulesEngineService>(Lifestyle.Scoped);
-            container.Register<IRulesEngineConfigurationValues, RulesEngineConfigurationValues>(Lifestyle.Scoped);
 
             var rulesEngineConfigurationValues = new RulesEngineConfigurationValues();
             var asConfiguredRulesDirectory = rulesEngineConfigurationValues.RulesFileFolder;
             if (asConfiguredRulesDirectory.StartsWith("~"))
             {
-                asConfiguredRulesDirectory = Server.MapPath(asConfiguredRulesDirectory);
+                rulesEngineConfigurationValues.RulesFileFolder = Server.MapPath(asConfiguredRulesDirectory);
             }
 
             var configuredSqlRulesDirectory = rulesEngineConfigurationValues.SqlRulesFileFolder;
@@ -123,7 +129,7 @@ namespace ValidationWeb
 
             Func<Model> modelCreatorDelegate =
                 () => new ModelBuilder(
-                    new DirectoryRulesStreams(asConfiguredRulesDirectory).Streams)
+                    new DirectoryRulesStreams(rulesEngineConfigurationValues.RulesFileFolder).Streams)
                     .Build(null, engineSchemaProvider);
 
             container.Register(modelCreatorDelegate, Lifestyle.Scoped);

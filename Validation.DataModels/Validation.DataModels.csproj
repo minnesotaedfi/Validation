@@ -106,7 +106,10 @@
     <Compile Include="RecordsRequestType.cs" />
     <Compile Include="RecordsResponseFormData.cs" />
     <Compile Include="RolePermissions.cs" />
+    <Compile Include="RuleDefinition.cs" />
     <Compile Include="RulesEngineExecutionException.cs" />
+    <Compile Include="RulesetReportDetail.cs" />
+    <Compile Include="RulesetDefinition.cs" />
     <Compile Include="RuleValidation.cs" />
     <Compile Include="RuleValidationDetail.cs" />
     <Compile Include="RuleValidationRuleComponent.cs" />

@@ -8,12 +8,12 @@ namespace ValidationWeb.Services.Implementations
 {
     public class RulesEngineConfigurationValues : IRulesEngineConfigurationValues
     {
-        private static readonly string _rulesFileFolder;
+        private static string _rulesFileFolder;
         private static readonly string _ruleEngineResultsSchema;
         private static readonly string _ruleEngineResultsConnectionString;
         private static readonly int _rulesExecutionTimeout;
-        private static string _sqlRulesFileFolder;
-		private static readonly List<string> _rulesTableExclusions;
+        private static string _sqlRulesFileFolder; 
+        private static readonly List<string> _rulesTableExclusions;
 
         static RulesEngineConfigurationValues()
         {
@@ -21,11 +21,15 @@ namespace ValidationWeb.Services.Implementations
             _ruleEngineResultsSchema = ConfigurationManager.AppSettings["RuleEngineResultsSchema"];
             _ruleEngineResultsConnectionString = ConfigurationManager.ConnectionStrings["ValidationPortalDbContext"]?.ToString();
             _sqlRulesFileFolder = ConfigurationManager.AppSettings["SqlRulesFileFolder"];
-            int.TryParse(ConfigurationManager.AppSettings["RulesExecutionTimeout"], out _rulesExecutionTimeout);
-			_rulesTableExclusions = ConfigurationManager.AppSettings["RulesTableExclusions"].Split(',').ToList();
+            int.TryParse(ConfigurationManager.AppSettings["RulesExecutionTimeout"], out _rulesExecutionTimeout); 
+            _rulesTableExclusions = ConfigurationManager.AppSettings["RulesTableExclusions"].Split(',').ToList();
         }
 
-        public string RulesFileFolder => _rulesFileFolder;
+        public string RulesFileFolder
+        {
+            get { return _rulesFileFolder; }
+            set { _rulesFileFolder = value; }
+        }
 
         public string RuleEngineResultsSchema => _ruleEngineResultsSchema;
 
