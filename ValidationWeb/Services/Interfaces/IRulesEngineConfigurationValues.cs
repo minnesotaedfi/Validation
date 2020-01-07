@@ -11,9 +11,11 @@ namespace ValidationWeb.Services.Interfaces
         string RuleEngineResultsConnectionString { get; }
 
         int RulesExecutionTimeout { get; }
-		
+        
         string SqlRulesFileFolder { get; set; }
         
-		List<string> RulesTableExclusions { get; }
+        List<string> RulesTableExclusions { get; }
+
+        bool SaveGeneratedRulesSqlToFiles { get; }
     }
 }

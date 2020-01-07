@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -172,6 +173,25 @@ namespace ValidationWeb.Services.Implementations
                         throw new InvalidOperationException($"Unable to find report summary {ruleValidationId} for year {schoolYear.Id}");
                     }
 
+                    string savedSqlPath = string.Empty;
+
+                    if (EngineConfig.SaveGeneratedRulesSqlToFiles)
+                    {
+                        savedSqlPath = Path.Combine(
+                            Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+                            "ValidationRulesSql",
+                            ruleValidationId.ToString());
+
+                        LoggingService.LogInfoMessage("Saved SQL Directory is " + savedSqlPath);
+
+                        if (Directory.Exists(savedSqlPath))
+                        {
+                            LoggingService.LogInfoMessage("Clearing contents of " + savedSqlPath);
+                            Directory.Delete(savedSqlPath, true);
+                        }
+
+                        Directory.CreateDirectory(savedSqlPath);
+                    }
                     var newRuleValidationExecution = odsRawDbContext.RuleValidations
                         .FirstOrDefault(x =>
                             x.RuleValidationId == newReportSummary.RuleValidationId);
@@ -265,7 +285,7 @@ namespace ValidationWeb.Services.Implementations
                             detailParams.AddRange(
                                 EngineObjectModel.GetParameters(collectionId)
                                     .Select(x => new SqlParameter(x.ParameterName, x.Value)));
-                            
+
                             odsRawDbContext.Database.CommandTimeout = EngineConfig.RulesExecutionTimeout;
 
                             if (toExecute.Count > 0)
@@ -284,6 +304,18 @@ namespace ValidationWeb.Services.Implementations
                             }
                             else
                             {
+                                if (EngineConfig.SaveGeneratedRulesSqlToFiles && !string.IsNullOrWhiteSpace(savedSqlPath))
+                                {
+                                    var rulesetPath = Path.Combine(savedSqlPath, rule.RulesetId);
+                                    if (!Directory.Exists(rulesetPath))
+                                    {
+                                        Directory.CreateDirectory(rulesetPath);
+                                    }
+
+                                    var rulePath = Path.Combine(rulesetPath, rule.RuleId + ".sql");
+                                    File.WriteAllText(rulePath, rule.Sql);
+                                }
+
                                 LoggingService.LogDebugMessage($"Executing Rule SQL {rule.ExecSql}.");
                                 var result = odsRawDbContext.Database.ExecuteSqlCommand(rule.ExecSql, detailParams.ToArray<object>());
                                 LoggingService.LogDebugMessage($"Executing Rule {rule.RuleId} rows affected = {result}.");

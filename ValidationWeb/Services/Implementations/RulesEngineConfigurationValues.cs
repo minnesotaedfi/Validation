@@ -12,7 +12,8 @@ namespace ValidationWeb.Services.Implementations
         private static readonly string _ruleEngineResultsSchema;
         private static readonly string _ruleEngineResultsConnectionString;
         private static readonly int _rulesExecutionTimeout;
-        private static string _sqlRulesFileFolder; 
+        private static string _sqlRulesFileFolder;
+        private static bool _saveGeneratedRulesSqlToFiles;
         private static readonly List<string> _rulesTableExclusions;
 
         static RulesEngineConfigurationValues()
@@ -23,6 +24,7 @@ namespace ValidationWeb.Services.Implementations
             _sqlRulesFileFolder = ConfigurationManager.AppSettings["SqlRulesFileFolder"];
             int.TryParse(ConfigurationManager.AppSettings["RulesExecutionTimeout"], out _rulesExecutionTimeout); 
             _rulesTableExclusions = ConfigurationManager.AppSettings["RulesTableExclusions"].Split(',').ToList();
+            bool.TryParse(ConfigurationManager.AppSettings["SaveGeneratedRulesSqlToFiles"], out _saveGeneratedRulesSqlToFiles);
         }
 
         public string RulesFileFolder
@@ -38,6 +40,9 @@ namespace ValidationWeb.Services.Implementations
         public int RulesExecutionTimeout => _rulesExecutionTimeout;
 
         public List<string> RulesTableExclusions => _rulesTableExclusions;
+
+        public bool SaveGeneratedRulesSqlToFiles => _saveGeneratedRulesSqlToFiles;
+
         public string SqlRulesFileFolder
         {
             get { return _sqlRulesFileFolder; }
