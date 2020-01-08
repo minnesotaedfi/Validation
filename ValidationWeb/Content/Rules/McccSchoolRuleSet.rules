@@ -1,0 +1,27 @@
+ruleset McccSchoolRuleSet
+
+rule 50.03.0001
+	when {MCCC_CourseOffering}.[PeriodNumber] exists then
+	require that {MCCC_CourseOffering}.[FixedPeriodIndicator] = 1
+	else 'Error on: Section with Section Class Period item and Section Characteristic without FixedPeriodIndicator'
+
+rule 50.03.0002
+	when {MCCC_CourseOffering}.[FixedPeriodIndicator] = 1 then
+	require that {MCCC_CourseOffering}.[PeriodNumber] exists
+	else 'Error on: Section Characteristic with FixedPeriodIndicator and no Section Class Period'
+	
+rule 50.03.0003
+	when {MCCC_CourseOffering}.[MarkingIndicator] = 1 and {MCCC_CourseOffering}.[StateStaffId] exists then
+	require that {MCCC_CourseOffering}.[TeacherOfRecordIndicator] = 1
+	else 'Error on: Section with MarkingIndicatorand no Staff Section Association Classroom Position of TeacherOfRecordIndicator'
+	
+rule 50.03.0004
+	require that {MCCC_CourseOffering}.[InstructionLanguage] exists 
+		and {MCCC_CourseOffering}.[InstructionLanguage] <> 'English'
+	else 'Error on: Section when Instruction Language is English or is not set'
+	
+rule 50.03.0005
+	when {MCCC_CourseOffering}.[SequenceOfCourse] exists then
+	require that {MCCC_CourseOffering}.[SequenceOfCourse] >= {MCCC_CourseOffering}.[CourseSequenceLimit]
+	else 'Error on: Section.SequenceOfCourse is not less than or equal to Course.SequenceLimit'
+

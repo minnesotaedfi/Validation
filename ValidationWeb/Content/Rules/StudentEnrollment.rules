@@ -346,7 +346,7 @@ rule 30.10.6630
 	and {StudentEnrollment}.[SchoolClassification] <> '45'
 	and {StudentEnrollment}.[DistrictType] <> '70' 
 	and {StudentEnrollment}.[IndependentStudyIndicator] = '1'
-	and {StudentEnrollment}.[StudentGradeLevel] <> 'PS'
+	and {StudentEnrollment}.[StudentGradeLevel] <> 'PS' then
 	require {StudentEnrollment}.[SpecialEducationServiceHours] exists and {StudentEnrollment}.[SpecialEducationServiceHours] > 0
 	else '263. Special Education Service Hours required when the Independent Study flag is set to "Y" and the Special Education Evaluation Status = 4 or 6.'
 

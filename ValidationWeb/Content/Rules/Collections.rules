@@ -11,3 +11,8 @@ collection EOY_Enrollment_And_Demographic includes
   StudentEnrollment, 
   MultipleEnrollment,
   SchoolCalendar
+  
+collection McccValidationCollection includes
+  McccCourseRuleSet,
+  McccSchoolRuleSet,
+  McccStudentRuleSet

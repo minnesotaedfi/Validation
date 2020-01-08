@@ -1,0 +1,59 @@
+ruleset McccStudentRuleSet
+
+rule 50.02.0001
+	when {MCCC_StudentSectionAssociation}.[SectionEnrollmentType] = 'ALC_IND_STUDY' then
+	require that {MCCC_StudentSectionAssociation}.[IndependentStudyIndicator] = 1
+	else 'Error on: Section with Enrollment Type of AI and without Course Level Characteristic IS'
+
+rule 50.02.0002
+	when {MCCC_StudentSectionAssociation}.[SectionEnrollmentType] = 'PROJECT_BASED' then
+	require that {MCCC_StudentSectionAssociation}.[ProjectBasedLearningIndicator] = 1
+	else 'Error on: Section with Enrollment Type of PB and without Course Level Characteristic PLB'
+	
+rule 50.02.0003
+	when {MCCC_StudentSectionAssociation}.[AcademicSubject] exists then
+	require that {MCCC_CourseGrades}.[StateCourseMultipleMarksIndicator] = 1
+	else 'Error on: Grade Academic Subject exists when State Course no Multiple Marks indicator'
+	
+rule 50.02.0004
+	when {MCCC_CourseGrades}.[StateCourseMultipleMarksIndicator] = 1 and {MCCC_CourseGrades}.[GradesReported] > 1 then
+	require that {MCCC_CourseGrades}.[GradeAcademicSubject] exists
+	else 'Error on: District Course for a State Course with Multiple Marks = true and more than 1 Grade is reported and Academic Subject for Grade is not set'
+	
+rule 50.02.0005
+	when {MCCC_CourseGrades}.[StateCourseMultipleMarksIndicator] = 1 
+		and {MCCC_CourseGrades}.[StateCourseCode] is in ['01055','01057'] 
+		and {MCCC_CourseGrades}.[DistrictCourseOfferedGradeLevel] is in ['9','10','11','12']
+		and {MCCC_CourseGrades}.[GradesReported] > 1 then
+	require that {MCCC_CourseGrades}.[GradeAcademicSubject] = '01'
+		or {MCCC_CourseGrades}.[GradeAcademicSubject] = '04'
+	else 'Error on: District Courses with Grade Levels 9-12 for State Courses 01055 and 01057 with Multiple Marks = true and more than one Student Section Grade reported, the Student Section Grade Academic Subject is not 01 or 04'
+	
+rule 50.02.0006
+	when {MCCC_CourseGrades}.[StateCourseMultipleMarksIndicator] = 1 
+		and {MCCC_CourseGrades}.[StateCourseCode] is in ['01055','01057'] 
+		and {MCCC_CourseGrades}.[DistrictCourseOfferedGradeLevel] is in ['KA','KB','KC','KD','KE','KF','KG','KH','KI','KJ','KK','1','2','3','4','5','6','7','8']
+		and {MCCC_CourseGrades}.[GradesReported] > 1 then
+	require that {MCCC_CourseGrades}.[GradeAcademicSubject] = '01'
+		or {MCCC_CourseGrades}.[GradeAcademicSubject] = '02'
+	else 'Error on: District Course with Grade Levels K-8 for State Course with Multiple Marks = true and more than one Student Section Grade reported, Grade Academic Subject is not language arts (1) or mathematics (2)'
+	
+rule 50.02.0007
+	when {MCCC_CourseGrades}.[SectionMarkingIndicator] = 1 then
+	require that {MCCC_CourseGrades}.[GradesReported] > 0
+	else 'Error on: Student with Section Marking Indicator = true and without a Section Grade'
+	
+rule 50.02.0008
+	when {MCCC_CourseGrades}.[GradesReported] > 0 then
+	require that {MCCC_CourseGrades}.[SectionMarkingIndicator] = 1 
+	else 'Error on: Student Grade Reported with Section Marking Indicator = false'
+	
+rule 50.02.0009
+	when {MCCC_CourseGrades}.[CollegeCreditEarned] exists then
+	require that {MCCC_CourseGrades}.[DistrictCourseLevelType] is in ['D','X']
+	else 'Error on: Section Grade with College Credit Earned for Local Course without Course Level Type of D or X'
+
+	
+
+	
+
