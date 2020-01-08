@@ -1,6 +1,9 @@
 ﻿using System;
+
 using Antlr4.Runtime;
+
 using Engine.Language;
+
 using log4net;
 
 namespace Engine.Utility
@@ -27,11 +30,24 @@ namespace Engine.Utility
                 _log.Error(msg);
         }
 
-        public void SyntaxError(IRecognizer recognizer, IToken offendingSymbol, int line, int charPositionInLine, string msg,
+        public void SyntaxError(
+            IRecognizer recognizer, 
+            IToken offendingSymbol, 
+            int line, 
+            int charPositionInLine, 
+            string msg,
             RecognitionException e)
         {
             var file = _fileContextFunc();
-            using (NDC.Push($"{line}:{charPositionInLine}")) _log.Error(msg);
+
+            using (NDC.Push($"{line}:{charPositionInLine}"))
+            {
+                // _log.Error(msg);
+
+                var ruleset = offendingSymbol.InputStream.ToString();
+                ruleset = ruleset.Substring(0, ruleset.IndexOf("\r\n", StringComparison.Ordinal));
+                _log.Error($"SYNTAX ERROR AT {ruleset} - line {line} column {charPositionInLine}");
+            }
         }
     }
 }
