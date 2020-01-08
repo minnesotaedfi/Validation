@@ -1,0 +1,152 @@
+ruleset StudentEnrollment
+
+/*
+rule 10.10.6216
+	when {StudentEnrollment}.[DistrictType] is in ['7','34','70']
+	and {StudentEnrollment}.[StateAidCategory] <> '98' then
+	require {StudentEnrollment}.[StatusBeginDate] >= 1-July
+	else '29. By statute the school year for early childhood special education and kindergarten disabled students may start July 1 and continue through June 30.  However, any membership that occurs before July 1 is part of the prior school year. Schools with classifications of 02 and District Types 07 and 34 are also held to this start date.'
+*/
+/*
+rule 10.10.6217
+	when {StudentEnrollment}.[StateAidCategory] <> '98' then
+	require {StudentEnrollment}.[StatusBeginDate] >= 1-July
+	else '29. By statute the school year for early childhood special education and kindergarten disabled students may start July 1 and continue through June 30.  However, any membership that occurs before July 1 is part of the prior school year. Schools with classifications of 02 and District Types 07 and 34 are also held to this start date.'
+*/
+/*
+rule 10.10.6218
+	when {StudentEnrollment}.[StateAidCategory] <> '98' then
+	require {StudentEnrollment}.[StatusBeginDate] >= 1-June
+	else '80. For Area Learning Center (ALC) and Learning Year Program Site (LYPS) students only:  Status Start Date must be within the school year.  The school year for ALC\'s and other state-approved alternative programs may start in June after the end of the just prior school year, usually early to mid-June, and running for the following 12 months, generally ending early the following June.  This error occurs when the student\'s Status Start Date is prior to June 1.  For example, an ALC student\'s Status Start Date cannot be before June 1, 2018 for FY 2019.'
+*/
+
+	/*
+rule 10.10.6564
+	when {StudentEnrollment}.[SchoolNumber] <> '005'
+	and {StudentEnrollment}.[StudentGradeLevel] is not in ['KA','KB','KC','KD','KE','KF','KG','KI','KJ','KK','KL','KM','KN','KO','KP','KQ','KR','KS','KT','KU','KV','KW','KX','KY','KZ','PA','PB','PC','PD','PE','PF','PG','PH','PI','PJ','RA','RB','RC','RD','RE','RF','RG','RH','RI','RJ']
+	and count({StudentDemographic} when {StudentDemographic}.[Gender] is in ['Male', 'Female'] ) > 0 then
+	expect count({StudentDemographic} when {StudentDemographic}.[SpecialEducationEvaluationStatus] is in ['4', '6', '9']) > 0 
+	else '171. This message warns that no students were reported with Special Education Evaluation Status = 4, 6 or 9.  Verify that no students were served in Special Education.'
+*/
+
+
+
+/***invalid combination****/
+
+/*
+rule 10.10.6203
+	when {StudentEnrollment}.[StateAidCategory] is in ['02', '24', '46', '52', '98',  '15','18'] then
+	require that {StudentEnrollment}.[PSEOProgramIndicator] <> '1'
+	else '97. Students who are not residents of Minnesota (State Aid Category SAC 15); shared time students who is a resident of other than Minnesota (SAC 18); who are foreign exchange students (SAC 02); who are enrolled in an extended school year special education program (SAC 46); who are enrolled in South Dakota under reciprocity (SAC 52); or who are summer graduates or summer leavers (SAC 98) are ineligible to participate in the postsecondary enrollment options (PSEO) program during this enrollment period.  Also check the student\'s State Aid Category.'
+	*/
+
+
+/* 
+rule 10.10.62631
+	when {MultipleEnrollment}.[EnrollmentOverlap] = 1
+	and {MultipleEnrollment}.[StudentGradeLevelRight] = 'EC'
+	and {StudentEnrollment}.[StudentGradeLevel] = 'EC'
+	and {StudentEnrollment}.[SpecialEducationEvaluationStatus] = '2'
+	and {StudentEnrollment}.[DistrictType] is in ['01','02','03'] then
+	require that {StudentEnrollment}.[StateAidCategory] is in ['00','21','15']
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] is in ['PA','PB','PC','PD','PE','PF','PG','PH','PI','PJ','RA','RB','RC','RD','RE','RF','RG','RH','RI','RJ']
+	else '318. For independent districts EC students cannot be open enrolled during evaluation period.  The resident district needs to report the evaluation record.' 
+   
+*/
+
+
+/*
+rule 20.10.6247
+	when collection is Fall_Enrollment_And_Demographic
+	and {StudentEnrollment}.[SpecialEducationEvaluationStatus] is in ['4','6','9']
+	and {StudentEnrollment}.[InstructionalSetting] is in ['39','30','31','32','33','41','42','43','44','45']
+	and {StudentEnrollment}.[StudentGradeLevel] <> 'PS' then
+	expect that (years since {StudentDemographic}.[BirthDate] as of {StudentEnrollment}.[StatusEndDate]
+					or years since {StudentDemographic}.[BirthDate] as of 30-June) >= 3 
+			and (years since {StudentDemographic}.[BirthDate] as of {StudentEnrollment}.[StatusEndDate]
+					or years since {StudentDemographic}.[BirthDate] as of 30-June) <= 5 
+	else '262. Instructional Setting must correspond to the student\'s age based on the status start and end dates.  Students less than 3 years old must have a Instructional Setting of 11-17.    Students age 3 through 5 must have a Instructional Setting of 30-45.   Students age 6 and older must have a Instructional Setting of 01-08.   Check the student\'s Birth Date in relation to the status being and end dates.'
+*/
+
+
+	/*
+rule 30.10.6454
+	when collection is EOY_Enrollment_And_Demographic
+	and {StudentEnrollment}.[StudentGradeLevel] <> 'EC'
+	and {StudentEnrollment}.[SpecialEducationEvaluationStatus] is in ['4','6','9']
+	and {StudentEnrollment}.[StateAidCategory] <> '98' 
+	and {StudentEnrollment}.[Membership] <> 0 then
+	require that {StudentEnrollment}.[SpecialEducationServiceHours] <= ({StudentEnrollment}.[Membership] * 3)
+	else '412. Special Education Service hours for grade EC are greater than 3 times the membership hours.  Service hours are excessive for this record.'
+	*/
+
+	
+	/*
+rule 10.10.6215
+	when {StudentEnrollment}.[DistrictType] is in ['1','2','3']
+	and {StudentEnrollment}.[StudentGradeLevel] is not in ['HK','EC','PS'] 
+	and {StudentEnrollment}.[StateAidCategory] is not in ['98','46'] 
+	and {StudentEnrollment}.[SchoolClassification] is not in ['41','42','43','44','45','02']
+	and {StudentEnrollment}.[DistrictNumber] <> '0347' 
+	and {StudentEnrollment}.[SchoolNumber] is not in ['931','941'] then
+	require {StudentEnrollment}.[StatusBeginDate] > first Monday in September
+	else '64. Status Start Date cannot be before the state-wide start date (specified by statute) for regular schools for students in grades K-12.  (This edit excludes students enrolled in Area Learning Centers and other state-approved alternative program sites, summer graduates, summer dropouts and other summer leavers, SAC 46 (ESY) students, and early childhood and kindergarten disabled students.'
+	*/
+	
+
+
+/*
+rule 10.10.65091
+	when {MultipleEnrollment}.[StatusBeginDateRight] > {MultipleEnrollment}.[StatusBeginDateLeft]
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] = 'PS'
+	and {MultipleEnrollment}.[StudentGradeLevelRight] = 'PS' 
+	and {MultipleEnrollment}.[StateAidCategoryLeft] = '41' then
+	require {MultipleEnrollment}.[StateAidCategoryRight] <> '45' 
+	else '259. Preschool screening students should not have a SAC 41 on one record and a second record with SAC 45.'
+	
+	
+rule 10.10.65092
+	when {MultipleEnrollment}.[StatusBeginDateRight] > {MultipleEnrollment}.[StatusBeginDateLeft]
+	and {MultipleEnrollment}.[StudentGradeLevelLeft] = 'PS'
+	and {MultipleEnrollment}.[StudentGradeLevelRight] = 'PS' 
+	and {MultipleEnrollment}.[StateAidCategoryLeft] = '45' then
+	require {MultipleEnrollment}.[StateAidCategoryRight] <> '41' 
+	else '259. Preschool screening students should not have a SAC 41 on one record and a second record with SAC 45.'
+*/
+	
+
+/*
+rule 30.10.6348
+	when collection is EOY_Enrollment_And_Demographic 
+	and {StudentEnrollment}.[LastLocationOfAttendance] = '24'
+	and {StudentEnrollment}.[StateAidCategory] <> '46'
+	and {StudentEnrollment}.[StudentGradeLevel] <> 'PS' then
+	require count({MultipleEnrollment} when {MultipleEnrollment}.[EnrollmentSequenceLeft] = 1 and {MultipleEnrollment}.[LastLocationOfAttendanceLeft] = '24') = 0
+	else '70. Last Location of Attendance 24 (re-enrollment into the same school or inter-district transfer) requires that there be a prior enrollment record for the student in the district. Also check the student\'s State Reporting Number.'
+*/
+
+
+/*
+rule 30.10.6388
+	when collection is EOY_Enrollment_And_Demographic 
+	and {StudentEnrollment}.[SpecialEducationEvaluationStatus] is in ['4','6','9']
+	and {StudentEnrollment}.[SchoolClassification] is in ['41','42','45']
+	and days since {StudentEnrollment}.[StatusBeginDate] as of {StudentEnrollment}.[StatusEndDate] >= 10
+	and {StudentEnrollment}.[StateAidCategory] is not in ['28','98']
+	and {StudentEnrollment}.[DistrictType] <> '70'
+	and {StudentEnrollment}.[StudentGradeLevel] <> 'PS'
+	and {MultipleEnrollment} does not exist then
+	require {StudentEnrollment}.[SpecialEducationServiceHours] exists
+	and {StudentEnrollment}.[SpecialEducationServiceHours] > 0
+	else '254. For students with Special Education Evaluation Status (SEES) equals 4, 6 or 9, Special Education Service Hours are required if: A. Grade = EC or HK. B. Homebound Indicator = Y OR D. State Aid Category = 16, 17, 18, 26 or 27 OR E. Students are in the school types - Multidisciplinary Teaching Model, Inclusive Program, Cooperative Teaching Model, Project Based. Additionally, for these students attending State Approved Alternative Programs (SAAP schools have classifications 41, 42 or 45) or OLL program (classification 46), Special Education Service Hours are required if: F. There is no other overlapping enrollment record in this district OR G. The only overlapping enrollment is from a SAAP or OL Program without Special Education Service Hours.'	
+
+
+rule 30.10.6448
+	when collection is EOY_Enrollment_And_Demographic 
+	and {StudentEnrollment}.[StudentGradeLevel] = 'EC'
+	and {StudentEnrollment}.[SpecialEducationEvaluationStatus] <> '2'
+	and {StudentEnrollment}.[StatusEnd] is in ['4','12','20','24','99'] 
+	and {StudentEnrollment}.[StateAidCategory] is not in ['14', '16', '17', '18', '28', '52'] then
+	expect count({MultipleEnrollment} when {MultipleEnrollment}.[StatusEndRight] is not in ['4','12','20','24','99'] and {MultipleEnrollment}.[EnrollmentSequenceRight] = max({MultipleEnrollment}.[EnrollmentSequenceRight])) >= 1
+	else '406. This student has a status end code that would indicate a later enrollment record should exist, but one was not found in this district or anywhere in the state for this fiscal year. Check the status end code and if correct, confirm the student is being reported as enrolled in another school or district.'	
+*/
