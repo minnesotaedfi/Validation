@@ -1084,9 +1084,6 @@
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\Rules\MultipleEnrollment.rules">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Content\Rules\StudentDemographic.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

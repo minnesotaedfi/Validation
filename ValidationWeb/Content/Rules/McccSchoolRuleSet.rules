@@ -25,3 +25,12 @@ rule 50.03.0005
 	require that {MCCC_CourseOffering}.[SequenceOfCourse] >= {MCCC_CourseOffering}.[CourseSequenceLimit]
 	else 'Error on: Section.SequenceOfCourse is not less than or equal to Course.SequenceLimit'
 
+rule 50.03.0006
+	when {MCCC_CourseOffering}.[CourseCode] < '81000' then
+	require that {MCCC_CourseOffering}.[SequenceOfCourse] exists
+	else 'Error on: District Course associated to State Course Code less than 81000 with no Section.SequenceOfCourse'
+
+rule 50.03.0007
+	when {MCCC_CourseOffering}.[CourseCode] < '81000' then
+	require that {MCCC_CourseOffering}.[CourseSequenceLimit] exists
+	else 'Error on: District Course associated to State Course Code less than 81000 with no Course Sequence Limit'

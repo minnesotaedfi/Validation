@@ -5,7 +5,7 @@ Error on:
 
 */
 
-DECLARE @RuleId VARCHAR(32) = '50.01.1001';
+DECLARE @RuleId VARCHAR(32) = '50.00.0002';
 DECLARE @Message NVARCHAR(MAX) = 'Courses with associations are not Defined By the same type of Education Organization';
 DECLARE @IsError BIT = 1;
 
@@ -60,7 +60,7 @@ WHERE
 INSERT INTO 
 	rules.RuleValidationDetail (RuleValidationId, Id, RuleId, IsError, [Message])
 SELECT TOP 1
-	NULL RuleValidationId, 0, @RuleId RuleId, @IsError IsError, 
+	@RuleValidationId, 0, @RuleId RuleId, @IsError IsError, 
 	@Message + CHAR(13)+CHAR(10)+ (
 		SELECT TOP 10 
 			CourseCode,

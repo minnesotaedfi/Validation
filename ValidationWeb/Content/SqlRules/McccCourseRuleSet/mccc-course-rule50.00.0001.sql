@@ -6,7 +6,7 @@ Error on:
 
 */
 
-DECLARE @RuleId VARCHAR(32) = '50.01.1000';
+DECLARE @RuleId VARCHAR(32) = '50.00.0001';
 DECLARE @Message NVARCHAR(MAX) = 'Course Defined By LEA (District Course) does not refer to Course Defined By SEA (State) or '+
 	'Course Defined By Post-Secondary (College Course) does not refer to Course Defined By LEA (District)';
 DECLARE @IsError BIT = 1;
@@ -55,18 +55,19 @@ FROM
 		) ToCourseDefinedByDescriptor
 		ON ToCourse.CourseDefinedByDescriptorId = ToCourseDefinedByDescriptor.DescriptorId
 	
-WHERE 
+WHERE (
+	Course.EducationOrganizationId = @DistrictId 
+	OR ToCourse.EducationOrganizationId = @DistrictId
+	) AND (
 	CourseDefinedByDescriptor.CodeValue = 'SEA'
-	OR
-	CourseDefinedByDescriptor.CodeValue = 'LEA' AND ToCourseDefinedByDescriptor.CodeValue <> 'SEA'
-	OR
-	CourseDefinedByDescriptor.CodeValue = 'College' AND ToCourseDefinedByDescriptor.CodeValue <> 'LEA'
-	
+	OR CourseDefinedByDescriptor.CodeValue = 'LEA' AND ToCourseDefinedByDescriptor.CodeValue <> 'SEA'
+	OR CourseDefinedByDescriptor.CodeValue = 'College' AND ToCourseDefinedByDescriptor.CodeValue <> 'LEA'
+	)
 )
 INSERT INTO 
 	rules.RuleValidationDetail (RuleValidationId, Id, RuleId, IsError, [Message])
 SELECT TOP 1
-	NULL RuleValidationId, 0, @RuleId RuleId, @IsError IsError, 
+	@RuleValidationId, 0, @RuleId RuleId, @IsError IsError, 
 	@Message + CHAR(13)+CHAR(10)+ (
 		SELECT TOP 10 
 			CourseCode,
