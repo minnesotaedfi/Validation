@@ -16,9 +16,8 @@ rule 50.03.0003
 	else 'Error on: Section with MarkingIndicatorand no Staff Section Association Classroom Position of TeacherOfRecordIndicator'
 	
 rule 50.03.0004
-	require that {MCCC_CourseOffering}.[InstructionLanguage] exists 
-		and {MCCC_CourseOffering}.[InstructionLanguage] <> 'English'
-	else 'Error on: Section when Instruction Language is English or is not set'
+	require that {MCCC_CourseOffering}.[InstructionLanguage] <> 'English'
+	else 'Error on: Section when Instruction Language is 11 (English)'
 	
 rule 50.03.0005
 	when {MCCC_CourseOffering}.[SequenceOfCourse] exists then
@@ -34,3 +33,8 @@ rule 50.03.0007
 	when {MCCC_CourseOffering}.[CourseCode] < '81000' then
 	require that {MCCC_CourseOffering}.[CourseSequenceLimit] exists
 	else 'Error on: District Course associated to State Course Code less than 81000 with no Course Sequence Limit'
+	
+rule 50.03.0008
+	when {MCCC_CourseOffering}.[BilingualIndicator] = 1 then
+	require that that {MCCC_CourseOffering}.[InstructionLanguage] exists
+	else 'Error on: Section when Instruction Language is not set and Course Level Characteristic with Bilingual Indicator'

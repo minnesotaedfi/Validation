@@ -67,4 +67,3 @@ rule 50.01.0013
 
 rule 50.01.0014
 	require that {SqlRuleComponent} exists else ''
-

@@ -53,7 +53,6 @@ rule 50.02.0009
 	require that {MCCC_CourseGrades}.[DistrictCourseLevelType] is in ['D','X']
 	else 'Error on: Section Grade with College Credit Earned for Local Course without Course Level Type of D or X'
 
-	
 
 	
 
