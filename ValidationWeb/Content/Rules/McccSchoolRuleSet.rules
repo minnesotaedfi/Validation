@@ -36,5 +36,13 @@ rule 50.03.0007
 	
 rule 50.03.0008
 	when {MCCC_CourseOffering}.[BilingualIndicator] = 1 then
-	require that that {MCCC_CourseOffering}.[InstructionLanguage] exists
+	require that {MCCC_CourseOffering}.[InstructionLanguage] exists
 	else 'Error on: Section when Instruction Language is not set and Course Level Characteristic with Bilingual Indicator'
+	
+rule 50.03.0009
+	require ContainsLeadingTrailingSpace({MCCC_CourseOffering}.[LocalCourseCode]) = 0 and ContainsLeadingTrailingSpace({MCCC_CourseOffering}.[CourseCode]) = 0
+	else 'Error on: Course Code with leading or trailing spaces'
+	
+rule 50.03.0010
+	require ContainsLeadingTrailingSpace({MCCC_CourseOffering}.[SectionIdentifier]) = 0
+	else 'Error on: Section Identifier with leading or trailing spaces'
