@@ -8,7 +8,7 @@ Error on:
 
 DECLARE @RuleId VARCHAR(32) = '50.00.0001';
 DECLARE @Message NVARCHAR(MAX) = 'Course Defined By LEA (District Course) does not refer to Course Defined By SEA (State) or '+
-	'Course Defined By Post-Secondary (College Course) does not refer to Course Defined By LEA (District)';
+	'Course Defined By Post-Secondary (College Course) does not refer to Course Defined By LEA (District). The entity ID returned is a district ed-org.';
 DECLARE @IsError BIT = 1;
 
 WITH 
@@ -67,7 +67,7 @@ WHERE (
 INSERT INTO 
 	rules.RuleValidationDetail (RuleValidationId, Id, RuleId, IsError, [Message])
 SELECT TOP 1
-	@RuleValidationId, 0, @RuleId RuleId, @IsError IsError, 
+	@RuleValidationId, @DistrictId, @RuleId RuleId, @IsError IsError, 
 	@Message + CHAR(13)+CHAR(10)+ (
 		SELECT TOP 10 
 			CourseCode,
