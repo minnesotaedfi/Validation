@@ -13,3 +13,9 @@ collection EOY_Enrollment_And_Demographic includes
 collection EOY_SchoolGrade_Calendar includes 
   SchoolCalendar,
   SchoolGrade
+  
+collection McccValidationCollection includes
+  McccCourseRuleSet,
+  McccSchoolRuleSet,
+  McccStudentRuleSet
+
