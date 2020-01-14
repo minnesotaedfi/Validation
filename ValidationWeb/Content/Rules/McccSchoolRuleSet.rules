@@ -1,0 +1,48 @@
+ruleset McccSchoolRuleSet
+
+rule 50.03.0001
+	when {MCCC_CourseOffering}.[PeriodNumber] exists then
+	require that {MCCC_CourseOffering}.[FixedPeriodIndicator] = 1
+	else 'Error on: Section with Section Class Period item and Section Characteristic without FixedPeriodIndicator'
+
+rule 50.03.0002
+	when {MCCC_CourseOffering}.[FixedPeriodIndicator] = 1 then
+	require that {MCCC_CourseOffering}.[PeriodNumber] exists
+	else 'Error on: Section Characteristic with FixedPeriodIndicator and no Section Class Period'
+	
+rule 50.03.0003
+	when {MCCC_CourseOffering}.[MarkingIndicator] = 1 and {MCCC_CourseOffering}.[StateStaffId] exists then
+	require that {MCCC_CourseOffering}.[TeacherOfRecordIndicator] = 1
+	else 'Error on: Section with MarkingIndicatorand no Staff Section Association Classroom Position of TeacherOfRecordIndicator'
+	
+rule 50.03.0004
+	require that {MCCC_CourseOffering}.[InstructionLanguage] <> 'English'
+	else 'Error on: Section when Instruction Language is 11 (English)'
+	
+rule 50.03.0005
+	when {MCCC_CourseOffering}.[SequenceOfCourse] exists then
+	require that {MCCC_CourseOffering}.[SequenceOfCourse] >= {MCCC_CourseOffering}.[CourseSequenceLimit]
+	else 'Error on: Section.SequenceOfCourse is not less than or equal to Course.SequenceLimit'
+
+rule 50.03.0006
+	when {MCCC_CourseOffering}.[CourseCode] < '81000' then
+	require that {MCCC_CourseOffering}.[SequenceOfCourse] exists
+	else 'Error on: District Course associated to State Course Code less than 81000 with no Section.SequenceOfCourse'
+
+rule 50.03.0007
+	when {MCCC_CourseOffering}.[CourseCode] < '81000' then
+	require that {MCCC_CourseOffering}.[CourseSequenceLimit] exists
+	else 'Error on: District Course associated to State Course Code less than 81000 with no Course Sequence Limit'
+	
+rule 50.03.0008
+	when {MCCC_CourseOffering}.[BilingualIndicator] = 1 then
+	require that {MCCC_CourseOffering}.[InstructionLanguage] exists
+	else 'Error on: Section when Instruction Language is not set and Course Level Characteristic with Bilingual Indicator'
+	
+rule 50.03.0009
+	require ContainsLeadingTrailingSpace({MCCC_CourseOffering}.[LocalCourseCode]) = 0 and ContainsLeadingTrailingSpace({MCCC_CourseOffering}.[CourseCode]) = 0
+	else 'Error on: Course Code with leading or trailing spaces'
+	
+rule 50.03.0010
+	require ContainsLeadingTrailingSpace({MCCC_CourseOffering}.[SectionIdentifier]) = 0
+	else 'Error on: Section Identifier with leading or trailing spaces'
