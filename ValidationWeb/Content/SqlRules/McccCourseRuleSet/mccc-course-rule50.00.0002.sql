@@ -6,7 +6,7 @@ Error on:
 */
 
 DECLARE @RuleId VARCHAR(32) = '50.00.0002';
-DECLARE @Message NVARCHAR(MAX) = 'Courses with associations are not Defined By the same type of Education Organization';
+DECLARE @Message NVARCHAR(MAX) = 'Courses with associations are not Defined By the same type of Education Organization. The entity ID returned is a district ed-org.';
 DECLARE @IsError BIT = 1;
 
 WITH 
@@ -23,12 +23,16 @@ FROM (
 		EducationOrganizationId
 	FROM
 		mn.CourseCourseAssociation
+	WHERE
+		EducationOrganizationId = @DistrictId
 	UNION
 	SELECT
 		ToCourseCode,
 		ToCourseEducationOrganizationId
 	FROM
 		mn.CourseCourseAssociation
+	WHERE
+		EducationOrganizationId = @DistrictId
 	) CourseList
 	INNER JOIN
 	edfi.Course
@@ -47,7 +51,7 @@ FROM (
 		ON Course.CourseDefinedByDescriptorId = CourseDefinedByDescriptor.DescriptorId
 
 	
-WHERE 
+WHERE
 	CourseDefinedByDescriptor.CodeValue = 'SEA' AND NOT EXISTS (SELECT 1 FROM edfi.StateEducationAgency WHERE StateEducationAgencyId = Course.EducationOrganizationId)
 	OR
 	CourseDefinedByDescriptor.CodeValue = 'LEA' AND NOT EXISTS (SELECT 1 FROM edfi.LocalEducationAgency WHERE LocalEducationAgencyId = Course.EducationOrganizationId)
@@ -60,7 +64,7 @@ WHERE
 INSERT INTO 
 	rules.RuleValidationDetail (RuleValidationId, Id, RuleId, IsError, [Message])
 SELECT TOP 1
-	@RuleValidationId, 0, @RuleId RuleId, @IsError IsError, 
+	@RuleValidationId, @DistrictId, @RuleId RuleId, @IsError IsError, 
 	@Message + CHAR(13)+CHAR(10)+ (
 		SELECT TOP 10 
 			CourseCode,
