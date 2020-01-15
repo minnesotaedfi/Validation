@@ -23,7 +23,7 @@ rule 50.01.0003
 
 rule 50.01.0004
 	when {MCCC_Course}.[StateCourseUnclassifiedCourseIndicator] = 1 then
-	require that {MCCC_Course}.[StateCourseCourseDescription] exists and {MCCC_Course}.[StateCourseCourseDescription] <> ''
+	require that {MCCC_Course}.[DistrictCourseCourseDescription] exists and {MCCC_Course}.[DistrictCourseCourseDescription] <> ''
 	else 'This district includes a District Course with an empty Local Description, which is associated to an Unclassified State Course.'
 
 rule 50.01.0005
