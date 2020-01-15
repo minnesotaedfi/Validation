@@ -9,52 +9,52 @@ rule 50.00.0002
 rule 50.01.0001
 	when {MCCC_Course}.[DistrictCourseOfferedGradeLevel] is in ['KA','KB','KC','KD','KE','KF','KG','KH','KI','KJ','KK','1','2','3','4','5','6','7','8'] then
 	require that {MCCC_Course}.[DistrictCourseCourseLevelType] is not in ['Articulation agreement course','Industry/occupational certification course','D-Dual/concurrent enrollment course']
-	else 'Error on: Course Offered Grade Level K-8 with Course Level Type A-Articulation agreement course, C-Industry/occupational certification course, or D-D-Dual/concurrent enrollment course. The entity ID returned is a district ed-org.'
+	else 'This district includes a District Course offered for Grade Levels K-8 with Course Level Type A-Articulation agreement course, C-Industry/occupational certification course, or D-D-Dual/concurrent enrollment course.'
 
 rule 50.01.0002
 	when {MCCC_Course}.[DistrictCourseOfferedGradeLevel] is in ['KA','KB','KC','KD','KE','KF','KG','KH','KI','KJ','KK','1','2','3','4','5','6','7','8','9','10','11','12'] then
 	require that {MCCC_Course}.[DistrictCourseCourseLevelType] <> 'Pre-School/Early Education'
-	else 'Error on: Course Offered Grade Level K-12 with Course Level Type P-Pre-School/Early Education. The entity ID returned is a district ed-org.'
+	else 'This district includes a District Course offered for Grade Levels K-12 with Course Level Type P-Pre-School/Early Education.'
 
 rule 50.01.0003
 	when {MCCC_Course}.[DistrictCourseCourseLevelType] is in ['Articulation agreement course','Dual/concurrent enrollment course'] then
 	require that {MCCC_Course}.[CollegeCourseCode] exists
-	else 'Error on: District Course Level Type of A-Articulation agreement course or D-Dual/concurrent enrollment course without College Course. The entity ID returned is a district ed-org.'
+	else 'This district includes a District Course with Course Level Type of A-Articulation agreement course or D-Dual/concurrent enrollment course without an associated College Course.'
 
 rule 50.01.0004
 	when {MCCC_Course}.[StateCourseUnclassifiedCourseIndicator] = 1 then
 	require that {MCCC_Course}.[StateCourseCourseDescription] exists and {MCCC_Course}.[StateCourseCourseDescription] <> ''
-	else 'Error on: State Course with Level Characteristic of UC and Description is empty. The entity ID returned is a district ed-org.'
+	else 'This district includes a District Course with an empty Local Description, which is associated to an Unclassified State Course.'
 
 rule 50.01.0005
 	when {MCCC_Course}.[CollegeCourseCourseLevelType] = 'Articulation agreement course' then
 	require that {MCCC_Course}.[DistrictCourseCourseLevelType] = 'Articulation agreement course'
-	else 'Error on: College Course with Course Level Type of A-Articulation agreement course is not associated with a District Course with Course Level Type of A-Articulation agreement course. The entity ID returned is a district ed-org.'
+	else 'This district includes a District Course associated to a College Course with Course Level Type of A-Articulation agreement. The District course level does not match the college course level type: A-Articulation agreement.'
 	
 rule 50.01.0006
 	when {MCCC_Course}.[CollegeCourseCourseLevelType] = 'Dual/concurrent enrollment course' then
 	require that {MCCC_Course}.[DistrictCourseCourseLevelType] = 'Dual/concurrent enrollment course'
-	else 'Error on: College Course with Course Level Type of D-Dual/concurrent enrollment course is not associated with a District Course with Course Level Type of D-Dual/concurrent enrollment course. The entity ID returned is a district ed-org.'
+	else 'This district includes a District Course associated to a College Course with Course Level Type of D-Dual/concurrent enrollment. The District course level does not match the college course level type: D-Dual/concurrent enrollment.'
 	
 rule 50.01.0007
 	when {MCCC_Course}.[CollegeCourseCode] exists then
 	require that {MCCC_Course}.[CollegeCourseCourseLevelType] exists
-	else 'Error on: College Course without a Level Type. The entity ID returned is a district ed-org.'
+	else 'This district includes a District Course associated to a College Course without a Level Type.'
 	
 rule 50.01.0008
 	when {MCCC_Course}.[DistrictCourseCode] exists then
 	require that {MCCC_Course}.[DistrictCourseCourseLevelType] exists
-	else 'Error on: District Course without a Level Type. The entity ID returned is a district ed-org.'
+	else 'This district includes a District Course without a Level Type.'
 	
 rule 50.01.0009
 	when {MCCC_Course}.[StateCourseCode] exists then
 	require that {MCCC_Course}.[StateCourseCourseLevelType] exists
-	else 'Error on: State Course without a Level Type. The entity ID returned is a district ed-org.'
+	else 'This district includes a District Course associated to a State Course without a Level Type.'
 	
 rule 50.01.0010
 	when {MCCC_Course}.[CollegeCourseCourseLevelType] = 'Not applicable' then
 	require that {MCCC_Course}.[DistrictCourseCourseLevelType] = 'Not applicable'
-	else 'Error on: College Course with Course Level Type of X-Not applicable is not associated with a District Course with Course Level Type of X-Not applicable. The entity ID returned is a district ed-org.'
+	else 'This district includes a District Course associated to a College Course with Course Level Type of X-Not applicable. The District course level does not match the college course level type: X-Not applicable.'
 	
 rule 50.01.0011
 	require that {SqlRuleComponent} exists else ''
