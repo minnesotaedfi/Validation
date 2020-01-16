@@ -48,11 +48,22 @@ namespace ValidationWeb.Services.Implementations
                         rule.Id = Regex.Match(text, @"^rule ([\d.]+)").Groups[1].Value;
                     }
 
-                    if (rule != null && text.StartsWith("else"))
+                    if (rule != null)
                     {
-                        rule.Message = Regex.Match(text, @"else '(.*)'").Groups[1].Value;
-                        ruleset.RuleDefinitions.Add(rule);
-                        rule = null;
+                        if (text.StartsWith("expect"))
+                        {
+                            rule.ValidationType = "Warning";
+                        }
+                        else if (text.StartsWith("require"))
+                        {
+                            rule.ValidationType = "Error";
+                        }
+                        else if (text.StartsWith("else"))
+                        {
+                            rule.Message = Regex.Match(text, @"else '(.*)'").Groups[1].Value;
+                            ruleset.RuleDefinitions.Add(rule);
+                            rule = null;
+                        }
                     }
                 }
                 result.Add(ruleset);

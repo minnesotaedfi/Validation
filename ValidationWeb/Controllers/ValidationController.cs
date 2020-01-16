@@ -10,6 +10,9 @@ using DataTables.AspNet.Mvc5;
 
 using Engine.Models;
 
+using Validation.DataModels;
+
+using ValidationWeb.DataCache;
 using ValidationWeb.Filters;
 using ValidationWeb.Models;
 using ValidationWeb.Services.Interfaces;
@@ -29,6 +32,7 @@ namespace ValidationWeb.Controllers
         private readonly ISubmissionCycleService _submissionCycleService;
         protected readonly IValidationResultsService _validationResultsService;
         protected readonly Model _engineObjectModel;
+        protected ICacheManager _cacheManager { get; }
 
         public ValidationController(
             IAppUserService appUserService,
@@ -38,7 +42,8 @@ namespace ValidationWeb.Controllers
             IRulesEngineService rulesEngineService,
             ISchoolYearService schoolYearService,
             ISubmissionCycleService submissionCycleService,
-            Model engineObjectModel)
+            Model engineObjectModel,
+            ICacheManager cacheManager)
         {
             _appUserService = appUserService;
             _edOrgService = edOrgService;
@@ -48,6 +53,7 @@ namespace ValidationWeb.Controllers
             _schoolYearService = schoolYearService;
             _submissionCycleService = submissionCycleService;
             _validationResultsService = validationResultsService;
+            _cacheManager = cacheManager;
         }
 
         // GET: Validation/Reports
@@ -273,12 +279,91 @@ namespace ValidationWeb.Controllers
             return Json(summary);
         }
 
-
         protected string CombineDetailField(
             ICollection<ValidationErrorEnrollmentDetail> details,
             Func<ValidationErrorEnrollmentDetail, string> func)
         {
             return string.Join(Environment.NewLine, details.Select(func));
+        }
+
+        public ActionResult ValidationRulesReport()
+        {
+            return View();
+        }
+
+        public JsonResult GetValidationRulesReportData(IDataTablesRequest request)
+        {
+            var result = _cacheManager.GetRulesetDefinitions();
+            var sortedResults = result.SelectMany(
+                x =>
+                    x.RuleDefinitions.Select(
+                        y =>
+                            new RulesetReportDetail
+                            {
+                                Ruleset = x.Name,
+                                Id = y.Id,
+                                ValidationType = y.ValidationType,
+                                Message = y.Message
+                            }));
+
+            var count = sortedResults.Count();
+
+            var sortColumn = request.Columns.FirstOrDefault(x => x.Sort != null);
+            if (sortColumn != null)
+            {
+                Func<RulesetReportDetail, string> orderingFunctionString = null;
+
+                switch (sortColumn.Field)
+                {
+                    case "name":
+                        {
+                            orderingFunctionString = x => x.Ruleset;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? sortedResults.OrderBy(orderingFunctionString)
+                                                : sortedResults.OrderByDescending(orderingFunctionString);
+                            break;
+                        }
+                    case "id":
+                        {
+                            orderingFunctionString = x => x.Id;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? sortedResults.OrderBy(orderingFunctionString)
+                                                : sortedResults.OrderByDescending(orderingFunctionString);
+                            break;
+                        }
+                    case "validationType":
+                        {
+                            orderingFunctionString = x => x.ValidationType;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? sortedResults.OrderBy(orderingFunctionString)
+                                                : sortedResults.OrderByDescending(orderingFunctionString);
+                            break;
+                        }
+                    case "message":
+                        {
+                            orderingFunctionString = x => x.Message;
+                            sortedResults = sortColumn.Sort.Direction == SortDirection.Ascending
+                                                ? sortedResults.OrderBy(orderingFunctionString)
+                                                : sortedResults.OrderByDescending(orderingFunctionString);
+                            break;
+                        }
+                    default:
+                        break;
+                }
+            }
+
+            if (request.Search != null)
+            {
+                sortedResults = sortedResults.Where(x =>
+                    x.Ruleset.IndexOf(request.Search.Value, StringComparison.OrdinalIgnoreCase) >= 0 ||
+                    x.Id.IndexOf(request.Search.Value, StringComparison.OrdinalIgnoreCase) >= 0 ||
+                    x.Message.IndexOf(request.Search.Value, StringComparison.OrdinalIgnoreCase) >= 0);
+            }
+
+            var pagedResults = sortedResults.Skip(request.Start).Take(request.Length);
+            var response = DataTablesResponse.Create(request, count, sortedResults.Count(), pagedResults);
+            var jsonResult = new DataTablesJsonResult(response, JsonRequestBehavior.AllowGet);
+            return jsonResult;
         }
     }
 }

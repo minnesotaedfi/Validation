@@ -2,110 +2,163 @@
 @using ValidationWeb.Models
 @using ValidationWeb.Utility
 @{
-    var identity = User.Identity as ValidationPortalIdentity;
-    var permissions = User?.Identity?.GetViewPermissions(identity?.AppRole);
+  var identity = User.Identity as ValidationPortalIdentity;
+  var permissions = User?.Identity?.GetViewPermissions(identity?.AppRole);
 }
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>Ed-Fi Data Validation Portal</title>
-    <link rel="SHORTCUT ICON" href="~/favicon.ico" />
-    <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    @Styles.Render("~/Content/Fonts/FontAwesomeCSS")
-    @Styles.Render("~/Content/BootstrapCSS")
-    @Styles.Render("~/Content/jqueryUICSS")
-    @Styles.Render("~/Content/datePickerCSS")
-    @Styles.Render("~/Content/DataTables/css/DataTablesCSS")
-    @Styles.Render("~/Content/Styles/Select2CSS")
-    @Styles.Render("~/Content/Styles/DualListBoxCSS")
-    @Styles.Render("~/Content/ValidationPortal")
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <title>Ed-Fi Data Validation Portal</title>
+  <link rel="SHORTCUT ICON" href="~/favicon.ico" />
+  <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  @Styles.Render("~/Content/Fonts/FontAwesomeCSS")
+  @Styles.Render("~/Content/BootstrapCSS")
+  @Styles.Render("~/Content/jqueryUICSS")
+  @Styles.Render("~/Content/datePickerCSS")
+  @Styles.Render("~/Content/DataTables/css/DataTablesCSS")
+  @Styles.Render("~/Content/Styles/Select2CSS")
+  @Styles.Render("~/Content/Styles/DualListBoxCSS")
+  @Styles.Render("~/Content/ValidationPortal")
 </head>
 <body>
-    <div class="container-fluid layout">
-        <div class="row ">
-            <header class="top-banner col-12" role="banner" aria-label="Minnesota Department of Education - Ed-Fi Data Validation Portal">
-                <img src="~/Content/Images/mdelogo450.png" class="mdelogo" alt="Minnesota Department of Education Logo" />
-                <p>
-                    <a href="#skipnavigation">Skip navigation</a>
-                </p>
-                <div role="heading" aria-level="1" class="app-title clear-margin">Ed-Fi Data Validation Portal</div>
-            </header>
-        </div>
-        <div class="row noprint">
-            <div class="col-12">
-                <nav id="layout-navbar" role="navigation" aria-label="Main navigation" class="navbar navbar-expand-sm prime-blue">
-                    <div class="collapse navbar-collapse w-100 order-1 order-md-0" id="theNavBar">
-                        <ul class="navbar-nav mr-auto">
-                            <li class="nav-item">
-                                @Html.Raw(Html.ActionLink("LinkText", "Index", "Home", new { area = "" }, new { @class = "nav-link validation-nav-link show-page-loading" }).ToHtmlString().Replace("LinkText", "<i class=\"fas fa-home white-heavy-text\"></i> Home"))
-                            </li>
-
-                            @if (permissions.CanViewValidationReports)
-                            {
-                                <li class="nav-item">
-                                    @Html.Raw(Html.ActionLink("LinkText", "Reports", "Validation", new { area = "" }, new { @class = "nav-link validation-nav-link show-page-loading" }).ToHtmlString().Replace("LinkText", "Validation Results"))
-                                </li>
-                            }
-                            @if (permissions.CanViewOdsReports)
-                            {
-                                <li class="nav-item">
-                                    @Html.Raw(Html.ActionLink("LinkText", "Reports", "Ods", new { area = "" }, new { @class = "nav-link validation-nav-link show-page-loading" }).ToHtmlString().Replace("LinkText", "Reports"))
-                                </li>
-                            }
-
-
-                            @if (permissions.CanAccessAdminFeatures)
-                            {
-                                <li class="nav-item">
-                                    @Html.Raw(
-                                        Html.ActionLink(
-                                            "Admin",
-                                            "Index",
-                                            "Admin",
-                                            new { area = "" },
-                                            new { @class = "nav-link validation-nav-link show-page-loading" }).ToHtmlString())
-                                </li>
-                            }
-                        </ul>
-                    </div>
-
-                    @Html.Action("NavDropDowns", "Nav")
-                </nav>
-            </div>
-        </div>
-        <div class="row">
-            <nav class="col-12" id="breadcrumb" role="navigation" aria-label="Breadcrumb navigation">
-                @Html.MvcSiteMap().SiteMapPath()
-            </nav>
-        </div>
-        <div class="row layout mainSection">
-            <div class="col-12" role="main">
-                <a name="skipnavigation" id="skipNavigationAnchor" tabindex="-1"></a>
-                @RenderBody()
-            </div>
-        </div>
-        @Html.Partial("_LittleFooter")
+  <div class="container-fluid layout">
+    <div class="row ">
+      <header class="top-banner col-12" role="banner" aria-label="Minnesota Department of Education - Ed-Fi Data Validation Portal">
+        <img src="~/Content/Images/mdelogo450.png" class="mdelogo" alt="Minnesota Department of Education Logo" />
+        <p>
+          <a href="#skipnavigation">Skip navigation</a>
+        </p>
+        <div role="heading" aria-level="1" class="app-title clear-margin">Ed-Fi Data Validation Portal</div>
+      </header>
     </div>
+    <div class="row noprint">
+      <div class="col-12">
+        <nav id="layout-navbar" role="navigation" aria-label="Main navigation" class="navbar navbar-expand-sm prime-blue">
+          <div class="collapse navbar-collapse w-100 order-1 order-md-0" id="theNavBar">
+            <ul class="navbar-nav mr-auto">
+              <li class="nav-item">
+                @Html.Raw(
+                    Html.ActionLink(
+                        "LinkText",
+                        "Index",
+                        "Home",
+                        new { area = "" },
+                        new { @class = "nav-link validation-nav-link show-page-loading" })
+                        .ToHtmlString()
+                        .Replace("LinkText", "<i class=\"fas fa-home white-heavy-text\"></i> Home"))
+              </li>
 
-    <!-- Turn this overlay on and off when loading new data asynchronously or screens. -->
-    <div id="overlay"><span id="overlay-text" role="status" aria-live="polite">Loading ... <i class="fas fa-cog fa-spin"></i></span></div>
+              <li class="nav-item dropdown" style="padding-left: 10px;" tabindex="0">
+                <a class="nav-link dropdown-toggle" href="#" id="validationDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Validation
+                </a>
+                <div class="dropdown-menu" aria-labelledby="validationDropdown" style="padding:0">
 
-    @{
-        Html.RenderAction("Environment", "Nav");
-    }
+                  @if (permissions != null && permissions.CanViewValidationReports)
+                  {
+                    @Html.Raw(
+                        Html.ActionLink(
+                            "LinkText",
+                            "Reports",
+                            "Validation",
+                            new { area = "" },
+                            new { @class = "dropdown-item show-page-loading" })
+                            .ToHtmlString()
+                            .Replace("LinkText", "Validation Results"))
+                  }
 
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
-    @Scripts.Render("~/bundles/jqueryUI")
-    @Scripts.Render("~/bundles/datePickerJS")
-    @Scripts.Render("~/bundles/Select2")
-    @Scripts.Render("~/bundles/DualListBox")
-    @Scripts.Render("~/bundles/DataTables")
-    <script>
+                  @Html.Raw(
+                      Html.ActionLink(
+                          "LinkText",
+                          "ValidationRulesReport",
+                          "Validation",
+                          new { area = "" },
+                          new { @class = "dropdown-item show-page-loading" })
+                          .ToHtmlString()
+                          .Replace("LinkText", "Validate Rules Dictionary"))
+                </div>
+              </li>
+
+              @*@if (permissions.CanViewValidationReports)
+                {
+                  <li class="nav-item">
+                    @Html.Raw(
+                        Html.ActionLink(
+                            "LinkText",
+                            "Reports",
+                            "Validation",
+                            new { area = "" },
+                            new { @class = "nav-link validation-nav-link show-page-loading" })
+                            .ToHtmlString()
+                            .Replace("LinkText", "Validation Results"))
+                  </li>
+                }*@
+
+              @if (permissions.CanViewOdsReports)
+              {
+                <li class="nav-item">
+                  @Html.Raw(
+                      Html.ActionLink(
+                          "LinkText", "Reports",
+                          "Ods", new { area = "" },
+                          new { @class = "nav-link validation-nav-link show-page-loading" })
+                          .ToHtmlString()
+                          .Replace("LinkText", "Reports"))
+                </li>
+              }
+
+              @if (permissions.CanAccessAdminFeatures)
+              {
+                <li class="nav-item">
+                  @Html.Raw(
+                      Html.ActionLink(
+                          "Admin",
+                          "Index",
+                          "Admin",
+                          new { area = "" },
+                          new { @class = "nav-link validation-nav-link show-page-loading" }).ToHtmlString())
+                </li>
+              }
+            </ul>
+          </div>
+
+          @Html.Action("NavDropDowns", "Nav")
+        </nav>
+      </div>
+    </div>
+    <div class="row">
+      <nav class="col-12" id="breadcrumb" role="navigation" aria-label="Breadcrumb navigation">
+        @Html.MvcSiteMap().SiteMapPath()
+      </nav>
+    </div>
+    <div class="row layout mainSection">
+      <div class="col-12" role="main">
+        <a name="skipnavigation" id="skipNavigationAnchor" tabindex="-1"></a>
+        @RenderBody()
+      </div>
+    </div>
+    @Html.Partial("_LittleFooter")
+  </div>
+
+  <!-- Turn this overlay on and off when loading new data asynchronously or screens. -->
+  <div id="overlay"><span id="overlay-text" role="status" aria-live="polite">Loading ... <i class="fas fa-cog fa-spin"></i></span></div>
+
+  @{
+    Html.RenderAction("Environment", "Nav");
+  }
+
+  @Scripts.Render("~/bundles/jquery")
+  @Scripts.Render("~/bundles/bootstrap")
+  @Scripts.Render("~/bundles/jqueryUI")
+  @Scripts.Render("~/bundles/datePickerJS")
+  @Scripts.Render("~/bundles/Select2")
+  @Scripts.Render("~/bundles/DualListBox")
+  @Scripts.Render("~/bundles/DataTables")
+  <script>
         @*  The contents of this script tag are not in a separate file because portions are generated on the server side with ASP.NET MVC *@
         // Supports overlay
         function overlayOn() { $("#overlay").fadeIn(100); }
@@ -259,8 +312,8 @@
             //    }
             //});
         }
-    </script>
+  </script>
 
-    @RenderSection("scripts", required: false)
+  @RenderSection("scripts", required: false)
 </body>
 </html>

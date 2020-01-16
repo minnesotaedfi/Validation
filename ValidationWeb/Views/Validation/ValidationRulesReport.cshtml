@@ -1,18 +1,21 @@
 ﻿
 <div class="row tbmargin10" id="pagetop">
-    <h2 class="vp-body-header justify-content-start align-self-center">Validation Rules Report</h2>
+  <h2 class="vp-body-header justify-content-start align-self-center">Validation Rules Report</h2>
+</div>
+
+<div class="row">
+  <p>The following set of validation rules are currently active in EDVP.</p>
 </div>
 
 <div class="row" id="requestedReportContent">
-    <table class="table table-bordered" id="reportsTable" role="grid">
-        <caption class="hidden">Click header to sort by Ruleset, Id, or Message</caption>
-    </table>
+  <table class="table table-bordered" id="reportsTable" role="grid">
+    <caption class="hidden">Click header to sort by Ruleset, Id, or Message</caption>
+  </table>
 </div>
 
 @section scripts {
-    <script type="text/javascript">
+  <script type="text/javascript">
         $(function() {
-
             var dataTable = $('#reportsTable').DataTable({
                 paging: true,
                 pagingType: 'full_numbers',
@@ -51,18 +54,22 @@
                     },
                     {
                         title: 'Rule ID',
-                        data: 'id',
+                        data: 'id'
+                    },
+                    {
+                      title: 'Validation Type',
+                      data: 'validationType'
                     },
                     {
                         title: 'Message',
-                        data: 'message',
+                        data: 'message'
                     }
                 ]
             });
 
             $(dataTable.table().header()).addClass('table-primary');
         });
-    </script>
+  </script>
 
 }
 
