@@ -232,14 +232,6 @@ rule 10.10.6563
 	expect count({StudentDemographic} when {StudentDemographic}.[HomePrimaryLanguage] <> '011') > 0 
 	else '143. This message warns that all students at the requested level (district,school,grade) are identified with a Home Language of English (011).  Verify that no students have some other Home Language.'	
 
-rule 30.10.6539
-	when collection is EOY_Enrollment_And_Demographic 
-	and {SchoolCalendar}.[SchoolTitle1Code] = 'B' 
-	and {SchoolGrade}.[SchoolNumber] <> '000' 
-	and {SchoolGrade}.[SchoolGradeLevel] <> 'PS' then 
-	require count({StudentEnrollment} by [SchoolNumber] when {StudentEnrollment}.[Title1Indicator] = 1) > 0
-	else '212. The student\'s Targeted Student Indicator is inconsistent with the Title I School Indicator.   When the Title I School Indicator is A, all students within the school must be reported with Targeted Student Indicator = N.   When the Title I School Indicator is C, all students within the school must be reported with Targeted Student Indicator = Y.    When the Title 1 School Indicator is B, at least one student within the school must be reported with Targeted Student Indicator = Y.'
-
 rule 30.10.6540
 	when collection is EOY_Enrollment_And_Demographic 
 	and count({StudentDemographic} when {StudentDemographic}.[Gender] is in ['Male', 'Female'] ) > 0
@@ -651,16 +643,6 @@ rule 30.10.6363
 	and {StudentEnrollment}.[StudentGradeLevel] is not in ['PS', 'EC', 'HK'] then
 	require that {StudentEnrollment}.[Membership] <= {StudentEnrollment}.[LengthOfYearInHours]
 	else '12. Membership Days (hours) cannot exceed the number of Instructional Days in Session provided in the school file in the grade in which the student was reported.  Also check the Instructional Days in Session in the school file.'
-
-
-rule 30.10.6381
-	when collection is EOY_Enrollment_And_Demographic
-	and {StudentEnrollment}.[SchoolClassification] is in ['41','42']
-	and {SchoolCalendar}.[LengthOfYearInHours] = '0'
-	and {StudentEnrollment}.[StateAidCategory] <> '46'
-	and {StudentEnrollment}.[StudentGradeLevel] <> 'PS' then
-	require that {StudentEnrollment}.[IndependentStudyIndicator] = '1'
-	else '287. Independent Study Flag is set to N but Instructional Days = 0 or Length of Day = 0'	
 
 rule 30.10.6384
 	when collection is EOY_Enrollment_And_Demographic
