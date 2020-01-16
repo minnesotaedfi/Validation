@@ -18,4 +18,7 @@ collection McccValidationCollection includes
   McccCourseRuleSet,
   McccSchoolRuleSet,
   McccStudentRuleSet
+  
+collection ExamReimbursementRequestCollection includes
+  ExamReimbursementRequestRuleSet
 
