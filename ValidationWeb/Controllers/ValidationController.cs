@@ -264,6 +264,8 @@ namespace ValidationWeb.Controllers
                 throw new InvalidOperationException(strMessage);
             }
 
+            _rulesEngineService.DeleteOldValidationRuns(submissionCycle);
+
             // TODO: Validate the user's access to district, action, school year
             // todo: all security
 

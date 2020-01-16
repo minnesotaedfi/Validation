@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+
 using Engine.Models;
+
 using ValidationWeb.Models;
 
 namespace ValidationWeb.Services.Interfaces
@@ -14,5 +16,7 @@ namespace ValidationWeb.Services.Interfaces
         void RunValidation(SubmissionCycle submissionCycle, long ruleValidationId);
 
         Task RunValidationAsync(SubmissionCycle submissionCycle, long ruleValidationId);
+
+        void DeleteOldValidationRuns(SubmissionCycle submissionCycle); 
     }
 }

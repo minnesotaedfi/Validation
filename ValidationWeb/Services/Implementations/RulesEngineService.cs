@@ -20,24 +20,6 @@ namespace ValidationWeb.Services.Implementations
 {
     public class RulesEngineService : IRulesEngineService
     {
-        protected readonly IRulesEngineConfigurationValues EngineConfig;
-
-        protected readonly Model EngineObjectModel;
-
-        protected readonly IAppUserService AppUserService;
-
-        protected readonly IEdOrgService EdOrgService;
-
-        protected readonly ISchoolYearService SchoolYearService;
-
-        protected readonly ILoggingService LoggingService;
-
-        public readonly IDbContextFactory<ValidationPortalDbContext> DbContextFactory;
-
-        public readonly ISchoolYearDbContextFactory OdsDbContextFactory;
-
-        private readonly IManualRuleExecutionService ManualRuleExecutionService;
-
         public RulesEngineService(
             IAppUserService appUserService,
             IEdOrgService edOrgService,
@@ -47,8 +29,7 @@ namespace ValidationWeb.Services.Implementations
             IDbContextFactory<ValidationPortalDbContext> dbContextFactory,
             ISchoolYearDbContextFactory odsDbContextFactory,
             Model engineObjectModel,
-            IManualRuleExecutionService manualRuleExecutionService
-            )
+            IManualRuleExecutionService manualRuleExecutionService)
         {
             AppUserService = appUserService;
             EdOrgService = edOrgService;
@@ -60,6 +41,16 @@ namespace ValidationWeb.Services.Implementations
             EngineObjectModel = engineObjectModel;
             ManualRuleExecutionService = manualRuleExecutionService;
         }
+
+        private IRulesEngineConfigurationValues EngineConfig { get; }
+        private Model EngineObjectModel { get; }
+        private IAppUserService AppUserService { get; }
+        private IEdOrgService EdOrgService { get; }
+        private ISchoolYearService SchoolYearService { get; }
+        private ILoggingService LoggingService { get; }
+        private IDbContextFactory<ValidationPortalDbContext> DbContextFactory { get; }
+        private ISchoolYearDbContextFactory OdsDbContextFactory { get; }
+        private IManualRuleExecutionService ManualRuleExecutionService { get; }
 
         public ValidationReportSummary SetupValidationRun(SubmissionCycle submissionCycle, string collectionId)
         {
@@ -145,6 +136,47 @@ namespace ValidationWeb.Services.Implementations
                             LoggingService.LogErrorMessage(task.Exception.Flatten().ChainInnerExceptionMessages());
                         }
                     });
+        }
+
+        public void DeleteOldValidationRuns(SubmissionCycle submissionCycle)
+        {
+            if (submissionCycle?.SchoolYearId == null)
+            {
+                throw new ArgumentException("Submission cycle is null, or SchoolYearId is null", nameof(submissionCycle));
+            }
+
+            using (var validationDbContext = DbContextFactory.Create())
+            {
+                var reportSummaries = validationDbContext.ValidationReportSummaries
+                    .Where(x => 
+                        x.Collection == submissionCycle.CollectionId && 
+                        x.SchoolYearId == submissionCycle.SchoolYearId)
+                    .OrderByDescending(x => x.RequestedWhen)
+                    .Skip(1);
+
+                foreach (var reportSummary in reportSummaries)
+                {
+                    var reportDetails = validationDbContext.ValidationReportDetails
+                        .Where(x => x.ValidationReportSummaryId == reportSummary.ValidationReportSummaryId);
+
+                    validationDbContext.ValidationReportDetails.RemoveRange(reportDetails);
+                    validationDbContext.ValidationReportSummaries.Remove(reportSummary);
+
+                    var schoolYear = SchoolYearService.GetSchoolYearById(reportSummary.SchoolYearId);
+                    string fourDigitOdsDbYear = schoolYear.EndYear;
+
+                    using (var odsRawDbContext = OdsDbContextFactory.CreateWithParameter(fourDigitOdsDbYear))
+                    {
+                        var ruleValidations = odsRawDbContext.RuleValidations.Where(
+                            x => x.RuleValidationId == reportSummary.RuleValidationId);
+                        
+                        odsRawDbContext.RuleValidations.RemoveRange(ruleValidations);
+                        odsRawDbContext.SaveChanges();
+                    }
+                }
+
+                validationDbContext.SaveChanges();
+            }
         }
 
         public void RunValidation(SubmissionCycle submissionCycle, long ruleValidationId)
