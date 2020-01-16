@@ -149,4 +149,27 @@ rule 30.10.6448
 	and {StudentEnrollment}.[StateAidCategory] is not in ['14', '16', '17', '18', '28', '52'] then
 	expect count({MultipleEnrollment} when {MultipleEnrollment}.[StatusEndRight] is not in ['4','12','20','24','99'] and {MultipleEnrollment}.[EnrollmentSequenceRight] = max({MultipleEnrollment}.[EnrollmentSequenceRight])) >= 1
 	else '406. This student has a status end code that would indicate a later enrollment record should exist, but one was not found in this district or anywhere in the state for this fiscal year. Check the status end code and if correct, confirm the student is being reported as enrolled in another school or district.'	
+
+
+/*  Mixing school and student components
+rule 30.10.6381
+	when collection is EOY_Enrollment_And_Demographic
+	and {StudentEnrollment}.[SchoolClassification] is in ['41','42']
+	and {SchoolCalendar}.[LengthOfYearInHours] = '0'
+	and {StudentEnrollment}.[StateAidCategory] <> '46'
+	and {StudentEnrollment}.[StudentGradeLevel] <> 'PS' then
+	require that {StudentEnrollment}.[IndependentStudyIndicator] = '1'
+	else '287. Independent Study Flag is set to N but Instructional Days = 0 or Length of Day = 0'	
+*/
+
+/* Mixing school and student components
+rule 30.10.6539
+	when collection is EOY_Enrollment_And_Demographic 
+	and {SchoolCalendar}.[SchoolTitle1Code] = 'B' 
+	and {SchoolGrade}.[SchoolNumber] <> '000' 
+	and {SchoolGrade}.[SchoolGradeLevel] <> 'PS' then 
+	require count({StudentEnrollment} by [SchoolNumber] when {StudentEnrollment}.[Title1Indicator] = 1) > 0
+	else '212. The student\'s Targeted Student Indicator is inconsistent with the Title I School Indicator.   When the Title I School Indicator is A, all students within the school must be reported with Targeted Student Indicator = N.   When the Title I School Indicator is C, all students within the school must be reported with Targeted Student Indicator = Y.    When the Title 1 School Indicator is B, at least one student within the school must be reported with Targeted Student Indicator = Y.'
+*/
+
 */
