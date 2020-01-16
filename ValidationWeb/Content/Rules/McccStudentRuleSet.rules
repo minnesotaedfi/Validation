@@ -3,22 +3,22 @@ ruleset McccStudentRuleSet
 rule 50.02.0001
 	when {MCCC_StudentSectionAssociation}.[SectionEnrollmentType] = 'ALC_IND_STUDY' then
 	require that {MCCC_StudentSectionAssociation}.[IndependentStudyIndicator] = 1
-	else 'Error on: Section with Enrollment Type of AI and without Course Level Characteristic IS. The entity ID returned is a student.'
+	else 'This Student is associated with a Section with Enrollment Type of AI.  The Course offered in this section is missing the Independent Study Course Level Characteristic Indicator.'
 
 rule 50.02.0002
 	when {MCCC_StudentSectionAssociation}.[SectionEnrollmentType] = 'PROJECT_BASED' then
 	require that {MCCC_StudentSectionAssociation}.[ProjectBasedLearningIndicator] = 1
-	else 'Error on: Section with Enrollment Type of PB and without Course Level Characteristic PLB. The entity ID returned is a student.'
+	else 'This Student is associated with a Section with Enrollment Type of PB. The Course offered in this section is missing the Project Based Learning Course Level Characteristic Indicator.'
 	
 rule 50.02.0003
 	when {MCCC_StudentSectionAssociation}.[AcademicSubject] exists then
 	require that {MCCC_CourseGrades}.[StateCourseMultipleMarksIndicator] = 1
-	else 'Error on: Grade Academic Subject exists when State Course no Multiple Marks indicator. The entity ID returned is a student.'
+	else 'This Student has a Grade/Mark submitted with for an Academic Subject Area. The associated State course has no Multiple Marks indicator. Academic Subject Area should be removed from the reported grade.'
 	
 rule 50.02.0004
 	when {MCCC_CourseGrades}.[StateCourseMultipleMarksIndicator] = 1 and {MCCC_CourseGrades}.[GradesReported] > 1 then
 	require that {MCCC_CourseGrades}.[GradeAcademicSubject] exists
-	else 'Error on: District Course for a State Course with Multiple Marks = true and more than 1 Grade is reported and Academic Subject for Grade is not set. The entity ID returned is a student.'
+	else 'This Student has more than 1 Grade/Mark reported where Academic Subject for the Grade is not set, and the local course is a Multiple Marks course. Academic Subject Area is required.'
 	
 rule 50.02.0005
 	when {MCCC_CourseGrades}.[StateCourseMultipleMarksIndicator] = 1 
@@ -27,7 +27,7 @@ rule 50.02.0005
 		and {MCCC_CourseGrades}.[GradesReported] > 1 then
 	require that {MCCC_CourseGrades}.[GradeAcademicSubject] = '01'
 		or {MCCC_CourseGrades}.[GradeAcademicSubject] = '04'
-	else 'Error on: District Courses with Grade Levels 9-12 for State Courses 01055 and 01057 with Multiple Marks = true and more than one Student Section Grade reported, the Student Section Grade Academic Subject is not 01 or 04. The entity ID returned is a student.'
+	else 'This Student is enrolled in a District Course for Grade Levels 9-12 associated to State Course Classifications 01055 or 01057 with Multiple Marks = true, and more than one Student Section Grade has been reported. The Grade Academic Subject is missing or is not 01 or 04.'
 	
 rule 50.02.0006
 	when {MCCC_CourseGrades}.[StateCourseMultipleMarksIndicator] = 1 
@@ -36,22 +36,22 @@ rule 50.02.0006
 		and {MCCC_CourseGrades}.[GradesReported] > 1 then
 	require that {MCCC_CourseGrades}.[GradeAcademicSubject] = '01'
 		or {MCCC_CourseGrades}.[GradeAcademicSubject] = '02'
-	else 'Error on: District Course with Grade Levels K-8 for State Course with Multiple Marks = true and more than one Student Section Grade reported, Grade Academic Subject is not language arts (1) or mathematics (2). The entity ID returned is a student.'
+	else 'This Student is enrolled in a District Course for Grade Levels K-8 associated with a State Course with Multiple Marks = true. More than one Student Section Grade is reported but the Grade's Academic Subject Area is not language arts (1) or mathematics (2).'
 	
 rule 50.02.0007
 	when {MCCC_CourseGrades}.[SectionMarkingIndicator] = 1 then
 	require that {MCCC_CourseGrades}.[GradesReported] > 0
-	else 'Error on: Student with Section Marking Indicator = true and without a Section Grade. The entity ID returned is a student.'
+	else 'Student with Section Marking Indicator = true and without a Section Grade/Mark.'
 	
 rule 50.02.0008
 	when {MCCC_CourseGrades}.[GradesReported] > 0 then
 	require that {MCCC_CourseGrades}.[SectionMarkingIndicator] = 1 
-	else 'Error on: Student Grade Reported with Section Marking Indicator = false. The entity ID returned is a student.'
+	else 'Student Grade/Mark Reported with Section Marking Indicator = false.'
 	
 rule 50.02.0009
 	when {MCCC_CourseGrades}.[CollegeCreditEarned] exists then
 	require that {MCCC_CourseGrades}.[DistrictCourseLevelType] is in ['D','X']
-	else 'Error on: Section Grade with College Credit Earned for Local Course without Course Level Type of D or X. The entity ID returned is a student.'
+	else 'Student with Section Grade/Mark with College Credit Earned for Local Course without Course Level Type of D or X.'
 
 
 	
