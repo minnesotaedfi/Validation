@@ -150,32 +150,35 @@ namespace ValidationWeb.Services.Implementations
                 var reportSummaries = validationDbContext.ValidationReportSummaries
                     .Where(x => 
                         x.Collection == submissionCycle.CollectionId && 
-                        x.SchoolYearId == submissionCycle.SchoolYearId)
-                    .OrderByDescending(x => x.RequestedWhen)
-                    .Skip(1);
+                        x.SchoolYearId == submissionCycle.SchoolYearId);
 
-                foreach (var reportSummary in reportSummaries)
+                if (reportSummaries.Count() > 1)
                 {
-                    var reportDetails = validationDbContext.ValidationReportDetails
-                        .Where(x => x.ValidationReportSummaryId == reportSummary.ValidationReportSummaryId);
+                    reportSummaries = reportSummaries.OrderByDescending(x => x.RequestedWhen).Skip(1);
 
-                    validationDbContext.ValidationReportDetails.RemoveRange(reportDetails);
-                    validationDbContext.ValidationReportSummaries.Remove(reportSummary);
-
-                    var schoolYear = SchoolYearService.GetSchoolYearById(reportSummary.SchoolYearId);
-                    string fourDigitOdsDbYear = schoolYear.EndYear;
-
-                    using (var odsRawDbContext = OdsDbContextFactory.CreateWithParameter(fourDigitOdsDbYear))
+                    foreach (var reportSummary in reportSummaries)
                     {
-                        var ruleValidations = odsRawDbContext.RuleValidations.Where(
-                            x => x.RuleValidationId == reportSummary.RuleValidationId);
-                        
-                        odsRawDbContext.RuleValidations.RemoveRange(ruleValidations);
-                        odsRawDbContext.SaveChanges();
-                    }
-                }
+                        var reportDetails = validationDbContext.ValidationReportDetails.Where(
+                            x => x.ValidationReportSummaryId == reportSummary.ValidationReportSummaryId);
 
-                validationDbContext.SaveChanges();
+                        validationDbContext.ValidationReportDetails.RemoveRange(reportDetails);
+                        validationDbContext.ValidationReportSummaries.Remove(reportSummary);
+
+                        var schoolYear = SchoolYearService.GetSchoolYearById(reportSummary.SchoolYearId);
+                        string fourDigitOdsDbYear = schoolYear.EndYear;
+
+                        using (var odsRawDbContext = OdsDbContextFactory.CreateWithParameter(fourDigitOdsDbYear))
+                        {
+                            var ruleValidations = odsRawDbContext.RuleValidations.Where(
+                                x => x.RuleValidationId == reportSummary.RuleValidationId);
+
+                            odsRawDbContext.RuleValidations.RemoveRange(ruleValidations);
+                            odsRawDbContext.SaveChanges();
+                        }
+                    }
+
+                    validationDbContext.SaveChanges();
+                }
             }
         }
 
