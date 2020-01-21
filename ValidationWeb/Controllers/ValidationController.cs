@@ -264,7 +264,10 @@ namespace ValidationWeb.Controllers
                 throw new InvalidOperationException(strMessage);
             }
 
-            _rulesEngineService.DeleteOldValidationRuns(submissionCycle);
+            var session = _appUserService.GetSession();
+            var edOrg = _edOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
+
+            _rulesEngineService.DeleteOldValidationRuns(submissionCycle, edOrg.Id);
 
             // TODO: Validate the user's access to district, action, school year
             // todo: all security

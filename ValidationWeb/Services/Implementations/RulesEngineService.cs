@@ -138,7 +138,7 @@ namespace ValidationWeb.Services.Implementations
                     });
         }
 
-        public void DeleteOldValidationRuns(SubmissionCycle submissionCycle)
+        public void DeleteOldValidationRuns(SubmissionCycle submissionCycle, int edOrgId)
         {
             if (submissionCycle?.SchoolYearId == null)
             {
@@ -150,7 +150,8 @@ namespace ValidationWeb.Services.Implementations
                 var reportSummaries = validationDbContext.ValidationReportSummaries
                     .Where(x => 
                         x.Collection == submissionCycle.CollectionId && 
-                        x.SchoolYearId == submissionCycle.SchoolYearId);
+                        x.SchoolYearId == submissionCycle.SchoolYearId && 
+                        x.EdOrgId == edOrgId);
 
                 if (reportSummaries.Count() > 1)
                 {
