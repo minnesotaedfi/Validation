@@ -1,0 +1,18 @@
+ruleset EarlyEdStudentRuleSet
+
+rule 52.01.0001
+	when {StudentEnrollment}.[StudentGradeLevel] is in ['RA','RB','RC','RD','RE','RF','RG','RH','RI','RJ'] then
+	require that years since {StudentEnrollment}.[BirthDate] as of 1-September = 3
+	or years since {StudentEnrollment}.[BirthDate] as of 1-September = 4
+	else 'Error on: StudentSchoolAssociation with EntryGradeLevel in "School Readiness" (RA,RB,RC,RD,RE,RF,RG,RH,RI.RJ) and Student Age as of Sept-1st is not 3 or 4.'
+
+rule 52.01.0002
+	when {StudentEnrollment}.[StatusEnd] is in ['67','68','69','70'] then
+	require that {StudentEnrollment}.[StudentGradeLevel] is in ['SR','ECFE']
+	else 'Error on: StudentSchoolAssociation with ExitWithdrawType in (67,68,69,70) and EntryGradeLevel not in (SR,ECFE)'
+	
+rule 52.01.0003
+	when {StudentEnrollment}.[StatusEnd] = '71' then
+	require that {StudentEnrollment}.[StudentGradeLevel] = 'ECFE'
+	else 'Error on: StudentSchoolAssociation with ExitWithdrawType is 71 and EntryGradeLevel is not ECFE'
+
