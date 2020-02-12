@@ -36,7 +36,7 @@ rule 10.10.6215
 	and {StudentEnrollment}.[DistrictNumber] <> '0347' 
 	and {StudentEnrollment}.[SchoolNumber] is not in ['931','941'] then
 	require {StudentEnrollment}.[StatusBeginDate] > first Monday in September
-	else '64. Status Start Date cannot be before the state-wide start date (specified by statute) for regular schools for students in grades K-12.  (This edit excludes students enrolled in Area Learning Centers and other state-approved alternative program sites, summer graduates, summer dropouts and other summer leavers, SAC 46 (ESY) students, and early childhood and kindergarten disabled students.'
+	else '64. Status Start Date cannot be before the state-wide start date (specified by statute) for regular schools for students in grades K-12.  (This edit excludes students enrolled in Area Learning Centers and other state-approved alternative program sites, summer graduates, summer dropouts and other summer leavers, SAC 46 (ESY) students, and early childhood, student readiness, and kindergarten disabled students.'
 
 rule 10.10.6221
 	when {StudentEnrollment}.[StudentGradeLevel] = 'HK' then
@@ -123,7 +123,7 @@ rule 10.10.6436
 		'SA','SB','SC','SD','SE','SF','SG','SH','SI','SJ'
 		] then
 	require that {StudentEnrollment}.[SchoolClassification] is not in ['41','42','43','45','50','51']
-	else '395. Grades PA - PJ and RA - RJ cannot be reported in school classifcations 41, 42, 43, 45, 50 or 51. Check student grade level and school'
+	else '395. Grades FA - FJ, PA - PJ, RA - RJ, SA - SJ cannot be reported in school classifications 41, 42, 43, 45, 50 or 51. Check student grade level and school'
 
 rule 10.10.6437 
 	when {StudentEnrollment}.[StudentGradeLevel] is in [
@@ -133,7 +133,7 @@ rule 10.10.6437
 		'SA','SB','SC','SD','SE','SF','SG','SH','SI','SJ'
 		] then
 	require that {StudentEnrollment}.[SpecialEducationEvaluationStatus] is not in ['3','4','5','6','8','9']
-	else '396. Grades PA - PJ and RA - RJ cannot be reported with special education status 3, 4, 5, 6, 8 or 9. Check student grade level and Special Education Evaluation Status.'
+	else '396. Grades FA - FJ, PA - PJ, RA - RJ, SA - SJ cannot be reported with special education status 3, 4, 5, 6, 8 or 9. Check student grade level and Special Education Evaluation Status.'
 
 rule 10.10.6444 
 	when {StudentEnrollment}.[StudentGradeLevel] is in [
@@ -143,7 +143,7 @@ rule 10.10.6444
 		'SA','SB','SC','SD','SE','SF','SG','SH','SI','SJ'
 		] then
 	require that {StudentEnrollment}.[DistrictType] is in ['1','3','7']
-	else '403. Grades PA-PJ and RA-RJ can only be reported with District Type 01, 03, 07. Check student grade level.'
+	else '403. Grades FA - FJ, PA - PJ, RA - RJ, SA - SJ can only be reported with District Type 01, 03, 07. Check student grade level.'
 
 rule 10.10.6463 
 	when {StudentEnrollment}.[DistrictNumber] = '0347'
@@ -520,7 +520,7 @@ rule 10.10.6266
 		'SA','SB','SC','SD','SE','SF','SG','SH','SI','SJ'
 		] then
 	require that {StudentEnrollment}.[StateAidCategory] is not in ['51','52']
-	else '315. Grade levels PS, PA-PJ, RA-RJ and EC are not valid for students reported with SAC 51 or 52.'
+	else '315. Grade levels FA-FJ, PS, PA-PJ, RA-RJ, SA-SJ and EC are not valid for students reported with SAC 51 or 52.'
 	
 rule 10.10.62671
 	when {StudentEnrollment}.[StateAidCategory] is in ['51','52'] then

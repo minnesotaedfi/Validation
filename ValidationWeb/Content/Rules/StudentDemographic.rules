@@ -323,7 +323,7 @@ rule 10.10.6601
 		'EC','PS',
 		'FA','FB','FC','FD','FE','FF','FG','FH','FI','FJ',
 		'PA','PB','PC','PD','PE','PF','PG','PH','PI','PJ',
-		'RA','RB','RC','RD','RE','RF','RG','RH','RI','RJ'
+		'SA','SB','SC','SD','SE','SF','SG','SH','SI','SJ'
 		] then
 	require years since {StudentDemographic}.[BirthDate] as of 1-September > 3
-	else '231. This error indicates the student\'s September 1 age is 3 or less, but the student is not enrolled as grade EC (Early Childhood). Check the student\'s grade or date of birth.'
+	else '231. This error indicates the student\'s September 1 age is 3 or less, but the student is not enrolled as grade EC (Early Childhood), FA-FJ (Early Childhood Family Education), SA-SJ (School Readiness). Check the student\'s grade or date of birth.'

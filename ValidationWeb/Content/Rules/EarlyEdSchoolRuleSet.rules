@@ -10,6 +10,6 @@ rule 52.02.0001
 		'RA','RB','RC','RD','RE','RF','RG','RH','RI','RJ',
 		'SA','SB','SC','SD','SE','SF','SG','SH','SI','SJ'
 		]
-	else 'Error on: Calendar KindergartenSchedule In (P,Q,R) and Calendar GradeLevel Not In (EC, PA-PJ, PS, RA-RJ, SA-SJ, FA-FJ)'
+	else 'School calendar schedules of types P, Q, and R can only be associated with grade levels (EC, PA-PJ, PS, RA-RJ, SA-SJ, FA-FJ).'
 
 
