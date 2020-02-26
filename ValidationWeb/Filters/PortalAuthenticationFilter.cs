@@ -42,7 +42,7 @@ namespace ValidationWeb.Filters
         /// </summary>
         private static string _appId;
 
-        private static string _unauthorizedUrl; 
+        private static string _unauthorizedUrl;
 
         /// <summary>
         /// Name of the ASP.NET/OWIN-provided Session object within the HttpContext
@@ -360,30 +360,21 @@ namespace ValidationWeb.Filters
                     try
                     {
                         _loggingService.LogDebugMessage(
-                            $"User: {authHeaderValue}, Ed Organization ID: {ssoUserOrg?.StateOrganizationId ?? "null"}.");
+                            $"*** User: {authHeaderValue}, Ed Organization ID: {ssoUserOrg?.DistrictNumber}.");
 
-                        if (!ssoUserOrg.StateOrganizationId.Equals("ALL", StringComparison.InvariantCultureIgnoreCase))
+                        if (ssoUserOrg != null && !ssoUserOrg.StateOrganizationId.Equals("ALL", StringComparison.InvariantCultureIgnoreCase))
                         {
-                            int authorizedEdOrgId;
-                            if (int.TryParse(ssoUserOrg.StateOrganizationId/*.Substring(0, 8)*/, out authorizedEdOrgId))
+                            var edOrg = (int)(ssoUserOrg?.DistrictNumber.Value);
+                            _loggingService.LogDebugMessage(
+                                $"User: {authHeaderValue}, EdOrg: '{edOrg}'. Taking information from the ODS associated with school year ID number {schoolYearId.ToString()}.");
+                            try
                             {
-
-                                _loggingService.LogDebugMessage(
-                                    $"User: {authHeaderValue}, Taking information from the ODS associated with school year ID number {schoolYearId.ToString()}.");
-                                try
-                                {
-                                    authorizedEdOrgs.Add(_edOrgService.GetEdOrgById(authorizedEdOrgId, schoolYearId));
-                                }
-                                catch (Exception ex)
-                                {
-                                    _loggingService.LogErrorMessage(
-                                        $"When retrieving the information for Organization ID {authorizedEdOrgId} from the ODS associated with school year ID {schoolYearId} for user {authHeaderValue}, an error occurred: {ex.ChainInnerExceptionMessages()}");
-                                }
+                                authorizedEdOrgs.Add(_edOrgService.GetEdOrgById(edOrg, schoolYearId));
                             }
-                            else
+                            catch (Exception ex)
                             {
-                                _loggingService.LogWarningMessage(
-                                    $"Could not look up Ed Organization Id {ssoUserOrg.StateOrganizationId}");
+                                _loggingService.LogErrorMessage(
+                                    $"When retrieving the information for Organization ID {edOrg} from the ODS associated with school year ID {schoolYearId} for user {authHeaderValue}, an error occurred: {ex.ChainInnerExceptionMessages()}");
                             }
                         }
                     }

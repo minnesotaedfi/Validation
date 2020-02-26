@@ -36,7 +36,7 @@ rule 50.02.0006
 		and {MCCC_CourseGrades}.[GradesReported] > 1 then
 	require that {MCCC_CourseGrades}.[GradeAcademicSubject] = '01'
 		or {MCCC_CourseGrades}.[GradeAcademicSubject] = '02'
-	else 'This Student is enrolled in a District Course for Grade Levels K-8 associated with a State Course with Multiple Marks = true. More than one Student Section Grade is reported but the Grade's Academic Subject Area is not language arts (1) or mathematics (2).'
+	else 'This Student is enrolled in a District Course for Grade Levels K-8 associated with a State Course with Multiple Marks = true. More than one Student Section Grade is reported but the Grade\'s Academic Subject Area is not language arts (1) or mathematics (2).'
 	
 rule 50.02.0007
 	when {MCCC_CourseGrades}.[SectionMarkingIndicator] = 1 then

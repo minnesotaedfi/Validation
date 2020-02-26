@@ -17,6 +17,6 @@ namespace ValidationWeb.Services.Interfaces
 
         Task RunValidationAsync(SubmissionCycle submissionCycle, long ruleValidationId);
 
-        void DeleteOldValidationRuns(SubmissionCycle submissionCycle); 
+        void DeleteOldValidationRuns(SubmissionCycle submissionCycle, int edOrgId); 
     }
 }

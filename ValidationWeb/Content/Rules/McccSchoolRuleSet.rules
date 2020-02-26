@@ -27,7 +27,7 @@ rule 50.03.0005
 rule 50.03.0006
 	when {MCCC_CourseOffering}.[CourseCode] < '81000' then
 	require that {MCCC_CourseOffering}.[SequenceOfCourse] exists
-	else 'This school includes a Section and CourseOffering for a District Course associated to State Course Code less than 81000, and the Section Sequence of Couse is missing.'
+	else 'This school includes a Section and CourseOffering for a District Course associated to State Course Code less than 81000, and the Section Sequence of Course is missing.'
 
 rule 50.03.0007
 	when {MCCC_CourseOffering}.[CourseCode] < '81000' then

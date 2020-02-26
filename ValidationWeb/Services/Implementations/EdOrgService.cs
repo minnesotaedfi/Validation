@@ -64,6 +64,8 @@ namespace ValidationWeb.Services.Implementations
 
         public EdOrg GetEdOrgById(int edOrgId, int schoolYearId)
         {
+            LoggingService.LogDebugMessage($"GetEdOrgById: '{edOrgId}', year {schoolYearId}");
+
             using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
             {
                 var schoolYear = SchoolYearService.GetSchoolYearById(schoolYearId);
