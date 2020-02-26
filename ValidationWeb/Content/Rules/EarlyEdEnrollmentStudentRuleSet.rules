@@ -19,7 +19,7 @@ rule 52.01.0003
 rule 52.10.6601
 	when {StudentEnrollment}.[StudentGradeLevel] is not in [
 		'EC','EE','PS',
-		'PA','PB','PC','PD','PE','PF','PG','PH','PI','PJ',
+		'PA','PB','PC','PD','PE','PF','PG','PH','PI','PJ'
 		] then
 	require years since {StudentDemographic}.[BirthDate] as of 1-September > 3
 	else '231. This error indicates the student\'s September 1 age is 3 or less, but the student is not enrolled as grade EC (Early Childhood) and EE (Early Education). Check the student\'s grade or date of birth.'
