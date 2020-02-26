@@ -34,38 +34,22 @@ rule 52.10.6215
 	else '64. Status Start Date cannot be before the state-wide start date (specified by statute) for regular schools for students in grades K-12.  (This edit excludes students enrolled in Area Learning Centers and other state-approved alternative program sites, summer graduates, summer dropouts and other summer leavers, SAC 46 (ESY) students, and early childhood, early education, and kindergarten disabled students.'
 	
 rule 52.10.6436 
-	when {StudentEnrollment}.[StudentGradeLevel] is in [
-		'EE',
-		'PA','PB','PC','PD','PE','PF','PG','PH','PI','PJ',
-		'RA','RB','RC','RD','RE','RF','RG','RH','RI','RJ'
-		] then
+	when {StudentEnrollment}.[StudentGradeLevel] = 'EE' then
 	require that {StudentEnrollment}.[SchoolClassification] is not in ['41','42','43','45','50','51']
-	else '395. Grades EE, PA - PJ, RA - RJ cannot be reported in school classifications 41, 42, 43, 45, 50 or 51. Check student grade level and school'
+	else '395. Grades EE cannot be reported in school classifications 41, 42, 43, 45, 50 or 51. Check student grade level and school'
 	
 rule 52.10.6437 
-	when {StudentEnrollment}.[StudentGradeLevel] is in [
-		'EE',
-		'PA','PB','PC','PD','PE','PF','PG','PH','PI','PJ',
-		'RA','RB','RC','RD','RE','RF','RG','RH','RI','RJ'
-		] then
+	when {StudentEnrollment}.[StudentGradeLevel] = 'EE' then
 	require that {StudentEnrollment}.[SpecialEducationEvaluationStatus] is not in ['3','4','5','6','8','9']
-	else '396. Grades EE, PA - PJ, RA - RJ cannot be reported with special education status 3, 4, 5, 6, 8 or 9. Check student grade level and Special Education Evaluation Status.'
+	else '396. Grades EE cannot be reported with special education status 3, 4, 5, 6, 8 or 9. Check student grade level and Special Education Evaluation Status.'
 	
 rule 52.10.6444 
-	when {StudentEnrollment}.[StudentGradeLevel] is in [
-		'EE',
-		'PA','PB','PC','PD','PE','PF','PG','PH','PI','PJ',
-		'RA','RB','RC','RD','RE','RF','RG','RH','RI','RJ'
-		] then
+	when {StudentEnrollment}.[StudentGradeLevel] = 'EE' then
 	require that {StudentEnrollment}.[DistrictType] is in ['1','3','7']
-	else '403. Grades EE, PA - PJ, RA - RJ can only be reported with District Type 01, 03, 07. Check student grade level.'
+	else '403. Grades EE can only be reported with District Type 01, 03, 07. Check student grade level.'
 	
 rule 52.10.6266
-	when {StudentEnrollment}.[StudentGradeLevel] is in [
-		'EC','PS','EE',
-		'PA','PB','PC','PD','PE','PF','PG','PH','PI','PJ',
-		'RA','RB','RC','RD','RE','RF','RG','RH','RI','RJ'
-		] then
+	when {StudentEnrollment}.[StudentGradeLevel] = 'EE' then
 	require that {StudentEnrollment}.[StateAidCategory] is not in ['51','52']
-	else '315. Grade levels EE, PS, PA-PJ, RA-RJ and EC are not valid for students reported with SAC 51 or 52.'
+	else '315. Grade levels EE are not valid for students reported with SAC 51 or 52.'
 
