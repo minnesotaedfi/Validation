@@ -1,5 +1,5 @@
 collection Fall_Enrollment_And_Demographic includes 
-  StudentDemographic, 
+  StudentDemographic,
   StudentEnrollment
   
 collection Fall_SchoolGrade_Calendar includes 
@@ -10,9 +10,15 @@ collection EOY_Enrollment_And_Demographic includes
   StudentDemographic, 
   StudentEnrollment
 
-collection EOY_SchoolGrade_Calendar includes 
+collection EOY_SchoolGrade_Calendar includes
   SchoolCalendar,
   SchoolGrade
+  
+collection EOY_EDFI_31_Non_MARSS includes 
+  StudentAncestryEthnicOrigin
+  
+collection Fall_EDFI_31_Non_MARSS includes 
+  StudentAncestryEthnicOrigin  
   
 collection McccValidationCollection includes
   McccCourseRuleSet,
