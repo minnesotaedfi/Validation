@@ -1,0 +1,55 @@
+ruleset EarlyEdEnrollmentStudentRuleSet
+
+rule 52.01.0001
+	when {StudentEnrollment}.[StudentGradeLevel] = 'EE' then
+	require that years since {StudentEnrollment}.[BirthDate] as of 1-September = 3
+	or years since {StudentEnrollment}.[BirthDate] as of 1-September = 4
+	else 'Students grade level is EE must be 3 or 4 years old as of September 1st of the current school year.'
+
+rule 52.01.0002
+	when {StudentEnrollment}.[StatusEnd] is in ['67','68','69','70'] then
+	require that {StudentEnrollment}.[StudentGradeLevel] = 'EE'
+	else 'Students with enrollment Exit Withdraw Type of 67-Student withdrawn by parent, expected back next section, 68-Student withdrawn by parent, expected back next year, 69-Student withdrawn by parent, moved to another district prenatal to prekindergarten program, or 70_Lack of transportation must be for grade level EE (Early Education).'
+	
+rule 52.01.0003
+	when {StudentEnrollment}.[StatusEnd] = '71' then
+	require that {StudentEnrollment}.[StudentGradeLevel] = 'EE'
+	else 'Students with an enrollment exit withdraw type 71-Short term course ended (ECFE only) must be for grade level EE (Early Education).'
+	
+rule 52.10.6601
+	when {StudentEnrollment}.[StudentGradeLevel] is not in [
+		'EC','EE','PS',
+		'PA','PB','PC','PD','PE','PF','PG','PH','PI','PJ'
+		] then
+	require years since {StudentDemographic}.[BirthDate] as of 1-September > 3
+	else '231. This error indicates the student\'s September 1 age is 3 or less, but the student is not enrolled as grade EC (Early Childhood) and EE (Early Education). Check the student\'s grade or date of birth.'
+
+rule 52.10.6215
+	when {StudentEnrollment}.[DistrictType] is in ['1','2','3']
+	and {StudentEnrollment}.[StudentGradeLevel] is not in ['HK','EC','EE','PS'] 
+	and {StudentEnrollment}.[StateAidCategory] is not in ['98','46'] 
+	and {StudentEnrollment}.[DistrictNumber] <> '0347' 
+	and {StudentEnrollment}.[SchoolNumber] is not in ['931','941'] then
+	require {StudentEnrollment}.[StatusBeginDate] > first Monday in September
+	else '64. Status Start Date cannot be before the state-wide start date (specified by statute) for regular schools for students in grades K-12.  (This edit excludes students enrolled in Area Learning Centers and other state-approved alternative program sites, summer graduates, summer dropouts and other summer leavers, SAC 46 (ESY) students, and early childhood, early education, and kindergarten disabled students.'
+	
+rule 52.10.6436 
+	when {StudentEnrollment}.[StudentGradeLevel] = 'EE' then
+	require that {StudentEnrollment}.[SchoolClassification] is not in ['41','42','43','45','50','51']
+	else '395. Grades EE cannot be reported in school classifications 41, 42, 43, 45, 50 or 51. Check student grade level and school'
+	
+rule 52.10.6437 
+	when {StudentEnrollment}.[StudentGradeLevel] = 'EE' then
+	require that {StudentEnrollment}.[SpecialEducationEvaluationStatus] is not in ['3','4','5','6','8','9']
+	else '396. Grades EE cannot be reported with special education status 3, 4, 5, 6, 8 or 9. Check student grade level and Special Education Evaluation Status.'
+	
+rule 52.10.6444 
+	when {StudentEnrollment}.[StudentGradeLevel] = 'EE' then
+	require that {StudentEnrollment}.[DistrictType] is in ['1','3','7']
+	else '403. Grades EE can only be reported with District Type 01, 03, 07. Check student grade level.'
+	
+rule 52.10.6266
+	when {StudentEnrollment}.[StudentGradeLevel] = 'EE' then
+	require that {StudentEnrollment}.[StateAidCategory] is not in ['51','52']
+	else '315. Grade levels EE are not valid for students reported with SAC 51 or 52.'
+

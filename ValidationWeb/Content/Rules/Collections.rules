@@ -21,4 +21,7 @@ collection McccValidationCollection includes
   
 collection ExamReimbursementRequestCollection includes
   ExamReimbursementRequestRuleSet
-
+  
+collection EarlyEdEnrollmentValidation includes
+  EarlyEdEnrollmentSchoolRuleSet,
+  EarlyEdEnrollmentStudentRuleSet
