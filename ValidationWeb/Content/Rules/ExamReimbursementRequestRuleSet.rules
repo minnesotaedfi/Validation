@@ -2,7 +2,7 @@ ruleset ExamReimbursementRequestRuleSet
 
 rule 51.01.0001
 	when {StudentExamReimbursementRequest}.[TestedDate] exists then
-	require that {StudentExamReimbursementRequest}.[TestedDate] < {StudentExamReimbursementRequest}.[CreateDate]
+	require that {StudentExamReimbursementRequest}.[TestedDate] < today
 	else 'This student has an Exam Reimbursement Request with Tested Date in the future (later than ODS original insertion date).'
 
 rule 51.01.0002
