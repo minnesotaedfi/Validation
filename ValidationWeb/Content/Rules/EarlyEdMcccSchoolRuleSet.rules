@@ -1,0 +1,39 @@
+ruleset EarlyEdMcccSchoolRuleSet
+
+rule 54.01.0001
+	when {MCCC_CourseOffering}.[CourseOfferedGradeLevel] is in [
+		'KA','KB','KC','KD','KE','KF','KG','KH','KI','KJ','KK',
+		'1','2','3','4','5','6','7','8','9','10','11','12'
+		] then
+	require that {MCCC_CourseOffering}.[InstructionalApproachIndicator] <> 1
+	else 'Error on: Course with Grade Level K-12 and Course Offering Instructional Approach item.'
+	
+rule 54.01.0002
+	when {MCCC_CourseOffering}.[CourseOfferedGradeLevel] is in [
+		'KA','KB','KC','KD','KE','KF','KG','KH','KI','KJ','KK',
+		'1','2','3','4','5','6','7','8','9','10','11','12'
+		] then
+	require that {MCCC_CourseOffering}.[SiteBasedInitiativeIndicator] <> 1
+	else 'Error on: Course with Grade Level K-12 and Course Offering Site Based Initiative item.'
+	
+rule 54.01.0003
+	when {MCCC_CourseOffering}.[CourseOfferedGradeLevel] = 'EE' then
+	require that {MCCC_CourseOffering}.[InstructionalApproachIndicator] = 1
+	else 'Error on: Course with Grade Level EE and a Course Offering with no Instructional Approach item.'
+	
+rule 54.01.0004
+	when {MCCC_CourseOffering}.[CourseOfferedGradeLevel] = 'EE' then
+	require that {MCCC_CourseOffering}.[InstructionalApproachImplementationStatusIndicator] = 1
+	else 'Error on: Course with Grade Level EE and a Course Offering with no Implementation Status on Instructional Approach item.'
+	
+rule 54.01.0005
+	when {MCCC_CourseOffering}.[CourseOfferedGradeLevel] = 'EE' then
+	require that {MCCC_CourseOffering}.[SiteBasedInitiativeIndicator] = 1
+	else 'Error on: Course with Grade Level EE and Course Offering with no Site Based Initiative item.'
+	
+rule 54.01.0006
+	when {MCCC_CourseOffering}.[CourseOfferedGradeLevel] = 'EE' then
+	require that {MCCC_CourseOffering}.[SiteBasedInitiativeImplementationStatusIndicator] = 1
+	else 'Error on: Course with Grade Level EE and a Course Offering with no Implementation Method on Site Based Initiative item.'
+
+

@@ -1,0 +1,61 @@
+ruleset EarlyEdMcccCourseRuleSet
+
+rule 53.01.0001
+	when {MCCC_Course}.[DistrictCourseOfferedGradeLevel] is in [
+		'KA','KB','KC','KD','KE','KF','KG','KH','KI','KJ','KK',
+		'1','2','3','4','5','6','7','8','9','10','11','12'
+		] then
+	require that {MCCC_Course}.[DistrictCourseAssessmentToolIndicator] <> 1
+	else 'Error on: Course with Grade Level K-12 and a Course Assessment Tool item.'
+
+rule 53.01.0002
+	when {MCCC_Course}.[StateCourseCode] > '80999' then
+	require that {MCCC_Course}.[DistrictCourseEarlyEducationCourseLocation] exists
+	else 'Error on: No Local Course Early Ed Course Location on Course when State Course Code > 80999.'
+	
+rule 53.01.0003
+	when {MCCC_Course}.[StateCourseCode] < '81000' then
+	require that {MCCC_Course}.[DistrictCourseEarlyEducationCourseLocation] not exists
+	else 'Error on: Local Course Early Ed Course Location when State Course Code < 81000.'
+	
+rule 53.01.0004
+	when {MCCC_Course}.[StateCourseCode] > '80999' then
+	require that {MCCC_Course}.[DistrictCourseStateProgramIndicator] = 1
+	else 'Error on: Local Course without Course Characteristic State Program Indicator by when State Course Code > 80999.'
+	
+rule 53.01.0005
+	when {MCCC_Course}.[StateCourseCode] > '80999' then
+	require that {MCCC_Course}.[DistrictCourseFederalProgramIndicator] = 1
+	else 'Error on: Local Course without Course Characteristic Federal Program Indicator by when State Course Code > 80999.'
+	
+rule 53.01.0006
+	when {MCCC_Course}.[StateCourseCode] > '80999' then
+	require that {MCCC_Course}.[DistrictCourseAbeIndicator] = 1
+	else 'Error on: Local Course without Course Characteristic ABE Indicator by when State Course Code > 80999.'
+	
+rule 53.01.0007
+	when {MCCC_Course}.[StateCourseCode] < '81000' then
+	require that {MCCC_Course}.[DistrictCourseStandardAddressed] exists
+	else 'Error on: Local Course without Standard Addressed when State Course Code < 81000.'
+	
+rule 53.01.0008
+	when {MCCC_Course}.[StateCourseCode] > '80999' then
+	require that {MCCC_Course}.[DistrictCourseCurriculumUsedIndicator] = 1
+	else 'Error on: Local Course without Curriculum Used item when State Course Code > 80999.'
+	
+rule 53.01.0009
+	when {MCCC_Course}.[DistrictCourseOfferedGradeLevel] = 'EE' then
+	require that {MCCC_Course}.[CollegeCourseCode] not exists
+	else 'Error on: Local Course with Grade Level EE with College Course association.'
+	
+rule 53.01.0010
+	when {MCCC_Course}.[StateCourseCode] > '80999' then
+	require that {MCCC_Course}.[DistrictCourseProgramIndicator] = 1
+	else 'Error on: Local Course without Program item when State Course Code > 80999.'
+	
+rule 53.01.0011
+	when {MCCC_Course}.[StateCourseCode] < '81000' then
+	require that {MCCC_Course}.[DistrictCourseProgramIndicator] <> 1
+	else 'Error on: Local Course with Program item when State Course Code < 81000.'
+
+
