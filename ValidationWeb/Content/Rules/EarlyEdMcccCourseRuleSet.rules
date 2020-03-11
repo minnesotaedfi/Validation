@@ -15,7 +15,7 @@ rule 53.01.0002
 	
 rule 53.01.0003
 	when {MCCC_Course}.[StateCourseCode] < '81000' then
-	require that {MCCC_Course}.[DistrictCourseEarlyEducationCourseLocation] not exists
+	require that {MCCC_Course}.[DistrictCourseEarlyEducationCourseLocation] does not exist
 	else 'Error on: Local Course Early Ed Course Location when State Course Code < 81000.'
 	
 rule 53.01.0004
@@ -45,7 +45,7 @@ rule 53.01.0008
 	
 rule 53.01.0009
 	when {MCCC_Course}.[DistrictCourseOfferedGradeLevel] = 'EE' then
-	require that {MCCC_Course}.[CollegeCourseCode] not exists
+	require that {MCCC_Course}.[CollegeCourseCode] does not exist
 	else 'Error on: Local Course with Grade Level EE with College Course association.'
 	
 rule 53.01.0010
