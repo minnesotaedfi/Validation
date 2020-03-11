@@ -67,3 +67,16 @@ rule 50.01.0013
 
 rule 50.01.0014
 	require that {SqlRuleComponent} exists else ''
+	
+rule 50.01.0015
+	expect that {MCCC_Course}.[DistrictCourseSequenceLimit] exists
+	else 'Warning on: District Course Sequence Limit not set.'
+	
+rule 50.01.0016
+	expect that {MCCC_Course}.[DistrictCourseStandardAddressed] exists
+	else 'Warning on: District Course Standard Addressed not set.'
+
+rule 50.01.0017
+	expect that {MCCC_Course}.[DistrictCourseGradRequirementIndicator] exists
+	else 'Warning on: District Course Graduation Requirement not set.'
+
