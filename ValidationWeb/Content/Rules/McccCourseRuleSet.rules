@@ -48,7 +48,7 @@ rule 50.01.0008
 	
 rule 50.01.0009
 	when {MCCC_Course}.[StateCourseCode] exists then
-	require that {MCCC_Course}.[StateCourseCourseLevelType] not exists
+	require that {MCCC_Course}.[StateCourseCourseLevelType] does not exist
 	else 'This district includes a District Course associated to a State Course without a Level Type.'
 	
 rule 50.01.0010

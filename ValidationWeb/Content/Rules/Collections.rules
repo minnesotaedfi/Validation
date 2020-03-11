@@ -26,5 +26,7 @@ collection EarlyEdValidationCollection includes
   EarlyEdEnrollmentSchoolRuleSet,
   EarlyEdEnrollmentStudentRuleSet,
   EarlyEdMcccCourseRuleSet,
-  EarlyEdMcccSchoolRuleSet
+  EarlyEdMcccSchoolRuleSet,
+  EarlyEdMcccStudentRuleSet
+  
   

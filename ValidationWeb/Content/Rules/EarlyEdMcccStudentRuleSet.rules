@@ -1,0 +1,14 @@
+ruleset EarlyEdMcccStudentRuleSet
+
+rule 55.01.0001
+	when {MCCC_StudentSectionAssociation}.[SectionEnrollmentType] is in ['DP','OP'] then
+	require that {MCCC_StudentSectionAssociation}.[CourseCode] >= '01000'
+		and {MCCC_StudentSectionAssociation}.[CourseCode] <= '23999'
+	else 'Error on: Student Section Enrollment Type of DP or OP with course code not between 01000 and 23999.'
+	
+rule 55.01.0002
+	when {MCCC_CourseGrades}.[DistrictCourseOfferedGradeLevel] = 'EE' then
+	require that {MCCC_CourseGrades}.[GradesReported] = 0 or 
+		{MCCC_CourseGrades}.[GradesReported] does not exist
+	else 'Error on: Course with GradeLevel EE and Student Section Grade item.'
+	
