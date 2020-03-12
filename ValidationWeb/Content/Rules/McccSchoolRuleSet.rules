@@ -46,3 +46,7 @@ rule 50.03.0009
 rule 50.03.0010
 	require ContainsLeadingTrailingSpace({MCCC_CourseOffering}.[SectionIdentifier]) = 0
 	else 'This school includes a Section with a Section Identifier containing leading or trailing spaces.'
+	
+rule 50.03.0011
+	expect that {MCCC_CourseOffering}.[CourseSequenceLimit] exists
+	else 'Warning on: COurse Section Sequence Number not set.'
