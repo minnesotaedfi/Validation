@@ -69,7 +69,8 @@ rule 52.01.0012
 	
 rule 52.01.0013
 	when {StudentEnrollmentEE}.[EarlyEdProgramType] = 'EE-SR' then
-	require that years since {StudentEnrollmentEE}.[BirthDate] as of 1-September is in [3,4]
+	require that years since {StudentEnrollmentEE}.[BirthDate] as of 1-September = 3
+		or years since {StudentEnrollmentEE}.[BirthDate] as of 1-September = 4
 	else 'Student\'s September 1 age should be 3 or 4 for Early Education - School Readiness program.'
 	
 rule 52.01.0014
@@ -84,7 +85,7 @@ rule 52.01.0015
 	
 rule 52.01.0016
 	when {StudentEnrollmentEE}.[EarlyEdProgramType] = 'EE-SR' then
-	require that {StudentEnrollmentEE}.[EarlyEdProgramReasonExited] is not 'PE-01'
+	require that {StudentEnrollmentEE}.[EarlyEdProgramReasonExited] <> 'PE-01'
 	else 'Exit Reason PE-01 (midyear end) is not valid for Early Education – School Readiness program.'
 	
 rule 52.01.0017
@@ -110,7 +111,7 @@ rule 52.01.0020
 rule 52.01.0021
 	when today > 1-May then
 	require that {StudentEnrollmentEE}.[EarlyEdProgramBeginDate] <= {StudentEnrollmentEE}.[EarlyEdProgramEndDate]
-		StudentEnrollmentEE}.[EarlyEdProgramServiceMembershipHours] > 0
+		and {StudentEnrollmentEE}.[EarlyEdProgramServiceMembershipHours] > 0
 		and {StudentEnrollmentEE}.[EarlyEdProgramServiceAttendanceHours] > 0
 	else 'After May 1, the Early Education Exit Reason and Service Hours are required.'
 	
