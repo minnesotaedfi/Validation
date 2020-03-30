@@ -47,9 +47,71 @@ rule 52.10.6444
 	require that {StudentEnrollmentEE}.[DistrictType] is in ['1','3','7']
 	else '403. Grades EE can only be reported with District Type 01, 03, 07. Check student grade level.'
 
-/* StateAidCategory does not apply to EE 
 rule 52.10.6266
 	when {StudentEnrollmentEE}.[GradeLevel] = 'EE' then
 	require that {StudentEnrollment}.[StateAidCategory] is not in ['51','52']
 	else '315. Grade levels EE are not valid for students reported with SAC 51 or 52.'
-*/
+	
+rule 52.01.0010
+	when {StudentEnrollmentEE}.[EarlyEdProgramType] = 'EE-SR' then
+	require that {StudentEnrollmentEE}.[GradeLevel] = 'EE'
+	else 'Student\'s enrolled grade is invalid for an Early Education program.'
+	
+rule 52.01.0011
+	when {StudentEnrollmentEE}.[EarlyEdProgramType] = 'EE-ECFE' then
+	require that {StudentEnrollmentEE}.[GradeLevel] is not in ['4','5','6','7','8','9','10','11','12']
+	else 'Student\'s enrolled grade is invalid for an Early Education program.'
+	
+rule 52.01.0012
+	when {StudentEnrollmentEE}.[GradeLevel] = 'EE' then
+	require that {StudentEnrollmentEE}.[EarlyEdProgramType] exists
+	else 'Students enrolled in grade EE require an Early Education program record.'
+	
+rule 52.01.0013
+	when {StudentEnrollmentEE}.[EarlyEdProgramType] = 'EE-SR' then
+	require that years since {StudentEnrollmentEE}.[BirthDate] as of 1-September is in [3,4]
+	else 'Student\'s September 1 age should be 3 or 4 for Early Education - School Readiness program.'
+	
+rule 52.01.0014
+	when {StudentEnrollmentEE}.[EarlyEdProgramType] = 'EE-ECFE' then
+	require that years since {StudentEnrollmentEE}.[BirthDate] as of 1-September < 10
+	else 'Student\'s September 1 age should be less than 10 for Early Education - Early Childhood Family Education program.'
+	
+rule 52.01.0015
+	when {StudentEnrollmentEE}.[GradeLevel] = 'EE' then
+	require that {StudentEnrollmentEE}.[StatusEnd] is in ['40','99']
+	else 'Student\'s enrolled in Grade EE require the Status End Code to be either 99 and 40.'
+	
+rule 52.01.0016
+	when {StudentEnrollmentEE}.[EarlyEdProgramType] = 'EE-SR' then
+	require that {StudentEnrollmentEE}.[EarlyEdProgramReasonExited] is not 'PE-01'
+	else 'Exit Reason PE-01 (midyear end) is not valid for Early Education – School Readiness program.'
+	
+rule 52.01.0017
+	when {StudentEnrollmentEE}.[EarlyEdProgramServiceMembershipHours] > 0 then
+	require that {StudentEnrollmentEE}.[EarlyEdProgramServiceAttendanceHours] <= {StudentEnrollmentEE}.[EarlyEdProgramServiceMembershipHours]
+	else 'Attendance Service Hours must be less than or equal to Membership Service Hours.'
+	
+rule 52.01.0018
+	when {StudentEnrollmentEE}.[EarlyEdProgramType] = 'EE-SR' then
+	require that {StudentEnrollmentEE}.[EarlyEdProgramFundingSource] exists
+	else 'The Funding Source is missing on Early Education program record.'
+	
+rule 52.01.0019
+	when {StudentEnrollmentEE}.[EarlyEdProgramType] = 'EE-ECFE' then
+	require that {StudentEnrollmentEE}.[EarlyEdProgramFundingSource] exists
+	else 'The Funding Source is missing on Early Education program record.'
+	
+rule 52.01.0020
+	when {StudentEnrollmentEE}.[EarlyEdProgramServiceMembershipHours] exists then
+	require that {StudentEnrollmentEE}.[EarlyEdProgramServiceMembershipHours] <= 2000
+	else 'The maximum number of Early Education Service Membership Hours cannot exceed 2000 hours.'
+	
+rule 52.01.0021
+	when today > 1-May then
+	require that {StudentEnrollmentEE}.[EarlyEdProgramBeginDate] <= {StudentEnrollmentEE}.[EarlyEdProgramEndDate]
+		StudentEnrollmentEE}.[EarlyEdProgramServiceMembershipHours] > 0
+		and {StudentEnrollmentEE}.[EarlyEdProgramServiceAttendanceHours] > 0
+	else 'After May 1, the Early Education Exit Reason and Service Hours are required.'
+	
+
