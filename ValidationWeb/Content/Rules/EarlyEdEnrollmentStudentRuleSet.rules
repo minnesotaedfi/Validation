@@ -1,5 +1,16 @@
 ruleset EarlyEdEnrollmentStudentRuleSet
 
+/* 
+
+  Student Early Education Enrollment Rule Set
+
+  - Note 52.10.* are mostly taken from StudentEnrollment.rules for when 
+    rules were applicable to Early Education
+
+  - See Demographics rules below.
+  
+*/
+
 rule 52.01.0001
 	when {StudentEnrollmentEE}.[GradeLevel] = 'EE' then
 	require that years since {StudentEnrollmentEE}.[BirthDate] as of 1-September = 3
@@ -144,3 +155,205 @@ rule 52.10.6601
 
 
 
+/* 
+
+  Student Demographics 
+	
+  - Note 52.10.* are mostly taken from StudentDemographic.rules for when 
+    rules were applicable to Early Education
+  
+*/
+
+
+/* American Indian - Alaskan Native (Minnesota) rules */
+
+rule 52.10.0101 
+	when {StudentDemographicEE}.[AlaskanNativeMinnesotaIndicator] = 1 then
+	require {StudentDemographicEE}.[IndianIndicator] exists and {StudentDemographicEE}.[IndianIndicator] = 1
+	else '425. When the student\'s EthnicCode is \'American Indian - Alaskan Native (Minnesota)\', the IndianIndicator must be set to true.'
+
+rule 52.10.0102 
+	when {StudentDemographicEE}.[AlaskanNativeMinnesotaIndicator] = 1 then
+	expect count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'ai-notindicated') > 0
+	or count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'ai-cherokee') > 0
+	or count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'ai-dakota') > 0
+	or count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'ai-ojibwe') > 0
+	or count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'ai-other') > 0
+	or count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'ai-unknown') > 0
+	else '424. Warning: You have a student with a federal race ethnicity code - American Indian - Alaskan Native (Minnesota)  - but without a corresponding state ancestry group. Is this correct?'
+
+rule 52.10.0103 
+	when {StudentDemographicEE}.[AlaskanNativeMinnesotaIndicator] = 0 
+		or {StudentDemographicEE}.[AlaskanNativeMinnesotaIndicator] does not exist then
+	require count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'ai-notindicated') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'ai-cherokee') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'ai-dakota') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'ai-ojibwe') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'ai-other') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'ai-unknown') = 0
+	else '425. When the student\'s EthnicCode is not \'American Indian - Alaskan Native (Minnesota)\', none of the corresponding values (\'ai-\') should be submitted for AncestryEthnicOrigin.'
+
+rule 52.10.0104 
+	when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'ai-notindicated' then
+	require count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'ai-cherokee') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'ai-dakota') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'ai-ojibwe') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'ai-other') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'ai-unknown') = 0
+	else '425. When an AncestryEthnicOrigin value of \'ai-notindicated\' is submitted, no other AncestryEthnicOrigins from that category (\'ai-\') may be submitted for that student.'
+
+
+/* AsianIndicator rules */
+
+rule 52.10.0202 
+	when {StudentDemographicEE}.[AsianIndicator] = 0 
+		or {StudentDemographicEE}.[AsianIndicator] does not exist then
+	require count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'as-notindicated') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'as-burmese') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'as-chinese') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'as-filipino') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'as-hmong') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'as-indian') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'as-karen') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'as-korean') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'as-other') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'as-unknown') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'as-vietnamese') = 0
+	else '425. When the student\'s AsianIndicator is not set to true, none of the corresponding values (\'as-\') should be submitted for AncestryEthnicOrigin.'
+
+rule 52.10.0203 
+	when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'as-notindicated' then
+	require count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'as-burmese') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'as-chinese') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'as-filipino') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'as-hmong') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'as-indian') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'as-karen') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'as-korean') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'as-other') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'as-unknown') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'as-vietnamese') = 0
+	else '425. When an AncestryEthnicOrigin value of \'as-notindicated\' is submitted, no other AncestryEthnicOrigins from that category (\'as-\') may be submitted for that student.'
+
+
+/* BlackIndicator rules */
+
+rule 52.10.0302 
+	when {StudentDemographicEE}.[BlackIndicator] = 0 or {StudentDemographicEE}.[BlackIndicator] does not exist then
+	require count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'bl-notindicated') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'bl-africanamerican') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'bl-ethiopianoromo') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'bl-ethiopianother') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'bl-liberian') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'bl-nigerian') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'bl-other') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'bl-somali') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'bl-unknown') = 0
+	else '425. When the student\'s BlackIndicator is not set to true, none of the corresponding values (\'bl-\') should be submitted for AncestryEthnicOrigin.'
+
+rule 52.10.0303 
+	when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'bl-notindicated' then
+	require count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'bl-africanamerican') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'bl-ethiopianoromo') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'bl-ethiopianother') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'bl-liberian') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'bl-nigerian') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'bl-other') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'bl-somali') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'bl-unknown') = 0
+	else '424. When an AncestryEthnicOrigin value of \'bl-notindicated\' is submitted, no other AncestryEthnicOrigins from that category (\'bl-\') may be submitted for that student.'
+
+
+/* HispanicIndicator rules */
+
+rule 52.10.0402 
+	when {StudentDemographicEE}.[HispanicIndicator] <> 1 then
+	require count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'hl-notindicated') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'hl-colombian') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'hl-ecuadorian') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'hl-guatemalan') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'hl-mexican') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'hl-other') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'hl-puertorican') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'hl-salvadoran') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'hl-spanish') = 0
+	else '425. When the student\'s HispanicIndicator is not set to true, none of the corresponding values (\'hl-\') should be submitted for AncestryEthnicOrigin.'
+
+rule 52.10.0403 
+	when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'hl-notindicated' then
+	require count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'hl-colombian') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'hl-ecuadorian') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'hl-guatemalan') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'hl-mexican') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'hl-other') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'hl-puertorican') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'hl-salvadoran') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'hl-spanish') = 0
+	else '425. When an AncestryEthnicOrigin value of \'hl-notindicated\' is submitted, no other AncestryEthnicOrigins from that category (\'hl-\') may be submitted for that student.'
+
+rule 52.10.0404
+	require {StudentDemographicEE}.[HispanicIndicator] exists
+	else '425. A value of either true or false must be provided for the student\'s HispanicIndicator.'
+
+rule 52.10.6241
+	when {StudentDemographicEE}.[EnglishLearnerServed] = 1 then
+	require that {StudentDemographicEE}.[HomePrimaryLanguage] is not in ['11','42']
+	else '48. A student who has been identified by a Home Language of English (011) or American Sign Language (042) cannot be identified as an English Learner.  Also check the student\'s Home Language.'
+
+rule 52.10.6269
+	when {StudentDemographicEE}.[HispanicIndicator] = 1 then
+	require that {StudentDemographicEE}.[IndianIndicator] = 1
+	or {StudentDemographicEE}.[AsianIndicator] = 1
+	or {StudentDemographicEE}.[BlackIndicator] = 1
+	or {StudentDemographicEE}.[PacificIslanderIndicator] = 1
+	or {StudentDemographicEE}.[WhiteIndicator] = 1
+	else '312. When Hispanic/Latino is flagged as Y, at least one race indicator is required.'
+
+rule 52.10.6297
+	when {StudentEnrollmentEE}.[GradeLevel] <> 'PS' then
+	require that count({StudentDemographicEE}) = count({StudentDemographicEE} by [HomePrimaryLanguage])
+	else '281. Home Language must match on all records within the district.  PS records are excluded from this error.'
+
+rule 52.10.6298
+	when {StudentEnrollmentEE}.[GradeLevel] <> 'PS' then
+	require that count({StudentDemographicEE}) = count({StudentDemographicEE} by [AlaskanNativeMinnesotaIndicator])
+	else '280. Race/Ethnicity must match on all records within the district. PS records are excluded from this error.'
+	
+rule 52.10.6402
+	require that {StudentDemographicEE}.[HispanicIndicator] = 1
+	or {StudentDemographic}.[IndianIndicator] = 1
+	or {StudentDemographic}.[AsianIndicator] = 1
+	or {StudentDemographic}.[BlackIndicator] = 1
+	or {StudentDemographic}.[PacificIslanderIndicator] = 1
+	or {StudentDemographic}.[WhiteIndicator] = 1
+	else '302. The six race/ethnic indicators are all set to N. At least one race/ethic indicator must be set to Y.'
+	
+rule 52.10.6419
+	when {StudentEnrollmentEE}.[GradeLevel] <> 'PS' then
+	require that count({StudentDemographicEE}) = count({StudentDemographicEE} by [HispanicIndicator])
+	else '280. Race/Ethnicity must match on all records within the district. PS records are excluded from this error.'
+	
+rule 52.10.6420
+	when {StudentEnrollmentEE}.[GradeLevel] <> 'PS' then
+	require that count({StudentDemographicEE}) = count({StudentDemographicEE} by [IndianIndicator])
+	else '280. Race/Ethnicity must match on all records within the district. PS records are excluded from this error.'
+	
+rule 52.10.6421
+	when {StudentEnrollmentEE}.[GradeLevel] <> 'PS' then
+	require that count({StudentDemographicEE}) = count({StudentDemographicEE} by [AsianIndicator])
+	else '280. Race/Ethnicity must match on all records within the district. PS records are excluded from this error.'
+	
+rule 52.10.6422
+	when {StudentEnrollmentEE}.[GradeLevel] <> 'PS' then
+	require that count({StudentDemographicEE}) = count({StudentDemographicEE} by [BlackIndicator])
+	else '280. Race/Ethnicity must match on all records within the district. PS records are excluded from this error.'
+	
+rule 52.10.6423
+	when {StudentEnrollmentEE}.[GradeLevel] <> 'PS' then
+	require that count({StudentDemographicEE}) = count({StudentDemographicEE} by [PacificIslanderIndicator])
+	else '280. Race/Ethnicity must match on all records within the district. PS records are excluded from this error.'
+	
+rule 52.10.6424
+	when {StudentEnrollmentEE}.[GradeLevel] <> 'PS' then
+	require that count({StudentDemographicEE}) = count({StudentDemographicEE} by [WhiteIndicator])
+	else '280. Race/Ethnicity must match on all records within the district. PS records are excluded from this error.'
