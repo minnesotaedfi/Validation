@@ -1,55 +1,359 @@
 ruleset EarlyEdEnrollmentStudentRuleSet
 
+/* 
+
+  Student Early Education Enrollment Rule Set
+
+  - Note 52.10.* are mostly taken from StudentEnrollment.rules for when 
+    rules were applicable to Early Education
+
+  - See Demographics rules below.
+  
+*/
+
 rule 52.01.0001
-	when {StudentEnrollment}.[StudentGradeLevel] = 'EE' then
-	require that years since {StudentEnrollment}.[BirthDate] as of 1-September = 3
-	or years since {StudentEnrollment}.[BirthDate] as of 1-September = 4
+	when {StudentEnrollmentEE}.[GradeLevel] = 'EE' then
+	require that years since {StudentEnrollmentEE}.[BirthDate] as of 1-September = 3
+	or years since {StudentEnrollmentEE}.[BirthDate] as of 1-September = 4
 	else 'Students grade level is EE must be 3 or 4 years old as of September 1st of the current school year.'
 
 rule 52.01.0002
-	when {StudentEnrollment}.[StatusEnd] is in ['67','68','69','70'] then
-	require that {StudentEnrollment}.[StudentGradeLevel] = 'EE'
+	when {StudentEnrollmentEE}.[StatusEnd] is in ['67','68','69','70'] then
+	require that {StudentEnrollmentEE}.[GradeLevel] = 'EE'
 	else 'Students with enrollment Exit Withdraw Type of 67-Student withdrawn by parent, expected back next section, 68-Student withdrawn by parent, expected back next year, 69-Student withdrawn by parent, moved to another district prenatal to prekindergarten program, or 70_Lack of transportation must be for grade level EE (Early Education).'
 	
 rule 52.01.0003
-	when {StudentEnrollment}.[StatusEnd] = '71' then
-	require that {StudentEnrollment}.[StudentGradeLevel] = 'EE'
+	when {StudentEnrollmentEE}.[StatusEnd] = '71' then
+	require that {StudentEnrollmentEE}.[GradeLevel] = 'EE'
 	else 'Students with an enrollment exit withdraw type 71-Short term course ended (ECFE only) must be for grade level EE (Early Education).'
+
+rule 52.01.0010
+	when {StudentEnrollmentEE}.[EarlyEdProgramType] = 'EE-SR' then
+	require that {StudentEnrollmentEE}.[GradeLevel] = 'EE'
+	else 'Student\'s enrolled grade is invalid for an Early Education program.'
 	
-rule 52.10.6601
-	when {StudentEnrollment}.[StudentGradeLevel] is not in [
-		'EC','EE','PS',
-		'PA','PB','PC','PD','PE','PF','PG','PH','PI','PJ'
-		] then
-	require years since {StudentDemographic}.[BirthDate] as of 1-September > 3
-	else '231. This error indicates the student\'s September 1 age is 3 or less, but the student is not enrolled as grade EC (Early Childhood) and EE (Early Education). Check the student\'s grade or date of birth.'
+rule 52.01.0011
+	when {StudentEnrollmentEE}.[EarlyEdProgramType] = 'EE-ECFE' then
+	require that {StudentEnrollmentEE}.[GradeLevel] is not in ['4','5','6','7','8','9','10','11','12']
+	else 'Student\'s enrolled grade is invalid for an Early Education program.'
+	
+rule 52.01.0012
+	when {StudentEnrollmentEE}.[GradeLevel] = 'EE' then
+	require that {StudentEnrollmentEE}.[EarlyEdProgramType] exists
+	else 'Students enrolled in grade EE require an Early Education program record.'
+	
+rule 52.01.0013
+	when {StudentEnrollmentEE}.[EarlyEdProgramType] = 'EE-SR' then
+	require that years since {StudentEnrollmentEE}.[BirthDate] as of 1-September = 3
+		or years since {StudentEnrollmentEE}.[BirthDate] as of 1-September = 4
+	else 'Student\'s September 1 age should be 3 or 4 for Early Education - School Readiness program.'
+	
+rule 52.01.0014
+	when {StudentEnrollmentEE}.[EarlyEdProgramType] = 'EE-ECFE' then
+	require that years since {StudentEnrollmentEE}.[BirthDate] as of 1-September < 10
+	else 'Student\'s September 1 age should be less than 10 for Early Education - Early Childhood Family Education program.'
+	
+rule 52.01.0015
+	when {StudentEnrollmentEE}.[GradeLevel] = 'EE' then
+	require that {StudentEnrollmentEE}.[StatusEnd] is in ['40','99']
+	else 'Student\'s enrolled in Grade EE require the Status End Code to be either 99 and 40.'
+	
+rule 52.01.0016
+	when {StudentEnrollmentEE}.[EarlyEdProgramType] = 'EE-SR' then
+	require that {StudentEnrollmentEE}.[EarlyEdProgramReasonExited] <> 'PE-01'
+	else 'Exit Reason PE-01 (midyear end) is not valid for Early Education – School Readiness program.'
+	
+rule 52.01.0017
+	when {StudentEnrollmentEE}.[EarlyEdProgramServiceMembershipHours] > 0 then
+	require that {StudentEnrollmentEE}.[EarlyEdProgramServiceAttendanceHours] <= {StudentEnrollmentEE}.[EarlyEdProgramServiceMembershipHours]
+	else 'Attendance Service Hours must be less than or equal to Membership Service Hours.'
+	
+rule 52.01.0018
+	when {StudentEnrollmentEE}.[EarlyEdProgramType] = 'EE-SR' then
+	require that {StudentEnrollmentEE}.[EarlyEdProgramFundingSource] exists
+	else 'The Funding Source is missing on Early Education program record.'
+	
+rule 52.01.0019
+	when {StudentEnrollmentEE}.[EarlyEdProgramType] = 'EE-ECFE' then
+	require that {StudentEnrollmentEE}.[EarlyEdProgramFundingSource] exists
+	else 'The Funding Source is missing on Early Education program record.'
+	
+rule 52.01.0020
+	when {StudentEnrollmentEE}.[EarlyEdProgramServiceMembershipHours] exists then
+	require that {StudentEnrollmentEE}.[EarlyEdProgramServiceMembershipHours] <= 2000
+	else 'The maximum number of Early Education Service Membership Hours cannot exceed 2000 hours.'
+	
+rule 52.01.0021
+	when today > 1-May then
+	require that {StudentEnrollmentEE}.[EarlyEdProgramBeginDate] <= {StudentEnrollmentEE}.[EarlyEdProgramEndDate]
+		and {StudentEnrollmentEE}.[EarlyEdProgramServiceMembershipHours] > 0
+		and {StudentEnrollmentEE}.[EarlyEdProgramServiceAttendanceHours] > 0
+	else 'After May 1, the Early Education Exit Reason and Service Hours are required.'
 
 rule 52.10.6215
-	when {StudentEnrollment}.[DistrictType] is in ['1','2','3']
-	and {StudentEnrollment}.[StudentGradeLevel] is not in ['HK','EC','EE','PS'] 
-	and {StudentEnrollment}.[StateAidCategory] is not in ['98','46'] 
-	and {StudentEnrollment}.[DistrictNumber] <> '0347' 
-	and {StudentEnrollment}.[SchoolNumber] is not in ['931','941'] then
-	require {StudentEnrollment}.[StatusBeginDate] > first Monday in September
+	when {StudentEnrollmentEE}.[DistrictType] is in ['1','2','3']
+	and {StudentEnrollmentEE}.[GradeLevel] is not in ['HK','EC','EE','PS'] 
+	and {StudentEnrollmentEE}.[DistrictNumber] <> '0347' 
+	and {StudentEnrollmentEE}.[SchoolNumber] is not in ['931','941'] then
+	require {StudentEnrollmentEE}.[StatusBeginDate] > first Monday in September
 	else '64. Status Start Date cannot be before the state-wide start date (specified by statute) for regular schools for students in grades K-12.  (This edit excludes students enrolled in Area Learning Centers and other state-approved alternative program sites, summer graduates, summer dropouts and other summer leavers, SAC 46 (ESY) students, and early childhood, early education, and kindergarten disabled students.'
-	
+
+rule 52.10.6242
+	when {StudentEnrollmentEE}.[GradeLevel] <> 'PS' 
+	and {StudentDemographicEE}.[EnglishLearnerServed] <> 1 then
+	require that {StudentDemographicEE}.[EnglishLearnerStartDate] does not exist 
+	else '51. A non-zero EL Start Date (the student participated in an EL program during the school year) requires that the student be identified as needing EL services; English Learner must be \'Y\' (yes, the student has been evaluated and requires EL services).  Additionally, if EL = Y, the student must either have 00000000 (00/00/00) as the EL Begin Date (needs el services but is not yet receiving EL services) or the date must fall within the current school year. Check English Learner indicator or the EL Start Date for valid values.'
+
+rule 52.10.6243
+	when {StudentEnrollmentEE}.[GradeLevel] <> 'PS' 
+	and {StudentDemographicEE}.[EnglishLearnerStartDate] exists then
+	require {StudentDemographicEE}.[EnglishLearnerStartDate] <= 30-June
+	and {StudentDemographicEE}.[EnglishLearnerStartDate] >= 1 year before 1-June
+	and {StudentDemographicEE}.[EnglishLearnerServed] = 1
+	else '51. A non-zero EL Start Date (the student participated in an EL program during the school year) requires that the student be identified as needing EL services; English Learner must be \'Y\' (yes, the student has been evaluated and requires EL services).  Additionally, if EL = Y, the student must either have 00000000 (00/00/00) as the EL Begin Date (needs el services but is not yet receiving EL services) or the date must fall within the current school year. Check English Learner indicator or the EL Start Date for valid values.'
+
+rule 52.10.6266
+	when {StudentEnrollmentEE}.[GradeLevel] = 'EE' then
+	require that {StudentEnrollmentEE}.[StateAidCategory] is not in ['51','52']
+	else '315. Grade levels EE are not valid for students reported with SAC 51 or 52.'
+
+rule 52.10.6386
+	when {StudentEnrollmentEE}.[ResidentDistrictType] = '1'
+	and {StudentEnrollmentEE}.[ResidentDistrictNumber] = '0001'
+	and {StudentEnrollmentEE}.[DistrictNumber] is not in ['4150','4177','4082','4012','4198'] 
+	and {StudentEnrollmentEE}.[SchoolClassification] <> '46' then
+	require that {StudentEnrollmentEE}.[DistrictType] <> '7' 
+	else '288. Student has resident district number 0001 and type of 01 (Aitkin) which is an invalid resident district number and type for charter school.'
+
 rule 52.10.6436 
-	when {StudentEnrollment}.[StudentGradeLevel] = 'EE' then
-	require that {StudentEnrollment}.[SchoolClassification] is not in ['41','42','43','45','50','51']
+	when {StudentEnrollmentEE}.[GradeLevel] = 'EE' then
+	require that {StudentEnrollmentEE}.[SchoolClassification] is not in ['41','42','43','45','50','51']
 	else '395. Grades EE cannot be reported in school classifications 41, 42, 43, 45, 50 or 51. Check student grade level and school'
 	
 rule 52.10.6437 
-	when {StudentEnrollment}.[StudentGradeLevel] = 'EE' then
-	require that {StudentEnrollment}.[SpecialEducationEvaluationStatus] is not in ['3','4','5','6','8','9']
+	when {StudentEnrollmentEE}.[GradeLevel] = 'EE' then
+	require that {StudentEnrollmentEE}.[SpecialEducationEvaluationStatus] is not in ['3','4','5','6','8','9']
 	else '396. Grades EE cannot be reported with special education status 3, 4, 5, 6, 8 or 9. Check student grade level and Special Education Evaluation Status.'
 	
 rule 52.10.6444 
-	when {StudentEnrollment}.[StudentGradeLevel] = 'EE' then
-	require that {StudentEnrollment}.[DistrictType] is in ['1','3','7']
+	when {StudentEnrollmentEE}.[GradeLevel] = 'EE' then
+	require that {StudentEnrollmentEE}.[DistrictType] is in ['1','3','7']
 	else '403. Grades EE can only be reported with District Type 01, 03, 07. Check student grade level.'
-	
-rule 52.10.6266
-	when {StudentEnrollment}.[StudentGradeLevel] = 'EE' then
-	require that {StudentEnrollment}.[StateAidCategory] is not in ['51','52']
-	else '315. Grade levels EE are not valid for students reported with SAC 51 or 52.'
 
+rule 52.10.6516 
+	when {StudentEnrollmentEE}.[ResidentDistrictNumber] exists and {StudentEnrollmentEE}.[ResidentDistrictNumber] <> '9998' then
+	require that {StudentEnrollmentEE}.[ResidentDistrictType] is in ['1','2','3','38']
+	else '24. The resident district number and/or type reported in the student\'s enrollment record is not a valid district number and/or type. Only district types 1, 2, 3 and 38 are valid resident district types.'
+
+rule 52.10.6601
+	when {StudentEnrollmentEE}.[GradeLevel] is not in [
+		'EC','EE','PS',
+		'PA','PB','PC','PD','PE','PF','PG','PH','PI','PJ'
+		] then
+	require years since {StudentEnrollmentEE}.[BirthDate] as of 1-September > 3
+	else '231. This error indicates the student\'s September 1 age is 3 or less, but the student is not enrolled as grade EC (Early Childhood) and EE (Early Education). Check the student\'s grade or date of birth.'
+
+
+
+/* 
+
+  Student Demographics 
+	
+  - Note 52.10.* are mostly taken from StudentDemographic.rules for when 
+    rules were applicable to Early Education
+  
+*/
+
+
+/* American Indian - Alaskan Native (Minnesota) rules */
+
+rule 52.10.0101 
+	when {StudentDemographicEE}.[AlaskanNativeMinnesotaIndicator] = 1 then
+	require {StudentDemographicEE}.[IndianIndicator] exists and {StudentDemographicEE}.[IndianIndicator] = 1
+	else '425. When the student\'s EthnicCode is \'American Indian - Alaskan Native (Minnesota)\', the IndianIndicator must be set to true.'
+
+rule 52.10.0102 
+	when {StudentDemographicEE}.[AlaskanNativeMinnesotaIndicator] = 1 then
+	expect count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'ai-notindicated') > 0
+	or count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'ai-cherokee') > 0
+	or count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'ai-dakota') > 0
+	or count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'ai-ojibwe') > 0
+	or count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'ai-other') > 0
+	or count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'ai-unknown') > 0
+	else '424. Warning: You have a student with a federal race ethnicity code - American Indian - Alaskan Native (Minnesota)  - but without a corresponding state ancestry group. Is this correct?'
+
+rule 52.10.0103 
+	when {StudentDemographicEE}.[AlaskanNativeMinnesotaIndicator] = 0 
+		or {StudentDemographicEE}.[AlaskanNativeMinnesotaIndicator] does not exist then
+	require count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'ai-notindicated') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'ai-cherokee') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'ai-dakota') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'ai-ojibwe') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'ai-other') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'ai-unknown') = 0
+	else '425. When the student\'s EthnicCode is not \'American Indian - Alaskan Native (Minnesota)\', none of the corresponding values (\'ai-\') should be submitted for AncestryEthnicOrigin.'
+
+rule 52.10.0104 
+	when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'ai-notindicated' then
+	require count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'ai-cherokee') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'ai-dakota') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'ai-ojibwe') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'ai-other') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'ai-unknown') = 0
+	else '425. When an AncestryEthnicOrigin value of \'ai-notindicated\' is submitted, no other AncestryEthnicOrigins from that category (\'ai-\') may be submitted for that student.'
+
+
+/* AsianIndicator rules */
+
+rule 52.10.0202 
+	when {StudentDemographicEE}.[AsianIndicator] = 0 
+		or {StudentDemographicEE}.[AsianIndicator] does not exist then
+	require count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'as-notindicated') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'as-burmese') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'as-chinese') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'as-filipino') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'as-hmong') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'as-indian') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'as-karen') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'as-korean') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'as-other') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'as-unknown') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'as-vietnamese') = 0
+	else '425. When the student\'s AsianIndicator is not set to true, none of the corresponding values (\'as-\') should be submitted for AncestryEthnicOrigin.'
+
+rule 52.10.0203 
+	when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'as-notindicated' then
+	require count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'as-burmese') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'as-chinese') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'as-filipino') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'as-hmong') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'as-indian') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'as-karen') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'as-korean') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'as-other') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'as-unknown') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'as-vietnamese') = 0
+	else '425. When an AncestryEthnicOrigin value of \'as-notindicated\' is submitted, no other AncestryEthnicOrigins from that category (\'as-\') may be submitted for that student.'
+
+
+/* BlackIndicator rules */
+
+rule 52.10.0302 
+	when {StudentDemographicEE}.[BlackIndicator] = 0 or {StudentDemographicEE}.[BlackIndicator] does not exist then
+	require count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'bl-notindicated') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'bl-africanamerican') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'bl-ethiopianoromo') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'bl-ethiopianother') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'bl-liberian') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'bl-nigerian') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'bl-other') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'bl-somali') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'bl-unknown') = 0
+	else '425. When the student\'s BlackIndicator is not set to true, none of the corresponding values (\'bl-\') should be submitted for AncestryEthnicOrigin.'
+
+rule 52.10.0303 
+	when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'bl-notindicated' then
+	require count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'bl-africanamerican') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'bl-ethiopianoromo') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'bl-ethiopianother') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'bl-liberian') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'bl-nigerian') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'bl-other') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'bl-somali') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'bl-unknown') = 0
+	else '424. When an AncestryEthnicOrigin value of \'bl-notindicated\' is submitted, no other AncestryEthnicOrigins from that category (\'bl-\') may be submitted for that student.'
+
+
+/* HispanicIndicator rules */
+
+rule 52.10.0402 
+	when {StudentDemographicEE}.[HispanicIndicator] <> 1 then
+	require count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'hl-notindicated') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'hl-colombian') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'hl-ecuadorian') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'hl-guatemalan') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'hl-mexican') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'hl-other') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'hl-puertorican') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'hl-salvadoran') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'hl-spanish') = 0
+	else '425. When the student\'s HispanicIndicator is not set to true, none of the corresponding values (\'hl-\') should be submitted for AncestryEthnicOrigin.'
+
+rule 52.10.0403 
+	when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'hl-notindicated' then
+	require count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'hl-colombian') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'hl-ecuadorian') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'hl-guatemalan') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'hl-mexican') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'hl-other') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'hl-puertorican') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'hl-salvadoran') = 0
+	and count({StudentDemographicEE} when {StudentDemographicEE}.[AncestryEthnicOrigin] = 'hl-spanish') = 0
+	else '425. When an AncestryEthnicOrigin value of \'hl-notindicated\' is submitted, no other AncestryEthnicOrigins from that category (\'hl-\') may be submitted for that student.'
+
+rule 52.10.0404
+	require {StudentDemographicEE}.[HispanicIndicator] exists
+	else '425. A value of either true or false must be provided for the student\'s HispanicIndicator.'
+
+rule 52.10.6241
+	when {StudentDemographicEE}.[EnglishLearnerServed] = 1 then
+	require that {StudentDemographicEE}.[HomePrimaryLanguage] is not in ['11','42']
+	else '48. A student who has been identified by a Home Language of English (011) or American Sign Language (042) cannot be identified as an English Learner.  Also check the student\'s Home Language.'
+
+rule 52.10.6269
+	when {StudentDemographicEE}.[HispanicIndicator] = 1 then
+	require that {StudentDemographicEE}.[IndianIndicator] = 1
+	or {StudentDemographicEE}.[AsianIndicator] = 1
+	or {StudentDemographicEE}.[BlackIndicator] = 1
+	or {StudentDemographicEE}.[PacificIslanderIndicator] = 1
+	or {StudentDemographicEE}.[WhiteIndicator] = 1
+	else '312. When Hispanic/Latino is flagged as Y, at least one race indicator is required.'
+
+rule 52.10.6297
+	when {StudentEnrollmentEE}.[GradeLevel] <> 'PS' then
+	require that count({StudentDemographicEE}) = count({StudentDemographicEE} by [HomePrimaryLanguage])
+	else '281. Home Language must match on all records within the district.  PS records are excluded from this error.'
+
+rule 52.10.6298
+	when {StudentEnrollmentEE}.[GradeLevel] <> 'PS' then
+	require that count({StudentDemographicEE}) = count({StudentDemographicEE} by [AlaskanNativeMinnesotaIndicator])
+	else '280. Race/Ethnicity must match on all records within the district. PS records are excluded from this error.'
+	
+rule 52.10.6402
+	require that {StudentDemographicEE}.[HispanicIndicator] = 1
+	or {StudentDemographic}.[IndianIndicator] = 1
+	or {StudentDemographic}.[AsianIndicator] = 1
+	or {StudentDemographic}.[BlackIndicator] = 1
+	or {StudentDemographic}.[PacificIslanderIndicator] = 1
+	or {StudentDemographic}.[WhiteIndicator] = 1
+	else '302. The six race/ethnic indicators are all set to N. At least one race/ethic indicator must be set to Y.'
+	
+rule 52.10.6419
+	when {StudentEnrollmentEE}.[GradeLevel] <> 'PS' then
+	require that count({StudentDemographicEE}) = count({StudentDemographicEE} by [HispanicIndicator])
+	else '280. Race/Ethnicity must match on all records within the district. PS records are excluded from this error.'
+	
+rule 52.10.6420
+	when {StudentEnrollmentEE}.[GradeLevel] <> 'PS' then
+	require that count({StudentDemographicEE}) = count({StudentDemographicEE} by [IndianIndicator])
+	else '280. Race/Ethnicity must match on all records within the district. PS records are excluded from this error.'
+	
+rule 52.10.6421
+	when {StudentEnrollmentEE}.[GradeLevel] <> 'PS' then
+	require that count({StudentDemographicEE}) = count({StudentDemographicEE} by [AsianIndicator])
+	else '280. Race/Ethnicity must match on all records within the district. PS records are excluded from this error.'
+	
+rule 52.10.6422
+	when {StudentEnrollmentEE}.[GradeLevel] <> 'PS' then
+	require that count({StudentDemographicEE}) = count({StudentDemographicEE} by [BlackIndicator])
+	else '280. Race/Ethnicity must match on all records within the district. PS records are excluded from this error.'
+	
+rule 52.10.6423
+	when {StudentEnrollmentEE}.[GradeLevel] <> 'PS' then
+	require that count({StudentDemographicEE}) = count({StudentDemographicEE} by [PacificIslanderIndicator])
+	else '280. Race/Ethnicity must match on all records within the district. PS records are excluded from this error.'
+	
+rule 52.10.6424
+	when {StudentEnrollmentEE}.[GradeLevel] <> 'PS' then
+	require that count({StudentDemographicEE}) = count({StudentDemographicEE} by [WhiteIndicator])
+	else '280. Race/Ethnicity must match on all records within the district. PS records are excluded from this error.'
