@@ -3,7 +3,7 @@ ruleset EarlyEdMcccStudentRuleSet
 rule 55.01.0001
 	when {MCCC_StudentSectionAssociation}.[SectionEnrollmentType] is in ['DP','OP'] then
 	require that {MCCC_StudentSectionAssociation}.[CourseCode] >= '01000'
-		and {MCCC_StudentSectionAssociation}.[CourseCode] <= '23999'
+		and {MCCC_StudentSectionAssociation}.[CourseCode] <= '24999'
 	else 'Error on: Student Section Enrollment Type of DP or OP with course code not between 01000 and 23999.'
 	
 rule 55.01.0002
