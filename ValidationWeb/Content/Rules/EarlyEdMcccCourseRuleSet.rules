@@ -57,5 +57,10 @@ rule 53.01.0011
 	when {MCCC_Course}.[StateCourseCode] < '81000' then
 	require that {MCCC_Course}.[DistrictCourseProgramIndicator] <> 1
 	else 'Error on: Local Course with Program item when State Course Code < 81000.'
+	
+rule 53.01.0012
+	when {MCCC_Course}.[StateCourseCode] > '24999' and {MCCC_Course}.[DistrictCourseCode] exists then
+	require that {MCCC_Course}.[CollegeCourseCode] does not exist
+	else 'Error on: Local Course with State classification > 24999 with College Course association.'
 
 
