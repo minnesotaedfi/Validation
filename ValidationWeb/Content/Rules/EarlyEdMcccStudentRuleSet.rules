@@ -17,3 +17,9 @@ rule 55.01.0003
 	require that {MCCC_CourseGrades}.[CollegeCreditEarned] exists
 	else 'Course Level Type of A, D and Student with Section Grade/Mark with not College Credit Earned.'
 	
+rule 55.01.0004
+	when {MCCC_CourseGrades}.[GradesReported] = 1 then
+	require that {MCCC_CourseGrades}.[LocalCreditEarned] exists
+	else 'Student with Section Grade/Mark with not Local Credit Earned.'
+	
+	
