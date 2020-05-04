@@ -12,3 +12,8 @@ rule 55.01.0002
 		{MCCC_CourseGrades}.[GradesReported] does not exist
 	else 'Error on: Course with GradeLevel EE and Student Section Grade item.'
 	
+rule 55.01.0003
+	when {MCCC_CourseGrades}.[DistrictCourseLevelType] is in ['A','D'] and {MCCC_CourseGrades}.[GradesReported] = 1 then
+	require that {MCCC_CourseGrades}.[CollegeCreditEarned] exists
+	else 'Course Level Type of A, D and Student with Section Grade/Mark with not College Credit Earned.'
+	

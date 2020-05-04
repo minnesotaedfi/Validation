@@ -50,8 +50,13 @@ rule 50.02.0008
 	
 rule 50.02.0009
 	when {MCCC_CourseGrades}.[CollegeCreditEarned] exists then
-	require that {MCCC_CourseGrades}.[DistrictCourseLevelType] is in ['D','X']
-	else 'Student with Section Grade/Mark with College Credit Earned for Local Course without Course Level Type of D or X.'
+	require that {MCCC_CourseGrades}.[DistrictCourseLevelType] is in ['A','D','X']
+	else 'Student with Section Grade/Mark with College Credit Earned for Local Course without Course Level Type of A, D or X.'
+	
+rule 50.02.0010
+	when {MCCC_CourseGrades}.[DistrictCourseLevelType] is in ['A','D'] and {MCCC_CourseGrades}.[GradesReported] = 1 then
+	require that {MCCC_CourseGrades}.[CollegeCreditEarned] exists
+	else 'Course Level Type of A, D and Student with Section Grade/Mark with not College Credit Earned.'
 
 
 	
