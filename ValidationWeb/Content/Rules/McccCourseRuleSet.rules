@@ -79,4 +79,9 @@ rule 50.01.0016
 rule 50.01.0017
 	expect that {MCCC_Course}.[DistrictCourseGradRequirementIndicator] exists
 	else 'Warning on: District Course Graduation Requirement not set.'
+	
+rule 50.01.0018
+	when {MCCC_Course}.[StateCourseUnclassifiedCourseIndicator] = 0 then
+	require that {MCCC_Course}.[DistrictCourseCourseDescription] does not exist or {MCCC_Course}.[DistrictCourseCourseDescription] = ''
+	else 'This district includes a District Course with Course Description and associated to an Unclassified State Course.'
 

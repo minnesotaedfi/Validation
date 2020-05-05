@@ -35,5 +35,15 @@ rule 54.01.0006
 	when {MCCC_CourseOffering}.[CourseOfferedGradeLevel] = 'EE' then
 	require that {MCCC_CourseOffering}.[SiteBasedInitiativeImplementationStatusIndicator] = 1
 	else 'Error on: Course with Grade Level EE and a Course Offering with no Implementation Method on Site Based Initiative item.'
+	
+rule 54.01.0007
+	require that {MCCC_CourseOffering}.[InstructionMinutesPerTerm] > 0 
+		and {MCCC_CourseOffering}.[InstructionMinutesPerTerm] < 527001
+	else 'Error on: Course Offering Instructional Minutes Per Term is not between 1 and 527000.'
+	
+rule 54.01.0008
+	when {MCCC_CourseOffering}.[SequenceOfCourse] exists then
+	require that {MCCC_CourseOffering}.[SequenceOfCourse] >= {MCCC_CourseOffering}.[CourseSequenceLimit]
+	else 'This school includes a Section where Sequence Of Course is greater than the associated Course SequenceLimit.'
 
 
