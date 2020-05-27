@@ -2,6 +2,7 @@
 
 namespace ValidationWeb
 {
+    // ReSharper disable once ClassNeverInstantiated.Global
     public class BundleConfig
     {
         public static void RegisterBundles(BundleCollection bundles)
@@ -46,7 +47,7 @@ namespace ValidationWeb
 
             bundles.Add(
                 new ScriptBundle("~/bundles/Select2")
-                    .Include("~/Scripts/select2.full.js"));
+                    .Include("~/Scripts/select2.full.js"));  // downloaded separately from nuget package
 
             bundles.Add(
                 new StyleBundle("~/Content/Styles/DualListBoxCSS")
