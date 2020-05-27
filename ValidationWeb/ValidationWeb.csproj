@@ -1011,6 +1011,8 @@
     <Compile Include="Database\SchoolYearDbContextFactory.cs">
       <DependentUpon>ISchoolYearDbContextFactory.cs</DependentUpon>
     </Compile>
+    <Compile Include="Services\Interfaces\IProgramAreaService.cs" />
+    <Compile Include="Services\Implementations\ProgramAreaService.cs" />
     <Compile Include="Services\Interfaces\IRuleDefinitionService.cs" />
     <Compile Include="Services\Implementations\ManualRuleExecutionService.cs" />
     <Compile Include="Services\Implementations\RuleDefinitionService.cs" />

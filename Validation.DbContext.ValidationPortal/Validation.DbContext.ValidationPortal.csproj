@@ -72,6 +72,10 @@
     <Compile Include="Migrations\202005271717467_SetupProgramAreaForeignKeys.designer.cs">
       <DependentUpon>202005271717467_SetupProgramAreaForeignKeys.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202005271952219_UpdateAppUserSession.cs" />
+    <Compile Include="Migrations\202005271952219_UpdateAppUserSession.designer.cs">
+      <DependentUpon>202005271952219_UpdateAppUserSession.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ValidationPortalDbContext.cs" />
     <Compile Include="Migrations\ValidationPortalDbMigrationConfiguration.cs" />
@@ -105,6 +109,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202005271717467_SetupProgramAreaForeignKeys.resx">
       <DependentUpon>202005271717467_SetupProgramAreaForeignKeys.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202005271952219_UpdateAppUserSession.resx">
+      <DependentUpon>202005271952219_UpdateAppUserSession.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

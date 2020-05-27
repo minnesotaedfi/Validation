@@ -38,7 +38,7 @@
     <div class="row noprint">
       <div class="col-12">
         <nav id="layout-navbar" role="navigation" aria-label="Main navigation" class="navbar navbar-expand-sm prime-blue">
-          <div class="collapse navbar-collapse w-100 order-1 order-md-0" id="theNavBar">
+          <div class="navbar-collapse collapse justify-content-between" id="theNavBar">
             <ul class="navbar-nav mr-auto">
               <li class="nav-item">
                 @Html.Raw(
@@ -83,22 +83,7 @@
                 </div>
               </li>
 
-              @*@if (permissions.CanViewValidationReports)
-                {
-                  <li class="nav-item">
-                    @Html.Raw(
-                        Html.ActionLink(
-                            "LinkText",
-                            "Reports",
-                            "Validation",
-                            new { area = "" },
-                            new { @class = "nav-link validation-nav-link show-page-loading" })
-                            .ToHtmlString()
-                            .Replace("LinkText", "Validation Results"))
-                  </li>
-                }*@
-
-              @if (permissions.CanViewOdsReports)
+              @if (permissions != null && permissions.CanViewOdsReports)
               {
                 <li class="nav-item">
                   @Html.Raw(
@@ -111,7 +96,7 @@
                 </li>
               }
 
-              @if (permissions.CanAccessAdminFeatures)
+              @if (permissions != null && permissions.CanAccessAdminFeatures)
               {
                 <li class="nav-item">
                   @Html.Raw(
@@ -124,9 +109,10 @@
                 </li>
               }
             </ul>
+            <ul class="navbar-nav ml-auto right">
+              @Html.Action("NavDropDowns", "Nav")
+            </ul>
           </div>
-
-          @Html.Action("NavDropDowns", "Nav")
         </nav>
       </div>
     </div>
@@ -227,6 +213,11 @@
             $('#newActionDropdownYear').select2({
                 containerCssClass: 'newActionDropdownYear',
                 minimumResultsForSearch: Infinity,
+            });
+
+            $('#newActionDropdownProgramArea').select2({
+              containerCssClass: 'newActionDropdownProgramArea',
+              minimumResultsForSearch: Infinity,
             });
 
             $.get("@Url.Content("~/api/validation/edorgs/autocomplete")")
