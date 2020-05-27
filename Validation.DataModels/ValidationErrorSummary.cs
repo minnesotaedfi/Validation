@@ -29,8 +29,7 @@ namespace ValidationWeb.Models
         public string ErrorCode { get; set; }
         
         public string ErrorText { get; set; }
-
-
+        
         [ForeignKey("ValidationReportDetails")]
         public int ValidationReportDetailsId { get; set; }
         
@@ -47,6 +46,7 @@ namespace ValidationWeb.Models
         /// The StudentUniqueId is not globally unique, but unique just to one ODS database.
         /// </summary>
         public string StudentUniqueId { get; set; }
+
         public string StudentFullName { get; set; }
     }
 }

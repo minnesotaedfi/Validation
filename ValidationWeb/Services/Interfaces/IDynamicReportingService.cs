@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 
+using Validation.DataModels;
+
 using ValidationWeb.Models;
 
 namespace ValidationWeb.Services.Interfaces

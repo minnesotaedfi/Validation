@@ -7,6 +7,8 @@ using System.Data.SqlClient;
 using System.Dynamic;
 using System.Linq;
 
+using Validation.DataModels;
+
 using ValidationWeb.Database;
 using ValidationWeb.Models;
 using ValidationWeb.Services.Interfaces;

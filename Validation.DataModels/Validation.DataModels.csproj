@@ -126,13 +126,13 @@
     <Compile Include="ValidationErrorSummary.cs" />
     <Compile Include="ValidationPortalIdentity.cs" />
     <Compile Include="ValidationPortalPrincipal.cs" />
+    <Compile Include="ProgramArea.cs" />
     <Compile Include="ValidationReportDetails.cs" />
     <Compile Include="ValidationReportSummary.cs" />
     <Compile Include="ValidationRulesField.cs" />
     <Compile Include="ValidationRulesView.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
