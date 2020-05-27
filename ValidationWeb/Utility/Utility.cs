@@ -1,5 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
+using System.Web.UI;
+
 using CsvHelper;
 
 namespace ValidationWeb.Utility
@@ -11,7 +14,7 @@ namespace ValidationWeb.Utility
             var memoryStream = new MemoryStream();
             var streamWriter = new StreamWriter(memoryStream);
 
-            using (var csvWriter = new CsvWriter(streamWriter))
+            using (var csvWriter = new CsvWriter(streamWriter, CultureInfo.CurrentCulture))
             {
                 csvWriter.WriteRecords(records);
                 streamWriter.Flush();
