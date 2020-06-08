@@ -249,32 +249,58 @@
                     console.log('An error occurred when attempting to get EdOrgs');
             });
 
-            // Supports NavDropDowns, School Year selection menu dropdown
-            $("#newActionDropdownYear").change(function (e) {
+            
+            $("#newActionDropdownProgramArea").change(function (e) {
                 var chosenLink = $(this);
-                var yearId = $(this).val();
+                var programAreaId = $(this).val();
                 $.ajax({
-                    url: "@Url.Content("~/api/user-session/school-year/select")",
+                    url: "@Url.Content("~/api/user-session/program-area/select")",
                     type: "Post",
-                    data: yearId,
+                    data: programAreaId,
                     contentType: 'application/json; charset=utf-8',
                     success: function (data) {
-                        console.log('setting school year to '+chosenLink.text());
+                        console.log('Setting Program Area to '+chosenLink.text());
 
-                        // If looking at detailed errors, go back to main reports listing for the new ODS School Year.
+                        @*// If looking at detailed errors, go back to main reports listing for the new ODS School Year.
                         if (location.pathname.toLowerCase().indexOf("validation/report/") !== -1) {
                             location.replace("@Url.Action("Reports","Validation")");
                             return;
-                        }
+                        }*@
 
                         // If looking at any other reports, get the listing for the new ODS School Year.
                         location.reload();
                     },
                     error: function () {
-                        console.log('An error occurred when attempting to change School Year to '+yearId);
+                        console.log('An error occurred when attempting to change Program Area to '+programAreaId);
                     }
                 });
             });
+
+            $("#newActionDropdownYear").change(function (e) {
+              var chosenLink = $(this);
+              var yearId = $(this).val();
+              $.ajax({
+                url: "@Url.Content("~/api/user-session/school-year/select")",
+                type: "Post",
+                data: yearId,
+                contentType: 'application/json; charset=utf-8',
+                success: function (data) {
+                  console.log('setting school year to '+chosenLink.text());
+
+                  // If looking at detailed errors, go back to main reports listing for the new ODS School Year.
+                  if (location.pathname.toLowerCase().indexOf("validation/report/") !== -1) {
+                    location.replace("@Url.Action("Reports","Validation")");
+                    return;
+                  }
+
+                  // If looking at any other reports, get the listing for the new ODS School Year.
+                  location.reload();
+                },
+                error: function () {
+                  console.log('An error occurred when attempting to change School Year to '+yearId);
+                }
+              });
+            }); 
         });
 
         function setupSelectKeyHandling() {

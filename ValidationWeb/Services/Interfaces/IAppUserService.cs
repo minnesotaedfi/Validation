@@ -11,6 +11,8 @@ namespace ValidationWeb.Services.Interfaces
         void UpdateFocusedEdOrg(string newFocusedEdOrgId);
         
         void UpdateFocusedSchoolYear(int newFocusedSchoolYearId);
+
+        void UpdateFocusedProgramArea(int newFocusedProgramAreaId);
     }
 }
 
