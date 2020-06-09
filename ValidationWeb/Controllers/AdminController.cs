@@ -8,6 +8,8 @@ using MoreLinq;
 
 using Newtonsoft.Json;
 
+using Validation.DataModels;
+
 using ValidationWeb.Filters;
 using ValidationWeb.Models;
 using ValidationWeb.Services.Interfaces;

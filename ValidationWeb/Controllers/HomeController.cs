@@ -3,6 +3,7 @@ using System.Web.Mvc;
 
 using ValidationWeb.Filters;
 using ValidationWeb.Models;
+using ValidationWeb.Services.Implementations;
 using ValidationWeb.Services.Interfaces;
 using ValidationWeb.ViewModels;
 
@@ -16,6 +17,7 @@ namespace ValidationWeb.Controllers
             IAppUserService appUserService,
             IEdOrgService edOrgService,
             ISchoolYearService schoolYearService,
+            IProgramAreaService programAreaService,
             IOdsDataService odsDataService,
             ISubmissionCycleService submissionCycleService,
             IRecordsRequestService recordsRequestService, 
@@ -25,6 +27,7 @@ namespace ValidationWeb.Controllers
             AppUserService = appUserService;
             EdOrgService = edOrgService;
             SchoolYearService = schoolYearService;
+            ProgramAreaService = programAreaService;
             OdsDataService = odsDataService;
             SubmissionCycleService = submissionCycleService;
             RecordsRequestService = recordsRequestService;
@@ -37,6 +40,8 @@ namespace ValidationWeb.Controllers
         
         protected IEdOrgService EdOrgService { get; set; }
        
+        protected IProgramAreaService ProgramAreaService { get; set; }
+
         protected ISchoolYearService SchoolYearService { get; set; }
         
         protected IOdsDataService OdsDataService { get; set; }
@@ -49,11 +54,17 @@ namespace ValidationWeb.Controllers
         
         public ActionResult Index()
         {
-            var focusedSchoolYearId = AppUserService.GetSession().FocusedSchoolYearId;
+            var session = AppUserService.GetSession(); 
+
+            var focusedSchoolYearId = session.FocusedSchoolYearId;
 
             var focusedEdOrg = EdOrgService.GetEdOrgById(
-                AppUserService.GetSession().FocusedEdOrgId,
+                session.FocusedEdOrgId,
                 SchoolYearService.GetSchoolYearById(focusedSchoolYearId).Id);
+
+            // add one-getter
+            var focusedProgramAreaId = session.FocusedProgramAreaId;
+            var focusedProgramArea = ProgramAreaService.GetProgramAreaById(focusedProgramAreaId);
 
             var recordsRequests = RecordsRequestService.GetAllRecordsRequests()
                 .Where(x => 
@@ -69,12 +80,13 @@ namespace ValidationWeb.Controllers
             var model = new HomeIndexViewModel
             {
                 AppUserSession = AppUserService.GetSession(),
-                Announcements = AnnouncementService.GetAnnouncements(),
+                Announcements = AnnouncementService.GetAnnouncements(focusedProgramArea),
                 YearsOpenForDataSubmission = SchoolYearService.GetSubmittableSchoolYears(),
                 AuthorizedEdOrgs = EdOrgService.GetAuthorizedEdOrgs(),
                 FocusedEdOrg = focusedEdOrg,
+                FocusedProgramArea = focusedProgramArea,
                 RecordsRequests = recordsRequests,
-                SubmissionCycles = SubmissionCycleService.GetSubmissionCyclesOpenToday()
+                SubmissionCycles = SubmissionCycleService.GetSubmissionCyclesOpenToday(focusedProgramArea)
             };
 
             if (!model.AuthorizedEdOrgs.Any())

@@ -7,6 +7,8 @@ using System.Data.SqlClient;
 using System.Dynamic;
 using System.Linq;
 
+using Validation.DataModels;
+
 using ValidationWeb.Database;
 using ValidationWeb.Models;
 using ValidationWeb.Services.Interfaces;
@@ -35,16 +37,23 @@ namespace ValidationWeb.Services.Implementations
         private ILoggingService LoggingService { get; }
         private IRulesEngineConfigurationValues RulesEngineConfigurationValues { get; }
 
-        public IEnumerable<DynamicReportDefinition> GetReportDefinitions()
+        public IEnumerable<DynamicReportDefinition> GetReportDefinitions(ProgramAreaLookup programArea = null)
         {
             using (var validationPortalContext = ValidationPortalDataContextFactory.Create())
             {
-                return validationPortalContext.DynamicReportDefinitions
+                var result = validationPortalContext.DynamicReportDefinitions
                     .Include(x => x.Fields)
                     .Include(x => x.Fields.Select(y => y.Field))
                     .Include(x => x.SchoolYear)
                     .Include(x => x.RulesView)
                     .ToList();
+
+                if (programArea != null)
+                {
+                    result = result.Where(x => x.ProgramAreaId == programArea.Id).ToList();
+                }
+
+                return result;
             }
         }
 
@@ -90,8 +99,8 @@ namespace ValidationWeb.Services.Implementations
                 queryCommand.CommandType = System.Data.CommandType.Text;
                 queryCommand.CommandText = $"SELECT {fieldNames} FROM {viewName}";
 
-                if(!reportDefinition.IsOrgLevelReport || districtId.HasValue) 
-                    // && selectedFields.Any(x => x.Field.Name.Equals("DistrictId", StringComparison.InvariantCultureIgnoreCase)))
+                if (!reportDefinition.IsOrgLevelReport || districtId.HasValue)
+                // && selectedFields.Any(x => x.Field.Name.Equals("DistrictId", StringComparison.InvariantCultureIgnoreCase)))
                 {
                     queryCommand.CommandText += $" where [DistrictId] = {districtId}";
                 }
@@ -254,12 +263,12 @@ namespace ValidationWeb.Services.Implementations
                                 StringComparer.OrdinalIgnoreCase))
                         {
                             var rulesView = new ValidationRulesView
-                                            {
-                                                Enabled = true,
-                                                Schema = reader["Schema"].ToString(),
-                                                Name = tableName,
-                                                SchoolYearId = schoolYearId
-                                            };
+                            {
+                                Enabled = true,
+                                Schema = reader["Schema"].ToString(),
+                                Name = tableName,
+                                SchoolYearId = schoolYearId
+                            };
 
                             viewsForYear.Add(rulesView);
                         }

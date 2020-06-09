@@ -1,4 +1,7 @@
 ﻿using System.Data.Entity;
+
+using Validation.DataModels;
+
 using ValidationWeb.Models;
 
 namespace ValidationWeb.Database
@@ -54,6 +57,8 @@ namespace ValidationWeb.Database
         public virtual DbSet<DynamicReportDefinition> DynamicReportDefinitions { get; set; }
 
         public virtual DbSet<DynamicReportField> DynamicReportFields { get; set; }
+
+        public virtual DbSet<ProgramAreaLookup> ProgramAreaLookup { get; set; }
 
         protected new virtual void Dispose(bool disposing)
         {

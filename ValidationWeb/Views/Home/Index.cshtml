@@ -10,7 +10,7 @@
             @if (Model.SubmissionCycles.Any())
             {
                 <h2 class="row vp-body-header">
-                    Collection Cycles open for Validation:
+                    Collection Cycles open for Program Area @(Model.FocusedProgramArea.Description):
                 </h2>
                 <div class="row">
                     <table class="table table-bordered table-sm" role="grid">
@@ -40,9 +40,7 @@
                     </table>
                 </div>
             }
-            <!-- all notifications here -->
-            <!-- add enrollment request (and responses!?) to notifications -->
-            <!-- see Home Page - Notification tab in spec worksheet -->
+
             @if (Model.RecordsRequests.Any())
             {
                 <h2 class="row vp-body-header">

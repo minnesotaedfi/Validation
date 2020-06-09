@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
+
+using Validation.DataModels;
+
 using ValidationWeb.Models;
 
 namespace ValidationWeb.Services.Interfaces
@@ -9,9 +12,9 @@ namespace ValidationWeb.Services.Interfaces
     {
         void DeleteSubmissionCycle(int id);
 
-        IList<SubmissionCycle> GetSubmissionCycles();
+        IList<SubmissionCycle> GetSubmissionCycles(ProgramAreaLookup programArea = null);
 
-        IEnumerable<SubmissionCycle> GetSubmissionCyclesOpenToday();
+        IEnumerable<SubmissionCycle> GetSubmissionCyclesOpenToday(ProgramAreaLookup programArea = null);
 
         SubmissionCycle GetSubmissionCycle(int id);
 

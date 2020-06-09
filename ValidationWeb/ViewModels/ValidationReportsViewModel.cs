@@ -1,5 +1,8 @@
 ﻿using System.Collections.Generic;
 using Engine.Models;
+
+using Validation.DataModels;
+
 using ValidationWeb.Models;
 
 namespace ValidationWeb.ViewModels
@@ -21,6 +24,8 @@ namespace ValidationWeb.ViewModels
         public int FocusedEdOrgId { get; set; }
 
         public int FocusedSchoolYearId { get; set; }
+
+        public ProgramAreaLookup FocusedProgramArea { get; set; }
 
         public bool ReadOnly { get; set; }
     }

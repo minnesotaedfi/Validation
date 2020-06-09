@@ -2,6 +2,8 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
+using Validation.DataModels;
+
 namespace ValidationWeb.Models
 {
     [Table("validation.Announcement")]
@@ -42,5 +44,11 @@ namespace ValidationWeb.Models
         /// </summary>
         [Required(ErrorMessage = "Please enter date")]
         public DateTime Expiration { get; set; }
+
+        [Required]
+        [ForeignKey("ProgramArea")]
+        public int ProgramAreaId { get; set; }
+
+        public ProgramAreaLookup ProgramArea { get; set; }
     }
 }

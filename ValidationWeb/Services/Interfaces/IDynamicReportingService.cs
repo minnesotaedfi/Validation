@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 
+using Validation.DataModels;
+
 using ValidationWeb.Models;
 
 namespace ValidationWeb.Services.Interfaces
@@ -12,7 +14,7 @@ namespace ValidationWeb.Services.Interfaces
          
         void UpdateViewsAndRulesForSchoolYear(int schoolYearId);
         
-        IEnumerable<DynamicReportDefinition> GetReportDefinitions();
+        IEnumerable<DynamicReportDefinition> GetReportDefinitions(ProgramAreaLookup programArea = null);
         
         void SaveReportDefinition(DynamicReportDefinition reportDefinition);
 

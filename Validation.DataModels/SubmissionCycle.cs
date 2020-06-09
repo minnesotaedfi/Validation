@@ -2,6 +2,8 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
+using Validation.DataModels;
+
 namespace ValidationWeb.Models
 {
     [Table("validation.SubmissionCycle")]
@@ -22,13 +24,22 @@ namespace ValidationWeb.Models
         public int Id { get; set; }
 
         public string CollectionId { get; set; }
+
         [Required]
         public DateTime StartDate { get; set; }
+        
         [Required]
         public DateTime EndDate { get; set; }
         public int? SchoolYearId { get; set; }
+        
         [NotMapped]
         public string SchoolYearDisplay { get; set; }
+
+        [Required]
+        [ForeignKey("ProgramArea")]
+        public int ProgramAreaId { get; set; }
+
+        public ProgramAreaLookup ProgramArea { get; set; }
 
         public override string ToString()
         {

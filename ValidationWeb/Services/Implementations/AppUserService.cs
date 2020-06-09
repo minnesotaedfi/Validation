@@ -96,5 +96,37 @@ namespace ValidationWeb.Services.Implementations
                 LoggingService.LogErrorMessage($"An error occurred when updating focused School Year ID to {newFocusedSchoolYearId.ToString()}: {ex.ChainInnerExceptionMessages()}");
             }
         }
+
+        public void UpdateFocusedProgramArea(int newFocusedProgramAreaId)
+        {
+            LoggingService.LogDebugMessage($"Attempting to update focused Program Area ID to {newFocusedProgramAreaId.ToString()}.");
+            try
+            {
+                using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
+                {
+                    var sessionObj = GetSession();
+
+                    // todo: null ref
+                    int? validProgramAreaId = validationPortalDataContext.ProgramAreaLookup
+                        .FirstOrDefault(x => x.Id == newFocusedProgramAreaId)?.Id;
+
+                    if (sessionObj == null || !validProgramAreaId.HasValue)
+                    {
+                        LoggingService.LogErrorMessage("Unable to set an invalid Program Area");
+                        return; // todo: another silent fail! 
+                    }
+
+                    validationPortalDataContext.AppUserSessions
+                        .First(x => x.Id == sessionObj.Id)
+                        .FocusedProgramAreaId = validProgramAreaId.Value;
+
+                    validationPortalDataContext.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggingService.LogErrorMessage($"An error occurred when updating focused School Year ID to {newFocusedProgramAreaId.ToString()}: {ex.ChainInnerExceptionMessages()}");
+            }
+        }
     }
 }

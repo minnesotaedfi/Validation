@@ -28,5 +28,7 @@ namespace ValidationWeb.Models
         /// Gets or sets SchoolYear that the user is acting on/viewing ... chosen in the application/website.
         /// </summary>
         public int FocusedSchoolYearId { get; set; }
+
+        public int FocusedProgramAreaId { get; set; }
     }
 }

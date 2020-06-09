@@ -1,9 +1,14 @@
 ﻿using System;
 using System.Data.Entity.Migrations;
 using System.Linq;
+
+using Validation.DataModels;
+
 using ValidationWeb.Models;
 using ValidationWeb.Services.Implementations;
 using ValidationWeb.Services.Interfaces;
+
+using EdOrgType = ValidationWeb.Models.EdOrgType;
 
 namespace ValidationWeb.Database
 {
@@ -32,20 +37,17 @@ namespace ValidationWeb.Database
             new EdOrgTypeLookup { Id = (int)EdOrgType.State, CodeValue = "State", Description = "State" }
         };
 
-        public static ErrorSeverityLookup[] ErrorSeverityLookups = new ErrorSeverityLookup[]
+        public static ErrorSeverityLookup[] ErrorSeverityLookups = 
         {
             new ErrorSeverityLookup { Id = (int)ErrorSeverity.Error, CodeValue = "Error", Description = "Error" },
             new ErrorSeverityLookup { Id = (int)ErrorSeverity.Warning, CodeValue = "Warning", Description = "Warning" }
         };
 
-        public static RecordsRequestTypeLookup[] RecordsRequestTypeLookups = new RecordsRequestTypeLookup[]
+        public static ProgramAreaLookup[] ProgramAreaLookups =
         {
-            new RecordsRequestTypeLookup { Id = (int)RecordsRequestType.Assessment, CodeValue = "Assessment", Description = "Assessment"},
-            new RecordsRequestTypeLookup { Id = (int)RecordsRequestType.Cumulative, CodeValue = "Cumulative", Description = "Cumulative"},
-            new RecordsRequestTypeLookup { Id = (int)RecordsRequestType.Discipline, CodeValue = "Discipline", Description = "Discipline"},
-            new RecordsRequestTypeLookup { Id = (int)RecordsRequestType.IEP, CodeValue = "IEP", Description = "IEP"},
-            new RecordsRequestTypeLookup { Id = (int)RecordsRequestType.Evaluation, CodeValue = "Evaluation", Description = "Evaluation"},
-            new RecordsRequestTypeLookup { Id = (int)RecordsRequestType.Immunizations, CodeValue = "Immunizations", Description = "Immunizations"}
+            new ProgramAreaLookup { Id = (int)ProgramArea.Marss, CodeValue = "MARSS", Description = "MARSS" },
+            new ProgramAreaLookup { Id = (int)ProgramArea.Ee, CodeValue = "EE", Description = "EE" },
+            new ProgramAreaLookup { Id = (int)ProgramArea.Mccc, CodeValue = "MCCC", Description = "MCCC" },
         };
         
         /// <summary>
@@ -56,7 +58,8 @@ namespace ValidationWeb.Database
         {
             context.EdOrgTypeLookup.AddOrUpdate(EdOrgTypeLookups);
             context.ErrorSeverityLookup.AddOrUpdate(ErrorSeverityLookups);
-            
+            context.ProgramAreaLookup.AddOrUpdate(ProgramAreaLookups);
+
             if (_config.SeedSchoolYears != null && !context.SchoolYears.Any()) 
             {
                 foreach (var schoolYearToSeedIfMissing in _config.SeedSchoolYears)
@@ -69,31 +72,6 @@ namespace ValidationWeb.Database
                     }
                 }
             }
-
-#if DEBUG
-            if (context.Announcements != null && !context.Announcements.Any())
-            {
-                context.Announcements.AddOrUpdate(
-                    new Announcement
-                    {
-                        Priority = 0,
-                        Message = "This message is stored in the application database.",
-                        ContactInfo = "info@education.mn.gov",
-                        IsEmergency = false,
-                        LinkUrl = "http://education.mn.gov/",
-                        Expiration = new DateTime(2019, 4, 1)
-                    },
-                    new Announcement
-                    {
-                        Priority = 0,
-                        Message = "Another message.",
-                        ContactInfo = "info@education.mn.gov",
-                        IsEmergency = false,
-                        LinkUrl = "http://education.mn.gov/",
-                        Expiration = new DateTime(2019, 4, 1)
-                    });
-            }
-#endif
         }
     }
 }

@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
+
+using Validation.DataModels;
+
 using ValidationWeb.Database;
 using ValidationWeb.Models;
 using ValidationWeb.Services.Interfaces;
@@ -11,27 +14,20 @@ namespace ValidationWeb.Services.Implementations
 {
     public class ValidationResultsService : IValidationResultsService
     {
-        //private ErrorSeverityLookup anError = ValidationPortalDbMigrationConfiguration.ErrorSeverityLookups.First(sev => sev.CodeValue == ErrorSeverity.Error.ToString());
-        //private ErrorSeverityLookup aWarning = ValidationPortalDbMigrationConfiguration.ErrorSeverityLookups.First(sev => sev.CodeValue == ErrorSeverity.Warning.ToString());
+        private const int MaxPageSize = 10000;
+        private const int AutocompleteSuggestionCount = 8;
+        private readonly ISubmissionCycleService SubmissionCycleService;
+        private readonly ILoggingService LoggingService;
+        private readonly IDbContextFactory<ValidationPortalDbContext> DbContextFactory;
         
-        protected const int MaxPageSize = 10000;
-
-        protected const int AutocompleteSuggestionCount = 8;
-
-        protected readonly ILoggingService LoggingService;
-        
-        protected readonly IDbContextFactory<ValidationPortalDbContext> DbContextFactory;
-        
-        public ValidationResultsService(ILoggingService loggingService, IDbContextFactory<ValidationPortalDbContext> dbContextFactory)
+        public ValidationResultsService(
+            ISubmissionCycleService submissionCycleService,
+            ILoggingService loggingService, 
+            IDbContextFactory<ValidationPortalDbContext> dbContextFactory)
         {
-
+            SubmissionCycleService = submissionCycleService;
             LoggingService = loggingService;
             DbContextFactory = dbContextFactory;
-
-#if DEBUG
-            // Log the SQL in DEBUG mode
-            //_portalDbContext.Database.Log = s => LoggingService.LogDebugMessage(s);
-#endif
         }
 
         public ValidationReportDetails GetValidationReportDetails(int validationReportId)
@@ -60,16 +56,24 @@ namespace ValidationWeb.Services.Implementations
             }
         }
 
-        public List<ValidationReportSummary> GetValidationReportSummaries(int edOrgId)
+        public IEnumerable<ValidationReportSummary> GetValidationReportSummaries(
+            int edOrgId,
+            ProgramAreaLookup programArea = null)
         {
             LoggingService.LogDebugMessage($"Retrieving a list of Validation Reports for the Ed Org ID number: {edOrgId.ToString()}");
             using (var portalDbContext = DbContextFactory.Create())
             {
+                //todo: fix overall tracking of collections, this is bad
+                var collections = SubmissionCycleService.GetSubmissionCycles(programArea)
+                    .Select(x => x.CollectionId);
+
                 var reportSummaryList = portalDbContext.ValidationReportSummaries
                     .Where(x => x.EdOrgId == edOrgId)
                     .Include(x => x.SchoolYear)
+                    .Where(x => collections.Contains(x.Collection))
                     .ToList();
 
+                // todo: fix this, use UTC across the board server-side
                 reportSummaryList.ForEach(
                     x =>
                         {

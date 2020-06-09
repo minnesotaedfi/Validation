@@ -1,11 +1,14 @@
 ﻿using System.Collections.Generic;
+
+using Validation.DataModels;
+
 using ValidationWeb.Models;
 
 namespace ValidationWeb.Services.Interfaces
 {
     public interface IValidationResultsService
     {
-        List<ValidationReportSummary> GetValidationReportSummaries(int edOrgId);
+        IEnumerable<ValidationReportSummary> GetValidationReportSummaries(int edOrgId, ProgramAreaLookup programArea = null);
         
         ValidationReportDetails GetValidationReportDetails(int validationReportId);
 

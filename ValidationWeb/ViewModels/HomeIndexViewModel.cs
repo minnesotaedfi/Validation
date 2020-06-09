@@ -1,4 +1,7 @@
 ﻿using System.Collections.Generic;
+
+using Validation.DataModels;
+
 using ValidationWeb.Models;
 
 namespace ValidationWeb.ViewModels
@@ -18,6 +21,8 @@ namespace ValidationWeb.ViewModels
         /// Gets or sets Ed Org currently selected (being acting on when a user takes actions designed to affect a single EdOrg)
         /// </summary>
         public EdOrg FocusedEdOrg { get; set; }
+
+        public ProgramAreaLookup FocusedProgramArea { get; set; }
         
         public IEnumerable<SchoolYear> YearsOpenForDataSubmission { get; set; }
 

@@ -2,10 +2,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ValidationWeb.Models
+using ValidationWeb.Models;
+
+namespace Validation.DataModels
 {
     [Table("validation.DynamicReportDefinition")]
-
     public class DynamicReportDefinition
     {
         public DynamicReportDefinition()
@@ -36,5 +37,11 @@ namespace ValidationWeb.Models
         public ICollection<DynamicReportField> Fields { get; set; }
 
         public bool IsOrgLevelReport { get; set; }
+
+        [Required]
+        [ForeignKey("ProgramArea")]
+        public int ProgramAreaId { get; set; }
+
+        public ProgramAreaLookup ProgramArea { get; set; }
     }
 }

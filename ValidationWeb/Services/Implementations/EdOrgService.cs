@@ -192,8 +192,7 @@ namespace ValidationWeb.Services.Implementations
                             {
                                 Id = int.Parse(reader[SingleEdOrgByIdQuery.IdColumnName].ToString()),
                                 ShortOrganizationName = reader[SingleEdOrgByIdQuery.OrganizationShortNameColumnName].ToString(),
-                                OrganizationName = reader[SingleEdOrgByIdQuery.OrganizationNameColumnName].ToString(),
-                                StateOrganizationId = reader[SingleEdOrgByIdQuery.StateOrganizationIdColumnName].ToString()
+                                OrganizationName = reader[SingleEdOrgByIdQuery.OrganizationNameColumnName].ToString()
                             };
                         }
                     }

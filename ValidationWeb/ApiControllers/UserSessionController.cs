@@ -42,5 +42,12 @@ namespace ValidationWeb.ApiControllers
         {
             _appUserService.UpdateFocusedSchoolYear(int.Parse(schoolYearId));
         }
+
+        [Route("program-area/select")]
+        [HttpPost]
+        public void SelectProgramArea([FromBody] string programAreaId)
+        {
+            _appUserService.UpdateFocusedProgramArea(int.Parse(programAreaId));
+        }
     }
 }

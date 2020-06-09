@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Web.Mvc;
+
+using Validation.DataModels;
+
 using ValidationWeb.Database;
 using ValidationWeb.Models;
 using ValidationWeb.Services.Interfaces;
@@ -28,11 +31,18 @@ namespace ValidationWeb.Services.Implementations
 
         protected ILoggingService LoggingService { get; set; }
 
-        public IList<SubmissionCycle> GetSubmissionCycles()
+        public IList<SubmissionCycle> GetSubmissionCycles(ProgramAreaLookup programArea = null)
         {
             using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
             {
-                foreach (var submissionCycle in validationPortalDataContext.SubmissionCycles)
+                var submissionCycles = validationPortalDataContext.SubmissionCycles.ToList();
+
+                if(programArea != null)
+                {
+                    submissionCycles = submissionCycles.Where(x => x.ProgramAreaId == programArea.Id).ToList();
+                }
+
+                foreach (var submissionCycle in submissionCycles)
                 {
                     var schoolYear = validationPortalDataContext.SchoolYears.FirstOrDefault(x => x.Id == submissionCycle.SchoolYearId);
                     if (schoolYear != null)
@@ -41,11 +51,11 @@ namespace ValidationWeb.Services.Implementations
                     }
                 }
 
-                return validationPortalDataContext.SubmissionCycles.ToList();
+                return submissionCycles.ToList();
             }
         }
 
-        public IEnumerable<SubmissionCycle> GetSubmissionCyclesOpenToday()
+        public IEnumerable<SubmissionCycle> GetSubmissionCyclesOpenToday(ProgramAreaLookup programArea = null)
         {
             using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
             {
@@ -55,6 +65,7 @@ namespace ValidationWeb.Services.Implementations
                     .Where(s => 
                         s.StartDate.Date <= DateTime.Now.Date &&
                         s.EndDate.Date >= DateTime.Now.Date)
+                    .Where(x => programArea == null || x.ProgramAreaId == programArea.Id)
                     .ToList();
 
                 foreach (var submissionCycle in submissionCyclesOpenToday)

@@ -15,38 +15,44 @@ namespace ValidationWeb.Controllers
     [PortalAuthorize(Roles = "Admin,DataOwner,DistrictUser,HelpDesk")]
     public class DynamicController : Controller
     {
+        private readonly IDynamicReportingService _dynamicReportingService;
+        private readonly IAppUserService _appUserService;
+        private readonly IEdOrgService _edOrgService;
+        private readonly ISchoolYearService _schoolYearService ;
+        private readonly IProgramAreaService _programAreaService;
+
         public DynamicController(
             IDynamicReportingService dynamicReportingService,
             IAppUserService appUserService,
             IEdOrgService edOrgService,
-            ISchoolYearService schoolYearService)
+            ISchoolYearService schoolYearService,
+            IProgramAreaService programAreaService)
         {
-            DynamicReportingService = dynamicReportingService;
-            AppUserService = appUserService;
-            EdOrgService = edOrgService;
-            SchoolYearService = schoolYearService;
+            _dynamicReportingService = dynamicReportingService;
+            _appUserService = appUserService;
+            _edOrgService = edOrgService;
+            _schoolYearService = schoolYearService;
+            _programAreaService = programAreaService;
         }
-
-        private IDynamicReportingService DynamicReportingService { get; }
-        private IAppUserService AppUserService { get; }
-        private IEdOrgService EdOrgService { get; }
-        private ISchoolYearService SchoolYearService { get; }
 
         // GET: Dynamic
         public ActionResult Index()
         {
-            var focusedSchoolYearId = AppUserService.GetSession().FocusedSchoolYearId;
-            var focusedSchoolYear = SchoolYearService.GetSchoolYearById(focusedSchoolYearId);
+            var session = _appUserService.GetSession();
+            var programArea = _programAreaService.GetProgramAreaById(session.FocusedProgramAreaId);
+            var focusedSchoolYearId = session.FocusedSchoolYearId;
+            var focusedSchoolYear = _schoolYearService.GetSchoolYearById(focusedSchoolYearId);
 
-            var focusedEdOrg = EdOrgService.GetEdOrgById(
-                AppUserService.GetSession().FocusedEdOrgId,
+            var focusedEdOrg = _edOrgService.GetEdOrgById(
+                _appUserService.GetSession().FocusedEdOrgId,
                 focusedSchoolYear.Id);
 
             var viewModel = new DynamicReportViewModel
             {
                 FocusedEdOrg = focusedEdOrg,
                 SchoolYear = focusedSchoolYear,
-                User = AppUserService.GetUser()
+                FocusedProgramArea = programArea,
+                User = _appUserService.GetUser()
             };
 
             return View(viewModel);
@@ -57,7 +63,10 @@ namespace ValidationWeb.Controllers
             var identity = (ValidationPortalIdentity)User.Identity;
             var permissions = User.Identity.GetViewPermissions(identity.AppRole);
 
-            var result = DynamicReportingService.GetReportDefinitions()
+            var session = _appUserService.GetSession();
+            var programArea = _programAreaService.GetProgramAreaById(session.FocusedProgramAreaId);
+
+            var result = _dynamicReportingService.GetReportDefinitions(programArea)
                 .Where(x => x.SchoolYearId == schoolYearId)
                 .Where(x => x.Enabled);
 
@@ -76,9 +85,9 @@ namespace ValidationWeb.Controllers
 
         public ActionResult GenerateReport(DynamicReportRequest request, int districtId)
         {
-            var user = AppUserService.GetUser();
+            var user = _appUserService.GetUser();
             var filterByDistrict = user.AppRole.Name != PortalRoleNames.DataOwner;
-            var report = DynamicReportingService.GetReportData(request, filterByDistrict ? districtId : (int?)null);
+            var report = _dynamicReportingService.GetReportData(request, filterByDistrict ? districtId : (int?)null);
             var csvArray = Csv.WriteCsvToMemory(report);
             var memoryStream = new MemoryStream(csvArray);
 

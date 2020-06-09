@@ -24,15 +24,16 @@ namespace ValidationWeb.Controllers
     [PortalAuthorize(Roles = "DistrictUser,HelpDesk,Admin")]
     public class ValidationController : Controller
     {
-        protected readonly IAppUserService _appUserService;
-        protected readonly IEdOrgService _edOrgService;
-        protected readonly ILoggingService _loggingService;
-        protected readonly IRulesEngineService _rulesEngineService;
-        protected readonly ISchoolYearService _schoolYearService;
+        private readonly IAppUserService _appUserService;
+        private readonly IEdOrgService _edOrgService;
+        private readonly ILoggingService _loggingService;
+        private readonly IRulesEngineService _rulesEngineService;
+        private readonly ISchoolYearService _schoolYearService;
         private readonly ISubmissionCycleService _submissionCycleService;
-        protected readonly IValidationResultsService _validationResultsService;
-        protected readonly Model _engineObjectModel;
-        protected ICacheManager _cacheManager { get; }
+        private readonly IValidationResultsService _validationResultsService;
+        private readonly Model _engineObjectModel;
+        private readonly ICacheManager _cacheManager;
+        private readonly IProgramAreaService _programAreaService;
 
         public ValidationController(
             IAppUserService appUserService,
@@ -43,7 +44,8 @@ namespace ValidationWeb.Controllers
             ISchoolYearService schoolYearService,
             ISubmissionCycleService submissionCycleService,
             Model engineObjectModel,
-            ICacheManager cacheManager)
+            ICacheManager cacheManager,
+            IProgramAreaService programAreaService)
         {
             _appUserService = appUserService;
             _edOrgService = edOrgService;
@@ -54,6 +56,7 @@ namespace ValidationWeb.Controllers
             _submissionCycleService = submissionCycleService;
             _validationResultsService = validationResultsService;
             _cacheManager = cacheManager;
+            _programAreaService = programAreaService;
         }
 
         // GET: Validation/Reports
@@ -61,6 +64,7 @@ namespace ValidationWeb.Controllers
         {
             var session = _appUserService.GetSession();
             var edOrg = _edOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
+            var programArea = _programAreaService.GetProgramAreaById(session.FocusedProgramAreaId);
             var rulesCollections = _engineObjectModel.Collections.OrderBy(x => x.CollectionId).ToList();
             var theUser = _appUserService.GetUser();
             var districtName = edOrg == null ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
@@ -71,9 +75,10 @@ namespace ValidationWeb.Controllers
                 TheUser = theUser,
                 RulesCollections = rulesCollections,
                 SchoolYears = _schoolYearService.GetSubmittableSchoolYears().ToList(),
-                SubmissionCycles = _submissionCycleService.GetSubmissionCyclesOpenToday().ToList(),
+                SubmissionCycles = _submissionCycleService.GetSubmissionCyclesOpenToday(programArea).ToList(),
                 FocusedEdOrgId = session.FocusedEdOrgId,
-                FocusedSchoolYearId = session.FocusedSchoolYearId
+                FocusedSchoolYearId = session.FocusedSchoolYearId,
+                FocusedProgramArea = programArea
             };
 
             return View(model);
@@ -81,9 +86,11 @@ namespace ValidationWeb.Controllers
 
         public FileStreamResult DownloadReportSummariesCsv(int edOrgId)
         {
+            var session = _appUserService.GetSession();
+            var programArea = _programAreaService.GetProgramAreaById(session.FocusedProgramAreaId);
             var edOrg = _edOrgService.GetSingleEdOrg(edOrgId, _appUserService.GetSession().FocusedSchoolYearId);
 
-            var results = _validationResultsService.GetValidationReportSummaries(edOrgId)
+            var results = _validationResultsService.GetValidationReportSummaries(edOrgId, programArea)
                 .OrderByDescending(rs => rs.CompletedWhen)
                 .ToList();
 
@@ -109,7 +116,12 @@ namespace ValidationWeb.Controllers
 
         public JsonResult ReportSummaries(int edOrgId, IDataTablesRequest request)
         {
-            var results = _validationResultsService.GetValidationReportSummaries(edOrgId).OrderByDescending(rs => rs.CompletedWhen).ToList();
+            var session = _appUserService.GetSession();
+            var programArea = _programAreaService.GetProgramAreaById(session.FocusedProgramAreaId);
+
+            var results = _validationResultsService.GetValidationReportSummaries(edOrgId, programArea)
+                .OrderByDescending(rs => rs.CompletedWhen)
+                .ToList();
 
             IEnumerable<ValidationReportSummary> sortedResults = results;
 

@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 
+using Validation.DataModels;
+
 using ValidationWeb.Models;
 
 namespace ValidationWeb.ViewModels
@@ -18,6 +20,10 @@ namespace ValidationWeb.ViewModels
         public IEnumerable<SchoolYear> SchoolYears { get; set; }
 
         public IEnumerable<EdOrg> EdOrgs { get; set; }
+
+        public IEnumerable<ProgramAreaLookup> ProgramAreas { get; set; }
+
+        public ProgramAreaLookup FocusedProgramArea { get; set; }
 
         public string EdiamProfileLink { get; set; }
 

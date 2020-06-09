@@ -5,6 +5,9 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 using Moq;
+
+using Validation.DataModels;
+
 using ValidationWeb.Database;
 using ValidationWeb.Models;
 
@@ -179,6 +182,14 @@ namespace ValidationWeb.Tests.Mocks
                 x => x.DynamicReportFields,
                 x => x.DynamicReportFields = It.IsAny<DbSet<DynamicReportField>>(),
                 dynamicReportFields);
+
+            var programAreaLookups = new List<ProgramAreaLookup>();
+            SetupMockDbSet(
+                GetQueryableMockDbSet(programAreaLookups),
+                validationPortalDbContextMock,
+                x => x.ProgramAreaLookup,
+                x => x.ProgramAreaLookup = It.IsAny<DbSet<ProgramAreaLookup>>(),
+                programAreaLookups);
 
             validationPortalDbContextMock.As<IDisposable>().Setup(x => x.Dispose());
         }

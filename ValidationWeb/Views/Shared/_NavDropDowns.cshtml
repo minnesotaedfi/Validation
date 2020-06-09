@@ -2,46 +2,56 @@
 @using ValidationWeb.Utility
 @model NavMenusViewModel
 @{
-    var identity = (ValidationPortalIdentity)User.Identity;
-    var permissions = User.Identity.GetViewPermissions(identity.AppRole);
+  var identity = (ValidationPortalIdentity)User.Identity;
+  var permissions = User.Identity.GetViewPermissions(identity.AppRole);
 }
 
-<div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
-    <ul class="navbar-nav ml-auto">
 
+  <li class="nav-item dropdown">
+    @if (Model.EdOrgs.Count() > 1)
+    {
+        <select id="edOrgNames" class="form-control validation-dropdown-menu district-dropdown" style="visibility: hidden"></select>
+    }
+  </li>
 
-        @*dropdown pull-right *@
-        <li class="nav-item dropdown">
-            @if (Model.EdOrgs.Count() > 1)
+  <li class="nav-item">
+    @Html.DropDownList(
+        "newActionDropdownYear",
+        new SelectList(Model.SchoolYears
+            .OrderBy(x => x.ToString())
+            .Select(x => new SelectListItem
             {
-                <select id="edOrgNames" class="form-control validation-dropdown-menu district-dropdown" style="visibility: hidden"></select>
-            }
-        </li>
+                Text = x.ToString(),
+                Value = x.Id.ToString()
+            }),
+            "Value",
+            "Text",
+            Model.FocusedSchoolYear.Id),
+        new { @class = "form-control", style = "visibility: hidden" })
+  </li>
 
-        <li class="nav-item">
-            @Html.DropDownList(
-                "newActionDropdownYear",
-                new SelectList(Model.SchoolYears
-                    .OrderBy(x => x.ToString())
-                    .Select(x => new SelectListItem
-                                 {
-                                     Text = x.ToString(),
-                                     Value = x.Id.ToString()
-                                 }),
-                    "Value",
-                    "Text",
-                    Model.FocusedSchoolYear.Id),
-                new { @class = "form-control", style = "visibility: hidden" })
-        </li>
+  <li class="nav-item">
+    @Html.DropDownList(
+        "newActionDropdownProgramArea",
+        new SelectList(Model.ProgramAreas
+            .OrderBy(x => x.ToString())
+            .Select(x => new SelectListItem
+            {
+                Text = x.Description.ToString(),
+                Value = x.Id.ToString()
+            }),
+            "Value",
+            "Text",
+            Model.FocusedProgramArea.Id),
+        new { @class = "form-control", style = "visibility: hidden; width: 150px;" })
+  </li>
 
-        <li class="nav-item dropdown" style="padding-left: 10px;" tabindex="0">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="fas fa-user-circle white-heavy-text"></i>&nbsp;<span class="white-heavy-text">@Model.AppUserSession.UserIdentity.UserId</span>
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown" style="padding:0">
-                <a class="dropdown-item" href="@Model.EdiamProfileLink">View Profile</a>
-                <a class="dropdown-item" href="@Model.EdiamLogoutLink">Log Out</a>
-            </div>
-        </li>
-    </ul>
-</div>
+  <li class="nav-item dropdown" style="margin-left: 25px;" tabindex="0">
+    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <i class="fas fa-user-circle white-heavy-text"></i>&nbsp;<span class="white-heavy-text">@Model.AppUserSession.UserIdentity.UserId</span>
+    </a>
+    <div class="dropdown-menu" aria-labelledby="navbarDropdown" style="padding:0">
+      <a class="dropdown-item" href="@Model.EdiamProfileLink">View Profile</a>
+      <a class="dropdown-item" href="@Model.EdiamLogoutLink">Log Out</a>
+    </div>
+  </li>

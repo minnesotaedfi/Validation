@@ -91,6 +91,7 @@ namespace ValidationWeb
             container.Register<IEdOrgService, EdOrgService>(Lifestyle.Scoped);
             container.Register<IHttpContextProvider, HttpContextProvider>(Lifestyle.Scoped);
             container.Register<ISchoolYearService, SchoolYearService>(Lifestyle.Scoped);
+            container.Register<IProgramAreaService, ProgramAreaService>(Lifestyle.Scoped);
             container.Register<IValidationResultsService, ValidationResultsService>(Lifestyle.Scoped);
             container.Register<ISubmissionCycleService, SubmissionCycleService>(Lifestyle.Scoped);
             container.Register<IEdFiApiLogService, EdFiApiLogService>(Lifestyle.Scoped);

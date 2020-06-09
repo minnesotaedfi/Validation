@@ -20,21 +20,14 @@ namespace ValidationWeb.Tests.Services
     [ExcludeFromCodeCoverage]
     public class EdOrgServiceTests
     {
-        protected MockRepository MockRepository { get; set; }
-
-        protected AppUserSession DefaultTestAppUserSession { get; set; }
-
-        protected Mock<ValidationPortalDbContext> ValidationPortalDbContextMock { get; set; }
-
-        protected Mock<IDbContextFactory<ValidationPortalDbContext>> DbContextFactoryMock { get; set; }
-
-        protected Mock<ISchoolYearDbContextFactory> SchoolYearDbContextFactoryMock { get; set; }
-
-        protected Mock<IAppUserService> AppUserServiceMock { get; set; }
-        
-        protected Mock<ISchoolYearService> SchoolYearServiceMock { get; set; }
-
-        protected Mock<ILoggingService> LoggingServiceMock { get; set; }
+        private MockRepository MockRepository { get; set; }
+        private AppUserSession DefaultTestAppUserSession { get; set; }
+        private Mock<ValidationPortalDbContext> ValidationPortalDbContextMock { get; set; }
+        private Mock<IDbContextFactory<ValidationPortalDbContext>> DbContextFactoryMock { get; set; }
+        private Mock<ISchoolYearDbContextFactory> SchoolYearDbContextFactoryMock { get; set; }
+        private Mock<IAppUserService> AppUserServiceMock { get; set; }
+        private Mock<ISchoolYearService> SchoolYearServiceMock { get; set; }
+        private Mock<ILoggingService> LoggingServiceMock { get; set; }
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -123,7 +116,6 @@ namespace ValidationWeb.Tests.Services
                 x => x.EdOrgs = It.IsAny<DbSet<EdOrg>>(),
                 allEdOrgs);
 
-
             var edOrgService = new EdOrgService(
                 DbContextFactoryMock.Object,
                 AppUserServiceMock.Object,
@@ -189,6 +181,7 @@ namespace ValidationWeb.Tests.Services
 
             SchoolYearServiceMock.Setup(x => x.GetSchoolYearById(testSchoolYearId)).Returns(testSchoolYear);
 
+            LoggingServiceMock.Setup(x => x.LogDebugMessage($"GetEdOrgById: '{testEdOrgId}', year {testSchoolYearId}"));
             LoggingServiceMock.Setup(x => x.LogDebugMessage($"EdOrg cache: {allEdOrgs.Count} currently in ValidationPortal database"));
 
             var result = edOrgService.GetEdOrgById(testEdOrgId, testSchoolYearId);
