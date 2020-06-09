@@ -26,5 +26,13 @@ namespace ValidationWeb.Services.Implementations
                 return validationPortalDataContext.ProgramAreaLookup.ToList();
             }
         }
+
+        public ProgramAreaLookup GetProgramAreaById(int programAreaId)
+        {
+            using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
+            {
+                return validationPortalDataContext.ProgramAreaLookup.FirstOrDefault(x => x.Id == programAreaId);
+            }
+        }
     }
 }

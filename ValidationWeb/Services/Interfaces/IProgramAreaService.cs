@@ -7,5 +7,6 @@ namespace ValidationWeb.Services.Interfaces
     public interface IProgramAreaService
     {
         IList<ProgramAreaLookup> GetProgramAreas();
+        ProgramAreaLookup GetProgramAreaById(int programAreaId);
     }
 }

@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+
+using Validation.DataModels;
+
 using ValidationWeb.Models;
 
 namespace ValidationWeb.Services.Interfaces
 {
     public interface IAnnouncementService
     {
-        List<Announcement> GetAnnouncements();
+        List<Announcement> GetAnnouncements(ProgramAreaLookup programArea = null);
         
         Announcement GetAnnouncement(int id);
         

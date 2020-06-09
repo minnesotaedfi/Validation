@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
+
+using Validation.DataModels;
+
 using ValidationWeb.Database;
 using ValidationWeb.Models;
 using ValidationWeb.Services.Interfaces;
@@ -27,7 +30,7 @@ namespace ValidationWeb.Services.Implementations
             LoggingService = loggingService;
         }
 
-        public List<Announcement> GetAnnouncements()
+        public List<Announcement> GetAnnouncements(ProgramAreaLookup programArea = null)
         {
             var announcements = new List<Announcement>();
             try
@@ -35,6 +38,10 @@ namespace ValidationWeb.Services.Implementations
                 using (var dbContext = DbContextFactory.Create())
                 {
                     announcements = dbContext.Announcements.OrderByDescending(ann => ann.Priority).ToList();
+                    if (programArea != null)
+                    {
+                        announcements = announcements.Where(x => x.ProgramAreaId == programArea.Id).ToList();
+                    }
                 }
             }
             catch (Exception ex)
