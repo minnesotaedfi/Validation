@@ -31,11 +31,18 @@ namespace ValidationWeb.Services.Implementations
 
         protected ILoggingService LoggingService { get; set; }
 
-        public IList<SubmissionCycle> GetSubmissionCycles()
+        public IList<SubmissionCycle> GetSubmissionCycles(ProgramAreaLookup programArea = null)
         {
             using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
             {
-                foreach (var submissionCycle in validationPortalDataContext.SubmissionCycles)
+                var submissionCycles = validationPortalDataContext.SubmissionCycles.ToList();
+
+                if(programArea != null)
+                {
+                    submissionCycles = submissionCycles.Where(x => x.ProgramAreaId == programArea.Id).ToList();
+                }
+
+                foreach (var submissionCycle in submissionCycles)
                 {
                     var schoolYear = validationPortalDataContext.SchoolYears.FirstOrDefault(x => x.Id == submissionCycle.SchoolYearId);
                     if (schoolYear != null)
@@ -44,7 +51,7 @@ namespace ValidationWeb.Services.Implementations
                     }
                 }
 
-                return validationPortalDataContext.SubmissionCycles.ToList();
+                return submissionCycles.ToList();
             }
         }
 
