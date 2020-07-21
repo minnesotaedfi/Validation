@@ -100,7 +100,6 @@ namespace ValidationWeb.Services.Implementations
                 queryCommand.CommandText = $"SELECT {fieldNames} FROM {viewName}";
 
                 if (!reportDefinition.IsOrgLevelReport || districtId.HasValue)
-                // && selectedFields.Any(x => x.Field.Name.Equals("DistrictId", StringComparison.InvariantCultureIgnoreCase)))
                 {
                     queryCommand.CommandText += $" where [DistrictId] = {districtId}";
                 }
@@ -115,7 +114,7 @@ namespace ValidationWeb.Services.Implementations
                         foreach (var field in selectedFields)
                         {
                             var fieldDescription = !string.IsNullOrWhiteSpace(field.Description) ? field.Description : field.Field.Name;
-                            dynamicObject.Add(fieldDescription, reader[field.Field.Name].ToString());
+                            dynamicObject.Add(fieldDescription, reader[field.Field.Name]);
                         }
 
                         report.Add(dynamicObject);
