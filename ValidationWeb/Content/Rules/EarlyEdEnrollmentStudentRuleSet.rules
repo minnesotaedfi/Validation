@@ -111,8 +111,7 @@ rule 52.10.6386
 	when {StudentEnrollmentEE}.[ResidentDistrictType] = '1'
 	and {StudentEnrollmentEE}.[ResidentDistrictNumber] = '0001'
 	and {StudentEnrollmentEE}.[DistrictNumber] is not in ['4150','4177','4082','4012','4198'] 
-	and {StudentEnrollmentEE}.[School
-	ification] <> '46' then
+	and {StudentEnrollmentEE}.[SchoolClassification] <> '46' then
 	require that {StudentEnrollmentEE}.[DistrictType] <> '7' 
 	else '288. Student has resident district number 0001 and type of 01 (Aitkin) which is an invalid resident district number and type for charter school.'
 
