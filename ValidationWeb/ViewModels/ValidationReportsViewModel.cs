@@ -25,7 +25,7 @@ namespace ValidationWeb.ViewModels
 
         public int FocusedSchoolYearId { get; set; }
 
-        public ProgramAreaLookup FocusedProgramArea { get; set; }
+        public ProgramArea FocusedProgramArea { get; set; }
 
         public bool ReadOnly { get; set; }
     }

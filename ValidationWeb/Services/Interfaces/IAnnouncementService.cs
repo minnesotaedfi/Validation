@@ -9,7 +9,7 @@ namespace ValidationWeb.Services.Interfaces
 {
     public interface IAnnouncementService
     {
-        List<Announcement> GetAnnouncements(ProgramAreaLookup programArea = null);
+        List<Announcement> GetAnnouncements(ProgramArea programArea = null);
         
         Announcement GetAnnouncement(int id);
         

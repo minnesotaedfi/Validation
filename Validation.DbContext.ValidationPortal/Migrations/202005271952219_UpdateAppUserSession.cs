@@ -7,7 +7,7 @@
     {
         public override void Up()
         {
-            AddColumn("validation.AppUserSession", "FocusedProgramAreaId", c => c.Int(nullable: false));
+            AddColumn("validation.AppUserSession", "FocusedProgramAreaId", c => c.Int(nullable: true));
         }
         
         public override void Down()

@@ -21,9 +21,9 @@ namespace ValidationWeb.ViewModels
 
         public IEnumerable<EdOrg> EdOrgs { get; set; }
 
-        public IEnumerable<ProgramAreaLookup> ProgramAreas { get; set; }
+        public IEnumerable<ProgramArea> ProgramAreas { get; set; }
 
-        public ProgramAreaLookup FocusedProgramArea { get; set; }
+        public ProgramArea FocusedProgramArea { get; set; }
 
         public string EdiamProfileLink { get; set; }
 

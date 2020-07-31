@@ -22,7 +22,7 @@ namespace ValidationWeb.ViewModels
         /// </summary>
         public EdOrg FocusedEdOrg { get; set; }
 
-        public ProgramAreaLookup FocusedProgramArea { get; set; }
+        public ProgramArea FocusedProgramArea { get; set; }
         
         public IEnumerable<SchoolYear> YearsOpenForDataSubmission { get; set; }
 

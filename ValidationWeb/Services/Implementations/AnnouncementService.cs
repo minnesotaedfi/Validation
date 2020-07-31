@@ -30,7 +30,7 @@ namespace ValidationWeb.Services.Implementations
             LoggingService = loggingService;
         }
 
-        public List<Announcement> GetAnnouncements(ProgramAreaLookup programArea = null)
+        public List<Announcement> GetAnnouncements(ProgramArea programArea = null)
         {
             var announcements = new List<Announcement>();
             try

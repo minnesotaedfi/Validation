@@ -47,8 +47,8 @@ namespace ValidationWeb.Models
 
         [Required]
         [ForeignKey("ProgramArea")]
-        public int ProgramAreaId { get; set; }
+        public int? ProgramAreaId { get; set; }
 
-        public ProgramAreaLookup ProgramArea { get; set; }
+        public ProgramArea ProgramArea { get; set; }
     }
 }

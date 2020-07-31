@@ -8,7 +8,7 @@ namespace ValidationWeb.Services.Interfaces
 {
     public interface IValidationResultsService
     {
-        IEnumerable<ValidationReportSummary> GetValidationReportSummaries(int edOrgId, ProgramAreaLookup programArea = null);
+        IEnumerable<ValidationReportSummary> GetValidationReportSummaries(int edOrgId, ProgramArea programArea = null);
         
         ValidationReportDetails GetValidationReportDetails(int validationReportId);
 

@@ -37,7 +37,7 @@ namespace ValidationWeb.Services.Implementations
         private ILoggingService LoggingService { get; }
         private IRulesEngineConfigurationValues RulesEngineConfigurationValues { get; }
 
-        public IEnumerable<DynamicReportDefinition> GetReportDefinitions(ProgramAreaLookup programArea = null)
+        public IEnumerable<DynamicReportDefinition> GetReportDefinitions(ProgramArea programArea = null)
         {
             using (var validationPortalContext = ValidationPortalDataContextFactory.Create())
             {

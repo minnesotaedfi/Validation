@@ -58,7 +58,7 @@ namespace ValidationWeb.Database
 
         public virtual DbSet<DynamicReportField> DynamicReportFields { get; set; }
 
-        public virtual DbSet<ProgramAreaLookup> ProgramAreaLookup { get; set; }
+        public virtual DbSet<ProgramArea> ProgramAreas { get; set; }
 
         protected new virtual void Dispose(bool disposing)
         {

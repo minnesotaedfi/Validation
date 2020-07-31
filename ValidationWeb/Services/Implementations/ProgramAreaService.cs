@@ -19,19 +19,19 @@ namespace ValidationWeb.Services.Implementations
 
         private IDbContextFactory<ValidationPortalDbContext> ValidationPortalDataContextFactory { get; }
 
-        public IList<ProgramAreaLookup> GetProgramAreas()
+        public IList<ProgramArea> GetProgramAreas()
         {
             using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
             {
-                return validationPortalDataContext.ProgramAreaLookup.ToList();
+                return validationPortalDataContext.ProgramAreas.ToList();
             }
         }
 
-        public ProgramAreaLookup GetProgramAreaById(int programAreaId)
+        public ProgramArea GetProgramAreaById(int programAreaId)
         {
             using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
             {
-                return validationPortalDataContext.ProgramAreaLookup.FirstOrDefault(x => x.Id == programAreaId);
+                return validationPortalDataContext.ProgramAreas.FirstOrDefault(x => x.Id == programAreaId);
             }
         }
     }

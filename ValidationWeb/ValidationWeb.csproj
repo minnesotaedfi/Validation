@@ -577,6 +577,15 @@
     <Content Include="Content\bootstrap.min.css.map" />
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-select.css.map" />
+    <Content Include="Content\Rules\EarlyEdEnrollmentSchoolRuleSet.rules" />
+    <Content Include="Content\Rules\EarlyEdEnrollmentStudentRuleSet.rules" />
+    <Content Include="Content\Rules\EarlyEdMcccCourseRuleSet.rules" />
+    <Content Include="Content\Rules\EarlyEdMcccSchoolRuleSet.rules" />
+    <Content Include="Content\Rules\EarlyEdMcccStudentRuleSet.rules" />
+    <Content Include="Content\Rules\ExamReimbursementRequestRuleSet.rules" />
+    <Content Include="Content\Rules\McccCourseRuleSet.rules" />
+    <Content Include="Content\Rules\McccSchoolRuleSet.rules" />
+    <Content Include="Content\Rules\McccStudentRuleSet.rules" />
     <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <Content Include="Scripts\esm\popper-utils.js" />

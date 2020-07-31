@@ -31,7 +31,7 @@ namespace ValidationWeb.Services.Implementations
 
         protected ILoggingService LoggingService { get; set; }
 
-        public IList<SubmissionCycle> GetSubmissionCycles(ProgramAreaLookup programArea = null)
+        public IList<SubmissionCycle> GetSubmissionCycles(ProgramArea programArea = null)
         {
             using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
             {
@@ -55,7 +55,7 @@ namespace ValidationWeb.Services.Implementations
             }
         }
 
-        public IEnumerable<SubmissionCycle> GetSubmissionCyclesOpenToday(ProgramAreaLookup programArea = null)
+        public IEnumerable<SubmissionCycle> GetSubmissionCyclesOpenToday(ProgramArea programArea = null)
         {
             using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
             {
