@@ -45,7 +45,9 @@ namespace ValidationWeb.Services.Implementations
 
                     if (programArea != null)
                     {
-                        announcements = announcements.Where(x => x.ProgramAreaId == programArea.Id).ToList();
+                        announcements = announcements
+                            .Where(x => x.ProgramAreaId == null || x.ProgramAreaId == programArea.Id)
+                            .ToList();
                     }
                 }
             }
@@ -121,8 +123,7 @@ namespace ValidationWeb.Services.Implementations
                 var existingAnnouncement = dbContext.Announcements.FirstOrDefault(a => a.Id == announcement.Id);
                 if (existingAnnouncement == null)
                 {
-                    throw new Exception(
-                        $"Could not save an announcement because announcement with ID {announcement.Id} was not found");
+                    throw new Exception($"Could not save an announcement because announcement with ID {announcement.Id} was not found");
                 }
 
                 existingAnnouncement.Priority = announcement.Priority;

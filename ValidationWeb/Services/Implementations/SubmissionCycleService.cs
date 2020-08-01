@@ -42,7 +42,9 @@ namespace ValidationWeb.Services.Implementations
 
                 if(programArea != null)
                 {
-                    submissionCycles = submissionCycles.Where(x => x.ProgramAreaId == programArea.Id).ToList();
+                    submissionCycles = submissionCycles
+                        .Where(x => x.ProgramAreaId == null || x.ProgramAreaId == programArea.Id)
+                        .ToList();
                 }
 
                 foreach (var submissionCycle in submissionCycles)
@@ -70,7 +72,9 @@ namespace ValidationWeb.Services.Implementations
                     .Where(s => 
                         s.StartDate.Date <= DateTime.Now.Date &&
                         s.EndDate.Date >= DateTime.Now.Date)
-                    .Where(x => programArea == null || x.ProgramAreaId == programArea.Id)
+                    .Where(x => programArea == null || 
+                                x.ProgramAreaId == null || 
+                                x.ProgramAreaId == programArea.Id)
                     .ToList();
 
                 foreach (var submissionCycle in submissionCyclesOpenToday)

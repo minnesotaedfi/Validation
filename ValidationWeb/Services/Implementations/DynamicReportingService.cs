@@ -51,7 +51,9 @@ namespace ValidationWeb.Services.Implementations
 
                 if (programArea != null)
                 {
-                    result = result.Where(x => x.ProgramAreaId == programArea.Id).ToList();
+                    result = result
+                        .Where(x => x.ProgramAreaId == null || x.ProgramAreaId == programArea.Id)
+                        .ToList();
                 }
 
                 return result;
