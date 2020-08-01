@@ -58,7 +58,7 @@ namespace ValidationWeb.Services.Implementations
 
         public IEnumerable<ValidationReportSummary> GetValidationReportSummaries(
             int edOrgId,
-            ProgramAreaLookup programArea = null)
+            ProgramArea programArea = null)
         {
             LoggingService.LogDebugMessage($"Retrieving a list of Validation Reports for the Ed Org ID number: {edOrgId.ToString()}");
             using (var portalDbContext = DbContextFactory.Create())

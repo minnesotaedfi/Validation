@@ -14,8 +14,18 @@
                 </div>
                 @Html.HiddenFor(m => m.Id, new { id = "edit-announcement-id" })
                 <div class="row form-group">
+                  <div class="col-sm-3">
+                    <label for="edit-announcement-programAreaId">Program Area:</label>
+                  </div>
+                  <div class="col-sm-9">
+                    @Html.DropDownListFor(m => m.ProgramAreaId,
+                        (IEnumerable<SelectListItem>)ViewData["programAreas"],
+                        new { id = "edit-announcement-programAreaId", @class = "form-control" })
+                  </div>
+                </div>
+                <div class="row form-group">
                     <div class="col-lg-3">
-                        <label for="edit-priority">Sort Order:</label>
+                        <label for="edit-announcement-priority">Sort Order:</label>
                     </div>
                     <div class="col-lg-9">
                         @Html.TextBoxFor(m => m.Priority, new { id = "edit-announcement-priority", pattern = "\\d*", title = "Priority must be a number", @class = "form-control" })

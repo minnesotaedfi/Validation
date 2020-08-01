@@ -34,12 +34,11 @@
     @Html.DropDownList(
         "newActionDropdownProgramArea",
         new SelectList(Model.ProgramAreas
-            .OrderBy(x => x.ToString())
             .Select(x => new SelectListItem
             {
                 Text = x.Description.ToString(),
                 Value = x.Id.ToString()
-            }),
+            }).OrderBy(x => x.Text),
             "Value",
             "Text",
             Model.FocusedProgramArea.Id),

@@ -183,12 +183,12 @@ namespace ValidationWeb.Tests.Mocks
                 x => x.DynamicReportFields = It.IsAny<DbSet<DynamicReportField>>(),
                 dynamicReportFields);
 
-            var programAreaLookups = new List<ProgramAreaLookup>();
+            var programAreaLookups = new List<ProgramArea>();
             SetupMockDbSet(
                 GetQueryableMockDbSet(programAreaLookups),
                 validationPortalDbContextMock,
-                x => x.ProgramAreaLookup,
-                x => x.ProgramAreaLookup = It.IsAny<DbSet<ProgramAreaLookup>>(),
+                x => x.ProgramAreas,
+                x => x.ProgramAreas = It.IsAny<DbSet<ProgramArea>>(),
                 programAreaLookups);
 
             validationPortalDbContextMock.As<IDisposable>().Setup(x => x.Dispose());

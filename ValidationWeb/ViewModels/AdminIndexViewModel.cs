@@ -1,5 +1,8 @@
 ﻿using System.Collections.Generic;
 using Engine.Models;
+
+using Validation.DataModels;
+
 using ValidationWeb.Models;
 
 namespace ValidationWeb.ViewModels
@@ -25,6 +28,8 @@ namespace ValidationWeb.ViewModels
         public IEnumerable<SubmissionCycle> SubmissionCycles { get; set; }
         
         public IEnumerable<Announcement> Announcements { get; set; }
+
+        public IEnumerable<ProgramArea> ProgramAreas { get; set; }
         
         public IDictionary<int, IEnumerable<ValidationRulesView>> RulesViewsPerSchoolYearId { get; set; }
         

@@ -28,6 +28,7 @@ namespace ValidationWeb.Controllers
         private readonly ISubmissionCycleService _submissionCycleService;
         private readonly IAnnouncementService _announcementService;
         private readonly IDynamicReportingService _dynamicReportingService;
+        private readonly IProgramAreaService _programAreaService;
 
         public AdminController(
             IAppUserService appUserService,
@@ -36,7 +37,8 @@ namespace ValidationWeb.Controllers
             IRulesEngineService rulesEngineService,
             ISubmissionCycleService submissionCycleService,
             IAnnouncementService announcementService,
-            IDynamicReportingService dynamicReportingService)
+            IDynamicReportingService dynamicReportingService,
+            IProgramAreaService programAreaService)
         {
             _appUserService = appUserService;
             _edOrgService = edOrgService;
@@ -45,6 +47,7 @@ namespace ValidationWeb.Controllers
             _submissionCycleService = submissionCycleService;
             _announcementService = announcementService;
             _dynamicReportingService = dynamicReportingService;
+            _programAreaService = programAreaService;
         }
 
         // GET: Admin
@@ -56,7 +59,7 @@ namespace ValidationWeb.Controllers
             foreach (var schoolYear in schoolYears)
             {
                 viewsPerYear.Add(
-                    schoolYear.Id, 
+                    schoolYear.Id,
                     _dynamicReportingService.GetRulesViews(schoolYear.Id));
             }
 
@@ -71,7 +74,8 @@ namespace ValidationWeb.Controllers
                 SubmissionCycles = _submissionCycleService.GetSubmissionCycles(),
                 Announcements = _announcementService.GetAnnouncements(),
                 RulesViewsPerSchoolYearId = viewsPerYear,
-                ReportSchoolYearId = _appUserService.GetSession().FocusedSchoolYearId
+                ReportSchoolYearId = _appUserService.GetSession().FocusedSchoolYearId,
+                ProgramAreas = _programAreaService.GetProgramAreas()
             };
 
             PopulateDropDownLists();
@@ -151,6 +155,8 @@ namespace ValidationWeb.Controllers
 
         public ActionResult AddDynamicReportDefinition(int schoolYearId)
         {
+            PopulateDropDownLists();
+
             var schoolYear = _schoolYearService.GetSchoolYearById(schoolYearId);
 
             var dynamicReport = new DynamicReportDefinition
@@ -165,7 +171,6 @@ namespace ValidationWeb.Controllers
             var viewModel = new AdminDynamicReportViewModel
             {
                 DynamicReportDefinition = dynamicReport,
-                ReportSchoolYearId = schoolYearId,
                 ValidationRulesViews = rulesViews.ToList()
             };
 
@@ -180,6 +185,7 @@ namespace ValidationWeb.Controllers
 
         public ActionResult EditDynamicReportDefinition(int id)
         {
+            PopulateDropDownLists();
             var dynamicReport = _dynamicReportingService.GetReportDefinition(id);
             return PartialView("Partials/DynamicReportEditModal", dynamicReport);
         }
@@ -216,7 +222,7 @@ namespace ValidationWeb.Controllers
         {
             _dynamicReportingService.DeleteViewsAndRulesForSchoolYear(schoolYearId);
             _dynamicReportingService.UpdateViewsAndRulesForSchoolYear(schoolYearId);
-            return new HttpStatusCodeResult(HttpStatusCode.OK); 
+            return new HttpStatusCodeResult(HttpStatusCode.OK);
         }
 
         public ActionResult AddSubmissionCycle()
@@ -268,7 +274,6 @@ namespace ValidationWeb.Controllers
                 PopulateDropDownLists(submissionCycle);
                 return PartialView("Partials/SubmissionCycleEditModal", submissionCycle);
             }
-
         }
 
         [HttpDelete]
@@ -281,18 +286,13 @@ namespace ValidationWeb.Controllers
         [HttpPost]
         public ActionResult SaveAnnouncement(Announcement announcement)
         {
+            PopulateDropDownLists();
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _announcementService.SaveAnnouncement(
-                        announcement.Id,
-                        announcement.Priority,
-                        announcement.Message,
-                        announcement.ContactInfo,
-                        announcement.LinkUrl,
-                        announcement.Expiration);
-
+                    _announcementService.SaveAnnouncement(announcement);
                     return RedirectToAction("Index", new { tab = "announcements" });
                 }
                 catch (Exception ex)
@@ -309,16 +309,17 @@ namespace ValidationWeb.Controllers
 
         public ActionResult AddAnnouncement()
         {
+            PopulateDropDownLists();
             var announcement = new Announcement { Expiration = DateTime.Now };
             return PartialView("Partials/AnnouncementEditModal", announcement);
         }
 
         public ActionResult EditAnnouncement(int id)
         {
+            PopulateDropDownLists();
             var announcement = _announcementService.GetAnnouncement(id);
             return PartialView("Partials/AnnouncementEditModal", announcement);
         }
-
 
         [HttpDelete]
         public ActionResult DeleteAnnouncement(int id)
@@ -331,8 +332,80 @@ namespace ValidationWeb.Controllers
         {
             List<SelectListItem> schoolYears = _submissionCycleService.GetSchoolYearsSelectList(submissionCycle);
             var ruleCollections = _rulesEngineService.GetCollections().Select(c => c.CollectionId);
+            var programAreas = _programAreaService.GetProgramAreas();
+
+            var programAreasSelectList = new List<SelectListItem>
+            {
+                new SelectListItem
+                {
+                    Text = "All",
+                    Value = string.Empty,
+                    Selected = true
+                }
+            };
+
+            programAreasSelectList.AddRange(programAreas.Select(x =>
+                new SelectListItem
+                {
+                    Text = x.Description,
+                    Value = x.Id.ToString()
+                }));
+
             ViewData["schoolYears"] = schoolYears;
             ViewData["RuleCollections"] = ruleCollections;
+            ViewData["ProgramAreas"] = programAreasSelectList;
+        }
+
+        public ActionResult AddProgramArea()
+        {
+            PopulateDropDownLists();
+            var programArea = new ProgramArea();
+            return PartialView("Partials/ProgramAreaEditModal", programArea);
+        }
+
+        public ActionResult EditProgramArea(int id)
+        {
+            var programArea = _programAreaService.GetProgramAreaById(id);
+            PopulateDropDownLists();
+            return PartialView("Partials/ProgramAreaEditModal", programArea);
+        }
+
+        public ActionResult SaveProgramArea(ProgramArea programArea)
+        {
+            var duplicate = _programAreaService.GetProgramAreas()
+                .FirstOrDefault(x => x.Description == programArea.Description);
+
+            if (duplicate != null && (programArea.Id == 0 || programArea.Id != duplicate.Id))
+            {
+                ModelState.AddModelError("ProgramAreaId", "A Program Area with this name already exists.");
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _programAreaService.SaveProgramArea(programArea);
+                    return RedirectToAction("Index", new { tab = "programareas" });
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("General Error", ex.Message);
+                    PopulateDropDownLists();
+                    return PartialView("Partials/ProgramAreaEditModal", programArea);
+                }
+            }
+            else
+            {
+                PopulateDropDownLists();
+                return PartialView("Partials/ProgramAreaEditModal", programArea);
+            }
+        }
+
+        [HttpDelete]
+        public ActionResult DeleteProgramArea(int id)
+        {
+            _programAreaService.DeleteProgramArea(id);
+            return RedirectToAction("Index", new { tab = "programareas" });
         }
     }
 }

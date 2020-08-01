@@ -14,7 +14,7 @@ namespace ValidationWeb.Services.Interfaces
          
         void UpdateViewsAndRulesForSchoolYear(int schoolYearId);
         
-        IEnumerable<DynamicReportDefinition> GetReportDefinitions(ProgramAreaLookup programArea = null);
+        IEnumerable<DynamicReportDefinition> GetReportDefinitions(ProgramArea programArea = null);
         
         void SaveReportDefinition(DynamicReportDefinition reportDefinition);
 

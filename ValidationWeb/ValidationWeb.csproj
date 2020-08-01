@@ -577,6 +577,15 @@
     <Content Include="Content\bootstrap.min.css.map" />
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-select.css.map" />
+    <Content Include="Content\Rules\EarlyEdEnrollmentSchoolRuleSet.rules" />
+    <Content Include="Content\Rules\EarlyEdEnrollmentStudentRuleSet.rules" />
+    <Content Include="Content\Rules\EarlyEdMcccCourseRuleSet.rules" />
+    <Content Include="Content\Rules\EarlyEdMcccSchoolRuleSet.rules" />
+    <Content Include="Content\Rules\EarlyEdMcccStudentRuleSet.rules" />
+    <Content Include="Content\Rules\ExamReimbursementRequestRuleSet.rules" />
+    <Content Include="Content\Rules\McccCourseRuleSet.rules" />
+    <Content Include="Content\Rules\McccSchoolRuleSet.rules" />
+    <Content Include="Content\Rules\McccStudentRuleSet.rules" />
     <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <Content Include="Scripts\esm\popper-utils.js" />
@@ -911,7 +920,7 @@
     <Content Include="Views\Shared\_Environment.cshtml" />
     <Content Include="Views\Dynamic\Index.cshtml" />
     <Content Include="Views\Admin\Partials\Dynamic.cshtml" />
-    <Content Include="Views\Admin\Partials\DynamicReportEditModal.cshtml" />
+    <Content Include="Views\Admin\Partials\ProgramAreaEditModal.cshtml" />
     <Content Include="Views\Admin\Partials\DynamicReportAddModal.cshtml" />
     <Content Include="Views\Login\Logout.cshtml" />
     <Content Include="Views\Error\Index.cshtml" />
@@ -929,6 +938,9 @@
     <Content Include="Scripts\popper.js.map" />
     <Content Include="Scripts\popper-utils.min.js.map" />
     <Content Include="Scripts\popper-utils.js.map" />
+    <Content Include="Views\Admin\Partials\ProgramAreas.cshtml" />
+    <Content Include="Views\Admin\Partials\ProgramAreaAddModal.cshtml" />
+    <Content Include="Views\Admin\Partials\DynamicReportEditModal.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

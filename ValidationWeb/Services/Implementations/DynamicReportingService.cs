@@ -37,7 +37,7 @@ namespace ValidationWeb.Services.Implementations
         private ILoggingService LoggingService { get; }
         private IRulesEngineConfigurationValues RulesEngineConfigurationValues { get; }
 
-        public IEnumerable<DynamicReportDefinition> GetReportDefinitions(ProgramAreaLookup programArea = null)
+        public IEnumerable<DynamicReportDefinition> GetReportDefinitions(ProgramArea programArea = null)
         {
             using (var validationPortalContext = ValidationPortalDataContextFactory.Create())
             {
@@ -46,11 +46,14 @@ namespace ValidationWeb.Services.Implementations
                     .Include(x => x.Fields.Select(y => y.Field))
                     .Include(x => x.SchoolYear)
                     .Include(x => x.RulesView)
+                    .Include(x => x.ProgramArea)
                     .ToList();
 
                 if (programArea != null)
                 {
-                    result = result.Where(x => x.ProgramAreaId == programArea.Id).ToList();
+                    result = result
+                        .Where(x => x.ProgramAreaId == null || x.ProgramAreaId == programArea.Id)
+                        .ToList();
                 }
 
                 return result;
@@ -66,6 +69,7 @@ namespace ValidationWeb.Services.Implementations
                     .Include(x => x.Fields)
                     .Include(x => x.Fields.Select(y => y.Field))
                     .Include(x => x.SchoolYear)
+                    .Include(x => x.ProgramArea)
                     .Single(x => x.Id == id);
             }
         }
@@ -198,6 +202,8 @@ namespace ValidationWeb.Services.Implementations
                 existingReportDefinition.Name = newReportDefinition.Name?.Trim();
                 existingReportDefinition.Description = newReportDefinition.Description?.Trim();
                 existingReportDefinition.IsOrgLevelReport = newReportDefinition.IsOrgLevelReport;
+                existingReportDefinition.ProgramAreaId = newReportDefinition.ProgramAreaId;
+                existingReportDefinition.SchoolYearId = newReportDefinition.SchoolYearId;
 
                 foreach (var newField in newReportDefinition.Fields)
                 {

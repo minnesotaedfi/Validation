@@ -64,17 +64,9 @@
     <Compile Include="Migrations\201908261759334_OrgLevelReport.Designer.cs">
       <DependentUpon>201908261759334_OrgLevelReport.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202005271659362_AddProgramAreas.cs" />
-    <Compile Include="Migrations\202005271659362_AddProgramAreas.designer.cs">
-      <DependentUpon>202005271659362_AddProgramAreas.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202005271717467_SetupProgramAreaForeignKeys.cs" />
-    <Compile Include="Migrations\202005271717467_SetupProgramAreaForeignKeys.designer.cs">
-      <DependentUpon>202005271717467_SetupProgramAreaForeignKeys.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202005271952219_UpdateAppUserSession.cs" />
-    <Compile Include="Migrations\202005271952219_UpdateAppUserSession.designer.cs">
-      <DependentUpon>202005271952219_UpdateAppUserSession.cs</DependentUpon>
+    <Compile Include="Migrations\202008012013093_AddProgramAreas.cs" />
+    <Compile Include="Migrations\202008012013093_AddProgramAreas.designer.cs">
+      <DependentUpon>202008012013093_AddProgramAreas.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ValidationPortalDbContext.cs" />
@@ -104,14 +96,8 @@
     <EmbeddedResource Include="Migrations\201908261759334_OrgLevelReport.resx">
       <DependentUpon>201908261759334_OrgLevelReport.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202005271659362_AddProgramAreas.resx">
-      <DependentUpon>202005271659362_AddProgramAreas.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202005271717467_SetupProgramAreaForeignKeys.resx">
-      <DependentUpon>202005271717467_SetupProgramAreaForeignKeys.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202005271952219_UpdateAppUserSession.resx">
-      <DependentUpon>202005271952219_UpdateAppUserSession.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202008012013093_AddProgramAreas.resx">
+      <DependentUpon>202008012013093_AddProgramAreas.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

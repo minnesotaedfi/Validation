@@ -21,6 +21,7 @@
             <th>Collection</th>
             <th>Start Date</th>
             <th>End Date</th>
+            <th>Program Area</th>
             <th></th>
             <th></th>
         </tr>
@@ -32,6 +33,7 @@
                 <td>@submissionCycle.CollectionId</td>
                 <td>@submissionCycle.StartDate.ToShortDateString()</td>
                 <td>@submissionCycle.EndDate.ToShortDateString()</td>
+                <td>@(submissionCycle.ProgramArea != null ? submissionCycle.ProgramArea.Description : "All")</td>
                 <td>
                     <a href="javascript:void(0);"
                        class="submissioncycle-edit btn btn-sm prime-blue white-heavy-text" data-id="@submissionCycle.Id">Edit</a>

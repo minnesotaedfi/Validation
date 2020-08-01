@@ -12,9 +12,9 @@ namespace ValidationWeb.Services.Interfaces
     {
         void DeleteSubmissionCycle(int id);
 
-        IList<SubmissionCycle> GetSubmissionCycles(ProgramAreaLookup programArea = null);
+        IList<SubmissionCycle> GetSubmissionCycles(ProgramArea programArea = null);
 
-        IEnumerable<SubmissionCycle> GetSubmissionCyclesOpenToday(ProgramAreaLookup programArea = null);
+        IEnumerable<SubmissionCycle> GetSubmissionCyclesOpenToday(ProgramArea programArea = null);
 
         SubmissionCycle GetSubmissionCycle(int id);
 

@@ -15,8 +15,6 @@ namespace ValidationWeb.ViewModels
 
         public DynamicReportDefinition DynamicReportDefinition { get; set; }
         
-        public int? ReportSchoolYearId { get; set; }
         public ICollection<ValidationRulesView> ValidationRulesViews { get; set; }
-
     }
 }

@@ -9,6 +9,6 @@ namespace ValidationWeb.ViewModels
         public EdOrg FocusedEdOrg { get; set; }
         public SchoolYear SchoolYear { get; set; }
         public ValidationPortalIdentity User { get; set; }
-        public ProgramAreaLookup FocusedProgramArea { get; set; }
+        public ProgramArea FocusedProgramArea { get; set; }
     }
 }

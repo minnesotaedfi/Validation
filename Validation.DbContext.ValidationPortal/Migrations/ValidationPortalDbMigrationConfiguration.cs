@@ -42,13 +42,6 @@ namespace ValidationWeb.Database
             new ErrorSeverityLookup { Id = (int)ErrorSeverity.Error, CodeValue = "Error", Description = "Error" },
             new ErrorSeverityLookup { Id = (int)ErrorSeverity.Warning, CodeValue = "Warning", Description = "Warning" }
         };
-
-        public static ProgramAreaLookup[] ProgramAreaLookups =
-        {
-            new ProgramAreaLookup { Id = (int)ProgramArea.Marss, CodeValue = "MARSS", Description = "MARSS" },
-            new ProgramAreaLookup { Id = (int)ProgramArea.Ee, CodeValue = "EE", Description = "EE" },
-            new ProgramAreaLookup { Id = (int)ProgramArea.Mccc, CodeValue = "MCCC", Description = "MCCC" },
-        };
         
         /// <summary>
         /// Called after migration.
@@ -58,7 +51,6 @@ namespace ValidationWeb.Database
         {
             context.EdOrgTypeLookup.AddOrUpdate(EdOrgTypeLookups);
             context.ErrorSeverityLookup.AddOrUpdate(ErrorSeverityLookups);
-            context.ProgramAreaLookup.AddOrUpdate(ProgramAreaLookups);
 
             if (_config.SeedSchoolYears != null && !context.SchoolYears.Any()) 
             {
@@ -71,6 +63,13 @@ namespace ValidationWeb.Database
                         context.SchoolYears.AddOrUpdate(schoolYearToSeedIfMissing);
                     }
                 }
+            }
+
+            if (!context.ProgramAreas.Any())
+            {
+                context.ProgramAreas.Add(new ProgramArea { Description = "MARSS" });
+                context.ProgramAreas.Add(new ProgramArea { Description = "MCCC" });
+                context.ProgramAreas.Add(new ProgramArea { Description = "EE" });
             }
         }
     }

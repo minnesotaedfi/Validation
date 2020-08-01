@@ -107,7 +107,7 @@ namespace ValidationWeb.Services.Implementations
                     var sessionObj = GetSession();
 
                     // todo: null ref
-                    int? validProgramAreaId = validationPortalDataContext.ProgramAreaLookup
+                    int? validProgramAreaId = validationPortalDataContext.ProgramAreas
                         .FirstOrDefault(x => x.Id == newFocusedProgramAreaId)?.Id;
 
                     if (sessionObj == null || !validProgramAreaId.HasValue)

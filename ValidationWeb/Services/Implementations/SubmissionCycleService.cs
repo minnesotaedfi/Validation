@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Web.Mvc;
@@ -31,15 +32,19 @@ namespace ValidationWeb.Services.Implementations
 
         protected ILoggingService LoggingService { get; set; }
 
-        public IList<SubmissionCycle> GetSubmissionCycles(ProgramAreaLookup programArea = null)
+        public IList<SubmissionCycle> GetSubmissionCycles(ProgramArea programArea = null)
         {
             using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
             {
-                var submissionCycles = validationPortalDataContext.SubmissionCycles.ToList();
+                var submissionCycles = validationPortalDataContext.SubmissionCycles
+                    .Include(x => x.ProgramArea)
+                    .ToList();
 
                 if(programArea != null)
                 {
-                    submissionCycles = submissionCycles.Where(x => x.ProgramAreaId == programArea.Id).ToList();
+                    submissionCycles = submissionCycles
+                        .Where(x => x.ProgramAreaId == null || x.ProgramAreaId == programArea.Id)
+                        .ToList();
                 }
 
                 foreach (var submissionCycle in submissionCycles)
@@ -55,17 +60,21 @@ namespace ValidationWeb.Services.Implementations
             }
         }
 
-        public IEnumerable<SubmissionCycle> GetSubmissionCyclesOpenToday(ProgramAreaLookup programArea = null)
+        public IEnumerable<SubmissionCycle> GetSubmissionCyclesOpenToday(ProgramArea programArea = null)
         {
             using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
             {
-                var submissionCycles = validationPortalDataContext.SubmissionCycles.ToList();
+                var submissionCycles = validationPortalDataContext.SubmissionCycles
+                    .Include(x => x.ProgramArea)
+                    .ToList();
 
                 var submissionCyclesOpenToday = submissionCycles
                     .Where(s => 
                         s.StartDate.Date <= DateTime.Now.Date &&
                         s.EndDate.Date >= DateTime.Now.Date)
-                    .Where(x => programArea == null || x.ProgramAreaId == programArea.Id)
+                    .Where(x => programArea == null || 
+                                x.ProgramAreaId == null || 
+                                x.ProgramAreaId == programArea.Id)
                     .ToList();
 
                 foreach (var submissionCycle in submissionCyclesOpenToday)
@@ -89,6 +98,7 @@ namespace ValidationWeb.Services.Implementations
             using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
             {
                 return validationPortalDataContext.SubmissionCycles
+                    .Include(x => x.ProgramArea)
                     .FirstOrDefault(submissionCycle => submissionCycle.Id == id);
             }
         }
@@ -152,6 +162,7 @@ namespace ValidationWeb.Services.Implementations
                         existingSubmissionCycle.StartDate = submissionCycle.StartDate;
                         existingSubmissionCycle.EndDate = submissionCycle.EndDate;
                         existingSubmissionCycle.SchoolYearId = submissionCycle.SchoolYearId;
+                        existingSubmissionCycle.ProgramAreaId = submissionCycle.ProgramAreaId;
                         validationPortalDataContext.SaveChanges();
                     }
                 }
@@ -164,8 +175,8 @@ namespace ValidationWeb.Services.Implementations
                     strMessage = $" with id = { submissionCycle.Id }, StartDate = { submissionCycle.StartDate }, EndDate = { submissionCycle.EndDate}, SchoolYearID = { submissionCycle.SchoolYearId }";
                 }
 
-                LoggingService.LogErrorMessage($"An error occurred while saving announcement {strMessage}: {ex.ChainInnerExceptionMessages()}");
-                throw new Exception("An error occurred while saving announcement.");
+                LoggingService.LogErrorMessage($"An error occurred while saving cycle {strMessage}: {ex.ChainInnerExceptionMessages()}");
+                throw new Exception("An error occurred while saving cycle.");
             }
         }
 
@@ -179,6 +190,7 @@ namespace ValidationWeb.Services.Implementations
             using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
             {
                 return validationPortalDataContext.SubmissionCycles
+                    .Include(x => x.ProgramArea)
                     .Where(submissionCycle => submissionCycle.CollectionId == collectionId)
                     .ToList();
             }
@@ -207,11 +219,13 @@ namespace ValidationWeb.Services.Implementations
             using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
             {
                 var duplicateCycle = validationPortalDataContext.SubmissionCycles
+                    .Include(x => x.ProgramArea)
                     .FirstOrDefault(x => x.SchoolYearId == submissionCycle.SchoolYearId && x.CollectionId == submissionCycle.CollectionId);
 
                 return duplicateCycle;
             }
         }
+
         public void DeleteSubmissionCycle(int id)
         {
             using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())

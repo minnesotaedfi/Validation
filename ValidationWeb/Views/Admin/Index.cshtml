@@ -1,34 +1,39 @@
 ﻿@model AdminIndexViewModel
 
 <div class="row">
-    <div class="col-2">
-        <div class="list-group list-group-flush" id="admin-list-tab" role="tablist">
-            <a class="list-group-item list-group-item-action" id="list-error-threshold-list" data-toggle="list" href="#list-error-threshold" role="tab"
-               onclick="loadDefaultTab()">School Years</a>
-            <a class="list-group-item list-group-item-action" id="list-submissioncycles-list" data-toggle="list" href="#list-submissioncycles" role="tab"
-               onclick="loadNonDefaultTab('submissioncycles')">Collection Cycles</a>
-            <a class="list-group-item list-group-item-action" id="list-announcements-list" data-toggle="list" href="#list-announcements" role="tab" aria-controls="settings"
-               onclick="loadNonDefaultTab('announcements')">Announcements</a>
-            <a class="list-group-item list-group-item-action" id="list-dynamic-list" data-toggle="list" href="#list-dynamic" role="tab" aria-controls="settings"
-               onclick="loadNonDefaultTab('dynamic')">Dynamic Reporting</a>
-        </div>
+  <div class="col-2">
+    <div class="list-group list-group-flush" id="admin-list-tab" role="tablist">
+      <a class="list-group-item list-group-item-action" id="list-error-threshold-list" data-toggle="list" href="#list-error-threshold" role="tab"
+         onclick="loadDefaultTab()">School Years</a>
+      <a class="list-group-item list-group-item-action" id="list-programarea-list" data-toggle="list" href="#list-programareas" role="tab" aria-controls="settings"
+         onclick="loadNonDefaultTab('programareas')">Program Areas</a>
+      <a class="list-group-item list-group-item-action" id="list-submissioncycles-list" data-toggle="list" href="#list-submissioncycles" role="tab"
+         onclick="loadNonDefaultTab('submissioncycles')">Collection Cycles</a>
+      <a class="list-group-item list-group-item-action" id="list-announcements-list" data-toggle="list" href="#list-announcements" role="tab" aria-controls="settings"
+         onclick="loadNonDefaultTab('announcements')">Announcements</a>
+      <a class="list-group-item list-group-item-action" id="list-dynamic-list" data-toggle="list" href="#list-dynamic" role="tab" aria-controls="settings"
+         onclick="loadNonDefaultTab('dynamic')">Dynamic Reporting</a>
     </div>
-    <div class="col-10">
-        <div class="tab-content" id="nav-tabContent">
-            <div class="tab-pane fade" id="list-error-threshold" role="tabpanel" aria-labelledby="list-error-threshold-list">
-                @Html.Partial("Partials/ErrorThresholds", Model.YearsOpenForDataSubmission)
-            </div>
-            <div class="tab-pane fade" id="list-submissioncycles" role="tabpanel" aria-labelledby="list-submissioncycles-list">
-                @Html.Partial("Partials/SubmissionCycleList", Model.SubmissionCycles)
-            </div>
-            <div class="tab-pane fade" id="list-announcements" role="tabpanel" aria-labelledby="list-announcements-list">
-                @Html.Partial("Partials/Announcements", Model.Announcements)
-            </div>
-            <div class="tab-pane fade" id="list-dynamic" role="tabpanel" aria-labelledby="list-dynamic-list">
-                @Html.Partial("Partials/Dynamic", Model)
-            </div>
-        </div>
+  </div>
+  <div class="col-10">
+    <div class="tab-content" id="nav-tabContent">
+      <div class="tab-pane fade" id="list-error-threshold" role="tabpanel" aria-labelledby="list-error-threshold-list">
+        @Html.Partial("Partials/ErrorThresholds", Model.YearsOpenForDataSubmission)
+      </div>
+      <div class="tab-pane fade" id="list-programareas" role="tabpanel" aria-labelledby="list-programarea-list">
+        @Html.Partial("Partials/ProgramAreas", Model.ProgramAreas)
+      </div>
+      <div class="tab-pane fade" id="list-submissioncycles" role="tabpanel" aria-labelledby="list-submissioncycles-list">
+        @Html.Partial("Partials/SubmissionCycleList", Model.SubmissionCycles)
+      </div>
+      <div class="tab-pane fade" id="list-announcements" role="tabpanel" aria-labelledby="list-announcements-list">
+        @Html.Partial("Partials/Announcements", Model.Announcements)
+      </div>
+      <div class="tab-pane fade" id="list-dynamic" role="tabpanel" aria-labelledby="list-dynamic-list">
+        @Html.Partial("Partials/Dynamic", Model)
+      </div>
     </div>
+  </div>
 </div>
 
 @*Modal Section*@
@@ -38,170 +43,172 @@
 
 
 @section scripts {
-    <script type="text/javascript">
-        /** All Error Threshold JS Functionality **/
-        $("#error-threshold-warning-button").on("click",
-            function() {
-                $("#error-threshold-warning").hide();
-            });
+  <script type="text/javascript">
+    /** All Error Threshold JS Functionality **/
+    $("#error-threshold-warning-button").on("click",
+      function() {
+        $("#error-threshold-warning").hide();
+      });
 
-        function loadNonDefaultTab(tabName) {
-            $('#nav-tabContent').hide();
-            var location = window.location.href;
-            var queryStringIndex = window.location.href.indexOf('?');
-            if (queryStringIndex > -1) {
-                location = location.slice(0, queryStringIndex);
-            }
-            window.location.href = location + '?tab=' + tabName;
-            $('#nav-tabContent').show();
+    function loadNonDefaultTab(tabName) {
+      $('#nav-tabContent').hide();
+      var location = window.location.href;
+      var queryStringIndex = window.location.href.indexOf('?');
+      if (queryStringIndex > -1) {
+        location = location.slice(0, queryStringIndex);
+      }
+      window.location.href = location + '?tab=' + tabName;
+      $('#nav-tabContent').show();
+    }
+
+    function loadDefaultTab() {
+      $('#nav-tabContent').hide();
+      var queryStringIndex = window.location.href.indexOf('?');
+      if (queryStringIndex > -1) {
+        window.location.href = window.location.href.slice(0, queryStringIndex);
+      }
+      $('#nav-tabContent').show();
+    }
+
+    function assignAnnouncementDateHandlers() {
+      $('#edit-announcement-expiration').datetimepicker({ format: 'L' });
+    }
+
+    function assignSubmissionCycleDateHandlers() {
+      $('#edit-submissioncycle-startDate').datetimepicker({ format: 'L' });
+      $('#edit-submissioncycle-endDate').datetimepicker({ format: 'L' });
+    }
+
+    const ModelFieldMap = {
+      "announcement": ["id", "priority", "message", "contactInfo", "linkUrl", "expiration", "programAreaId"],
+      "submissioncycle": ["id", "schoolYearId", "programAreaId", "collectionId", "startDate", "endDate"],
+      "programarea": ["id", "description"]
+    };
+
+    const ModelFieldTransforms = {
+      "#edit-announcement-priority": function(prioritySelector) {
+        var priority = $(prioritySelector).val();
+        if ($.trim(priority).length === 0) {
+          return 0;
         }
+        return priority;
+      }
+    };
 
-        function loadDefaultTab() {
-            $('#nav-tabContent').hide();
-            var queryStringIndex = window.location.href.indexOf('?');
-            if (queryStringIndex > -1) {
-                window.location.href = window.location.href.slice(0, queryStringIndex);
+    const ModelNameToDisplay = {
+      "announcement": "Announcement",
+      "submissioncycle": "Active Dates for Collection",
+      "report": "Dynamic Report",
+      "programarea": "Program Area"
+    };
+
+    var originalThreshold = "";
+    $(document).ready(function() {
+      var currentTab = $("[name='tabParam']");
+      if (currentTab.val()) {
+        var tabContentId = '#list-' + currentTab.val();
+        $(tabContentId).addClass("show active");
+        var tabId = '#list-' + currentTab.val() + '-list';
+        $(tabId).addClass("active");
+      } else {
+        $('#list-error-threshold').addClass("show active");
+        $('#list-error-threshold-list').addClass("active");
+      }
+
+      $(".save-row").hide();
+      $(".cancel-row").hide();
+      $(".remove-row").hide();
+
+      $(".edit-row").on("click",
+        function(event) {
+          event.preventDefault();
+          var tblRow = $(this).closest('tr');
+
+          tblRow.find('.save-row').show();
+          tblRow.find('.cancel-row').show();
+          tblRow.find('.remove-row').show();
+
+          tblRow.find('.edit-row').hide();
+
+          // Make the whole row editable
+          tblRow.find('.row-data')
+            .attr('contenteditable', 'true')
+            //.addClass('bg-warning')
+            .css('padding', '3px')
+            .focus();
+
+          // Save original threshold value just in case of canceled use
+          originalThreshold = tblRow.find('.row-data')[0].innerText;
+        });
+
+      $(".cancel-row").on('click',
+        function(event) {
+          event.preventDefault();
+
+          var tblRow = $(this).closest('tr');
+
+          tblRow.find('.save-row').hide();
+          tblRow.find('.cancel-row').hide();
+          tblRow.find('.remove-row').hide();
+
+          tblRow.find('.edit-row').show();
+
+          // Make the whole row editable
+          tblRow.find('.row-data')
+            .attr('contenteditable', 'false')
+            .removeClass('bg-warning')
+            .removeClass('bg-danger')
+            .css('padding', '');
+
+          // If canceled we can put in the original data they started with.
+          tblRow.find('.row-data')[0].innerText = originalThreshold;
+        });
+
+      $(".save-row").on('click',
+        function(event) {
+          event.preventDefault();
+          var tblRow = $(this).closest('tr');
+
+          // Clear all white space with regex
+          var threshold = tblRow.find('.row-data')[0].innerText.replace(/\s/g, "");
+          var id = tblRow[0].cells[0].innerText;
+
+          // Validate and update the threshold
+          if (isNaN(threshold)) {
+            $('#error-threshold-warning').show();
+          } else {
+            // This is to make sure the threshold does not appear with extra white spaces.
+            tblRow.find('.row-data')[0].innerText = threshold;
+
+            var successValue = updateThreshold(id, threshold);
+
+            // Ajax returns a captial T true instead of boolean
+            if (successValue !== "True") {
+              $("#error-threshold-warning").show();
             }
-            $('#nav-tabContent').show();
-        }
+            // Otherwise return it back to original state.
+            else {
+              tblRow.find('.save-row').hide();
+              tblRow.find('.cancel-row').hide();
+              tblRow.find('.remove-row').hide();
 
-        function assignAnnouncementDateHandlers() {
-            $('#edit-announcement-expiration').datetimepicker({ format: 'L' });
-        }
+              tblRow.find('.edit-row').show();
 
-        function assignSubmissionCycleDateHandlers() {
-            $('#edit-submissioncycle-startDate').datetimepicker({ format: 'L' });
-            $('#edit-submissioncycle-endDate').datetimepicker({ format: 'L' });
-        }
-
-        const ModelFieldMap = {
-            "announcement": ["id", "priority", "message", "contactInfo", "linkUrl", "expiration"],
-            "submissioncycle": ["id", "schoolYearId", "collectionId", "startDate", "endDate"]
-        };
-
-        const ModelFieldTransforms = {
-            "#edit-announcement-priority": function(prioritySelector) {
-                var priority = $(prioritySelector).val();
-                if ($.trim(priority).length === 0) {
-                    return 0;
-                }
-                return priority;
+              tblRow.find('.row-data')
+                .attr('contenteditable', 'false')
+                .removeClass('bg-danger')
+                .removeClass('bg-warning')
+                .css('padding', '');
             }
-        };
+          }
+        });
 
-        const ModelNameToDisplay = {
-            "announcement": "Announcement",
-            "submissioncycle": "Active Dates for Collection",
-            "report": "Dynamic Report"
-        };
+      // Setting the end year for the user in the add error threshold.
+      $("#add-start-year").change(function() {
+        $("#add-end-year").val(Number($("#add-start-year").val()) + 1);
+      });
 
-        var originalThreshold = "";
-        $(document).ready(function() {
-            var currentTab = $("[name='tabParam']");
-            if (currentTab.val()) {
-                var tabContentId = '#list-' + currentTab.val();
-                $(tabContentId).addClass("show active");
-                var tabId = '#list-' + currentTab.val() + '-list';
-                $(tabId).addClass("active");
-            } else {
-                $('#list-error-threshold').addClass("show active");
-                $('#list-error-threshold-list').addClass("active");
-            }
-
-            $(".save-row").hide();
-            $(".cancel-row").hide();
-            $(".remove-row").hide();
-
-            $(".edit-row").on("click",
-                function(event) {
-                    event.preventDefault();
-                    var tblRow = $(this).closest('tr');
-
-                    tblRow.find('.save-row').show();
-                    tblRow.find('.cancel-row').show();
-                    tblRow.find('.remove-row').show();
-
-                    tblRow.find('.edit-row').hide();
-
-                    // Make the whole row editable
-                    tblRow.find('.row-data')
-                        .attr('contenteditable', 'true')
-                        //.addClass('bg-warning')
-                        .css('padding', '3px')
-                        .focus();
-
-                    // Save original threshold value just in case of canceled use
-                    originalThreshold = tblRow.find('.row-data')[0].innerText;
-                });
-
-            $(".cancel-row").on('click',
-                function(event) {
-                    event.preventDefault();
-
-                    var tblRow = $(this).closest('tr');
-
-                    tblRow.find('.save-row').hide();
-                    tblRow.find('.cancel-row').hide();
-                    tblRow.find('.remove-row').hide();
-
-                    tblRow.find('.edit-row').show();
-
-                    // Make the whole row editable
-                    tblRow.find('.row-data')
-                        .attr('contenteditable', 'false')
-                        .removeClass('bg-warning')
-                        .removeClass('bg-danger')
-                        .css('padding', '');
-
-                    // If canceled we can put in the original data they started with.
-                    tblRow.find('.row-data')[0].innerText = originalThreshold;
-                });
-
-            $(".save-row").on('click',
-                function(event) {
-                    event.preventDefault();
-                    var tblRow = $(this).closest('tr');
-
-                    // Clear all white space with regex
-                    var threshold = tblRow.find('.row-data')[0].innerText.replace(/\s/g, "");
-                    var id = tblRow[0].cells[0].innerText;
-
-                    // Validate and update the threshold
-                    if (isNaN(threshold)) {
-                        $('#error-threshold-warning').show();
-                    } else {
-                        // This is to make sure the threshold does not appear with extra white spaces.
-                        tblRow.find('.row-data')[0].innerText = threshold;
-
-                        var successValue = updateThreshold(id, threshold);
-
-                        // Ajax returns a captial T true instead of boolean
-                        if (successValue !== "True") {
-                            $("#error-threshold-warning").show();
-                        }
-                        // Otherwise return it back to original state.
-                        else {
-                            tblRow.find('.save-row').hide();
-                            tblRow.find('.cancel-row').hide();
-                            tblRow.find('.remove-row').hide();
-
-                            tblRow.find('.edit-row').show();
-
-                            tblRow.find('.row-data')
-                                .attr('contenteditable', 'false')
-                                .removeClass('bg-danger')
-                                .removeClass('bg-warning')
-                                .css('padding', '');
-                        }
-                    }
-                });
-
-            // Setting the end year for the user in the add error threshold.
-            $("#add-start-year").change(function() {
-                $("#add-end-year").val(Number($("#add-start-year").val()) + 1);
-            });
-
-            @*$('#edit-dynamic-reports-schoolYearId').change(function() {
+      @*$('#edit-dynamic-reports-schoolYearId').change(function() {
                 $('#reportDefinitionsTable').DataTable()
                     .ajax
                     .url('@Url.Action("GetReportDefinitionsPerSchoolYearId")?schoolYearId=' +
@@ -209,838 +216,885 @@
                     .load();
             });*@
 
-            var dataTable = $('#reportDefinitionsTable').DataTable({
-                dom: 'r<t>',
-                ordering: false,
-                paging: false,
-                processing: true,
-                language: {
-                    loadingRecords: 'Loading...',
-                    processing: "Loading...",
-                },
-                columnDefs: [
-                    {
-                        "width": "240px",
-                        "targets": 1
-                    },
-                    {
-                        "width": "82px",
-                        "targets": 5
-                    }
-                ],
-                columns: [
-                    {
-                        data: 'Id',
-                        searchable: false,
-                        sortable: false,
-                        visible: false,
-                        render: function(data, type, row) {
-                            return data;
-                        }
-                    },
-                    {
-                        data: 'Name',
-                        title: 'Name',
-                        searchable: false,
-                        sortable: false
-                    },
-                    {
-                        data: 'RulesView.Name',
-                        title: 'Rules View',
-                        searchable: false,
-                        sortable: false
-                    },
-                    {
-                        data: 'SchoolYear',
-                        title: 'School Year',
-                        searchable: false,
-                        sortable: false,
-                        render: function(data, type, row) {
-                            if (type === 'display') {
-                                return data.StartYear + '&nbsp;&ndash;&nbsp;' + data.EndYear;
-                            } else {
-                                return data;
-                            }
-                        }
-                    },
-                    {
-                        data: 'Enabled',
-                        title: 'Status',
-                        searchable: false,
-                        sortable: false,
-                        render: function(data, type, row) {
-                            if (type === 'display') {
-                                var enabled = data === true;
-                                return enabled ? "Enabled" : "Disabled";
-                            } else {
-                                return data;
-                            }
-                        },
-                    },
-                    {
-                        data: 'IsOrgLevelReport',
-                        title: 'Data Owner Report',
-                        searchable: false,
-                        sortable: false,
-                        render: function(data, type, row) {
-                            if (type === 'display') {
-                                var enabled = data === true;
-                                return enabled ? "Yes" : "No";
-                            } else {
-                                return data;
-                            }
-                        },
-                    },
-                    {
-                        title: 'Actions',
-                        data: null,
-                        searchable: false,
-                        sortable: false,
-                        render: function(data, type, row) {
-                            if (type === 'display') {
-
-                                var html =
-                                    '<a href="javascript:void(0);" class="report-edit btn btn-sm prime-blue white-heavy-text" data-id="' +
-                                        data.Id +
-                                        '">Edit</a> ';
-
-                                var cssClass = (data.Enabled === true ? 'report-disable' : 'report-enable');
-                                var text = (data.Enabled ? 'Disable' : 'Enable');
-
-                                html += '<a href="javascript:void(0);" class="' +
-                                    cssClass +
-                                    ' btn btn-sm prime-blue white-heavy-text" data-id="' +
-                                    data.Id +
-                                    '">' +
-                                    text +
-                                    '</a>';
-                                html +=
-                                    ' <a href="javascript:void(0);" class="report-delete btn btn-sm prime-blue white-heavy-text" data-id="' +
-                                    data.Id +
-                                    '">Delete</a>';
-                                return html;
-                            } else {
-                                return data;
-                            }
-                        },
-                    }
-                ],
-                ajax: {
-                    url: '@Url.Action("GetReportDefinitionsPerSchoolYearId")?schoolYearId=@(Model.ReportSchoolYearId)',
-                    complete: function() {
-                        var dataTable = $($("#reportDefinitionsTable").DataTable().table().header());
-                        dataTable.find('th').removeAttr('aria-label');
-                    }
+      var dataTable = $('#reportDefinitionsTable').DataTable({
+        dom: 'r<t>',
+        ordering: false,
+        paging: false,
+        processing: true,
+        language: {
+          loadingRecords: 'Loading...',
+          processing: "Loading...",
+        },
+        columnDefs: [
+          {
+            "width": "240px",
+            "targets": 1
+          },
+          {
+            "width": "82px",
+            "targets": 5
+          }
+        ],
+        columns: [
+          {
+            data: 'Id',
+            searchable: false,
+            sortable: false,
+            visible: false,
+            render: function(data, type, row) {
+              return data;
+            }
+          },
+          {
+            data: 'Name',
+            title: 'Name',
+            searchable: false,
+            sortable: false
+          },
+          {
+            data: 'RulesView.Name',
+            title: 'Rules View',
+            searchable: false,
+            sortable: false
+          },
+          {
+            data: 'SchoolYear',
+            title: 'School Year',
+            searchable: false,
+            sortable: false,
+            render: function(data, type, row) {
+              if (type === 'display') {
+                return data.StartYear + '&nbsp;&ndash;&nbsp;' + data.EndYear;
+              } else {
+                return data;
+              }
+            }
+          },
+          {
+            data: 'ProgramArea',
+            title: 'Program Area',
+            searchable: false,
+            sortable: false,
+            render: function(data, type, row) {
+              if (type === 'display') {
+                if (data != null) {
+                  return data.Description;
+                } else {
+                  return 'All';
                 }
-            });
+              } else {
+                return data;
+              }
+            }
+          },
+          {
+            data: 'Enabled',
+            title: 'Status',
+            searchable: false,
+            sortable: false,
+            render: function(data, type, row) {
+              if (type === 'display') {
+                var enabled = data === true;
+                return enabled ? "Enabled" : "Disabled";
+              } else {
+                return data;
+              }
+            },
+          },
+          {
+            data: 'IsOrgLevelReport',
+            title: 'Data Owner Report',
+            searchable: false,
+            sortable: false,
+            render: function(data, type, row) {
+              if (type === 'display') {
+                var enabled = data === true;
+                return enabled ? "Yes" : "No";
+              } else {
+                return data;
+              }
+            },
+          },
+          {
+            title: 'Actions',
+            data: null,
+            searchable: false,
+            sortable: false,
+            render: function(data, type, row) {
+              if (type === 'display') {
 
-            $(dataTable.table().header()).addClass('table-primary');
+                var html =
+                  '<a href="javascript:void(0);" class="report-edit btn btn-sm prime-blue white-heavy-text" data-id="' +
+                    data.Id +
+                    '">Edit</a> ';
 
-            @* todo: why so many warnings here? *@
-            var AddAnnouncementRoute = "@Url.Content("~/Admin/AddAnnouncement")";
-            $("#announcement-add").click({ modalName: "Announcement", modalAddRoute: AddAnnouncementRoute },
-                CreateAddModal);
+                var cssClass = (data.Enabled === true ? 'report-disable' : 'report-enable');
+                var text = (data.Enabled ? 'Disable' : 'Enable');
 
-            var EditAnnouncementRoute = "@Url.Content("~/Admin/EditAnnouncement")";
-            $(".announcement-edit").click({ modalName: "Announcement", modalEditRoute: EditAnnouncementRoute },
-                CreateEditModal);
+                html += '<a href="javascript:void(0);" class="' +
+                  cssClass +
+                  ' btn btn-sm prime-blue white-heavy-text" data-id="' +
+                  data.Id +
+                  '">' +
+                  text +
+                  '</a>';
+                html +=
+                  ' <a href="javascript:void(0);" class="report-delete btn btn-sm prime-blue white-heavy-text" data-id="' +
+                  data.Id +
+                  '">Delete</a>';
+                return html;
+              } else {
+                return data;
+              }
+            },
+          }
+        ],
+        ajax: {
+          url: '@Url.Action("GetReportDefinitionsPerSchoolYearId")?schoolYearId=@(Model.ReportSchoolYearId)',
+          complete: function() {
+            var dataTable = $($("#reportDefinitionsTable").DataTable().table().header());
+            dataTable.find('th').removeAttr('aria-label');
+          }
+        }
+      });
 
-            var DeleteAnnouncementRoute = "@Url.Content("~/Admin/DeleteAnnouncement")";
-            $(".announcement-delete").click({ modelName: "announcement", deleteRoute: DeleteAnnouncementRoute },
-                DeleteModel);
+      $(dataTable.table().header()).addClass('table-primary');
 
-            var AddDynamicReportRoute = "@Url.Content("~/Admin/AddDynamicReportDefinition")";
-            $('#report-add').click({
-                    modalName: "report",
-                    modalAddRoute: AddDynamicReportRoute,
-                    option: '#edit-dynamic-reports-schoolYearId'
-                },
-                CreateAddDynamicReportModal);
+      @* todo: why so many warnings here? *@
+      var AddAnnouncementRoute = "@Url.Content("~/Admin/AddAnnouncement")";
+      $("#announcement-add").click({ modalName: "Announcement", modalAddRoute: AddAnnouncementRoute },
+        CreateAddModal);
 
-            $('#refresh-reports').click(function(event) {
-                event.preventDefault();
-                var confirmationString =
-                    'This will delete all dynamic reports and refresh the views from the selected school year\'s ODS. This operation cannot be undone. Continue?';
+      var EditAnnouncementRoute = "@Url.Content("~/Admin/EditAnnouncement")";
+      $(".announcement-edit").click({ modalName: "Announcement", modalEditRoute: EditAnnouncementRoute },
+        CreateEditModal);
 
-                if (confirm(confirmationString)) {
-                    $.ajax({
-                        type: "GET",
-                        url: "@Url.Action("RefreshRulesViews", new {schoolYearId = Model.ReportSchoolYearId})",
-                        success: function(/*data*/) {
-                            location.reload(true);
-                        },
-                        error: function() {
-                            alert('Could not refresh the rules views.');
-                        }
-                    });
-                }
-            });
+      var DeleteAnnouncementRoute = "@Url.Content("~/Admin/DeleteAnnouncement")";
+      $(".announcement-delete").click({ modelName: "announcement", deleteRoute: DeleteAnnouncementRoute },
+        DeleteModel);
 
-            // changing these to bind to future elements not yet present
+      var AddProgramAreaRoute = "@Url.Content("~/Admin/AddProgramArea")";
+      $("#programarea-add").click({ modalName: "ProgramArea", modalAddRoute: AddProgramAreaRoute },
+        CreateAddModal);
 
-            var EditDynamicReportRoute = "@Url.Content("~/Admin/EditDynamicReportDefinition")";
-            $('body').on('click',
-                '.report-edit',
-                { modalName: "report", modalEditRoute: EditDynamicReportRoute },
-                CreateEditDynamicReportModal);
+      var EditProgramAreaRoute = "@Url.Content("~/Admin/EditProgramArea")";
+      $(".programarea-edit").click({ modalName: "ProgramArea", modalEditRoute: EditProgramAreaRoute },
+        CreateEditModal);
 
-            var DisableDynamicReportRoute = "@Url.Content("~/Admin/DisableDynamicReportDefinition")";
-            $('body').on('click',
-                '.report-disable',
-                { modelName: "report", disableRoute: DisableDynamicReportRoute },
-                DisableDynamicReport);
+      var DeleteProgramAreaRoute = "@Url.Content("~/Admin/DeleteProgramArea")";
+      $(".programarea-delete").click({ modelName: "programarea", deleteRoute: DeleteProgramAreaRoute },
+        DeleteModel);
 
-            var EnableDynamicReportRoute = "@Url.Content("~/Admin/EnableDynamicReportDefinition")";
-            $('body').on('click',
-                '.report-enable',
-                { modelName: "report", enableRoute: EnableDynamicReportRoute },
-                EnableDynamicReport);
+      var AddDynamicReportRoute = "@Url.Content("~/Admin/AddDynamicReportDefinition")";
+      $('#report-add').click({
+          modalName: "report",
+          modalAddRoute: AddDynamicReportRoute,
+          option: '#edit-dynamic-reports-schoolYearId'
+        },
+        CreateAddDynamicReportModal);
 
-            var DeleteDynamicReportRoute = "@Url.Content("~/Admin/DeleteDynamicReportDefinition")";
-            $('body').on('click',
-                '.report-delete',
-                { modelName: "report", deleteRoute: DeleteDynamicReportRoute },
-                DeleteModel);
+      $('#refresh-reports').click(function(event) {
+        event.preventDefault();
+        var confirmationString =
+          'This will delete all dynamic reports and refresh the views from the selected school year\'s ODS. This operation cannot be undone. Continue?';
 
-            var AddSubmissionCycleRoute = "@Url.Content("~/Admin/AddSubmissionCycle")";
-            $("#submissioncycle-add").click({ modalName: "SubmissionCycle", modalAddRoute: AddSubmissionCycleRoute },
-                CreateAddModal);
+        if (confirm(confirmationString)) {
+          $.ajax({
+            type: "GET",
+            url: "@Url.Action("RefreshRulesViews", new {schoolYearId = Model.ReportSchoolYearId})",
+            success: function(/*data*/) {
+              location.reload(true);
+            },
+            error: function() {
+              alert('Could not refresh the rules views.');
+            }
+          });
+        }
+      });
 
-            var EditSubmissionCycleRoute = "@Url.Content("~/Admin/EditSubmissionCycle")";
-            $(".submissioncycle-edit").click({ modalName: "SubmissionCycle", modalEditRoute: EditSubmissionCycleRoute },
-                CreateEditModal);
+      // changing these to bind to future elements not yet present
 
-            var DeleteSubmissionCycleRoute = "@Url.Content("~/Admin/DeleteSubmissionCycle")";
-            $(".submissioncycle-delete")
-                .click({ modelName: "submissioncycle", deleteRoute: DeleteSubmissionCycleRoute }, DeleteModel);
+      var EditDynamicReportRoute = "@Url.Content("~/Admin/EditDynamicReportDefinition")";
+      $('body').on('click',
+        '.report-edit',
+        { modalName: "report", modalEditRoute: EditDynamicReportRoute },
+        CreateEditDynamicReportModal);
 
-            $('#reportModal').on('shown.bs.modal',
-                function() {
-                    updateRulesViews(@Model.ReportSchoolYearId);
-                    setModalHeaderText("report", ModelNameToDisplay["report"]);
-                    $("#newReportForm").on('submit', saveDynamicReport);
-                });
+      var DisableDynamicReportRoute = "@Url.Content("~/Admin/DisableDynamicReportDefinition")";
+      $('body').on('click',
+        '.report-disable',
+        { modelName: "report", disableRoute: DisableDynamicReportRoute },
+        DisableDynamicReport);
 
-            $('#edit-reportModal').on('shown.bs.modal',
-                function() {
-                    debugger;
-                    $('#editRulesTable').DataTable({
-                        dom: '<t>',
-                        scrollY: '200px',
-                        scrollCollapse: true,
-                        ordering: false,
-                        paging: false,
-                        columns: [
-                            {
-                                title: "Id",
-                                searchable: false,
-                                sortable: false,
-                                visible: false
-                            },
-                            {
-                                title: "Enabled",
-                                searchable: false,
-                                sortable: false,
-                            },
-                            {
-                                title: "Name",
-                                searchable: false,
-                                sortable: false
-                            },
-                            {
-                                title: "Description",
-                                searchable: false,
-                                sortable: false,
-                            }
-                        ]
-                    });
+      var EnableDynamicReportRoute = "@Url.Content("~/Admin/EnableDynamicReportDefinition")";
+      $('body').on('click',
+        '.report-enable',
+        { modelName: "report", enableRoute: EnableDynamicReportRoute },
+        EnableDynamicReport);
 
-                    setModalHeaderText("report", ModelNameToDisplay["report"]);
-                    $("#editReportForm").on('submit', updateDynamicReport);
-                });
+      var DeleteDynamicReportRoute = "@Url.Content("~/Admin/DeleteDynamicReportDefinition")";
+      $('body').on('click',
+        '.report-delete',
+        { modelName: "report", deleteRoute: DeleteDynamicReportRoute },
+        DeleteModel);
 
-            $('#submissioncycleModal').on('shown.bs.modal',
-                function() {
-                    setModalHeaderText("submissioncycle", ModelNameToDisplay["submissioncycle"]);
-                    assignSubmissionCycleDateHandlers();
-                    $("#save-submissioncycle").click({
-                            modalName: "SubmissionCycle",
-                            additionalFunction: assignSubmissionCycleDateHandlers
-                        },
-                        saveModel);
-                });
+      var AddSubmissionCycleRoute = "@Url.Content("~/Admin/AddSubmissionCycle")";
+      $("#submissioncycle-add").click({
+          modalName: "SubmissionCycle",
+          modalAddRoute: AddSubmissionCycleRoute
+        },
+        CreateAddModal);
 
-            $('#announcementModal').on('shown.bs.modal',
-                function() {
-                    setModalHeaderText("announcement", ModelNameToDisplay["announcement"]);
-                    assignAnnouncementDateHandlers();
-                    $("#save-announcement")
-                        .click({ modalName: "Announcement", additionalFunction: assignAnnouncementDateHandlers },
-                            saveModel);
-                });
+      var EditSubmissionCycleRoute = "@Url.Content("~/Admin/EditSubmissionCycle")";
+      $(".submissioncycle-edit").click({
+          modalName: "SubmissionCycle",
+          modalEditRoute: EditSubmissionCycleRoute
+        },
+        CreateEditModal);
+
+      var DeleteSubmissionCycleRoute = "@Url.Content("~/Admin/DeleteSubmissionCycle")";
+      $(".submissioncycle-delete")
+        .click({ modelName: "submissioncycle", deleteRoute: DeleteSubmissionCycleRoute }, DeleteModel);
+
+      $('#reportModal').on('shown.bs.modal',
+        function() {
+          updateRulesViews(@Model.ReportSchoolYearId);
+          setModalHeaderText("report", ModelNameToDisplay["report"]);
+          $("#newReportForm").on('submit', saveDynamicReport);
         });
 
-        function updateRulesViews(schoolYearId) {
-            $.ajax({
-                type: "GET",
-                url: '@Url.Action("GetRulesViewsPerSchoolYearId", "Admin")?schoolYearId=' + schoolYearId,
-                contentType: "application/json; charset=utf-8",
-                datatype: "json",
-                success: function(data) {
-                    var viewSelect = $('#rulesViewSelect');
-                    var viewTabs = $('#rulesViewTabs');
-                    var viewPanes = $('#rulesViewPanes');
+      $('#edit-reportModal').on('shown.bs.modal',
+        function() {
+          $('#editRulesTable').DataTable({
+            dom: '<t>',
+            scrollY: '200px',
+            scrollCollapse: true,
+            ordering: false,
+            paging: false,
+            columns: [
+              {
+                title: "Id",
+                searchable: false,
+                sortable: false,
+                visible: false
+              },
+              {
+                title: "Enabled",
+                searchable: false,
+                sortable: false,
+              },
+              {
+                title: "Name",
+                searchable: false,
+                sortable: false
+              },
+              {
+                title: "Description",
+                searchable: false,
+                sortable: false,
+              }
+            ]
+          });
 
-                    viewTabs.empty();
-                    viewPanes.empty();
-                    viewSelect.empty();
-                    viewSelect.append($('<option>', { value: '', text: '- select a view -' }));
+          setModalHeaderText("report", ModelNameToDisplay["report"]);
+          $("#editReportForm").on('submit', updateDynamicReport);
+        });
 
-                    $.each(data,
-                        function(i, item) {
-                            viewSelect.append($('<option>', { value: item.Id, text: item.Name }));
+      $('#submissioncycleModal').on('shown.bs.modal',
+        function() {
+          setModalHeaderText("submissioncycle", ModelNameToDisplay["submissioncycle"]);
+          assignSubmissionCycleDateHandlers();
+          $("#save-submissioncycle").click({
+              modalName: "SubmissionCycle",
+              additionalFunction: assignSubmissionCycleDateHandlers
+            },
+            saveModel);
+        });
 
-                            var tabName = 'rulesViewTabContent-' + item.Id;
+      $('#announcementModal').on('shown.bs.modal',
+        function() {
+          setModalHeaderText("announcement", ModelNameToDisplay["announcement"]);
+          assignAnnouncementDateHandlers();
+          $("#save-announcement")
+            .click({ modalName: "Announcement", additionalFunction: assignAnnouncementDateHandlers },
+              saveModel);
+        });
 
-                            viewTabs.append($('<li class="nav-link"><a href="#' +
-                                tabName +
-                                '">' +
-                                item.Name +
-                                '</a></li>'));
-                            viewPanes.append($('<div>', { class: 'tab-pane', id: tabName }));
-                            var viewContent = $('#' + tabName);
+      $('#programareaModal').on('shown.bs.modal',
+        function() {
+          setModalHeaderText("Program Area", ModelNameToDisplay["programarea"]);
+          $("#save-programarea").click({ modalName: "ProgramArea" }, saveModel);
+        });
+    });
 
-                            viewContent.empty();
+    function updateRulesViews(schoolYearId) {
+      $.ajax({
+        type: "GET",
+        url: '@Url.Action("GetRulesViewsPerSchoolYearId", "Admin")?schoolYearId=' + schoolYearId,
+        contentType: "application/json; charset=utf-8",
+        datatype: "json",
+        success: function(data) {
+          var viewSelect = $('#rulesViewSelect');
+          var viewTabs = $('#rulesViewTabs');
+          var viewPanes = $('#rulesViewPanes');
 
-                            var tableContent =
-                                '<table class="table table-sm table-responsive-md table-bordered" id="rulesTable-' +
-                                    item.Id +
-                                    '">';
+          viewTabs.empty();
+          viewPanes.empty();
+          viewSelect.empty();
+          viewSelect.append($('<option>', { value: '', text: '- select a view -' }));
 
-                            tableContent +=
-                                '<thead><tr class="table-primary"><th>ID</th><th>Enabled</th><th>Field Name</th><th>Alias</th></tr></thead><tbody>';
+          $.each(data,
+            function(i, item) {
+              viewSelect.append($('<option>', { value: item.Id, text: item.Name }));
 
-                            $.each(item.RulesFields,
-                                function(j, field) {
-                                    tableContent += '<tr>' +
-                                        '<td>' +
-                                        field.Id +
-                                        '</td>' +
-                                        '<td>true</td>' +
-                                        '<td>' +
-                                        field.Name +
-                                        '</td>' +
-                                        '<td></td>' +
-                                        '</tr>';
-                                });
-                            tableContent += '</tbody></table>';
-                            viewContent.append(tableContent);
+              var tabName = 'rulesViewTabContent-' + item.Id;
 
-                            $('#rulesTable-' + item.Id).DataTable({
-                                dom: '<t>',
-                                scrollY: '200px',
-                                scrollCollapse: true,
-                                ordering: false,
-                                paging: false,
-                                columns: [
-                                    {
-                                        data: "Id",
-                                        searchable: false,
-                                        sortable: false,
-                                        visible: false
-                                    },
-                                    {
-                                        data: "Enabled",
-                                        searchable: false,
-                                        sortable: false,
-                                        render: function(data, type, row) {
-                                            if (type === 'display') {
-                                                var checked = false;
-                                                if (data === 'true') {
-                                                    checked = true; // todo? this isn't binded to anything
-                                                }
+              viewTabs.append($('<li class="nav-link"><a href="#' +
+                tabName +
+                '">' +
+                item.Name +
+                '</a></li>'));
+              viewPanes.append($('<div>', { class: 'tab-pane', id: tabName }));
+              var viewContent = $('#' + tabName);
 
-                                                return '<input type="checkbox" ' + (checked ? 'checked' : '') + '>';
-                                            } else {
-                                                return data;
-                                            }
-                                        },
-                                    },
-                                    {
-                                        data: "Name",
-                                        searchable: false,
-                                        sortable: false
-                                    },
-                                    {
-                                        data: "Description",
-                                        searchable: false,
-                                        sortable: false,
-                                        render: function(data, type, row) {
-                                            if (type === 'display') {
-                                                return '<input type="text" value="' + data + '">';
-                                            } else {
-                                                return data;
-                                            }
-                                        },
-                                    },
-                                ]
-                            });
-                        });
-                },
-                error: function() {
-                    alert('Could not retrieve rules views');
-                }
-            });
-        }
+              viewContent.empty();
 
-        function saveDynamicReport() {
-            var rulesViewId = $('#rulesViewSelect').val();
-            var reportTitle = $('#report-name').val();
-            var reportDescription = $('#report-description').val();
-            var reportIsOrgLevel = $('#report-is-org-level').is(':checked');
-            var reportTable = $('#rulesTable-' + rulesViewId).DataTable();
-            var schoolYearId = @Model.ReportSchoolYearId;
+              var tableContent =
+                '<table class="table table-sm table-responsive-md table-bordered" id="rulesTable-' +
+                  item.Id +
+                  '">';
 
-            var dynamicReportDefinition = {
-                name: reportTitle,
-                description: reportDescription,
-                isOrgLevelReport: reportIsOrgLevel,
-                enabled: true,
-                schoolYearId: schoolYearId,
-                validationRulesViewId: rulesViewId
-            };
+              tableContent +=
+                '<thead><tr class="table-primary"><th>ID</th><th>Enabled</th><th>Field Name</th><th>Alias</th></tr></thead><tbody>';
 
-            var reportFields = [];
-
-            reportTable.rows().eq(0).each(function(index) {
-                var row = reportTable.row(index);
-                var data = row.data();
-                var node = $(row.node());
-                var enabled = node.find('input[type=checkbox]').is(':checked');
-                var description = $(node).find('input[type=text]').val();
-                reportFields.push({
-                    ValidationRulesFieldId: data.Id,
-                    Name: data.Name,
-                    Description: description.trim(),
-                    Enabled: enabled
+              $.each(item.RulesFields,
+                function(j, field) {
+                  tableContent += '<tr>' +
+                    '<td>' +
+                    field.Id +
+                    '</td>' +
+                    '<td>true</td>' +
+                    '<td>' +
+                    field.Name +
+                    '</td>' +
+                    '<td></td>' +
+                    '</tr>';
                 });
-            });
+              tableContent += '</tbody></table>';
+              viewContent.append(tableContent);
 
-            dynamicReportDefinition.Fields = reportFields;
-
-            $.ajax({
-                type: "POST",
-                url: '@Url.Action("SaveDynamicReportDefinition", "Admin")',
-                contentType: "application/json; charset=utf-8",
-                data: JSON.stringify(dynamicReportDefinition),
-                datatype: "json",
-                success: function(data) {
-                    location.reload(true);
-                },
-                error: function(data) {
-                    debugger;
-                    alert('Unable to save report definition');
-                }
-            });
-
-            return false;
-        }
-
-        function updateDynamicReport() {
-
-            var reportId = $('#edit-report-id').val();
-            var reportTitle = $('#edit-report-name').val();
-            var reportDescription = $('#edit-report-description').val();
-            var reportIsOrgLevel = $('#edit-report-is-org-level').is(':checked');
-
-            var dynamicReportUpdate = {
-                id: reportId,
-                name: reportTitle,
-                description: reportDescription,
-                isOrgLevelReport: reportIsOrgLevel,
-            };
-
-            var reportFields = [];
-
-            var reportTable = $('#editRulesTable').DataTable();
-            debugger;
-
-            reportTable.rows().eq(0).each(function(index) {
-                var row = reportTable.row(index);
-                var data = row.data();
-                var node = $(row.node());
-                var enabled = node.find('input[type=checkbox]').is(':checked');
-                var description = $(node).find('input[type=text]').val();
-                reportFields.push({
-                    Id: data[0],
-                    Description: description.trim(),
-                    Enabled: enabled
-                });
-            });
-
-            dynamicReportUpdate.Fields = reportFields;
-
-            $.ajax({
-                type: "POST",
-                url: '@Url.Action("UpdateDynamicReportDefinition", "Admin")',
-                contentType: "application/json; charset=utf-8",
-                data: JSON.stringify(dynamicReportUpdate),
-                datatype: "json",
-                success: function(data) {
-                    location.reload(true);
-                },
-                error: function(data) {
-                    alert('Unable to save report definition');
-                }
-            });
-
-            return false;
-        }
-
-        function changeRulesViewTab(sender) {
-            var senderId = $(sender).val();
-            var tabHref = '#rulesViewTabContent-' + senderId;
-            var tab = $('#rulesViewTabs li a[href$="' + tabHref + '"]');
-            if (tab && tab.length) {
-                tab.tab('show');
-                var rulesTable = $('#rulesTable-' + senderId);
-                rulesTable.DataTable().columns().draw();
-            } else {
-                $('#rulesViewTabs li a[class$="active"]').removeClass('active');
-                $('#rulesViewPanes div[class$="active"]').removeClass('active');
-            }
-        }
-
-        function CreateAddModal(event) {
-
-            var modalNameRaw = event.data.modalName;
-            var modalAddRoute = event.data.modalAddRoute;
-
-            var modelName = modalNameRaw.toLowerCase();
-            var modelModalContent = '#' + modelName + '-modal-content';
-            var modelModal = '#' + modelName + 'Modal';
-            var modelDisplayName = ModelNameToDisplay[modelName];
-
-            var optionSelector = event.data.option;
-
-            if (optionSelector) {
-                modalAddRoute += "?schoolYearId=" + $(optionSelector).val();
-            }
-
-            var options = { "backdrop": "static", keyboard: true };
-            $.ajax({
-                type: "GET",
-                url: modalAddRoute,
-                contentType: "application/json; charset=utf-8",
-                data: {},
-                datatype: "json",
-                success: function(data) {
-                    $(modelModalContent).html(data);
-                    $(modelModal).modal(options);
-                    $(modelModal).modal('show');
-                },
-                error: function() {
-                    alert('Could not open a dialog to create ' + modelDisplayName);
-                }
-            });
-        }
-
-        function CreateAddDynamicReportModal(event) {
-            var modalNameRaw = event.data.modalName;
-            var modalAddRoute = event.data.modalAddRoute;
-
-            var modelName = modalNameRaw.toLowerCase();
-            var modelModalContent = '#' + modelName + '-modal-content';
-            var modelModal = '#' + modelName + 'Modal';
-            var modelDisplayName = ModelNameToDisplay[modelName];
-
-            //var optionSelector = event.data.option;
-
-            //if (optionSelector) {
-            //    modalAddRoute += "?schoolYearId=" + $(optionSelector).val();
-            //}
-
-            modalAddRoute += "?schoolYearId=@(Model.ReportSchoolYearId)";
-
-            var options = { "backdrop": "static", keyboard: true };
-            $.ajax({
-                type: "GET",
-                url: modalAddRoute,
-                contentType: "application/json; charset=utf-8",
-                data: {},
-                datatype: "json",
-                success: function(data) {
-                    $(modelModalContent).html(data);
-                    $(modelModal).modal(options);
-                    $(modelModal).modal('show');
-
-                },
-                error: function() {
-                    alert('Could not open a dialog to create ' + modelDisplayName);
-                }
-            });
-        }
-
-        function CreateEditModal(event) {
-            var modalNameRaw = event.data.modalName;
-            var modalEditRoute = event.data.modalEditRoute;
-            var modelName = modalNameRaw.toLowerCase();
-            var modelModalContent = '#' + modelName + '-modal-content';
-            var modelModal = '#' + modelName + 'Modal';
-            var $buttonClicked = $(this);
-            var id = $buttonClicked.attr('data-id');
-            var options = { "backdrop": "static", keyboard: true };
-            $.ajax({
-                type: "GET",
-                url: modalEditRoute,
-                contentType: "application/json; charset=utf-8",
-                data: { "Id": id },
-                datatype: "json",
-                success: function(data) {
-                    $(modelModalContent).html(data);
-                    $(modelModal).modal(options);
-                    $(modelModal).modal('show');
-                },
-                error: function() {
-                    alert('Could not retrieve the ' + modalNameRaw + ' for editing.');
-                }
-            });
-        }
-
-        function DeleteModel(event) {
-            debugger;
-            var modelName = event.data.modelName;
-            var deleteRoute = event.data.deleteRoute;
-            var modelDisplayName = ModelNameToDisplay[modelName];
-
-            var $buttonClicked = $(this);
-            var id = $buttonClicked.attr('data-id');
-            if (confirm('Are you sure you want to delete this ' + modelDisplayName + '?')) {
-                $.ajax({
-                    type: "DELETE",
-                    url: deleteRoute + '/' + id,
-                    success: function(/*data*/) {
-                        location.reload(true);
-                    },
-                    error: function() {
-                        alert('Could not delete the ' + modelDisplayName);
-                    }
-                });
-            }
-        };
-
-        function CreateEditDynamicReportModal(event) {
-            var modalNameRaw = event.data.modalName;
-            var modalEditRoute = event.data.modalEditRoute;
-            var modelName = modalNameRaw.toLowerCase();
-            var modelModalContent = '#edit-' + modelName + '-modal-content';
-            var modelModal = '#edit-' + modelName + 'Modal';
-            var $buttonClicked = $(this);
-            var id = $buttonClicked.attr('data-id');
-            var options = { "backdrop": "static", keyboard: true };
-            $.ajax({
-                type: "GET",
-                url: modalEditRoute,
-                contentType: "application/json; charset=utf-8",
-                data: { "Id": id },
-                datatype: "json",
-                success: function(data) {
-                    $(modelModalContent).html(data);
-                    $(modelModal).modal(options);
-                    $(modelModal).modal('show');
-                },
-                error: function() {
-                    alert('Could not retrieve the ' + modalNameRaw + ' for editing.');
-                }
-            });
-        }
-
-        function DisableDynamicReport(event) {
-            var $buttonClicked = $(this);
-            var id = $buttonClicked.attr('data-id');
-            var disableRoute = event.data.disableRoute;
-
-            $.ajax({
-                type: "GET",
-                url: disableRoute + '/' + id,
-                contentType: "application/json; charset=utf-8",
-                success: function(data) {
-                    location.reload(true);
-                },
-                error: function() {
-                    alert('Could not disable the report with id ' + id);
-                }
-            });
-        }
-
-        function EnableDynamicReport(event) {
-            var $buttonClicked = $(this);
-            var id = $buttonClicked.attr('data-id');
-            var enableRoute = event.data.enableRoute;
-
-            $.ajax({
-                type: "GET",
-                url: enableRoute + '/' + id,
-                contentType: "application/json; charset=utf-8",
-                success: function(data) {
-                    location.reload(true);
-                },
-                error: function() {
-                    alert('Could not enable the report with id ' + id);
-                }
-            });
-
-        }
-
-        function DeleteDynamicReport(event) {
-            debugger;
-
-        }
-
-        function DeleteModel(event) {
-            var modelName = event.data.modelName;
-            var deleteRoute = event.data.deleteRoute;
-            var modelDisplayName = ModelNameToDisplay[modelName];
-
-            var $buttonClicked = $(this);
-            var id = $buttonClicked.attr('data-id');
-            if (confirm('Are you sure you want to delete this ' + modelDisplayName + '?')) {
-                $.ajax({
-                    type: "DELETE",
-                    url: deleteRoute + '/' + id,
-                    success: function(/*data*/) {
-                        location.reload(true);
-                    },
-                    error: function() {
-                        alert('Could not delete the ' + modelDisplayName);
-                    }
-                });
-            }
-        };
-
-        function saveModel(event) {
-            event.preventDefault();
-            var modalNameRaw = event.data.modalName;
-            var additionalFunction = event.data.additionalFunction;
-            var modelName = modalNameRaw.toLowerCase();
-            $('#save-' + modelName).prop("disabled", true);
-            var saveRoute = '@Url.Content("~/Admin/Save")' + modalNameRaw;
-            var modelFieldNames = ModelFieldMap[modelName];
-            var dataObj = getMappedModel(modelName, modelFieldNames);
-            var jsonData = JSON.stringify(dataObj);
-            var options = { "backdrop": "static", keyboard: true };
-            $.ajax({
-                type: "POST",
-                url: saveRoute,
-                contentType: "application/json; charset=utf-8",
-                data: jsonData,
-                datatype: "json",
-                success: function(data) {
-                    var tempData = $(data);
-                    var validationSummaryContents = "";
-                    var validationSummary = tempData.find('#' + modelName + '-validation-summary-row');
-                    if (validationSummary) {
-                        validationSummaryContents = validationSummary.text();
-                    }
-                    // If validationSummaryContents contains more than just whitespace,
-                    // then validation summary contains errors, and we should re-show the modal
-                    if ($.trim(validationSummaryContents).length > 0) {
-                        $('#' + modelName + '-modal-content').html(data);
-                        $('#' + modelName + 'Modal').modal(options);
-                        $('#' + modelName + 'Modal').modal('show');
-                        // Need to reattach event handlers to some of the modal's fields, because
-                        // when the modal's HTML got repopulated above, the event handlers disappeared
-                        setModalHeaderText(modelName, ModelNameToDisplay[modelName]);
-                        if (additionalFunction) {
-                            additionalFunction();
+              $('#rulesTable-' + item.Id).DataTable({
+                dom: '<t>',
+                scrollY: '200px',
+                scrollCollapse: true,
+                ordering: false,
+                paging: false,
+                columns: [
+                  {
+                    data: "Id",
+                    searchable: false,
+                    sortable: false,
+                    visible: false
+                  },
+                  {
+                    data: "Enabled",
+                    searchable: false,
+                    sortable: false,
+                    render: function(data, type, row) {
+                      if (type === 'display') {
+                        var checked = false;
+                        if (data === 'true') {
+                          checked = true; // todo? this isn't binded to anything
                         }
-                        $('#save-' + modelName)
-                            .click({ modalName: modalNameRaw, additionalFunction: additionalFunction }, saveModel);
-                    } else {
-                        var locationUrl = location.href;
-                        var urlContainsModelName = locationUrl.includes(modelName + 's');
-                        if (!urlContainsModelName) {
-                            location.href = location.href + '?tab=' + modelName + 's';
-                        }
-                        location.reload(true);
-                    }
-                },
-                error: function(data) {
-                    $('#' + modelName + '-modal-content').html(data);
-                    $('#' + modelName + 'Modal').modal(options);
-                    $('#' + modelName + 'Modal').modal('show');
-                    // Need to reattach event handlers to some of the modal's fields, because
-                    // when the modal's HTML got repopulated above, the event handlers disappeared
-                    if (additionalFunction) {
-                        additionalFunction();
-                    }
-                    $('#save-' + modelName).click({ modalName: modalNameRaw, additionalFunction: additionalFunction },
-                        saveModel);
-                }
+
+                        return '<input type="checkbox" ' + (checked ? 'checked' : '') + '>';
+                      } else {
+                        return data;
+                      }
+                    },
+                  },
+                  {
+                    data: "Name",
+                    searchable: false,
+                    sortable: false
+                  },
+                  {
+                    data: "Description",
+                    searchable: false,
+                    sortable: false,
+                    render: function(data, type, row) {
+                      if (type === 'display') {
+                        return '<input type="text" value="' + data + '">';
+                      } else {
+                        return data;
+                      }
+                    },
+                  },
+                ]
+              });
             });
+        },
+        error: function() {
+          alert('Could not retrieve rules views');
         }
+      });
+    }
 
-        function getMappedModel(modelName, modelFieldNames) {
-            var dataObj = {};
-            var fieldVal;
-            for (var i = 0; i < modelFieldNames.length; i++) {
-                var fieldName = modelFieldNames[i];
-                var fieldSelector = '#edit-' + modelName + '-' + fieldName;
-                var fieldValFunc = ModelFieldTransforms[fieldSelector];
-                if (fieldValFunc) {
-                    fieldVal = fieldValFunc(fieldSelector);
-                } else {
-                    fieldVal = $(fieldSelector).val();
-                }
-                dataObj[fieldName] = fieldVal;
+    function saveDynamicReport() {
+      var rulesViewId = $('#rulesViewSelect').val();
+      var reportTitle = $('#report-name').val();
+      var reportDescription = $('#report-description').val();
+      var reportIsOrgLevel = $('#report-is-org-level').is(':checked');
+      var reportTable = $('#rulesTable-' + rulesViewId).DataTable();
+      var schoolYearId = $('#report-school-year-id').val();
+      var reportProgramAreaId = $('#report-program-area-id').val();
+
+      var dynamicReportDefinition = {
+        name: reportTitle,
+        description: reportDescription,
+        isOrgLevelReport: reportIsOrgLevel,
+        enabled: true,
+        schoolYearId: schoolYearId,
+        validationRulesViewId: rulesViewId,
+        programAreaId: reportProgramAreaId
+      };
+
+      var reportFields = [];
+
+      reportTable.rows().eq(0).each(function(index) {
+        var row = reportTable.row(index);
+        var data = row.data();
+        var node = $(row.node());
+        var enabled = node.find('input[type=checkbox]').is(':checked');
+        var description = $(node).find('input[type=text]').val();
+        reportFields.push({
+          ValidationRulesFieldId: data.Id,
+          Name: data.Name,
+          Description: description.trim(),
+          Enabled: enabled
+        });
+      });
+
+      dynamicReportDefinition.Fields = reportFields;
+
+      $.ajax({
+        type: "POST",
+        url: '@Url.Action("SaveDynamicReportDefinition", "Admin")',
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify(dynamicReportDefinition),
+        datatype: "json",
+        success: function(data) {
+          location.reload(true);
+        },
+        error: function(data) {
+          alert('Unable to save report definition');
+        }
+      });
+
+      return false;
+    }
+
+    function updateDynamicReport() {
+
+      var reportId = $('#edit-report-id').val();
+      var reportTitle = $('#edit-report-name').val();
+      var reportDescription = $('#edit-report-description').val();
+      var reportIsOrgLevel = $('#edit-report-is-org-level').is(':checked');
+      var reportProgramAreaId = $('#report-program-area-id').val();
+      var schoolYearId = $('#report-school-year-id').val();
+
+      var dynamicReportUpdate = {
+        id: reportId,
+        name: reportTitle,
+        description: reportDescription,
+        isOrgLevelReport: reportIsOrgLevel,
+        programAreaId: reportProgramAreaId,
+        schoolYearId: schoolYearId
+      };
+
+      var reportFields = [];
+
+      var reportTable = $('#editRulesTable').DataTable();
+
+      reportTable.rows().eq(0).each(function(index) {
+        var row = reportTable.row(index);
+        var data = row.data();
+        var node = $(row.node());
+        var enabled = node.find('input[type=checkbox]').is(':checked');
+        var description = $(node).find('input[type=text]').val();
+        reportFields.push({
+          Id: data[0],
+          Description: description.trim(),
+          Enabled: enabled
+        });
+      });
+
+      dynamicReportUpdate.Fields = reportFields;
+
+      $.ajax({
+        type: "POST",
+        url: '@Url.Action("UpdateDynamicReportDefinition", "Admin")',
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify(dynamicReportUpdate),
+        datatype: "json",
+        success: function(data) {
+          location.reload(true);
+        },
+        error: function(data) {
+          alert('Unable to save report definition');
+        }
+      });
+
+      return false;
+    }
+
+    function changeRulesViewTab(sender) {
+      var senderId = $(sender).val();
+      var tabHref = '#rulesViewTabContent-' + senderId;
+      var tab = $('#rulesViewTabs li a[href$="' + tabHref + '"]');
+      if (tab && tab.length) {
+        tab.tab('show');
+        var rulesTable = $('#rulesTable-' + senderId);
+        rulesTable.DataTable().columns().draw();
+      } else {
+        $('#rulesViewTabs li a[class$="active"]').removeClass('active');
+        $('#rulesViewPanes div[class$="active"]').removeClass('active');
+      }
+    }
+
+    function CreateAddModal(event) {
+      var modalNameRaw = event.data.modalName;
+      var modalAddRoute = event.data.modalAddRoute;
+      var modelName = modalNameRaw.toLowerCase();
+      var modelModalContent = '#' + modelName + '-modal-content';
+      var modelModal = '#' + modelName + 'Modal';
+      var modelDisplayName = ModelNameToDisplay[modelName];
+
+      var optionStrings = [];
+
+      var optionSelector = event.data.option;
+
+      if (optionSelector) {
+        optionStrings.push("schoolYearId=" + $(optionSelector).val());
+      }
+
+      if (optionStrings.length) {
+        modalAddRoute += "?" + optionStrings.join('&');
+      }
+
+      var options = { "backdrop": "static", keyboard: true };
+      $.ajax({
+        type: "GET",
+        url: modalAddRoute,
+        contentType: "application/json; charset=utf-8",
+        data: {},
+        datatype: "json",
+        success: function(data) {
+          $(modelModalContent).html(data);
+          $(modelModal).modal(options);
+          $(modelModal).modal('show');
+        },
+        error: function() {
+          alert('Could not open a dialog to create ' + modelDisplayName);
+        }
+      });
+    }
+
+    function CreateAddDynamicReportModal(event) {
+      var modalNameRaw = event.data.modalName;
+      var modalAddRoute = event.data.modalAddRoute;
+
+      var modelName = modalNameRaw.toLowerCase();
+      var modelModalContent = '#' + modelName + '-modal-content';
+      var modelModal = '#' + modelName + 'Modal';
+      var modelDisplayName = ModelNameToDisplay[modelName];
+
+      //var optionSelector = event.data.option;
+
+      //if (optionSelector) {
+      //    modalAddRoute += "?schoolYearId=" + $(optionSelector).val();
+      //}
+
+      modalAddRoute += "?schoolYearId=@(Model.ReportSchoolYearId)";
+
+      var options = { "backdrop": "static", keyboard: true };
+      $.ajax({
+        type: "GET",
+        url: modalAddRoute,
+        contentType: "application/json; charset=utf-8",
+        data: {},
+        datatype: "json",
+        success: function(data) {
+          $(modelModalContent).html(data);
+          $(modelModal).modal(options);
+          $(modelModal).modal('show');
+
+        },
+        error: function() {
+          alert('Could not open a dialog to create ' + modelDisplayName);
+        }
+      });
+    }
+
+    function CreateEditModal(event) {
+      var modalNameRaw = event.data.modalName;
+      var modalEditRoute = event.data.modalEditRoute;
+      var modelName = modalNameRaw.toLowerCase();
+      var modelModalContent = '#' + modelName + '-modal-content';
+      var modelModal = '#' + modelName + 'Modal';
+      var $buttonClicked = $(this);
+      var id = $buttonClicked.attr('data-id');
+      var options = { "backdrop": "static", keyboard: true };
+      $.ajax({
+        type: "GET",
+        url: modalEditRoute,
+        contentType: "application/json; charset=utf-8",
+        data: { "Id": id },
+        datatype: "json",
+        success: function(data) {
+          $(modelModalContent).html(data);
+          $(modelModal).modal(options);
+          $(modelModal).modal('show');
+        },
+        error: function() {
+          alert('Could not retrieve the ' + modalNameRaw + ' for editing.');
+        }
+      });
+    }
+
+    function DeleteModel(event) {
+      var modelName = event.data.modelName;
+      var deleteRoute = event.data.deleteRoute;
+      var modelDisplayName = ModelNameToDisplay[modelName];
+
+      var $buttonClicked = $(this);
+      var id = $buttonClicked.attr('data-id');
+      if (confirm('Are you sure you want to delete this ' + modelDisplayName + '?')) {
+        $.ajax({
+          type: "DELETE",
+          url: deleteRoute + '/' + id,
+          success: function(/*data*/) {
+            location.reload(true);
+          },
+          error: function() {
+            alert('Could not delete the ' + modelDisplayName);
+          }
+        });
+      }
+    };
+
+    function CreateEditDynamicReportModal(event) {
+      var modalNameRaw = event.data.modalName;
+      var modalEditRoute = event.data.modalEditRoute;
+      var modelName = modalNameRaw.toLowerCase();
+      var modelModalContent = '#edit-' + modelName + '-modal-content';
+      var modelModal = '#edit-' + modelName + 'Modal';
+      var $buttonClicked = $(this);
+      var id = $buttonClicked.attr('data-id');
+      var options = { "backdrop": "static", keyboard: true };
+      $.ajax({
+        type: "GET",
+        url: modalEditRoute,
+        contentType: "application/json; charset=utf-8",
+        data: { "Id": id },
+        datatype: "json",
+        success: function(data) {
+          $(modelModalContent).html(data);
+          $(modelModal).modal(options);
+          $(modelModal).modal('show');
+        },
+        error: function() {
+          alert('Could not retrieve the ' + modalNameRaw + ' for editing.');
+        }
+      });
+    }
+
+    function DisableDynamicReport(event) {
+      var $buttonClicked = $(this);
+      var id = $buttonClicked.attr('data-id');
+      var disableRoute = event.data.disableRoute;
+
+      $.ajax({
+        type: "GET",
+        url: disableRoute + '/' + id,
+        contentType: "application/json; charset=utf-8",
+        success: function(data) {
+          location.reload(true);
+        },
+        error: function() {
+          alert('Could not disable the report with id ' + id);
+        }
+      });
+    }
+
+    function EnableDynamicReport(event) {
+      var $buttonClicked = $(this);
+      var id = $buttonClicked.attr('data-id');
+      var enableRoute = event.data.enableRoute;
+
+      $.ajax({
+        type: "GET",
+        url: enableRoute + '/' + id,
+        contentType: "application/json; charset=utf-8",
+        success: function(data) {
+          location.reload(true);
+        },
+        error: function() {
+          alert('Could not enable the report with id ' + id);
+        }
+      });
+
+    }
+
+    function DeleteDynamicReport(event) {
+      debugger;
+
+    }
+
+    function DeleteModel(event) {
+      var modelName = event.data.modelName;
+      var deleteRoute = event.data.deleteRoute;
+      var modelDisplayName = ModelNameToDisplay[modelName];
+
+      var $buttonClicked = $(this);
+      var id = $buttonClicked.attr('data-id');
+      if (confirm('Are you sure you want to delete this ' + modelDisplayName + '?')) {
+        $.ajax({
+          type: "DELETE",
+          url: deleteRoute + '/' + id,
+          success: function(/*data*/) {
+            location.reload(true);
+          },
+          error: function() {
+            alert('Could not delete the ' + modelDisplayName);
+          }
+        });
+      }
+    };
+
+    function saveModel(event) {
+      event.preventDefault();
+      var modalNameRaw = event.data.modalName;
+      var additionalFunction = event.data.additionalFunction;
+      var modelName = modalNameRaw.toLowerCase();
+      $('#save-' + modelName).prop("disabled", true);
+      var saveRoute = '@Url.Content("~/Admin/Save")' + modalNameRaw;
+      var modelFieldNames = ModelFieldMap[modelName];
+      var dataObj = getMappedModel(modelName, modelFieldNames);
+      var jsonData = JSON.stringify(dataObj);
+      var options = { "backdrop": "static", keyboard: true };
+      $.ajax({
+        type: "POST",
+        url: saveRoute,
+        contentType: "application/json; charset=utf-8",
+        data: jsonData,
+        datatype: "json",
+        success: function(data) {
+          var tempData = $(data);
+          var validationSummaryContents = "";
+          var validationSummary = tempData.find('#' + modelName + '-validation-summary-row');
+          if (validationSummary) {
+            validationSummaryContents = validationSummary.text();
+          }
+          // If validationSummaryContents contains more than just whitespace,
+          // then validation summary contains errors, and we should re-show the modal
+          if ($.trim(validationSummaryContents).length > 0) {
+            $('#' + modelName + '-modal-content').html(data);
+            $('#' + modelName + 'Modal').modal(options);
+            $('#' + modelName + 'Modal').modal('show');
+            // Need to reattach event handlers to some of the modal's fields, because
+            // when the modal's HTML got repopulated above, the event handlers disappeared
+            setModalHeaderText(modelName, ModelNameToDisplay[modelName]);
+            if (additionalFunction) {
+              additionalFunction();
             }
-            return dataObj;
-        }
-
-        function setAnnouncementHeaderText() {
-            var announcementHeader = $('#announcement-header');
-            var id = $('#edit-announcement-id').val();
-            if (id > 0) {
-                announcementHeader.text("Edit Announcement");
+            $('#save-' + modelName)
+              .click({ modalName: modalNameRaw, additionalFunction: additionalFunction }, saveModel);
+          } else {
+            var locationUrl = location.href;
+            var urlContainsModelName = locationUrl.includes(modelName + 's');
+            if (!urlContainsModelName) {
+              location.href = location.href + '?tab=' + modelName + 's';
             }
+            location.reload(true);
+          }
+        },
+        error: function(data) {
+          $('#' + modelName + '-modal-content').html(data);
+          $('#' + modelName + 'Modal').modal(options);
+          $('#' + modelName + 'Modal').modal('show');
+          // Need to reattach event handlers to some of the modal's fields, because
+          // when the modal's HTML got repopulated above, the event handlers disappeared
+          if (additionalFunction) {
+            additionalFunction();
+          }
+          $('#save-' + modelName).click({ modalName: modalNameRaw, additionalFunction: additionalFunction },
+            saveModel);
         }
+      });
+    }
 
-        function setModalHeaderText(modalName, modalTitle) {
-            var modalHeader = $('#' + modalName + '-header');
-            var id = $('#edit-' + modalName + '-id').val();
-            if (id > 0) {
-                modalHeader.text('Edit ' + modalTitle);
-            }
+    function getMappedModel(modelName, modelFieldNames) {
+      var dataObj = {};
+      var fieldVal;
+      for (var i = 0; i < modelFieldNames.length; i++) {
+        var fieldName = modelFieldNames[i];
+        var fieldSelector = '#edit-' + modelName + '-' + fieldName;
+        var fieldValFunc = ModelFieldTransforms[fieldSelector];
+        if (fieldValFunc) {
+          fieldVal = fieldValFunc(fieldSelector);
+        } else {
+          fieldVal = $(fieldSelector).val();
         }
+        dataObj[fieldName] = fieldVal;
+      }
+      return dataObj;
+    }
 
-        function updateThreshold(id, errorThreshold) {
-            var value;
-            $.ajax({
-                url: '@Url.Action("UpdateThresholdErrorValue", "Admin")',
-                async: true,
-                data: { Id: id, thresholdValue: errorThreshold },
-                success: function(result) {
-                    value = result;
-                }
-            });
-            return value;
-        }
+    function setAnnouncementHeaderText() {
+      var announcementHeader = $('#announcement-header');
+      var id = $('#edit-announcement-id').val();
+      if (id > 0) {
+        announcementHeader.text("Edit Announcement");
+      }
+    }
 
-        function submitNewSchoolYears() {
-            $("#submit-school-years-form").submit();
-        }
+    function setModalHeaderText(modalName, modalTitle) {
+      var modalHeader = $('#' + modalName + '-header');
+      var id = $('#edit-' + modalName + '-id').val();
+      if (id > 0) {
+        modalHeader.text('Edit ' + modalTitle);
+      }
+    }
 
-        function removeSchoolYear(id, yearsRange) {
-            if (confirm("Are you sure you want to delete " + yearsRange + "?")) {
-                $.ajax({
-                    url: '@Url.Action("RemoveSchoolYear", "Admin")',
-                    async: false,
-                    data: { Id: id },
-                    success: function() {
-                        location.reload();
-                    }
-                });
-            }
+    function updateThreshold(id, errorThreshold) {
+      var value;
+      $.ajax({
+        url: '@Url.Action("UpdateThresholdErrorValue", "Admin")',
+        async: true,
+        data: { Id: id, thresholdValue: errorThreshold },
+        success: function(result) {
+          value = result;
         }
-    </script>
+      });
+      return value;
+    }
+
+    function submitNewSchoolYears() {
+      $("#submit-school-years-form").submit();
+    }
+
+    function removeSchoolYear(id, yearsRange) {
+      if (confirm("Are you sure you want to delete " + yearsRange + "?")) {
+        $.ajax({
+          url: '@Url.Action("RemoveSchoolYear", "Admin")',
+          async: false,
+          data: { Id: id },
+          success: function() {
+            location.reload();
+          }
+        });
+      }
+    }
+  </script>
 }

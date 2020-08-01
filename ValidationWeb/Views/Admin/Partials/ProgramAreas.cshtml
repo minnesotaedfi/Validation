@@ -1,0 +1,60 @@
+﻿@using ProgramArea = Validation.DataModels.ProgramArea
+@model IEnumerable<ProgramArea>
+
+<div class="row">
+  <div class="col-10">
+    <div id="programarea-warning" class="alert alert-danger alert-dismissible" style="display:none" role="alert">
+      <button id="programarea-warning-button" type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">[close]</span>
+      </button>
+    </div>
+    <div class="col-2">
+      <button id="programarea-add" class="btn btn-sm prime-blue white-heavy-text">Add Program Area</button>
+    </div>
+  </div>
+</div>
+
+<div class="row tbmargin10">
+  <table class="table table-sm table-responsive-md table-bordered" id="programAreaTable">
+    <tr class="table-primary">
+      <th class="id-hide-column">Id</th>
+      <th>Program Area Name</th>
+      <th></th>
+      <th></th>
+    </tr>
+    @foreach (var programArea in Model.OrderBy(x => x.Id))
+    {
+        <tr>
+          <td class="id-hide-column">@programArea.Id</td>
+          <td>
+            <span style="overflow-wrap: break-word; word-wrap: break-word; -ms-hyphens: auto; hyphens: auto;">@programArea.Description</span>
+          </td>
+          <td>
+            <a href="javascript:void(0);"
+               class="programarea-edit btn btn-sm prime-blue white-heavy-text" data-id="@programArea.Id">Edit</a>
+          </td>
+          <td>
+            <a href="javascript:void(0);" data-id="@programArea.Id" 
+               class="programarea-delete btn btn-sm prime-blue white-heavy-text">Delete</a>
+          </td>
+        </tr>
+    }
+  </table>
+</div>
+
+<div id='programareaModal' class="modal fade" role="dialog" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div id='programarea-modal-content'></div>
+    </div>
+  </div>
+</div>
+
+<div id='edit-programareaModal' class="modal fade" role="dialog" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div id='edit-programarea-modal-content'></div>
+    </div>
+  </div>
+</div>
+

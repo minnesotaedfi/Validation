@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 
@@ -30,17 +31,23 @@ namespace ValidationWeb.Services.Implementations
             LoggingService = loggingService;
         }
 
-        public List<Announcement> GetAnnouncements(ProgramAreaLookup programArea = null)
+        public List<Announcement> GetAnnouncements(ProgramArea programArea = null)
         {
             var announcements = new List<Announcement>();
             try
             {
                 using (var dbContext = DbContextFactory.Create())
                 {
-                    announcements = dbContext.Announcements.OrderByDescending(ann => ann.Priority).ToList();
+                    announcements = dbContext.Announcements
+                        .Include(x => x.ProgramArea)
+                        .OrderByDescending(ann => ann.Priority)
+                        .ToList();
+
                     if (programArea != null)
                     {
-                        announcements = announcements.Where(x => x.ProgramAreaId == programArea.Id).ToList();
+                        announcements = announcements
+                            .Where(x => x.ProgramAreaId == null || x.ProgramAreaId == programArea.Id)
+                            .ToList();
                     }
                 }
             }
@@ -60,7 +67,9 @@ namespace ValidationWeb.Services.Implementations
             {
                 using (var dbContext = DbContextFactory.Create())
                 {
-                    announcement = dbContext.Announcements.First(x => x.Id == id);
+                    announcement = dbContext.Announcements
+                        .Include(x => x.ProgramArea)
+                        .First(x => x.Id == id);
                 }
             }
             catch (Exception ex)
@@ -72,22 +81,22 @@ namespace ValidationWeb.Services.Implementations
             return announcement;
         }
 
-        public void SaveAnnouncement(int announcementId, int priority, string message, string contactInfo, string linkUrl, DateTime expirationDate)
+        public void SaveAnnouncement(Announcement announcement)
         {
             try
             {
-                if (announcementId > 0)
+                if (announcement.Id > 0)
                 {
-                    SaveExistingAnnouncement(announcementId, priority, message, contactInfo, linkUrl, expirationDate);
+                    SaveExistingAnnouncement(announcement);
                 }
                 else
                 {
-                    SaveNewAnnouncement(priority, message, contactInfo, linkUrl, expirationDate);
+                    SaveNewAnnouncement(announcement);
                 }
             }
             catch (Exception ex)
             {
-                LoggingService.LogErrorMessage($"An error occurred while saving announcement with announcementId = {announcementId}, priority = {priority}, message = {message}, contactInfo = {contactInfo}, linkUrl = {linkUrl}, expirationDate = {expirationDate}: {ex.ChainInnerExceptionMessages()}");
+                LoggingService.LogErrorMessage($"An error occurred while saving announcement with announcementId = {announcement?.Id}: {ex.ChainInnerExceptionMessages()}");
                 throw new Exception("An error occurred while saving announcement.");
             }
         }
@@ -107,52 +116,31 @@ namespace ValidationWeb.Services.Implementations
             }
         }
 
-        private void SaveExistingAnnouncement(
-            int announcementId,
-            int priority,
-            string message,
-            string contactInfo,
-            string linkUrl,
-            DateTime expirationDate)
+        private void SaveExistingAnnouncement(Announcement announcement)
         {
             using (var dbContext = DbContextFactory.Create())
             {
-                var announcement = dbContext.Announcements.FirstOrDefault(a => a.Id == announcementId);
-                if (announcement == null)
+                var existingAnnouncement = dbContext.Announcements.FirstOrDefault(a => a.Id == announcement.Id);
+                if (existingAnnouncement == null)
                 {
-                    throw new Exception(
-                        $"Could not save an announcement because announcement with ID {announcementId} was not found");
+                    throw new Exception($"Could not save an announcement because announcement with ID {announcement.Id} was not found");
                 }
 
-                announcement.Priority = priority;
-                announcement.Message = message;
-                announcement.ContactInfo = contactInfo;
-                announcement.LinkUrl = linkUrl;
-                announcement.Expiration = expirationDate;
+                existingAnnouncement.Priority = announcement.Priority;
+                existingAnnouncement.Message = announcement.Message;
+                existingAnnouncement.ContactInfo = announcement.ContactInfo;
+                existingAnnouncement.LinkUrl = announcement.LinkUrl;
+                existingAnnouncement.Expiration = announcement.Expiration;
+                existingAnnouncement.ProgramAreaId = announcement.ProgramAreaId;
 
                 dbContext.SaveChanges();
             }
         }
 
-        private void SaveNewAnnouncement(
-            int priority,
-            string message,
-            string contactInfo,
-            string linkUrl,
-            DateTime expirationDate)
+        private void SaveNewAnnouncement(Announcement announcement)
         {
             using (var dbContext = DbContextFactory.Create())
             {
-                var announcement = new Announcement
-                {
-                    Priority = priority,
-                    Message = message,
-                    ContactInfo = contactInfo,
-                    LinkUrl = linkUrl,
-                    IsEmergency = false,
-                    Expiration = expirationDate
-                };
-
                 dbContext.Announcements.Add(announcement);
                 dbContext.SaveChanges();
             }
