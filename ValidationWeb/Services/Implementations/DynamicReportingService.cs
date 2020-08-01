@@ -203,6 +203,7 @@ namespace ValidationWeb.Services.Implementations
                 existingReportDefinition.Description = newReportDefinition.Description?.Trim();
                 existingReportDefinition.IsOrgLevelReport = newReportDefinition.IsOrgLevelReport;
                 existingReportDefinition.ProgramAreaId = newReportDefinition.ProgramAreaId;
+                existingReportDefinition.SchoolYearId = newReportDefinition.SchoolYearId;
 
                 foreach (var newField in newReportDefinition.Fields)
                 {

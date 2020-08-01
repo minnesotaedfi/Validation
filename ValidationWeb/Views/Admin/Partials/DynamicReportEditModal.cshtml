@@ -21,7 +21,16 @@
                 </div>
 
                 @Html.HiddenFor(m => m.Id, new { id = "edit-report-id" })
-
+                <div class="row form-group">
+                  <div class="col-sm-3">
+                    <label for="report-school-year-id">School Year:</label>
+                  </div>
+                  <div class="col-sm-9">
+                    @Html.DropDownListFor(m => m.SchoolYearId,
+                        (IEnumerable<SelectListItem>)ViewData["schoolYears"],
+                        new { id = "report-school-year-id", @class = "form-control" })
+                  </div>
+                </div>
                 <div class="row form-group">
                   <div class="col-sm-3">
                     <label for="report-program-area-id">Program Area:</label>

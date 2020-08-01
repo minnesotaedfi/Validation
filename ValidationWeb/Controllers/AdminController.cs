@@ -171,7 +171,6 @@ namespace ValidationWeb.Controllers
             var viewModel = new AdminDynamicReportViewModel
             {
                 DynamicReportDefinition = dynamicReport,
-                ReportSchoolYearId = schoolYearId,
                 ValidationRulesViews = rulesViews.ToList()
             };
 

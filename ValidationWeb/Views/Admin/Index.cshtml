@@ -646,7 +646,7 @@
       var reportDescription = $('#report-description').val();
       var reportIsOrgLevel = $('#report-is-org-level').is(':checked');
       var reportTable = $('#rulesTable-' + rulesViewId).DataTable();
-      var schoolYearId = @Model.ReportSchoolYearId;
+      var schoolYearId = $('#report-school-year-id').val();
       var reportProgramAreaId = $('#report-program-area-id').val();
 
       var dynamicReportDefinition = {
@@ -701,13 +701,15 @@
       var reportDescription = $('#edit-report-description').val();
       var reportIsOrgLevel = $('#edit-report-is-org-level').is(':checked');
       var reportProgramAreaId = $('#report-program-area-id').val();
+      var schoolYearId = $('#report-school-year-id').val();
 
       var dynamicReportUpdate = {
         id: reportId,
         name: reportTitle,
         description: reportDescription,
         isOrgLevelReport: reportIsOrgLevel,
-        programAreaId: reportProgramAreaId
+        programAreaId: reportProgramAreaId,
+        schoolYearId: schoolYearId
       };
 
       var reportFields = [];
