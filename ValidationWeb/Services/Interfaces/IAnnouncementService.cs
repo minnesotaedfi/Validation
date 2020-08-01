@@ -15,12 +15,6 @@ namespace ValidationWeb.Services.Interfaces
         
         void DeleteAnnouncement(int announcementId);
 
-        void SaveAnnouncement(
-            int announcementId,
-            int priority,
-            string message,
-            string contactInfo,
-            string linkUrl,
-            DateTime expirationDate);
+        void SaveAnnouncement(Announcement announcement);
     }
 }

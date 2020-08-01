@@ -21,7 +21,8 @@
             <th>Contact Info</th>
             <th>Link Url</th>
             <th>Expiration</th>
-            <th></th>
+            <th>Program Area</th>
+          <th></th>
             <th></th>
         </tr>
         @foreach (var announcement in Model.OrderBy(x => x.Priority))
@@ -37,6 +38,8 @@
                     <span style="overflow-wrap: break-word; word-wrap: break-word; -ms-hyphens: auto; hyphens: auto;">@announcement.LinkUrl</span>
                 </td>
                 <td>@announcement.Expiration.ToShortDateString()</td>
+                <td>@(announcement.ProgramArea != null ? announcement.ProgramArea.Description : "All")</td>
+
                 <td>
                     <a href="javascript:void(0);"
                        class="announcement-edit btn btn-sm prime-blue white-heavy-text" data-id="@announcement.Id">Edit</a>

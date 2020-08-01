@@ -275,13 +275,7 @@ namespace ValidationWeb.Tests.Services
                 AppUserServiceMock.Object,
                 LoggingServiceMock.Object);
 
-            announcementService.SaveAnnouncement(
-                announcement.Id,
-                announcement.Priority,
-                announcement.Message,
-                announcement.ContactInfo,
-                announcement.LinkUrl,
-                announcement.Expiration);
+            announcementService.SaveAnnouncement(announcement);
 
             dbSetMock.Verify(x => x.Add(It.Is<Announcement>(y => y.Id == announcement.Id)), Times.Once);
             ValidationPortalDbContextMock.Verify(x => x.SaveChanges(), Times.Once);
@@ -314,13 +308,7 @@ namespace ValidationWeb.Tests.Services
 
             var announcementService = new AnnouncementService(DbContextFactoryMock.Object, AppUserServiceMock.Object, LoggingServiceMock.Object);
 
-            announcementService.SaveAnnouncement(
-                announcement.Id,
-                announcement.Priority,
-                announcement.Message,
-                announcement.ContactInfo,
-                announcement.LinkUrl,
-                announcement.Expiration);
+            announcementService.SaveAnnouncement(announcement);
 
             ValidationPortalDbContextMock.Verify(x => x.SaveChanges(), Times.Once);
         }
@@ -354,14 +342,8 @@ namespace ValidationWeb.Tests.Services
 
             var announcementService = new AnnouncementService(DbContextFactoryMock.Object, AppUserServiceMock.Object, LoggingServiceMock.Object);
 
-            Assert.Throws<Exception>(() =>
-                announcementService.SaveAnnouncement(
-                    announcement.Id + 1,
-                    announcement.Priority,
-                    announcement.Message,
-                    announcement.ContactInfo,
-                    announcement.LinkUrl,
-                    announcement.Expiration));
+            announcement.Id++;
+            Assert.Throws<Exception>(() => announcementService.SaveAnnouncement(announcement));
         }
 
         [Test]

@@ -155,6 +155,8 @@ namespace ValidationWeb.Controllers
 
         public ActionResult AddDynamicReportDefinition(int schoolYearId)
         {
+            PopulateDropDownLists();
+
             var schoolYear = _schoolYearService.GetSchoolYearById(schoolYearId);
 
             var dynamicReport = new DynamicReportDefinition
@@ -184,6 +186,7 @@ namespace ValidationWeb.Controllers
 
         public ActionResult EditDynamicReportDefinition(int id)
         {
+            PopulateDropDownLists();
             var dynamicReport = _dynamicReportingService.GetReportDefinition(id);
             return PartialView("Partials/DynamicReportEditModal", dynamicReport);
         }
@@ -284,18 +287,13 @@ namespace ValidationWeb.Controllers
         [HttpPost]
         public ActionResult SaveAnnouncement(Announcement announcement)
         {
+            PopulateDropDownLists();
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _announcementService.SaveAnnouncement(
-                        announcement.Id,
-                        announcement.Priority,
-                        announcement.Message,
-                        announcement.ContactInfo,
-                        announcement.LinkUrl,
-                        announcement.Expiration);
-
+                    _announcementService.SaveAnnouncement(announcement);
                     return RedirectToAction("Index", new { tab = "announcements" });
                 }
                 catch (Exception ex)
@@ -312,12 +310,14 @@ namespace ValidationWeb.Controllers
 
         public ActionResult AddAnnouncement()
         {
+            PopulateDropDownLists();
             var announcement = new Announcement { Expiration = DateTime.Now };
             return PartialView("Partials/AnnouncementEditModal", announcement);
         }
 
         public ActionResult EditAnnouncement(int id)
         {
+            PopulateDropDownLists();
             var announcement = _announcementService.GetAnnouncement(id);
             return PartialView("Partials/AnnouncementEditModal", announcement);
         }
