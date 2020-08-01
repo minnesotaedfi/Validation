@@ -8,5 +8,11 @@ namespace ValidationWeb.Services.Interfaces
     {
         IList<ProgramArea> GetProgramAreas();
         ProgramArea GetProgramAreaById(int programAreaId);
+
+        void AddProgramArea(ProgramArea programArea);
+
+        void SaveProgramArea(ProgramArea programArea);
+
+        void DeleteProgramArea(int id);
     }
 }

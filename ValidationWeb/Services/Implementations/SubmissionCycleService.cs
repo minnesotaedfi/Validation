@@ -164,8 +164,8 @@ namespace ValidationWeb.Services.Implementations
                     strMessage = $" with id = { submissionCycle.Id }, StartDate = { submissionCycle.StartDate }, EndDate = { submissionCycle.EndDate}, SchoolYearID = { submissionCycle.SchoolYearId }";
                 }
 
-                LoggingService.LogErrorMessage($"An error occurred while saving announcement {strMessage}: {ex.ChainInnerExceptionMessages()}");
-                throw new Exception("An error occurred while saving announcement.");
+                LoggingService.LogErrorMessage($"An error occurred while saving cycle {strMessage}: {ex.ChainInnerExceptionMessages()}");
+                throw new Exception("An error occurred while saving cycle.");
             }
         }
 
@@ -212,6 +212,7 @@ namespace ValidationWeb.Services.Implementations
                 return duplicateCycle;
             }
         }
+
         public void DeleteSubmissionCycle(int id)
         {
             using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())

@@ -64,6 +64,13 @@ namespace ValidationWeb.Database
                     }
                 }
             }
+
+            if (!context.ProgramAreas.Any())
+            {
+                context.ProgramAreas.Add(new ProgramArea { Description = "MARSS" });
+                context.ProgramAreas.Add(new ProgramArea { Description = "MCCC" });
+                context.ProgramAreas.Add(new ProgramArea { Description = "EE" });
+            }
         }
     }
 }

@@ -1,0 +1,36 @@
+﻿@using ProgramArea = Validation.DataModels.ProgramArea
+@model ProgramArea
+
+<div>
+    <div id="programarea-modal-content" class="modal-content" tabindex="-1">
+        <div class="modal-header prime-blue white-heavy-text">
+            <h4 id="programarea-header" class="modal-title">Add Program Area</h4>
+            <button type="button" class="close" aria-label="close" data-dismiss="modal">[close]</button>
+        </div>
+        <div class="modal-body">
+
+            <form id="newProgramAreaForm">
+                <div class="col-md-10 offset-1">
+                    <div class="row" id="programarea-validation-summary-row">
+                        @Html.ValidationSummary(false, "Errors:", new
+                        {
+                            @class = "alert alert-danger",
+                            style = "width: 100%"
+                        })
+                    </div>
+                  <div class="row form-group">
+                    <div class="col-sm-3">
+                      Program Area Name
+                    </div>
+                    <div class="col-sm-9">
+                      @Html.DisplayTextFor(m => m.Description)
+                    </div>
+                  </div>
+                </div>
+                <div class="row modal-footer">
+                    <button type="submit" id="save-new-programarea" class="btn prime-blue white-heavy-text">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

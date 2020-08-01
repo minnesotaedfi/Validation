@@ -1,34 +1,39 @@
 ﻿@model AdminIndexViewModel
 
 <div class="row">
-    <div class="col-2">
-        <div class="list-group list-group-flush" id="admin-list-tab" role="tablist">
-            <a class="list-group-item list-group-item-action" id="list-error-threshold-list" data-toggle="list" href="#list-error-threshold" role="tab"
-               onclick="loadDefaultTab()">School Years</a>
-            <a class="list-group-item list-group-item-action" id="list-submissioncycles-list" data-toggle="list" href="#list-submissioncycles" role="tab"
-               onclick="loadNonDefaultTab('submissioncycles')">Collection Cycles</a>
-            <a class="list-group-item list-group-item-action" id="list-announcements-list" data-toggle="list" href="#list-announcements" role="tab" aria-controls="settings"
-               onclick="loadNonDefaultTab('announcements')">Announcements</a>
-            <a class="list-group-item list-group-item-action" id="list-dynamic-list" data-toggle="list" href="#list-dynamic" role="tab" aria-controls="settings"
-               onclick="loadNonDefaultTab('dynamic')">Dynamic Reporting</a>
-        </div>
+  <div class="col-2">
+    <div class="list-group list-group-flush" id="admin-list-tab" role="tablist">
+      <a class="list-group-item list-group-item-action" id="list-error-threshold-list" data-toggle="list" href="#list-error-threshold" role="tab"
+         onclick="loadDefaultTab()">School Years</a>
+      <a class="list-group-item list-group-item-action" id="list-programarea-list" data-toggle="list" href="#list-programareas" role="tab" aria-controls="settings"
+         onclick="loadNonDefaultTab('programareas')">Program Areas</a>
+      <a class="list-group-item list-group-item-action" id="list-submissioncycles-list" data-toggle="list" href="#list-submissioncycles" role="tab"
+         onclick="loadNonDefaultTab('submissioncycles')">Collection Cycles</a>
+      <a class="list-group-item list-group-item-action" id="list-announcements-list" data-toggle="list" href="#list-announcements" role="tab" aria-controls="settings"
+         onclick="loadNonDefaultTab('announcements')">Announcements</a>
+      <a class="list-group-item list-group-item-action" id="list-dynamic-list" data-toggle="list" href="#list-dynamic" role="tab" aria-controls="settings"
+         onclick="loadNonDefaultTab('dynamic')">Dynamic Reporting</a>
     </div>
-    <div class="col-10">
-        <div class="tab-content" id="nav-tabContent">
-            <div class="tab-pane fade" id="list-error-threshold" role="tabpanel" aria-labelledby="list-error-threshold-list">
-                @Html.Partial("Partials/ErrorThresholds", Model.YearsOpenForDataSubmission)
-            </div>
-            <div class="tab-pane fade" id="list-submissioncycles" role="tabpanel" aria-labelledby="list-submissioncycles-list">
-                @Html.Partial("Partials/SubmissionCycleList", Model.SubmissionCycles)
-            </div>
-            <div class="tab-pane fade" id="list-announcements" role="tabpanel" aria-labelledby="list-announcements-list">
-                @Html.Partial("Partials/Announcements", Model.Announcements)
-            </div>
-            <div class="tab-pane fade" id="list-dynamic" role="tabpanel" aria-labelledby="list-dynamic-list">
-                @Html.Partial("Partials/Dynamic", Model)
-            </div>
-        </div>
+  </div>
+  <div class="col-10">
+    <div class="tab-content" id="nav-tabContent">
+      <div class="tab-pane fade" id="list-error-threshold" role="tabpanel" aria-labelledby="list-error-threshold-list">
+        @Html.Partial("Partials/ErrorThresholds", Model.YearsOpenForDataSubmission)
+      </div>
+      <div class="tab-pane fade" id="list-programareas" role="tabpanel" aria-labelledby="list-programarea-list">
+        @Html.Partial("Partials/ProgramAreas", Model.ProgramAreas)
+      </div>
+      <div class="tab-pane fade" id="list-submissioncycles" role="tabpanel" aria-labelledby="list-submissioncycles-list">
+        @Html.Partial("Partials/SubmissionCycleList", Model.SubmissionCycles)
+      </div>
+      <div class="tab-pane fade" id="list-announcements" role="tabpanel" aria-labelledby="list-announcements-list">
+        @Html.Partial("Partials/Announcements", Model.Announcements)
+      </div>
+      <div class="tab-pane fade" id="list-dynamic" role="tabpanel" aria-labelledby="list-dynamic-list">
+        @Html.Partial("Partials/Dynamic", Model)
+      </div>
     </div>
+  </div>
 </div>
 
 @*Modal Section*@
@@ -38,7 +43,7 @@
 
 
 @section scripts {
-    <script type="text/javascript">
+  <script type="text/javascript">
         /** All Error Threshold JS Functionality **/
         $("#error-threshold-warning-button").on("click",
             function() {
@@ -76,7 +81,8 @@
 
         const ModelFieldMap = {
             "announcement": ["id", "priority", "message", "contactInfo", "linkUrl", "expiration"],
-            "submissioncycle": ["id", "schoolYearId", "collectionId", "startDate", "endDate"]
+            "submissioncycle": ["id", "schoolYearId", "collectionId", "startDate", "endDate"],
+            "programarea": ["id", "description"]
         };
 
         const ModelFieldTransforms = {
@@ -92,7 +98,8 @@
         const ModelNameToDisplay = {
             "announcement": "Announcement",
             "submissioncycle": "Active Dates for Collection",
-            "report": "Dynamic Report"
+            "report": "Dynamic Report",
+            "programarea": "Program Area"
         };
 
         var originalThreshold = "";
@@ -349,6 +356,18 @@
             $(".announcement-delete").click({ modelName: "announcement", deleteRoute: DeleteAnnouncementRoute },
                 DeleteModel);
 
+            var AddProgramAreaRoute = "@Url.Content("~/Admin/AddProgramArea")";
+            $("#programarea-add").click({ modalName: "ProgramArea", modalAddRoute: AddProgramAreaRoute },
+                CreateAddModal);
+
+            var EditProgramAreaRoute = "@Url.Content("~/Admin/EditProgramArea")";
+          $(".programarea-edit").click({ modalName: "ProgramArea", modalEditRoute: EditProgramAreaRoute },
+                CreateEditModal);
+
+            var DeleteProgramAreaRoute = "@Url.Content("~/Admin/DeleteProgramArea")";
+          $(".programarea-delete").click({ modelName: "programarea", deleteRoute: DeleteProgramAreaRoute },
+                  DeleteModel);
+
             var AddDynamicReportRoute = "@Url.Content("~/Admin/AddDynamicReportDefinition")";
             $('#report-add').click({
                     modalName: "report",
@@ -423,7 +442,6 @@
 
             $('#edit-reportModal').on('shown.bs.modal',
                 function() {
-                    debugger;
                     $('#editRulesTable').DataTable({
                         dom: '<t>',
                         scrollY: '200px',
@@ -477,7 +495,13 @@
                     $("#save-announcement")
                         .click({ modalName: "Announcement", additionalFunction: assignAnnouncementDateHandlers },
                             saveModel);
-                });
+              });
+
+            $('#programareaModal').on('shown.bs.modal',
+              function () {
+                setModalHeaderText("Program Area", ModelNameToDisplay["programarea"]);
+                $("#save-programarea").click({ modalName: "ProgramArea" }, saveModel);
+              });
         });
 
         function updateRulesViews(schoolYearId) {
@@ -638,7 +662,6 @@
                     location.reload(true);
                 },
                 error: function(data) {
-                    debugger;
                     alert('Unable to save report definition');
                 }
             });
@@ -663,7 +686,6 @@
             var reportFields = [];
 
             var reportTable = $('#editRulesTable').DataTable();
-            debugger;
 
             reportTable.rows().eq(0).each(function(index) {
                 var row = reportTable.row(index);
@@ -712,10 +734,8 @@
         }
 
         function CreateAddModal(event) {
-
             var modalNameRaw = event.data.modalName;
             var modalAddRoute = event.data.modalAddRoute;
-
             var modelName = modalNameRaw.toLowerCase();
             var modelModalContent = '#' + modelName + '-modal-content';
             var modelModal = '#' + modelName + 'Modal';
@@ -808,7 +828,6 @@
         }
 
         function DeleteModel(event) {
-            debugger;
             var modelName = event.data.modelName;
             var deleteRoute = event.data.deleteRoute;
             var modelDisplayName = ModelNameToDisplay[modelName];
@@ -919,12 +938,12 @@
         };
 
         function saveModel(event) {
-            event.preventDefault();
-            var modalNameRaw = event.data.modalName;
-            var additionalFunction = event.data.additionalFunction;
-            var modelName = modalNameRaw.toLowerCase();
-            $('#save-' + modelName).prop("disabled", true);
-            var saveRoute = '@Url.Content("~/Admin/Save")' + modalNameRaw;
+          event.preventDefault();
+          var modalNameRaw = event.data.modalName;
+          var additionalFunction = event.data.additionalFunction;
+          var modelName = modalNameRaw.toLowerCase();
+          $('#save-' + modelName).prop("disabled", true);
+          var saveRoute = '@Url.Content("~/Admin/Save")' + modalNameRaw;
             var modelFieldNames = ModelFieldMap[modelName];
             var dataObj = getMappedModel(modelName, modelFieldNames);
             var jsonData = JSON.stringify(dataObj);
@@ -1042,5 +1061,5 @@
                 });
             }
         }
-    </script>
+  </script>
 }

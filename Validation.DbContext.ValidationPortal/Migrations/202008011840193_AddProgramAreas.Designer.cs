@@ -13,7 +13,7 @@ namespace ValidationWeb.Database
         
         string IMigrationMetadata.Id
         {
-            get { return "202005271659362_AddProgramAreas"; }
+            get { return "202008011840193_AddProgramAreas"; }
         }
         
         string IMigrationMetadata.Source
