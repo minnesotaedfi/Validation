@@ -64,7 +64,18 @@ namespace ValidationWeb.Controllers
         {
             var session = _appUserService.GetSession();
             var edOrg = _edOrgService.GetEdOrgById(session.FocusedEdOrgId, session.FocusedSchoolYearId);
-            var programArea = _programAreaService.GetProgramAreaById(session.FocusedProgramAreaId);
+
+            ProgramArea programArea;
+
+            if (session.FocusedProgramAreaId != null)
+            {
+                programArea = _programAreaService.GetProgramAreaById(session.FocusedProgramAreaId.Value);
+            }
+            else
+            {
+                programArea = _programAreaService.GetProgramAreas().FirstOrDefault();
+            }
+
             var rulesCollections = _engineObjectModel.Collections.OrderBy(x => x.CollectionId).ToList();
             var theUser = _appUserService.GetUser();
             var districtName = edOrg == null ? "Invalid Education Organization Selected" : edOrg.OrganizationName;
@@ -87,7 +98,17 @@ namespace ValidationWeb.Controllers
         public FileStreamResult DownloadReportSummariesCsv(int edOrgId)
         {
             var session = _appUserService.GetSession();
-            var programArea = _programAreaService.GetProgramAreaById(session.FocusedProgramAreaId);
+            ProgramArea programArea;
+
+            if (session.FocusedProgramAreaId != null)
+            {
+                programArea = _programAreaService.GetProgramAreaById(session.FocusedProgramAreaId.Value);
+            }
+            else
+            {
+                programArea = _programAreaService.GetProgramAreas().FirstOrDefault();
+            }
+
             var edOrg = _edOrgService.GetSingleEdOrg(edOrgId, _appUserService.GetSession().FocusedSchoolYearId);
 
             var results = _validationResultsService.GetValidationReportSummaries(edOrgId, programArea)
@@ -117,7 +138,16 @@ namespace ValidationWeb.Controllers
         public JsonResult ReportSummaries(int edOrgId, IDataTablesRequest request)
         {
             var session = _appUserService.GetSession();
-            var programArea = _programAreaService.GetProgramAreaById(session.FocusedProgramAreaId);
+            ProgramArea programArea;
+
+            if (session.FocusedProgramAreaId != null)
+            {
+                programArea = _programAreaService.GetProgramAreaById(session.FocusedProgramAreaId.Value);
+            }
+            else
+            {
+                programArea = _programAreaService.GetProgramAreas().FirstOrDefault();
+            }
 
             var results = _validationResultsService.GetValidationReportSummaries(edOrgId, programArea)
                 .OrderByDescending(rs => rs.CompletedWhen)

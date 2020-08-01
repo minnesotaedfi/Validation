@@ -45,7 +45,6 @@ namespace ValidationWeb.Models
         [Required(ErrorMessage = "Please enter date")]
         public DateTime Expiration { get; set; }
 
-        [Required]
         [ForeignKey("ProgramArea")]
         public int? ProgramAreaId { get; set; }
 

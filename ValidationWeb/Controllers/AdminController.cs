@@ -59,7 +59,7 @@ namespace ValidationWeb.Controllers
             foreach (var schoolYear in schoolYears)
             {
                 viewsPerYear.Add(
-                    schoolYear.Id, 
+                    schoolYear.Id,
                     _dynamicReportingService.GetRulesViews(schoolYear.Id));
             }
 
@@ -220,7 +220,7 @@ namespace ValidationWeb.Controllers
         {
             _dynamicReportingService.DeleteViewsAndRulesForSchoolYear(schoolYearId);
             _dynamicReportingService.UpdateViewsAndRulesForSchoolYear(schoolYearId);
-            return new HttpStatusCodeResult(HttpStatusCode.OK); 
+            return new HttpStatusCodeResult(HttpStatusCode.OK);
         }
 
         public ActionResult AddSubmissionCycle()
@@ -321,7 +321,7 @@ namespace ValidationWeb.Controllers
             var announcement = _announcementService.GetAnnouncement(id);
             return PartialView("Partials/AnnouncementEditModal", announcement);
         }
-        
+
         [HttpDelete]
         public ActionResult DeleteAnnouncement(int id)
         {
@@ -334,15 +334,33 @@ namespace ValidationWeb.Controllers
             List<SelectListItem> schoolYears = _submissionCycleService.GetSchoolYearsSelectList(submissionCycle);
             var ruleCollections = _rulesEngineService.GetCollections().Select(c => c.CollectionId);
             var programAreas = _programAreaService.GetProgramAreas();
+
+            var programAreasSelectList = new List<SelectListItem>
+            {
+                new SelectListItem
+                {
+                    Text = "All",
+                    Value = string.Empty,
+                    Selected = true
+                }
+            };
+
+            programAreasSelectList.AddRange(programAreas.Select(x =>
+                new SelectListItem
+                {
+                    Text = x.Description,
+                    Value = x.Id.ToString()
+                }));
+
             ViewData["schoolYears"] = schoolYears;
             ViewData["RuleCollections"] = ruleCollections;
-            ViewData["ProgramAreas"] = programAreas;
+            ViewData["ProgramAreas"] = programAreasSelectList;
         }
 
         public ActionResult AddProgramArea()
         {
             PopulateDropDownLists();
-            var programArea = new ProgramArea(); 
+            var programArea = new ProgramArea();
             return PartialView("Partials/ProgramAreaEditModal", programArea);
         }
 

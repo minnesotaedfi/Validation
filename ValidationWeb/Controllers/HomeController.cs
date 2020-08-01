@@ -1,6 +1,8 @@
 ﻿using System.Linq;
 using System.Web.Mvc;
 
+using Validation.DataModels;
+
 using ValidationWeb.Filters;
 using ValidationWeb.Models;
 using ValidationWeb.Services.Implementations;
@@ -62,9 +64,16 @@ namespace ValidationWeb.Controllers
                 session.FocusedEdOrgId,
                 SchoolYearService.GetSchoolYearById(focusedSchoolYearId).Id);
 
-            // add one-getter
-            var focusedProgramAreaId = session.FocusedProgramAreaId;
-            var focusedProgramArea = ProgramAreaService.GetProgramAreaById(focusedProgramAreaId);
+            ProgramArea programArea;
+
+            if (session.FocusedProgramAreaId != null)
+            {
+                programArea = ProgramAreaService.GetProgramAreaById(session.FocusedProgramAreaId.Value);
+            }
+            else
+            {
+                programArea = ProgramAreaService.GetProgramAreas().FirstOrDefault();
+            }
 
             var recordsRequests = RecordsRequestService.GetAllRecordsRequests()
                 .Where(x => 
@@ -80,13 +89,13 @@ namespace ValidationWeb.Controllers
             var model = new HomeIndexViewModel
             {
                 AppUserSession = AppUserService.GetSession(),
-                Announcements = AnnouncementService.GetAnnouncements(focusedProgramArea),
+                Announcements = AnnouncementService.GetAnnouncements(programArea),
                 YearsOpenForDataSubmission = SchoolYearService.GetSubmittableSchoolYears(),
                 AuthorizedEdOrgs = EdOrgService.GetAuthorizedEdOrgs(),
                 FocusedEdOrg = focusedEdOrg,
-                FocusedProgramArea = focusedProgramArea,
+                FocusedProgramArea = programArea,
                 RecordsRequests = recordsRequests,
-                SubmissionCycles = SubmissionCycleService.GetSubmissionCyclesOpenToday(focusedProgramArea)
+                SubmissionCycles = SubmissionCycleService.GetSubmissionCyclesOpenToday(programArea)
             };
 
             if (!model.AuthorizedEdOrgs.Any())

@@ -4,6 +4,8 @@ using System.Web.Mvc;
 
 using Newtonsoft.Json;
 
+using Validation.DataModels;
+
 using ValidationWeb.Filters;
 using ValidationWeb.Models;
 using ValidationWeb.Services.Interfaces;
@@ -39,7 +41,18 @@ namespace ValidationWeb.Controllers
         public ActionResult Index()
         {
             var session = _appUserService.GetSession();
-            var programArea = _programAreaService.GetProgramAreaById(session.FocusedProgramAreaId);
+
+            ProgramArea programArea;
+
+            if (session.FocusedProgramAreaId != null)
+            {
+                programArea = _programAreaService.GetProgramAreaById(session.FocusedProgramAreaId.Value);
+            }
+            else
+            {
+                programArea = _programAreaService.GetProgramAreas().FirstOrDefault();
+            }
+            
             var focusedSchoolYearId = session.FocusedSchoolYearId;
             var focusedSchoolYear = _schoolYearService.GetSchoolYearById(focusedSchoolYearId);
 
@@ -64,7 +77,17 @@ namespace ValidationWeb.Controllers
             var permissions = User.Identity.GetViewPermissions(identity.AppRole);
 
             var session = _appUserService.GetSession();
-            var programArea = _programAreaService.GetProgramAreaById(session.FocusedProgramAreaId);
+
+            ProgramArea programArea;
+
+            if (session.FocusedProgramAreaId != null)
+            {
+                programArea = _programAreaService.GetProgramAreaById(session.FocusedProgramAreaId.Value);
+            }
+            else
+            {
+                programArea = _programAreaService.GetProgramAreas().FirstOrDefault();
+            }
 
             var result = _dynamicReportingService.GetReportDefinitions(programArea)
                 .Where(x => x.SchoolYearId == schoolYearId)

@@ -38,7 +38,6 @@ namespace Validation.DataModels
 
         public bool IsOrgLevelReport { get; set; }
 
-        [Required]
         [ForeignKey("ProgramArea")]
         public int? ProgramAreaId { get; set; }
 

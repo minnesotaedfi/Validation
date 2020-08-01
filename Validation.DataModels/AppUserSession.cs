@@ -29,6 +29,6 @@ namespace ValidationWeb.Models
         /// </summary>
         public int FocusedSchoolYearId { get; set; }
 
-        public int FocusedProgramAreaId { get; set; }
+        public int? FocusedProgramAreaId { get; set; }
     }
 }

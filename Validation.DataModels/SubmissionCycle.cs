@@ -35,7 +35,6 @@ namespace ValidationWeb.Models
         [NotMapped]
         public string SchoolYearDisplay { get; set; }
 
-        [Required]
         [ForeignKey("ProgramArea")]
         public int? ProgramAreaId { get; set; }
 

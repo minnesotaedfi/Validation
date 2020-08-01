@@ -105,6 +105,28 @@ namespace ValidationWeb.Services.Implementations
                         $"Could not delete program area with ID {id} - not found");
                 }
 
+                // must remove all associations first!
+                var submissionCycles = validationPortalDataContext.SubmissionCycles.Where(x => x.ProgramAreaId == programArea.Id);
+                foreach (var submissionCycle in submissionCycles)
+                {
+                    submissionCycle.ProgramArea = null;
+                    submissionCycle.ProgramAreaId = null; 
+                }
+
+                var dynamicReports = validationPortalDataContext.DynamicReportDefinitions.Where(x => x.ProgramAreaId == programArea.Id);
+                foreach (var dynamicReport in dynamicReports)
+                {
+                    dynamicReport.ProgramArea = null;
+                    dynamicReport.ProgramAreaId = null;
+                }
+
+                var announcements = validationPortalDataContext.Announcements.Where(x => x.ProgramAreaId == programArea.Id);
+                foreach (var announcement in announcements)
+                {
+                    announcement.ProgramArea = null;
+                    announcement.ProgramAreaId = null;
+                }
+
                 validationPortalDataContext.ProgramAreas.Remove(programArea);
                 validationPortalDataContext.SaveChanges();
             }

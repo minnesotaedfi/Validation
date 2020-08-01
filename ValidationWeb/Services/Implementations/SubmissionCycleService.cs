@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
+using System.Data.Entity;
+
 using System.Web.Mvc;
 
 using Validation.DataModels;
@@ -35,7 +37,9 @@ namespace ValidationWeb.Services.Implementations
         {
             using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
             {
-                var submissionCycles = validationPortalDataContext.SubmissionCycles.ToList();
+                var submissionCycles = validationPortalDataContext.SubmissionCycles
+                    .Include(x => x.ProgramArea)
+                    .ToList();
 
                 if(programArea != null)
                 {
@@ -59,7 +63,9 @@ namespace ValidationWeb.Services.Implementations
         {
             using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
             {
-                var submissionCycles = validationPortalDataContext.SubmissionCycles.ToList();
+                var submissionCycles = validationPortalDataContext.SubmissionCycles
+                    .Include(x => x.ProgramArea)
+                    .ToList();
 
                 var submissionCyclesOpenToday = submissionCycles
                     .Where(s => 
@@ -89,6 +95,7 @@ namespace ValidationWeb.Services.Implementations
             using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
             {
                 return validationPortalDataContext.SubmissionCycles
+                    .Include(x => x.ProgramArea)
                     .FirstOrDefault(submissionCycle => submissionCycle.Id == id);
             }
         }
@@ -152,6 +159,7 @@ namespace ValidationWeb.Services.Implementations
                         existingSubmissionCycle.StartDate = submissionCycle.StartDate;
                         existingSubmissionCycle.EndDate = submissionCycle.EndDate;
                         existingSubmissionCycle.SchoolYearId = submissionCycle.SchoolYearId;
+                        existingSubmissionCycle.ProgramAreaId = submissionCycle.ProgramAreaId;
                         validationPortalDataContext.SaveChanges();
                     }
                 }
@@ -179,6 +187,7 @@ namespace ValidationWeb.Services.Implementations
             using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
             {
                 return validationPortalDataContext.SubmissionCycles
+                    .Include(x => x.ProgramArea)
                     .Where(submissionCycle => submissionCycle.CollectionId == collectionId)
                     .ToList();
             }
@@ -207,6 +216,7 @@ namespace ValidationWeb.Services.Implementations
             using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
             {
                 var duplicateCycle = validationPortalDataContext.SubmissionCycles
+                    .Include(x => x.ProgramArea)
                     .FirstOrDefault(x => x.SchoolYearId == submissionCycle.SchoolYearId && x.CollectionId == submissionCycle.CollectionId);
 
                 return duplicateCycle;

@@ -1,60 +1,70 @@
 ﻿@model ValidationWeb.Models.SubmissionCycle
 
-        <div id="submissioncycle-modal-content" class="modal-content">
-            <div class="modal-header prime-blue white-heavy-text">
-                <h4 id="submissioncycle-header" class="modal-title">Add Active Dates for Collection</h4>
-                <button type="button" class="close" aria-label="close" data-dismiss="modal">[close]</button>
-            </div>
-            <div class="modal-body">
-                @using (Html.BeginForm())
-                {
-                    <div class="row" id="submissioncycle-validation-summary-row">
-                        @Html.ValidationSummary(false, "Errors:", new { @class = "alert alert-danger", style = "width: 100%" })
-                    </div>
-                    @Html.HiddenFor(m => m.Id, new { id = "edit-submissioncycle-id" })
+<div id="submissioncycle-modal-content" class="modal-content">
+  <div class="modal-header prime-blue white-heavy-text">
+    <h4 id="submissioncycle-header" class="modal-title">Add Active Dates for Collection</h4>
+    <button type="button" class="close" aria-label="close" data-dismiss="modal">[close]</button>
+  </div>
+  <div class="modal-body">
+    @using (Html.BeginForm())
+    {
+      <div class="row" id="submissioncycle-validation-summary-row">
+        @Html.ValidationSummary(false, "Errors:", new { @class = "alert alert-danger", style = "width: 100%" })
+      </div>
+      @Html.HiddenFor(m => m.Id, new { id = "edit-submissioncycle-id" })
 
-                    <div style="padding: 10px;">
-                        <div class="row form-group">
-                            <div class="col-sm-3">
-                                <label for="edit-submissioncycle-school-year">School Year:</label>
-                            </div>
-                            <div class="col-sm-9">
-                                @Html.DropDownListFor(m => m.SchoolYearId,
-                    (IEnumerable<SelectListItem>)ViewData["schoolYears"],
-                    new { id = "edit-submissioncycle-schoolYearId", @class = "form-control" })
-                            </div>
-                        </div>
-                        <div class="row form-group">
-                            <div class="col-sm-3">
-                                <label for="edit-submissioncycle-collectionId">Collection:</label>
-                            </div>
-                            <div class="col-sm-9">
-                                @Html.DropDownListFor(m => m.CollectionId,
-                    new SelectList((IEnumerable<string>)ViewData["RuleCollections"]),
-                    new { id = "edit-submissioncycle-collectionId", @class = "form-control" })
-                            </div>
-                        </div>
-
-                        <div id="form-row-0" class="row form-group">
-                            <div class="col-sm-3">
-                                <label for="edit-submissioncycle-startDate">Start Date:</label>
-                            </div>
-                            <div class="col-sm-9">
-                                @Html.TextBoxFor(m => m.StartDate, new { id = "edit-submissioncycle-startDate", @class = "form-control", required = "required" })
-                            </div>
-                        </div>
-                        <div id="form-row-0" class="row form-group">
-                            <div class="col-sm-3">
-                                <label for="edit-submissioncycle-endDate">End Date:</label>
-                            </div>
-                            <div class="col-sm-9">
-                                @Html.TextBoxFor(m => m.EndDate, new { id = "edit-submissioncycle-endDate", @class = "form-control", required = "required" })
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn prime-blue white-heavy-text" id="save-submissioncycle">Save Collection Cycle</button>
-                        </div>
-                    </div>
-                }
-            </div>
+      <div style="padding: 10px;">
+        <div class="row form-group">
+          <div class="col-sm-3">
+            <label for="edit-submissioncycle-school-year">School Year:</label>
+          </div>
+          <div class="col-sm-9">
+            @Html.DropDownListFor(m => m.SchoolYearId,
+                (IEnumerable<SelectListItem>)ViewData["schoolYears"],
+                new { id = "edit-submissioncycle-schoolYearId", @class = "form-control" })
+          </div>
         </div>
+        <div class="row form-group">
+          <div class="col-sm-3">
+            <label for="edit-submissioncycle-program-area">Program Area:</label>
+          </div>
+          <div class="col-sm-9">
+            @Html.DropDownListFor(m => m.ProgramAreaId,
+                (IEnumerable<SelectListItem>)ViewData["programAreas"],
+                new { id = "edit-submissioncycle-programAreaId", @class = "form-control" })
+          </div>
+        </div>
+        <div class="row form-group">
+          <div class="col-sm-3">
+            <label for="edit-submissioncycle-collectionId">Collection:</label>
+          </div>
+          <div class="col-sm-9">
+            @Html.DropDownListFor(m => m.CollectionId,
+new SelectList((IEnumerable<string>)ViewData["RuleCollections"]),
+new { id = "edit-submissioncycle-collectionId", @class = "form-control" })
+          </div>
+        </div>
+
+        <div id="form-row-0" class="row form-group">
+          <div class="col-sm-3">
+            <label for="edit-submissioncycle-startDate">Start Date:</label>
+          </div>
+          <div class="col-sm-9">
+            @Html.TextBoxFor(m => m.StartDate, new { id = "edit-submissioncycle-startDate", @class = "form-control", required = "required" })
+          </div>
+        </div>
+        <div id="form-row-0" class="row form-group">
+          <div class="col-sm-3">
+            <label for="edit-submissioncycle-endDate">End Date:</label>
+          </div>
+          <div class="col-sm-9">
+            @Html.TextBoxFor(m => m.EndDate, new { id = "edit-submissioncycle-endDate", @class = "form-control", required = "required" })
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn prime-blue white-heavy-text" id="save-submissioncycle">Save Collection Cycle</button>
+        </div>
+      </div>
+    }
+  </div>
+</div>
