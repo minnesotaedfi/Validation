@@ -46,6 +46,7 @@ namespace ValidationWeb.Services.Implementations
                     .Include(x => x.Fields.Select(y => y.Field))
                     .Include(x => x.SchoolYear)
                     .Include(x => x.RulesView)
+                    .Include(x => x.ProgramArea)
                     .ToList();
 
                 if (programArea != null)
@@ -66,6 +67,7 @@ namespace ValidationWeb.Services.Implementations
                     .Include(x => x.Fields)
                     .Include(x => x.Fields.Select(y => y.Field))
                     .Include(x => x.SchoolYear)
+                    .Include(x => x.ProgramArea)
                     .Single(x => x.Id == id);
             }
         }
@@ -198,6 +200,7 @@ namespace ValidationWeb.Services.Implementations
                 existingReportDefinition.Name = newReportDefinition.Name?.Trim();
                 existingReportDefinition.Description = newReportDefinition.Description?.Trim();
                 existingReportDefinition.IsOrgLevelReport = newReportDefinition.IsOrgLevelReport;
+                existingReportDefinition.ProgramAreaId = newReportDefinition.ProgramAreaId;
 
                 foreach (var newField in newReportDefinition.Fields)
                 {

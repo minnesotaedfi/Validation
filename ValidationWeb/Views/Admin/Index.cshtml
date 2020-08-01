@@ -271,6 +271,23 @@
             }
           },
           {
+            data: 'ProgramArea',
+            title: 'Program Area',
+            searchable: false,
+            sortable: false,
+            render: function(data, type, row) {
+              if (type === 'display') {
+                if (data != null) {
+                  return data.Description;
+                } else {
+                  return 'All';
+                }
+              } else {
+                return data;
+              }
+            }
+          },
+          {
             data: 'Enabled',
             title: 'Status',
             searchable: false,
@@ -423,8 +440,8 @@
 
       var AddSubmissionCycleRoute = "@Url.Content("~/Admin/AddSubmissionCycle")";
       $("#submissioncycle-add").click({
-        modalName: "SubmissionCycle",
-        modalAddRoute: AddSubmissionCycleRoute
+          modalName: "SubmissionCycle",
+          modalAddRoute: AddSubmissionCycleRoute
         },
         CreateAddModal);
 
@@ -630,6 +647,7 @@
       var reportIsOrgLevel = $('#report-is-org-level').is(':checked');
       var reportTable = $('#rulesTable-' + rulesViewId).DataTable();
       var schoolYearId = @Model.ReportSchoolYearId;
+      var reportProgramAreaId = $('#report-program-area-id').val();
 
       var dynamicReportDefinition = {
         name: reportTitle,
@@ -637,7 +655,8 @@
         isOrgLevelReport: reportIsOrgLevel,
         enabled: true,
         schoolYearId: schoolYearId,
-        validationRulesViewId: rulesViewId
+        validationRulesViewId: rulesViewId,
+        programAreaId: reportProgramAreaId
       };
 
       var reportFields = [];
@@ -681,12 +700,14 @@
       var reportTitle = $('#edit-report-name').val();
       var reportDescription = $('#edit-report-description').val();
       var reportIsOrgLevel = $('#edit-report-is-org-level').is(':checked');
+      var reportProgramAreaId = $('#report-program-area-id').val();
 
       var dynamicReportUpdate = {
         id: reportId,
         name: reportTitle,
         description: reportDescription,
         isOrgLevelReport: reportIsOrgLevel,
+        programAreaId: reportProgramAreaId
       };
 
       var reportFields = [];
