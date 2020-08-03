@@ -7,6 +7,9 @@ using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+
+using Validation.DataModels;
+
 using ValidationWeb.Database;
 using ValidationWeb.Models;
 using ValidationWeb.Services.Implementations;
@@ -71,6 +74,17 @@ namespace ValidationWeb.Tests.Services
             LoggingServiceMock.Reset();
         }
 
+        // a helper to make dbset queryable
+        private Mock<DbSet<T>> GetMockDbSet<T>(IQueryable<T> entities) where T : class
+        {
+            var mockSet = new Mock<DbSet<T>>();
+            mockSet.As<IQueryable<T>>().Setup(m => m.Provider).Returns(entities.Provider);
+            mockSet.As<IQueryable<T>>().Setup(m => m.Expression).Returns(entities.Expression);
+            mockSet.As<IQueryable<T>>().Setup(m => m.ElementType).Returns(entities.ElementType);
+            mockSet.As<IQueryable<T>>().Setup(m => m.GetEnumerator()).Returns(entities.GetEnumerator());
+            return mockSet;
+        }
+
         [Test]
         public void GetAnnouncements_Should_ReturnAll()
         {
@@ -83,28 +97,48 @@ namespace ValidationWeb.Tests.Services
             var announcementIdToDismiss = 2345;
             var announcementIdToKeep = 3456;
 
+            var programAreaLookups = new List<ProgramArea>
+            {
+                new ProgramArea { Id = 1, Description = "MARSS"},
+                new ProgramArea { Id = 2, Description = "MCCC"},
+            };
+
             var announcements = new List<Announcement>(
                 new[]
                 {
                     new Announcement
                     {
                         Id = announcementIdToKeep,
-                        Message = "test contact info"
+                        Message = "test contact info",
+                        ProgramAreaId = 1
                     },
                     new Announcement
                     {
                         Id = announcementIdToDismiss,
-                        Message = "dismiss me"
+                        Message = "dismiss me",
+                        ProgramAreaId = 2
                     }
                 });
 
+            var dbSet = EntityFrameworkMocks.GetQueryableMockDbSet(announcements);
+
+            var programAreaDbSet = EntityFrameworkMocks.GetQueryableMockDbSet(programAreaLookups);
+            dbSet.SetupGet(m => m.Include("ProgramArea").AsQueryable()).Returns(dbSet.Object);
+
+            EntityFrameworkMocks.SetupMockDbSet<ValidationPortalDbContext, ProgramArea>(
+                programAreaDbSet,
+                ValidationPortalDbContextMock,
+                x => x.ProgramAreas,
+                x => x.ProgramAreas = It.IsAny<DbSet<ProgramArea>>(),
+                programAreaLookups);
+            
             EntityFrameworkMocks.SetupMockDbSet<ValidationPortalDbContext, Announcement>(
-                EntityFrameworkMocks.GetQueryableMockDbSet(announcements),
+                dbSet,
                 ValidationPortalDbContextMock,
                 x => x.Announcements,
                 x => x.Announcements = It.IsAny<DbSet<Announcement>>(),
                 announcements);
-
+            
             DbContextFactoryMock.Setup(x => x.Create()).Returns(ValidationPortalDbContextMock.Object);
 
             var announcementService = new AnnouncementService(DbContextFactoryMock.Object, AppUserServiceMock.Object, LoggingServiceMock.Object);
