@@ -586,6 +586,7 @@
     <Content Include="Content\Rules\McccCourseRuleSet.rules" />
     <Content Include="Content\Rules\McccSchoolRuleSet.rules" />
     <Content Include="Content\Rules\McccStudentRuleSet.rules" />
+    <Content Include="Content\Rules\StudentAncestryEthnicOrigin.rules" />
     <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <Content Include="Scripts\esm\popper-utils.js" />
