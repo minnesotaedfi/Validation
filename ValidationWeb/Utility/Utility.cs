@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration.Internal;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 
 using CsvHelper;
 using CsvHelper.Configuration;
@@ -39,11 +40,10 @@ namespace ValidationWeb.Utility
                 {
                     return null;
                 }
-
-                long longVal;
-                if (stringValue.Length >= 9 && long.TryParse(stringValue, out longVal))
+                
+                if (stringValue.Length >= 9 && stringValue.All(char.IsNumber))
                 {
-                    return $"=\"{base.ConvertToString(value, row, memberMapData)}\"";
+                    return $"=\"{stringValue}\"";
                 }
 
                 return base.ConvertToString(value, row, memberMapData);
