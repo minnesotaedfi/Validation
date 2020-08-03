@@ -40,9 +40,8 @@ namespace ValidationWeb.Utility
                     return null;
                 }
 
-                int intVal;
                 long longVal;
-                if (stringValue.Length >= 9 && (int.TryParse(stringValue, out intVal) || long.TryParse(stringValue, out longVal)))
+                if (stringValue.Length >= 9 && long.TryParse(stringValue, out longVal))
                 {
                     return $"=\"{base.ConvertToString(value, row, memberMapData)}\"";
                 }
