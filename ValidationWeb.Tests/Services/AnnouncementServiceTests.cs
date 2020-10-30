@@ -7,6 +7,9 @@ using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+
+using Validation.DataModels;
+
 using ValidationWeb.Database;
 using ValidationWeb.Models;
 using ValidationWeb.Services.Implementations;
@@ -148,11 +151,13 @@ namespace ValidationWeb.Tests.Services
                     {
                         Id = announcementIdToReturn,
                         Message = "return me",
+                        ProgramArea = new ProgramArea { Id = 1, Description = "MARSS" }
                     },
                     new Announcement
                     {
                         Id = announcementIdToNotReturn,
                         Message = "leave me out",
+                        ProgramArea = new ProgramArea { Id = 2, Description = "EE" }
                     }
                 });
 
@@ -340,10 +345,23 @@ namespace ValidationWeb.Tests.Services
 
             LoggingServiceMock.Setup(x => x.LogErrorMessage(It.IsAny<string>()));
 
-            var announcementService = new AnnouncementService(DbContextFactoryMock.Object, AppUserServiceMock.Object, LoggingServiceMock.Object);
+            var announcementService = new AnnouncementService(
+                DbContextFactoryMock.Object, 
+                AppUserServiceMock.Object, 
+                LoggingServiceMock.Object);
 
-            announcement.Id++;
-            Assert.Throws<Exception>(() => announcementService.SaveAnnouncement(announcement));
+            var newAnnouncement =
+                new Announcement
+                {
+                    Id = announcement.Id++,
+                    Priority = 1,
+                    Message = "revised message",
+                    ContactInfo = "3-2-1, contact",
+                    LinkUrl = "http://education.mn.gov",
+                    Expiration = DateTime.Now.AddMonths(1)
+                };
+
+            Assert.Throws<Exception>(() => announcementService.SaveAnnouncement(newAnnouncement));
         }
 
         [Test]

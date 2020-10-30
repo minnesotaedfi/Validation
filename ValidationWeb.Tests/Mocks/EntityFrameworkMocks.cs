@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
@@ -35,6 +36,7 @@ namespace ValidationWeb.Tests.Mocks
             dbSet.As<IQueryable<T>>().Setup(m => m.GetEnumerator()).Returns(() => queryable.GetEnumerator());
             dbSet.Setup(d => d.Add(It.IsAny<T>())).Callback<T>(sourceList.Add).Returns<T>(x => x);
             dbSet.Setup(x => x.Remove(It.IsAny<T>())).Callback<T>(x => sourceList.Remove(x)).Returns<T>(x => x);
+            dbSet.Setup(x => x.Include(It.IsAny<string>())).Returns(dbSet.Object);
             return dbSet;
         }
 
@@ -71,9 +73,38 @@ namespace ValidationWeb.Tests.Mocks
                 x => x.AppUserSessions = It.IsAny<DbSet<AppUserSession>>(),
                 appUserSessions);
 
-            var announcements = new List<Announcement>();
+            var programAreas = new List<ProgramArea>(
+                new[]
+                {
+                    new ProgramArea
+                    {
+                        Id = 1,
+                        Description = "MARRS"
+                    },
+                    new ProgramArea
+                    {
+                        Id = 2,
+                        Description = "ECCC"
+                    }
+                });
+
+            var programAreaDbSet = GetQueryableMockDbSet(programAreas);
+
             SetupMockDbSet(
-                GetQueryableMockDbSet(announcements),
+                programAreaDbSet,
+                validationPortalDbContextMock,
+                x => x.ProgramAreas,
+                x => x.ProgramAreas = It.IsAny<DbSet<ProgramArea>>(),
+                programAreas);
+
+            var announcements = new List<Announcement>();
+            var announcementDbSet = GetQueryableMockDbSet(announcements);
+
+            announcementDbSet.Setup(x => x.Include(It.IsAny<string>()))
+                .Returns(announcementDbSet.Object);
+
+            SetupMockDbSet(
+                announcementDbSet,
                 validationPortalDbContextMock,
                 x => x.Announcements,
                 x => x.Announcements = It.IsAny<DbSet<Announcement>>(),
@@ -183,15 +214,21 @@ namespace ValidationWeb.Tests.Mocks
                 x => x.DynamicReportFields = It.IsAny<DbSet<DynamicReportField>>(),
                 dynamicReportFields);
 
-            var programAreaLookups = new List<ProgramArea>();
-            SetupMockDbSet(
-                GetQueryableMockDbSet(programAreaLookups),
-                validationPortalDbContextMock,
-                x => x.ProgramAreas,
-                x => x.ProgramAreas = It.IsAny<DbSet<ProgramArea>>(),
-                programAreaLookups);
 
             validationPortalDbContextMock.As<IDisposable>().Setup(x => x.Dispose());
+        }
+    }
+
+    public static class ModelExtensions
+    {
+        public static IQueryable<T> Include<T>(this IQueryable<T> sequence, string path) where T : class
+        {
+            var dbQuery = sequence as DbQuery<T>;
+            if (dbQuery != null)
+            {
+                return dbQuery.Include(path);
+            }
+            return sequence;
         }
     }
 }

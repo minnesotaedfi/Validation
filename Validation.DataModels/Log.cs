@@ -34,5 +34,7 @@ namespace ValidationWeb.Models
         public string ResponseBody { get; set; }
 
         public string Exception { get; set; }
+
+        public string RequestBody { get; set; }
     }
 }

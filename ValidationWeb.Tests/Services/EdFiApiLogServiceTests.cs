@@ -1,15 +1,16 @@
-﻿using System;
+﻿using Moq;
+
+using NUnit.Framework;
+
+using Should;
+
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Diagnostics.CodeAnalysis;
 
-using Moq;
-
-using NUnit.Framework;
-
-using Should;
-using Should.Extensions;
+using DataTables.AspNet.Core;
 
 using ValidationWeb.Database;
 using ValidationWeb.Models;
@@ -103,11 +104,22 @@ namespace ValidationWeb.Tests.Services
                 LoggingServiceMock.Object,
                 DbContextFactoryMock.Object);
 
-            var result = edfiApiLogService.GetIdentityIssues();
+           var requestMock = MockRepository.Create<IDataTablesRequest>();
+           var sortMock = MockRepository.Create<ISort>();
+           sortMock.Setup(x => x.Direction).Returns(SortDirection.Ascending);
+
+           var columnMock = MockRepository.Create<IColumn>();
+           columnMock.Setup(x => x.Sort).Returns(sortMock.Object);
+           columnMock.Setup(x => x.Field).Returns("id");
+
+           requestMock.Setup(x => x.Columns).Returns(new[] { columnMock.Object });
+           requestMock.Setup(x => x.Start).Returns(25);
+           requestMock.Setup(x => x.Length).Returns(25);
+           requestMock.Setup(x => x.Draw).Returns(25);
+
+            var result = edfiApiLogService.GetIdentityIssues(requestMock.Object, "12345", "2020");
             
             result.ShouldNotBeNull();
-            result.ShouldNotBeEmpty();
-            result.ShouldHaveSameItems(IdentityLogs);
         }
 
         [Test]
@@ -117,11 +129,22 @@ namespace ValidationWeb.Tests.Services
                 LoggingServiceMock.Object,
                 DbContextFactoryMock.Object);
 
-            var result = edfiApiLogService.GetApiErrors();
+            var requestMock = MockRepository.Create<IDataTablesRequest>();
+            var sortMock = MockRepository.Create<ISort>();
+            sortMock.Setup(x => x.Direction).Returns(SortDirection.Ascending);
+
+            var columnMock = MockRepository.Create<IColumn>();
+            columnMock.Setup(x => x.Sort).Returns(sortMock.Object);
+            columnMock.Setup(x => x.Field).Returns("id");
+
+            requestMock.Setup(x => x.Columns).Returns(new[] { columnMock.Object });
+            requestMock.Setup(x => x.Start).Returns(25);
+            requestMock.Setup(x => x.Length).Returns(25);
+            requestMock.Setup(x => x.Draw).Returns(25);
+
+            var result = edfiApiLogService.GetApiErrors(requestMock.Object, "12345", "2020");
             
             result.ShouldNotBeNull();
-            result.ShouldNotBeEmpty();
-            result.ShouldHaveSameItems(ApiLogs);
         }
     }
 }
