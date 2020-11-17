@@ -30,10 +30,8 @@ collection EarlyEdValidationCollection includes
   EarlyEdMcccStudentRuleSet
   
 collection EOY_EDFI_31_Non_MARSS includes
-  StudentAncestryEthnicOrigin
   DigitalEquityRuleSet
   
 collection Fall_EDFI_31_Non_MARSS includes
-  StudentAncestryEthnicOrigin
   DigitalEquityRuleSet
 
