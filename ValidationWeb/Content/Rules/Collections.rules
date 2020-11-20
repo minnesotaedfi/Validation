@@ -29,4 +29,9 @@ collection EarlyEdValidationCollection includes
   EarlyEdMcccSchoolRuleSet,
   EarlyEdMcccStudentRuleSet
   
+collection EOY_EDFI_31_Non_MARSS includes
+  DigitalEquityRuleSet
   
+collection Fall_EDFI_31_Non_MARSS includes
+  DigitalEquityRuleSet
+

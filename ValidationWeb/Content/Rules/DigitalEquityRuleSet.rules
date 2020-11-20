@@ -1,0 +1,41 @@
+ruleset DigitalEquityRuleSet
+
+rule 60.01.0001
+	require that {SqlRuleComponent} exists else ''
+
+rule 60.01.0002
+	require that {SqlRuleComponent} exists else ''
+
+rule 60.01.0003
+	require that {SqlRuleComponent} exists else ''
+
+rule 60.01.0004
+	require that {SqlRuleComponent} exists else ''
+
+rule 60.01.0005
+	require that {SqlRuleComponent} exists else ''
+
+rule 60.01.0006
+	require that {SqlRuleComponent} exists else ''
+
+rule 60.01.0007
+	require that {SqlRuleComponent} exists else ''
+
+rule 60.01.0008
+	require that {SqlRuleComponent} exists else ''
+
+rule 60.01.0009
+	require that {SqlRuleComponent} exists else ''
+
+rule 60.01.0010
+	require that {SqlRuleComponent} exists else ''
+
+rule 60.01.0011
+	require that {SqlRuleComponent} exists else ''
+
+rule 60.01.0012
+	require that {SqlRuleComponent} exists else ''
+
+rule 60.01.0013
+	require that {SqlRuleComponent} exists else ''
+
