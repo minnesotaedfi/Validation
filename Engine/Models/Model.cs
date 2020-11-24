@@ -45,8 +45,12 @@ namespace Engine.Models
 
         public void AddRule(Rule rule)
         {
-            if (string.IsNullOrEmpty(rule.RuleId) || _rules.Any(x => x.RuleId == rule.RuleId))
+            if (string.IsNullOrEmpty(rule.RuleId) || 
+                _rules.Any(x => x.RuleId == rule.RuleId && x.RulesetId == rule.RulesetId))
+            {
                 throw new ArgumentException($"Duplicate RuleId: {rule.RuleId}", nameof(rule));
+            }
+
             _rules.Add(rule);
         }
 

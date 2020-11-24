@@ -115,13 +115,13 @@ rule 52.10.6386
 	require that {StudentEnrollmentEE}.[DistrictType] <> '7' 
 	else '288. Student has resident district number 0001 and type of 01 (Aitkin) which is an invalid resident district number and type for charter school.'
 
-rule 52.10.6436 
+rule 52.10.6436
 	when {StudentEnrollmentEE}.[GradeLevel] = 'EE' then
 	require that {StudentEnrollmentEE}.[SchoolClassification] is not in ['41','42','43','45','50','51']
 	else '395. Grades EE cannot be reported in school classifications 41, 42, 43, 45, 50 or 51. Check student grade level and school'
 	
-rule 52.10.6436.1 
-	when {StudentEnrollmentEE}.[SchoolClassification] is in ['84','85'] 
+rule 52.10.6436.1
+	when {StudentEnrollmentEE}.[SchoolClassification] is in ['84','85'] then
 	require that {StudentEnrollmentEE}.[GradeLevel] = 'EE'
 	else 'Student who is not in gradelevel EE is enrolled in a school with school classification of 84 or 85. Only EE gradelevels can be reported with classification 84 or 85.'
 	

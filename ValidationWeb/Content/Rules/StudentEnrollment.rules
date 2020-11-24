@@ -1119,8 +1119,8 @@ rule 10.10.6593
 	else '243. If the school is not an ALC/ALP school (classifications 41, 42, or 43), OR the homebound indicator= Y, the Independent Study flag must be N.  Check the school classification.'
 	
 	
-rule 52.10.6436.1 
-	when {StudentEnrollment}.[SchoolClassification] is in ['84','85'] 
+rule 52.10.6436.1
+	when {StudentEnrollment}.[SchoolClassification] is in ['84','85'] then
 	require that {StudentEnrollment}.[StudentGradeLevel] = 'EE'
 	else 'Student who is not in gradelevel EE is enrolled in a school with school classification of 84 or 85. Only EE gradelevels can be reported with classification 84 or 85.'
 	
