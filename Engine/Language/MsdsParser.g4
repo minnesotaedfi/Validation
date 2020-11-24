@@ -35,7 +35,7 @@ ruleDefinition
             ELSE error
     ;
 
-ruleid : RULEID1 | RULEID2;
+ruleid : RULEID1 | RULEID2 | RULEID3;
 
 error : STRING;
 

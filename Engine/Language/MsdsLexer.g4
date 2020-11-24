@@ -54,8 +54,9 @@ COMMA : ',';
 DOT : '.';
 NEG : '-';
 
-RULEID1 : INT DOT INT;              // 100.1
-RULEID2 : INT DOT INT DOT INT;      // 100.1.2
+RULEID1 : INT DOT INT;                       // 100.1
+RULEID2 : INT DOT INT DOT INT;              // 100.1.2
+RULEID3 : INT DOT INT DOT INT DOT INT;     // 100.1.2.3
 
 fragment DIGIT : [0-9] ;
 INT :   DIGIT+ ;

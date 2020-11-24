@@ -21,23 +21,27 @@ namespace Engine.Models
 
         public Collection(string collectionId)
         {
-            this.CollectionId = collectionId;
+            CollectionId = collectionId;
         }
 
         public void AddRulesetReference(string rulesetId)
         {
             if (string.IsNullOrEmpty(rulesetId) || _rulesetIds.Contains(rulesetId))
+            {
                 throw new ArgumentException($"Duplicate or null RulesetId: {rulesetId}", nameof(rulesetId));
-            else
-                _rulesetIds.Add(rulesetId);
+            }
+            
+            _rulesetIds.Add(rulesetId);
         }
 
         public void AddRuleReference(string ruleId)
         {
             if (string.IsNullOrEmpty(ruleId) || _ruleIds.Contains(ruleId))
+            {
                 throw new ArgumentException($"Duplicate RuleId: {ruleId}", nameof(ruleId));
-            else
-                _ruleIds.Add(ruleId);
+            }
+
+            _ruleIds.Add(ruleId);
         }
     }
 }
