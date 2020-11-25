@@ -215,6 +215,12 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\css\select2.css" />
     <Content Include="Content\css\select2.min.css" />
+    <Content Include="Content\SqlRules\McccCourseRuleSet\mccc-course-rule50.00.0001.sql" />
+    <Content Include="Content\SqlRules\McccCourseRuleSet\mccc-course-rule50.00.0002.sql" />
+    <Content Include="Content\SqlRules\McccCourseRuleSet\mccc-course-rule50.01.0011.sql" />
+    <Content Include="Content\SqlRules\McccCourseRuleSet\mccc-course-rule50.01.0012.sql" />
+    <Content Include="Content\SqlRules\McccCourseRuleSet\mccc-course-rule50.01.0013.sql" />
+    <Content Include="Content\SqlRules\McccCourseRuleSet\mccc-course-rule50.01.0014.sql" />
     <Content Include="Content\SqlRules\SchoolGrade\school-grade-rule10.10.6530.sql" />
     <Content Include="Content\SqlRules\SchoolGrade\school-grade-rule10.10.6642.sql" />
     <Content Include="Content\SqlRules\SchoolGrade\school-grade-rule10.10.6643.sql" />
