@@ -14,7 +14,7 @@ WITH
 failed_rows AS (
 
 SELECT
-  DISTINCT School.SchoolId
+  DISTINCT School.LocalEducationAgencyId
 FROM 
   edfi.StudentEducationOrganizationAssociation
   JOIN
@@ -35,5 +35,5 @@ WHERE
 INSERT INTO 
 	rules.RuleValidationDetail (RuleValidationId, Id, RuleId, IsError, [Message])
 SELECT
-	@RuleValidationId, SchoolId, @RuleId, @IsError, @Message
+	@RuleValidationId, LocalEducationAgencyId, @RuleId, @IsError, @Message
 FROM failed_rows;
