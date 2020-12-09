@@ -8,7 +8,9 @@ require SEOA.StudentIndicator in (Shared, Not Shared, Unknown)
 */
 
 DECLARE @RuleId VARCHAR(32) = '60.01.0007';
-DECLARE @Message NVARCHAR(MAX) = 'When SEOA.StudentIndicator.IndicatorName = PrimaryLearningDeviceAccess
+DECLARE @Message NVARCHAR(MAX) = 'Invalid PrimaryLearningDeviceAccess for this student.
+
+When SEOA.StudentIndicator.IndicatorName = PrimaryLearningDeviceAccess
 require SEOA.StudentIndicator in (Shared, Not Shared, Unknown)';
 DECLARE @IsError BIT = 1;
 
