@@ -7,7 +7,9 @@ when count of SEOA.StudentIndicator records is null for student within district
 */
 
 DECLARE @RuleId VARCHAR(32) = '60.01.0009';
-DECLARE @Message NVARCHAR(MAX) = 'When count of SEOA.StudentIndicator records is null for student within district';
+DECLARE @Message NVARCHAR(MAX) = 'No Digital Equity records have been submitted for this student within this district. 
+
+When count of SEOA.StudentIndicator records is null for student within district';
 DECLARE @IsError BIT = 0;
 
 WITH 
