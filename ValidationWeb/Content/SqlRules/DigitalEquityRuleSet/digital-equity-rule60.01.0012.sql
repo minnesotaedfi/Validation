@@ -8,7 +8,7 @@ error when there is no additional record for same student where SEOA.StudentIndi
 */
 
 DECLARE @RuleId VARCHAR(32) = '60.01.0012';
-DECLARE @Message NVARCHAR(MAX) = 'When Internet Access in Residence is not reported as Yes, Internet Access Type In Residence should not be reported for this student.
+DECLARE @Message NVARCHAR(MAX) = 'When Internet Access in Residence is reported as Yes, Internet Access Type In Residence must also be reported for this student.
 
 If SEOA.StudentIndicator.IndicatorName = InternetAccessInResidence and SEOA.StudentIndicator.Indicator = Yes, 
 error when there is no additional record for same student where SEOA.StudentIndicator.IndicatorName = InternetAccessTypeInResidence';
