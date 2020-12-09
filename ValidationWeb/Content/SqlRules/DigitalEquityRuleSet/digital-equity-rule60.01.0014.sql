@@ -7,8 +7,8 @@ error on additional record for same student where SEOA.StudentIndicator.Indicato
 
 */
 
-DECLARE @RuleId VARCHAR(32) = '60.01.0011';
-DECLARE @Message NVARCHAR(MAX) = 'When Digital Device is not reported as None, PrimaryLearningDeviceProvider should not be reported for this student.
+DECLARE @RuleId VARCHAR(32) = '60.01.0014';
+DECLARE @Message NVARCHAR(MAX) = 'When Digital Device is reported as None, PrimaryLearningDeviceProvider should not be reported for this student.
 
 If SEOA.StudentIndicator.IndicatorName = DigitalDevice and SEOA.StudentIndicator.Indicator = None, 
 error on additional record for same student where SEOA.StudentIndicator.IndicatorName = PrimaryLearningDeviceProvider';
