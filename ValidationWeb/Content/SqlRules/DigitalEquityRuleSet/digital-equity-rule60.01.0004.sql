@@ -1,6 +1,6 @@
 /*
 
-Warning: Invalid Digital Equity Indicator Value  was submitted for this student
+Warning: Invalid response for Internet Performance for this student.
 
 Error on:
 
@@ -10,7 +10,7 @@ require SEOA.StudentIndicator.Indicator in (Yes - No issues, Yes - But not consi
 */
 
 DECLARE @RuleId VARCHAR(32) = '60.01.0004';
-DECLARE @Message NVARCHAR(MAX) = 'Warning: Invalid Digital Equity Indicator Value  was submitted for this student
+DECLARE @Message NVARCHAR(MAX) = 'Warning: Invalid response for Internet Performance for this student.
 When SEOA.StudentIndicator.IndicatorName = InternetPerformance 
 require SEOA.StudentIndicator.Indicator in (Yes - No issues, Yes - But not consistent, No)';
 DECLARE @IsError BIT = 1;
