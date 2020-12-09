@@ -1,5 +1,5 @@
 /*
-Warning: Digital Equity data has not been reported for this student.
+Warning: You have submitted an invalid response for Internet Access In Residencee for this student.
 
 Error on:
 
@@ -9,7 +9,7 @@ require SEOA.StudentIndicator.Indicator in (Yes, No - Not Available, No - Not Af
 */
 
 DECLARE @RuleId VARCHAR(32) = '60.01.0002';
-DECLARE @Message NVARCHAR(MAX) = 'Warning: Digital Equity data has not been reported for this student.
+DECLARE @Message NVARCHAR(MAX) = 'Warning: You have submitted an invalid response for Internet Access In Residence for this student.
 When SEOA.StudentIndicator.IndicatorName = InternetAccessInResidence
 require SEOA.StudentIndicator.Indicator in (Yes, No - Not Available, No - Not Affordable, No - Other)';
 DECLARE @IsError BIT = 1;
