@@ -8,7 +8,9 @@ error on additional record for same student where SEOA.StudentIndicator.Indicato
 */
 
 DECLARE @RuleId VARCHAR(32) = '60.01.0011';
-DECLARE @Message NVARCHAR(MAX) = 'If SEOA.StudentIndicator.IndicatorName = InternetAccessInResidence and SEOA.StudentIndicator.Indicator <> Yes, 
+DECLARE @Message NVARCHAR(MAX) = 'When Internet Access in Residence is not reported as Yes, Internet Performance should not be reported for this student.
+
+If SEOA.StudentIndicator.IndicatorName = InternetAccessInResidence and SEOA.StudentIndicator.Indicator <> Yes, 
 error on additional record for same student where SEOA.StudentIndicator.IndicatorName = InternetPerformance';
 DECLARE @IsError BIT = 1;
 
