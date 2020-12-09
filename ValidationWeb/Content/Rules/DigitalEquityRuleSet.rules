@@ -38,4 +38,16 @@ rule 60.01.0012
 
 rule 60.01.0013
 	require that {SqlRuleComponent} exists else ''
+	
+rule 60.01.0014
+	require that {SqlRuleComponent} exists else ''
+
+rule 60.01.0015
+	require that {SqlRuleComponent} exists else ''
+
+rule 60.01.0016
+	require that {SqlRuleComponent} exists else ''
+
+rule 60.01.0017
+	require that {SqlRuleComponent} exists else ''
 
