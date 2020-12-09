@@ -1,5 +1,5 @@
 /*
-Warning: Warning: You have submitted an invalid Digital Equity Indicator.
+Warning: Warning: Invalid Digital Equity Indicator.
 
 Error on:
 
