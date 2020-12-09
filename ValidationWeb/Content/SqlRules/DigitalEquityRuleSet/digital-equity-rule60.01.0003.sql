@@ -1,6 +1,6 @@
 /*
 
-Error on: You have submitted an invalid response for Internet Access Type In Residence for this student
+Error on: Invalid response for Internet Access Type In Residence for this student
 
 When SEOA.StudentIndicator.IndicatorName = InternetAccessTypeInResidence
 require SEOA.StudentIndicator.Indicator in (ResidentialBroadband, CellularNetwork, SchoolProvidedHotSpot
@@ -9,7 +9,7 @@ require SEOA.StudentIndicator.Indicator in (ResidentialBroadband, CellularNetwor
 */
 
 DECLARE @RuleId VARCHAR(32) = '60.01.0003';
-DECLARE @Message NVARCHAR(MAX) = 'You have submitted an invalid response for Internet Access Type In Residence for this student
+DECLARE @Message NVARCHAR(MAX) = 'Invalid response for Internet Access Type In Residence for this student.
 
 Error on: When SEOA.StudentIndicator.IndicatorName = InternetAccessTypeInResidence
 require SEOA.StudentIndicator.Indicator in (ResidentialBroadband, CellularNetwork, SchoolProvidedHotSpot
