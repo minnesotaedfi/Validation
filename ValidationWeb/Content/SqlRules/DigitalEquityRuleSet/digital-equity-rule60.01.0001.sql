@@ -15,7 +15,7 @@ PrimaryLearningDeviceAccess
 */
 
 DECLARE @RuleId VARCHAR(32) = '60.01.0001';
-DECLARE @Message NVARCHAR(MAX) = 'Warning: Your district has not collected any Digital Equity records for students enrolled in the district.
+DECLARE @Message NVARCHAR(MAX) = 'Warning: You have submitted an invalid Digital Equity Indicator.
 When SEOA.StudentIndicator.IndicatorName exists it must match one of following string values: 
 InternetAccessInResidence
 InternetAccessTypeInResidence
