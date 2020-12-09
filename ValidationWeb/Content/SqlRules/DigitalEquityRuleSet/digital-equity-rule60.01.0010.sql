@@ -8,7 +8,11 @@ error on additional record for same student where SEOA.StudentIndicator.Indicato
 */
 
 DECLARE @RuleId VARCHAR(32) = '60.01.0010';
-DECLARE @Message NVARCHAR(MAX) = 'If SEOA.StudentIndicator.IndicatorName = InternetAccessInResidence and SEOA.StudentIndicator.Indicator <> Yes, 
+DECLARE @Message NVARCHAR(MAX) = 'Invalid InternetAccessTypeInResidence for this student.
+
+Error on: 
+
+If SEOA.StudentIndicator.IndicatorName = InternetAccessInResidence and SEOA.StudentIndicator.Indicator <> Yes, 
 error on additional record for same student where SEOA.StudentIndicator.IndicatorName = InternetAccessTypeInResidence';
 DECLARE @IsError BIT = 1;
 
