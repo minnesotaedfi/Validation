@@ -8,7 +8,9 @@ require SEOA.StudentIndicator.Indicator in (Personal, School, Other)
 */
 
 DECLARE @RuleId VARCHAR(32) = '60.01.0006';
-DECLARE @Message NVARCHAR(MAX) = 'When SEOA.StudentIndicator.IndicatorName = PrimaryLearningDeviceProvider
+DECLARE @Message NVARCHAR(MAX) = 'Invalid PrimaryLearningDeviceProvider response for this student.
+Error on:
+When SEOA.StudentIndicator.IndicatorName = PrimaryLearningDeviceProvider
 require SEOA.StudentIndicator.Indicator in (Personal, School, Other)';
 DECLARE @IsError BIT = 1;
 
