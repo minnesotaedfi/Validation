@@ -1,6 +1,6 @@
 /*
 
-Warning: Invalid Digital Equity Indicator Name was submitted for this student
+Warning: Invalid DigitalDevice response for this student.
 
 Error on:
 
@@ -11,7 +11,7 @@ require SEOA.StudentIndicator.Indicator in
 */
 
 DECLARE @RuleId VARCHAR(32) = '60.01.0005';
-DECLARE @Message NVARCHAR(MAX) = 'Warning: Invalid Digital Equity Indicator Name was submitted for this student
+DECLARE @Message NVARCHAR(MAX) = 'Warning: Invalid DigitalDevice response for this student.
 When SEOA.StudentIndicator.IndicatorName = DigitalDevice
 require SEOA.StudentIndicator.Indicator in (Desktop/Laptop, Tablet, Chromebook, SmartPhone, None, Other)';
 DECLARE @IsError BIT = 1;
