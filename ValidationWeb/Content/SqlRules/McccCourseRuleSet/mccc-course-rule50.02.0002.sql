@@ -15,7 +15,7 @@ C is NOT a valid choice for K-8
 */
 
 DECLARE @RuleId VARCHAR(32) = '50.02.0002';
-DECLARE @Message NVARCHAR(MAX) = 'Course level type combination error detected for course offered for grades K-8. Details: ';
+DECLARE @Message NVARCHAR(MAX) = 'Course level type combination error detected for course offered for grades K-8.';
 DECLARE @IsError BIT = 1;
 
 WITH 
@@ -182,6 +182,6 @@ SELECT TOP 1
    CourseCode
   FROM failed_rows [xml] 
   FOR XML RAW,
-   ROOT ('failedRows')
+   ROOT ('Details')
   ) [Message]
 FROM failed_rows;
