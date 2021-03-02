@@ -90,5 +90,48 @@ rule 50.02.0001
 
 rule 50.02.0002
 	require that {SqlRuleComponent} exists else ''
+  
+rule 50.02.0003
+	require that {SqlRuleComponent} exists else ''
+  
+rule 50.02.0004
+	require that {SqlRuleComponent} exists else ''
+  
+rule 50.02.0005
+	require that {SqlRuleComponent} exists else ''
+  
+rule 50.02.0006
+	require that {SqlRuleComponent} exists else ''
+  
+rule 50.02.0007
+	require that {SqlRuleComponent} exists else ''
+  
+rule 50.02.0008
+	require that {SqlRuleComponent} exists else ''
+  
+rule 50.02.0009
+	require that {SqlRuleComponent} exists else ''
+  
+rule 50.02.0010
+	require that {SqlRuleComponent} exists else ''
+  
+rule 50.02.0011
+	require that {SqlRuleComponent} exists else ''
+  
+rule 50.02.0012
+	require that {SqlRuleComponent} exists else ''
+  
+rule 50.02.0013
+	require that {SqlRuleComponent} exists else ''
+  
+rule 50.02.0014
+	require that {SqlRuleComponent} exists else ''
+  
+rule 50.02.0015
+	require that {SqlRuleComponent} exists else ''
+  
+rule 50.02.0016
+	require that {SqlRuleComponent} exists else ''
+  
 
 
