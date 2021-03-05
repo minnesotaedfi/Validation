@@ -62,11 +62,9 @@ INSERT INTO
  rules.RuleValidationDetail (RuleValidationId, Id, RuleId, IsError, [Message])
 SELECT TOP 1
  @RuleValidationId, @DistrictId, @RuleId RuleId, @IsError IsError, 
- @Message + CHAR(13)+CHAR(10)+ (
+ @Message + (
   SELECT TOP 1 
-   CourseCode
-  FROM failed_rows [xml] 
-  FOR XML RAW,
-   ROOT ('Detail')
+   ' Course Code: '+CourseCode
+  FROM failed_rows
   ) [Message]
 FROM failed_rows;
