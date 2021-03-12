@@ -54,7 +54,7 @@ FROM
 				ON CourseDefinedByDescriptor.CourseDefinedByDescriptorId = Descriptor.DescriptorId
 		) ToCourseDefinedByDescriptor
 		ON ToCourse.CourseDefinedByDescriptorId = ToCourseDefinedByDescriptor.DescriptorId
-	
+
 WHERE (
 	Course.EducationOrganizationId = @DistrictId 
 	OR ToCourse.EducationOrganizationId = @DistrictId
@@ -62,22 +62,11 @@ WHERE (
 	CourseDefinedByDescriptor.CodeValue = 'SEA'
 	OR CourseDefinedByDescriptor.CodeValue = 'LEA' AND ToCourseDefinedByDescriptor.CodeValue <> 'SEA'
 	OR CourseDefinedByDescriptor.CodeValue = 'College' AND ToCourseDefinedByDescriptor.CodeValue <> 'LEA'
-	)
+	) 
 )
 INSERT INTO 
 	rules.RuleValidationDetail (RuleValidationId, Id, RuleId, IsError, [Message])
 SELECT TOP 1
 	@RuleValidationId, @DistrictId, @RuleId RuleId, @IsError IsError, 
-	@Message + CHAR(13)+CHAR(10)+ (
-		SELECT TOP 10 
-			CourseCode,
-			EducationOrganizationId,
-			CourseDefinedBy,
-			ToCourseCode,
-			ToCourseEducationOrganizationId,
-			ToCourseDefinedBy
-		FROM failed_rows [xml] 
-		FOR XML RAW,
-			ROOT ('failedRows')
-		) [Message]
+	@Message + ' Course code: ' + (SELECT TOP 1 CourseCode+' -> '+ToCourseCode FROM failed_rows) [Message]
 FROM failed_rows;
