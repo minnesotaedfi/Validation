@@ -6,7 +6,7 @@ Error on:
 */
 
 DECLARE @RuleId VARCHAR(32) = '50.01.0013';
-DECLARE @Message NVARCHAR(MAX) = 'Error on: Course with Level Type of B with Level Type of G or E. The entity ID returned is a district ed-org.';
+DECLARE @Message NVARCHAR(MAX) = 'Error on: Course with Level Type of B with Level Type of G or E.';
 DECLARE @IsError BIT = 1;
 
 WITH 
