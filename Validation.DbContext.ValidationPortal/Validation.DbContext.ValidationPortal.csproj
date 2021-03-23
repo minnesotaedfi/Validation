@@ -68,6 +68,10 @@
     <Compile Include="Migrations\202008012013093_AddProgramAreas.designer.cs">
       <DependentUpon>202008012013093_AddProgramAreas.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202103221745515_SoftDeleteSchoolYears.cs" />
+    <Compile Include="Migrations\202103221745515_SoftDeleteSchoolYears.designer.cs">
+      <DependentUpon>202103221745515_SoftDeleteSchoolYears.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ValidationPortalDbContext.cs" />
     <Compile Include="Migrations\ValidationPortalDbMigrationConfiguration.cs" />
@@ -98,6 +102,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202008012013093_AddProgramAreas.resx">
       <DependentUpon>202008012013093_AddProgramAreas.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202103221745515_SoftDeleteSchoolYears.resx">
+      <DependentUpon>202103221745515_SoftDeleteSchoolYears.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -67,10 +67,6 @@ namespace ValidationWeb.Database
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            //modelBuilder.Entity<ValidationRulesView>()
-            //    .HasRequired(x => x.SchoolYear)
-            //    .WithRequiredDependent()
-            //    .WillCascadeOnDelete(false);
         }
     }
 }

@@ -111,9 +111,14 @@ namespace ValidationWeb.Controllers
             return RedirectToAction("Index");
         }
 
-        public bool RemoveSchoolYear(int id)
+        public bool HideSchoolYear(int id)
         {
-            return _schoolYearService.RemoveSchoolYear(id);
+            return _schoolYearService.HideSchoolYear(id);
+        }
+
+        public bool RevealSchoolYear(int id)
+        {
+            return _schoolYearService.RevealSchoolYear(id);
         }
 
         public ActionResult GetSubmissionCyclesByCollectionId(string collectionId)
