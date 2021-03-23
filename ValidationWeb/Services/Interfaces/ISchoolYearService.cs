@@ -11,17 +11,7 @@ namespace ValidationWeb.Services.Interfaces
         
         SchoolYear GetSchoolYearById(int id);
         
-        void SetSubmittableSchoolYears(IEnumerable<SchoolYear> years);
-
-        bool UpdateErrorThresholdValue(
-            int id,
-            decimal thresholdValue);
-
         bool AddNewSchoolYear(
-            string startDate,
-            string endDate);
-
-        bool ValidateYears(
             string startDate,
             string endDate);
 

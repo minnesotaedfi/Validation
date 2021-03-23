@@ -1067,19 +1067,6 @@
       }
     }
 
-    function updateThreshold(id, errorThreshold) {
-      var value;
-      $.ajax({
-        url: '@Url.Action("UpdateThresholdErrorValue", "Admin")',
-        async: true,
-        data: { Id: id, thresholdValue: errorThreshold },
-        success: function(result) {
-          value = result;
-        }
-      });
-      return value;
-    }
-
     function submitNewSchoolYears() {
       $("#submit-school-years-form").submit();
     }
