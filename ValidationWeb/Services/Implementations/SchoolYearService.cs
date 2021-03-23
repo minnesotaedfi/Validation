@@ -102,7 +102,7 @@ namespace ValidationWeb.Services.Implementations
             return startDateCheck.ToString() == endDate;
         }
 
-        public bool RemoveSchoolYear(int id)
+        public bool RevealSchoolYear(int id)
         {
             using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
             {
@@ -113,7 +113,25 @@ namespace ValidationWeb.Services.Implementations
                     return false;
                 }
 
-                validationPortalDataContext.SchoolYears.Remove(schoolYearRecord);
+                schoolYearRecord.Visible = true;
+                validationPortalDataContext.SaveChanges();
+                return true;
+            }
+        }
+
+        public bool HideSchoolYear(int id)
+        {
+            using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
+            {
+                var schoolYearRecord = validationPortalDataContext.SchoolYears.FirstOrDefault(schoolYear => schoolYear.Id == id);
+
+                if (schoolYearRecord == null)
+                {
+                    return false;
+                }
+
+                // validationPortalDataContext.SchoolYears.Remove(schoolYearRecord);
+                schoolYearRecord.Visible = false;
                 validationPortalDataContext.SaveChanges();
                 return true;
             }

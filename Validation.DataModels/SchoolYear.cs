@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -9,13 +10,15 @@ namespace ValidationWeb.Models
     {
         public SchoolYear()
         {
+            Visible = true;
         }
 
-        public SchoolYear(string startYear, string endYear, bool enabled = true)
+        public SchoolYear(string startYear, string endYear, bool enabled = true, bool visible = true)
         {
             StartYear = startYear;
             EndYear = endYear;
             Enabled = enabled;
+            Visible = visible;
         }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -29,6 +32,9 @@ namespace ValidationWeb.Models
         public string StartYear { get; set; }
 
         public string EndYear { get; set; }
+        
+        [DefaultValue(true)]
+        public bool Visible { get; set; }
 
         public override string ToString()
         {
@@ -51,7 +57,10 @@ namespace ValidationWeb.Models
 
         public bool Equals(SchoolYear other)
         {
-            return other != null && Id == other.Id && string.Equals(StartYear, other.StartYear) && string.Equals(EndYear, other.EndYear);
+            return other != null && 
+                   Id == other.Id && 
+                   string.Equals(StartYear, other.StartYear) && 
+                   string.Equals(EndYear, other.EndYear);
         }
 
         public override bool Equals(object obj)

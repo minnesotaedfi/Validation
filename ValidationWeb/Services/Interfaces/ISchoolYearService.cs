@@ -25,6 +25,8 @@ namespace ValidationWeb.Services.Interfaces
             string startDate,
             string endDate);
 
-        bool RemoveSchoolYear(int id);
+        bool HideSchoolYear(int id);
+
+        bool RevealSchoolYear(int id);
     }
 }
