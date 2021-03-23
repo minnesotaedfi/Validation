@@ -44,37 +44,9 @@ namespace ValidationWeb.Services.Implementations
             using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
             {
                 return validationPortalDataContext.SchoolYears
+                    .Where(x => x.Enabled)
+                    .Where(x => x.Visible)
                     .ToDictionary(x => x.Id, x => x.ToString());
-            }
-        }
-
-        public void SetSubmittableSchoolYears(IEnumerable<SchoolYear> years)
-        {
-            using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
-            {
-                validationPortalDataContext.SchoolYears.RemoveRange(validationPortalDataContext.SchoolYears.ToArray());
-                validationPortalDataContext.SaveChanges();
-
-                validationPortalDataContext.SchoolYears.AddRange(years);
-                validationPortalDataContext.SaveChanges();
-            }
-        }
-
-        public bool UpdateErrorThresholdValue(int id, decimal thresholdValue)
-        {
-            using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
-            {
-                var schoolYearRecord = validationPortalDataContext.SchoolYears.FirstOrDefault(schoolYear => schoolYear.Id == id);
-
-                if (schoolYearRecord == null)
-                {
-                    return false;
-                }
-
-                schoolYearRecord.ErrorThreshold = thresholdValue;
-                validationPortalDataContext.SaveChanges();
-
-                return true;
             }
         }
 

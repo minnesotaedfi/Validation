@@ -92,11 +92,6 @@ namespace ValidationWeb.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        public bool UpdateThresholdErrorValue(int id, decimal thresholdValue)
-        {
-            return _schoolYearService.UpdateErrorThresholdValue(id, thresholdValue);
-        }
-
         public ActionResult AddNewSchoolYear(FormCollection formCollection)
         {
             int endDate;
