@@ -28,5 +28,7 @@ namespace ValidationWeb.Services.Interfaces
         bool HideSchoolYear(int id);
 
         bool RevealSchoolYear(int id);
+
+        IList<SchoolYear> GetAllSchoolYears();
     }
 }

@@ -198,7 +198,9 @@ namespace ValidationWeb.Services.Implementations
 
         public List<SelectListItem> GetSchoolYearsSelectList(SubmissionCycle submissionCycle = null)
         {
-            var schoolYearsEnumerable = SchoolYearService.GetSubmittableSchoolYearsDictionary().OrderByDescending(x => x.Value);
+            var schoolYearsEnumerable = SchoolYearService
+                .GetSubmittableSchoolYearsDictionary()
+                .OrderByDescending(x => x.Value);
 
             List<SelectListItem> schoolYears = schoolYearsEnumerable.Select(kvPair => new SelectListItem
             {
