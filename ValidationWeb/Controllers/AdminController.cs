@@ -53,7 +53,7 @@ namespace ValidationWeb.Controllers
         // GET: Admin
         public ActionResult Index()
         {
-            var schoolYears = _schoolYearService.GetSubmittableSchoolYears();
+            var schoolYears = _schoolYearService.GetAllSchoolYears();
 
             var viewsPerYear = new Dictionary<int, IEnumerable<ValidationRulesView>>();
             foreach (var schoolYear in schoolYears)

@@ -1098,7 +1098,7 @@
     }
 
     function revealSchoolYear(id, yearsRange) {
-      if (confirm("Are you sure you want to hide " + yearsRange + "?")) {
+      if (confirm("Are you sure you want to reveal " + yearsRange + "?")) {
         $.ajax({
           url: '@Url.Action("RevealSchoolYear", "Admin")',
           async: false,

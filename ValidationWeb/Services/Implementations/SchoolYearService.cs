@@ -20,9 +20,22 @@ namespace ValidationWeb.Services.Implementations
 
         public IList<SchoolYear> GetSubmittableSchoolYears()
         {
+            using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
+            {
+                return validationPortalDataContext.SchoolYears
+                    .Where(x => x.Enabled)
+                    .Where(x => x.Visible)
+                    .ToList();
+            }
+        }
+
+        public IList<SchoolYear> GetAllSchoolYears()
+        {
             using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create()) 
             {
-                return validationPortalDataContext.SchoolYears.Where(x => x.Enabled).ToList();
+                return validationPortalDataContext.SchoolYears
+                    .Where(x => x.Enabled)
+                    .ToList();
             }
         }
 
@@ -30,7 +43,8 @@ namespace ValidationWeb.Services.Implementations
         {
             using (var validationPortalDataContext = ValidationPortalDataContextFactory.Create())
             {
-                return validationPortalDataContext.SchoolYears.ToDictionary(x => x.Id, x => x.ToString());
+                return validationPortalDataContext.SchoolYears
+                    .ToDictionary(x => x.Id, x => x.ToString());
             }
         }
 
