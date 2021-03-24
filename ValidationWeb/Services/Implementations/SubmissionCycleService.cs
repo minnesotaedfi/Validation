@@ -68,6 +68,8 @@ namespace ValidationWeb.Services.Implementations
                     .Include(x => x.ProgramArea)
                     .ToList();
 
+                var schoolYears = SchoolYearService.GetSubmittableSchoolYears();
+
                 var submissionCyclesOpenToday = submissionCycles
                     .Where(s => 
                         s.StartDate.Date <= DateTime.Now.Date &&
@@ -75,13 +77,16 @@ namespace ValidationWeb.Services.Implementations
                     .Where(x => programArea == null || 
                                 x.ProgramAreaId == null || 
                                 x.ProgramAreaId == programArea.Id)
-                    .ToList();
+                    .ToList()
+                    .Where(x => schoolYears.Any(y => y.Id == x.SchoolYearId));
 
                 foreach (var submissionCycle in submissionCyclesOpenToday)
                 {
                     var schoolYear =
-                        validationPortalDataContext.SchoolYears.FirstOrDefault(
-                            x => x.Id == submissionCycle.SchoolYearId);
+                        validationPortalDataContext.SchoolYears
+                            .Where(x => x.Enabled)
+                            .Where(x => x.Visible)
+                            .FirstOrDefault(x => x.Id == submissionCycle.SchoolYearId);
 
                     if (schoolYear != null)
                     {
