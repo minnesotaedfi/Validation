@@ -1,0 +1,14 @@
+ruleset DoubleLineTest
+
+rule 10.3.2 
+	when {StudentDemographic}.[BlackIndicator] <> 1 or {StudentDemographic}.[BlackIndicator] does not exist then
+	require count({StudentDemographic} when {StudentDemographic}.[AncestryEthnicOrigin] = 'bl-notindicated') = 0
+	and count({StudentDemographic} when {StudentDemographic}.[AncestryEthnicOrigin] = 'bl-africanamerican') = 0
+	and count({StudentDemographic} when {StudentDemographic}.[AncestryEthnicOrigin] = 'bl-ethiopianoromo') = 0
+	and count({StudentDemographic} when {StudentDemographic}.[AncestryEthnicOrigin] = 'bl-ethiopianother') = 0
+	and count({StudentDemographic} when {StudentDemographic}.[AncestryEthnicOrigin] = 'bl-liberian') = 0
+	and count({StudentDemographic} when {StudentDemographic}.[AncestryEthnicOrigin] = 'bl-nigerian') = 0
+	and count({StudentDemographic} when {StudentDemographic}.[AncestryEthnicOrigin] = 'bl-other') = 0
+	and count({StudentDemographic} when {StudentDemographic}.[AncestryEthnicOrigin] = 'bl-somali') = 0
+	and count({StudentDemographic} when {StudentDemographic}.[AncestryEthnicOrigin] = 'bl-unknown') = 0
+	else '425. When the student\'s BlackIndicator is not set to true, none of the corresponding values (\'bl-\') should be submitted for AncestryEthnicOrigin.'

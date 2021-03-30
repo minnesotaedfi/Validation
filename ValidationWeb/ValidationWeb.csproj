@@ -593,6 +593,7 @@
     <Content Include="Content\Rules\McccSchoolRuleSet.rules" />
     <Content Include="Content\Rules\McccStudentRuleSet.rules" />
     <Content Include="Content\Rules\StudentAncestryEthnicOrigin.rules" />
+    <Content Include="Content\Rules\DoubleLineTest.rules" />
     <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <Content Include="Scripts\esm\popper-utils.js" />
@@ -1157,9 +1158,6 @@
   <ItemGroup>
     <Content Include="Content\Rules\Collections.rules">
       <SubType>Designer</SubType>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Rules\StudentDemographic.rules">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Rules\StudentEnrollment.rules">
