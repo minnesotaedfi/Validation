@@ -6,7 +6,7 @@ Error on:
 */
 
 DECLARE @RuleId VARCHAR(32) = '50.01.0012';
-DECLARE @Message NVARCHAR(MAX) = 'Error on: Course with Level Type in (A,C, or D) and Level Type in (B,G, or E). The entity ID returned is a district ed-org.';
+DECLARE @Message NVARCHAR(MAX) = 'Error on: Course with Level Type in (A,C, or D) and Level Type in (B,G, or E).';
 DECLARE @IsError BIT = 1;
 
 WITH 
@@ -49,12 +49,6 @@ INSERT INTO
 	rules.RuleValidationDetail (RuleValidationId, Id, RuleId, IsError, [Message])
 SELECT TOP 1
 	@RuleValidationId, @DistrictId, @RuleId RuleId, @IsError IsError, 
-	@Message + CHAR(13)+CHAR(10)+ (
-		SELECT TOP 10 
-			CourseCode,
-			EducationOrganizationId
-		FROM failed_rows [xml] 
-		FOR XML RAW,
-			ROOT ('failedRows')
-		) [Message]
-FROM failed_rows;
+	@Message +' Course code: '+ (SELECT TOP 1 CourseCode FROM failed_rows) [Message]
+FROM
+ failed_rows;
