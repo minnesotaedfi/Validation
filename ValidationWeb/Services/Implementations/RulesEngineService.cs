@@ -301,9 +301,6 @@ namespace ValidationWeb.Services.Implementations
 
                         try
                         {
-                            //Execute the SQL files in here? We have the RuleSetName and the Rule Id
-                            //e.g.  RuleSetId = MultipleEnrollment
-                            //      RuleId = 10.10.6175
                             var toExecute = ManualRuleExecutionService.GetManualSqlFile(rule.RulesetId, rule.RuleId).Result;
 
                             // By default, rules are run against ALL districts in the Ed Fi ODS. This line filters for multi-district/multi-tenant ODS's.
