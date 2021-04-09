@@ -215,12 +215,45 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\css\select2.css" />
     <Content Include="Content\css\select2.min.css" />
+    <Content Include="Content\SqlRules\DigitalEquityRuleSet\digital-equity-rule60.01.0001.sql" />
+    <Content Include="Content\SqlRules\DigitalEquityRuleSet\digital-equity-rule60.01.0002.sql" />
+    <Content Include="Content\SqlRules\DigitalEquityRuleSet\digital-equity-rule60.01.0003.sql" />
+    <Content Include="Content\SqlRules\DigitalEquityRuleSet\digital-equity-rule60.01.0004.sql" />
+    <Content Include="Content\SqlRules\DigitalEquityRuleSet\digital-equity-rule60.01.0005.sql" />
+    <Content Include="Content\SqlRules\DigitalEquityRuleSet\digital-equity-rule60.01.0006.sql" />
+    <Content Include="Content\SqlRules\DigitalEquityRuleSet\digital-equity-rule60.01.0007.sql" />
+    <Content Include="Content\SqlRules\DigitalEquityRuleSet\digital-equity-rule60.01.0008.sql" />
+    <Content Include="Content\SqlRules\DigitalEquityRuleSet\digital-equity-rule60.01.0009.sql" />
+    <Content Include="Content\SqlRules\DigitalEquityRuleSet\digital-equity-rule60.01.0010.sql" />
+    <Content Include="Content\SqlRules\DigitalEquityRuleSet\digital-equity-rule60.01.0011.sql" />
+    <Content Include="Content\SqlRules\DigitalEquityRuleSet\digital-equity-rule60.01.0012.sql" />
+    <Content Include="Content\SqlRules\DigitalEquityRuleSet\digital-equity-rule60.01.0013.sql" />
+    <Content Include="Content\SqlRules\DigitalEquityRuleSet\digital-equity-rule60.01.0014.sql" />
+    <Content Include="Content\SqlRules\DigitalEquityRuleSet\digital-equity-rule60.01.0015.sql" />
+    <Content Include="Content\SqlRules\DigitalEquityRuleSet\digital-equity-rule60.01.0016.sql" />
+    <Content Include="Content\SqlRules\DigitalEquityRuleSet\digital-equity-rule60.01.0017.sql" />
     <Content Include="Content\SqlRules\McccCourseRuleSet\mccc-course-rule50.00.0001.sql" />
     <Content Include="Content\SqlRules\McccCourseRuleSet\mccc-course-rule50.00.0002.sql" />
     <Content Include="Content\SqlRules\McccCourseRuleSet\mccc-course-rule50.01.0011.sql" />
     <Content Include="Content\SqlRules\McccCourseRuleSet\mccc-course-rule50.01.0012.sql" />
     <Content Include="Content\SqlRules\McccCourseRuleSet\mccc-course-rule50.01.0013.sql" />
     <Content Include="Content\SqlRules\McccCourseRuleSet\mccc-course-rule50.01.0014.sql" />
+    <Content Include="Content\SqlRules\McccCourseRuleSet\mccc-course-rule50.02.0001.sql" />
+    <Content Include="Content\SqlRules\McccCourseRuleSet\mccc-course-rule50.02.0002.sql" />
+    <Content Include="Content\SqlRules\McccCourseRuleSet\mccc-course-rule50.02.0003.sql" />
+    <Content Include="Content\SqlRules\McccCourseRuleSet\mccc-course-rule50.02.0004.sql" />
+    <Content Include="Content\SqlRules\McccCourseRuleSet\mccc-course-rule50.02.0005.sql" />
+    <Content Include="Content\SqlRules\McccCourseRuleSet\mccc-course-rule50.02.0006.sql" />
+    <Content Include="Content\SqlRules\McccCourseRuleSet\mccc-course-rule50.02.0007.sql" />
+    <Content Include="Content\SqlRules\McccCourseRuleSet\mccc-course-rule50.02.0008.sql" />
+    <Content Include="Content\SqlRules\McccCourseRuleSet\mccc-course-rule50.02.0009.sql" />
+    <Content Include="Content\SqlRules\McccCourseRuleSet\mccc-course-rule50.02.0010.sql" />
+    <Content Include="Content\SqlRules\McccCourseRuleSet\mccc-course-rule50.02.0011.sql" />
+    <Content Include="Content\SqlRules\McccCourseRuleSet\mccc-course-rule50.02.0012.sql" />
+    <Content Include="Content\SqlRules\McccCourseRuleSet\mccc-course-rule50.02.0013.sql" />
+    <Content Include="Content\SqlRules\McccCourseRuleSet\mccc-course-rule50.02.0014.sql" />
+    <Content Include="Content\SqlRules\McccCourseRuleSet\mccc-course-rule50.02.0015.sql" />
+    <Content Include="Content\SqlRules\McccCourseRuleSet\mccc-course-rule50.02.0016.sql" />
     <Content Include="Content\SqlRules\SchoolGrade\school-grade-rule10.10.6530.sql" />
     <Content Include="Content\SqlRules\SchoolGrade\school-grade-rule10.10.6642.sql" />
     <Content Include="Content\SqlRules\SchoolGrade\school-grade-rule10.10.6643.sql" />
@@ -593,6 +626,7 @@
     <Content Include="Content\Rules\McccSchoolRuleSet.rules" />
     <Content Include="Content\Rules\McccStudentRuleSet.rules" />
     <Content Include="Content\Rules\StudentAncestryEthnicOrigin.rules" />
+    <Content Include="Content\Rules\DigitalEquityRuleSet.rules" />
     <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <Content Include="Scripts\esm\popper-utils.js" />
@@ -1189,7 +1223,8 @@
           <IISUrl>http://localhost:6888/VP/portal</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
-          <CustomServerUrl>http://localhost:6888/VP/portal/login</CustomServerUrl>
+          <CustomServerUrl>
+          </CustomServerUrl>
           <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
         </WebProjectProperties>
       </FlavorProperties>
