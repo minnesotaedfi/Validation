@@ -5,7 +5,7 @@
 <div>
     <div id="report-modal-content" class="modal-content" tabindex="-1">
         <div class="modal-header prime-blue white-heavy-text">
-            <h4 id="report-header" class="modal-title">Add Dynamic Report</h4>
+            <h4 id="report-header" class="modal-title">Edit Dynamic Report</h4>
             <button type="button" class="close" aria-label="close" data-dismiss="modal">[close]</button>
         </div>
         <div class="modal-body">
@@ -21,14 +21,14 @@
                 </div>
 
                 @Html.HiddenFor(m => m.Id, new { id = "edit-report-id" })
+                @Html.HiddenFor(m => m.SchoolYearId, new { id = "report-school-year-id" })
+
                 <div class="row form-group">
                   <div class="col-sm-3">
-                    <label for="report-school-year-id">School Year:</label>
+                    <label for="report-school-year-display">School Year:</label>
                   </div>
-                  <div class="col-sm-9">
-                    @Html.DropDownListFor(m => m.SchoolYearId,
-                        (IEnumerable<SelectListItem>)ViewData["schoolYears"],
-                        new { id = "report-school-year-id", @class = "form-control" })
+                  <div class="col-sm-9" id = "report-school-year-display" >
+                    @Html.DisplayTextFor(m => m.SchoolYear)
                   </div>
                 </div>
                 <div class="row form-group">

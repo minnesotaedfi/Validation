@@ -28,7 +28,12 @@
                       <div class="col-sm-9">
                         @Html.DropDownListFor(m => m.DynamicReportDefinition.SchoolYearId,
                             (IEnumerable<SelectListItem>)ViewData["schoolYears"],
-                            new { id = "report-school-year-id", @class = "form-control" })
+                            new
+                            {
+                              id = "report-school-year-id",
+                              @class = "form-control",
+                              onchange = "javascript:updateRulesViews($(this).val())"
+                            })
                       </div>
                     </div>
                     <div class="row form-group">
