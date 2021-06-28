@@ -131,7 +131,11 @@ namespace ValidationWeb.Filters
             var validYears = new List<SchoolYear>();
             using (var dbContext = _dbContextFactory.Create())
             {
-                validYears.AddRange(dbContext.SchoolYears.Where(sy => sy.Enabled).ToList());
+                validYears
+                    .AddRange(dbContext.SchoolYears
+                        .Where(sy => sy.Enabled)
+                        .Where(sy => sy.Visible)
+                        .OrderBy(x => x.StartYear).ToList());
             }
 
             if (validYears.Count == 0)
@@ -161,7 +165,12 @@ namespace ValidationWeb.Filters
                         if (currentSession != null)
                         {
                             previousSessionFocusedEdOrgId = currentSession.FocusedEdOrgId;
-                            previousSessionFocusedSchoolYearId = currentSession.FocusedSchoolYearId;
+
+                            if (validYears.Any(x => x.Id == currentSession.FocusedSchoolYearId))
+                            {
+                                previousSessionFocusedSchoolYearId = currentSession.FocusedSchoolYearId;
+                            }
+
                             if (currentSession.ExpiresUtc > DateTime.UtcNow)
                             {
                                 // Extend the current session.
@@ -352,7 +361,16 @@ namespace ValidationWeb.Filters
                 #endregion Extract data about the user that is common to all SSO Authorization records.
 
                 // A school year is needed to identify which Ed Fi ODS database to pull organizational information from.
-                var schoolYearId = previousSessionFocusedSchoolYearId ?? validYears.First().Id;
+                int schoolYearId; 
+                if (previousSessionFocusedSchoolYearId != null && 
+                    validYears.All(x => x.Id != previousSessionFocusedSchoolYearId))
+                {
+                    schoolYearId = previousSessionFocusedSchoolYearId.Value;
+                }
+                else
+                {
+                    schoolYearId = validYears.First().Id;
+                }
 
                 var authorizedEdOrgs = new List<EdOrg>();
                 foreach (var ssoUserOrg in ssoUserAuthorizations)
